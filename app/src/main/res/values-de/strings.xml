@@ -340,6 +340,7 @@
   <string name="NodeSelector.statusLabel">Node-Verbindungsstatus</string>
   <!-- Node Selector view title -->
   <string name="NodeSelector.title">Bitcoin-Nodes</string>
+  <string name="ELA_NodeSelector.title">Elastos-Nodes</string>
   <!-- Bad Payment request alert title -->
   <string name="PaymentProtocol.Errors.badPaymentRequest">Ungültige Zahlungsanforderung</string>
   <!-- Error opening payment protocol file message -->

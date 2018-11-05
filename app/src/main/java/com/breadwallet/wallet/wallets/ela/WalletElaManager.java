@@ -19,6 +19,7 @@ import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.SettingsUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
@@ -95,18 +96,18 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     public static WalletElaManager getInstance(Context context) {
 
         if (mInstance == null) {
-            mInstance = new WalletElaManager();
-            mContext = context;
+            mInstance = new WalletElaManager(context);
         }
 
         return mInstance;
     }
 
-    private WalletElaManager() {
+    private WalletElaManager(Context context) {
+        mContext = context;
         mUiConfig = new WalletUiConfiguration("#003d79", null,
                 true, WalletManagerHelper.MAX_DECIMAL_PLACES_FOR_UI);
 
-        mSettingsConfig = new WalletSettingsConfiguration();
+        mSettingsConfig = new WalletSettingsConfiguration(context, getIso(), SettingsUtil.getElastosSettings(mContext), new ArrayList<BigDecimal>(0));
 
         mWalletManagerHelper = new WalletManagerHelper();
     }
@@ -569,21 +570,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public BigDecimal getSmallestCryptoForCrypto(Context app, BigDecimal amount) {
-        if (amount.doubleValue() == 0) return amount;
-        BigDecimal result = BigDecimal.ZERO;
-        int unit = BRSharedPrefs.getCryptoDenomination(app, getIso());
-        switch (unit) {
-            case BRConstants.CURRENT_UNIT_BITS:
-                result = amount.multiply(new BigDecimal("100"));
-                break;
-            case BRConstants.CURRENT_UNIT_MBITS:
-                result = amount.multiply(new BigDecimal("100000"));
-                break;
-            case BRConstants.CURRENT_UNIT_BITCOINS:
-                result = amount.multiply(new BigDecimal("100000000"));
-                break;
-        }
-        return result;
+        return amount.multiply(new BigDecimal("100000000"));
     }
 
     @Override
