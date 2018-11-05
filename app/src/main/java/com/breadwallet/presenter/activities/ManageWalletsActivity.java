@@ -65,14 +65,15 @@ public class ManageWalletsActivity extends BaseSettingsActivity implements OnSta
             if (!tokenSymbol.equalsIgnoreCase("btc") && !tokenSymbol.equalsIgnoreCase("bch") &&
                     !tokenSymbol.equalsIgnoreCase("eth") && !tokenSymbol.equalsIgnoreCase("brd")) {
 
-                BREthereumToken tk = WalletEthManager.getInstance(this).node.lookupToken(info.contractAddress);
-                if (tk == null) {
-                    BRReportsManager.reportBug(new NullPointerException("No token for contract: " + info.contractAddress));
+                if(info.contractAddress != null) {
+                    BREthereumToken tk = WalletEthManager.getInstance(this).node.lookupToken(info.contractAddress);
+                    if (tk == null) {
+                        BRReportsManager.reportBug(new NullPointerException("No token for contract: " + info.contractAddress));
 
-                } else
-                    tokenItem = new TokenItem(tk.getAddress(), tk.getSymbol(), tk.getName(), null);
+                    } else
+                        tokenItem = new TokenItem(tk.getAddress(), tk.getSymbol(), tk.getName(), null);
 
-
+                }
             } else if (tokenSymbol.equalsIgnoreCase("btc"))
                 tokenItem = new TokenItem(null, "BTC", "Bitcoin", null);
 
