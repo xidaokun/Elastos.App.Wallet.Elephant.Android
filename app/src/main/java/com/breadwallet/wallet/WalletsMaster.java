@@ -116,7 +116,7 @@ public class WalletsMaster {
 
             boolean isHidden = mTokenListMetaData.isCurrencyHidden(enabled.symbol);
 
-            if(enabled.symbol.equalsIgnoreCase("ELA")){
+            if(enabled.symbol.equalsIgnoreCase("ELA") && !isHidden){
                 mWallets.add(WalletElaManager.getInstance(app));
             } else if (enabled.symbol.equalsIgnoreCase("BTC") && !isHidden) {
                 //BTC wallet

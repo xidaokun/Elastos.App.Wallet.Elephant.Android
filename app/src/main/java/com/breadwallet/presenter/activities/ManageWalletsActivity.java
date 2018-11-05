@@ -63,17 +63,17 @@ public class ManageWalletsActivity extends BaseSettingsActivity implements OnSta
             String tokenSymbol = mTokens.get(i).symbol;
 
             if (!tokenSymbol.equalsIgnoreCase("btc") && !tokenSymbol.equalsIgnoreCase("bch") &&
-                    !tokenSymbol.equalsIgnoreCase("eth") && !tokenSymbol.equalsIgnoreCase("brd")) {
+                    !tokenSymbol.equalsIgnoreCase("eth") && !tokenSymbol.equalsIgnoreCase("brd")
+                    && !tokenSymbol.equalsIgnoreCase("ela")) {
 
-                if(info.contractAddress != null) {
-                    BREthereumToken tk = WalletEthManager.getInstance(this).node.lookupToken(info.contractAddress);
-                    if (tk == null) {
-                        BRReportsManager.reportBug(new NullPointerException("No token for contract: " + info.contractAddress));
+                BREthereumToken tk = WalletEthManager.getInstance(this).node.lookupToken(info.contractAddress);
+                if (tk == null) {
+                    BRReportsManager.reportBug(new NullPointerException("No token for contract: " + info.contractAddress));
 
-                    } else
-                        tokenItem = new TokenItem(tk.getAddress(), tk.getSymbol(), tk.getName(), null);
+                } else
+                    tokenItem = new TokenItem(tk.getAddress(), tk.getSymbol(), tk.getName(), null);
 
-                }
+
             } else if (tokenSymbol.equalsIgnoreCase("btc"))
                 tokenItem = new TokenItem(null, "BTC", "Bitcoin", null);
 
@@ -83,7 +83,8 @@ public class ManageWalletsActivity extends BaseSettingsActivity implements OnSta
                 tokenItem = new TokenItem(null, "ETH", "Ethereum", null);
             else if (tokenSymbol.equalsIgnoreCase("brd"))
                 tokenItem = new TokenItem(null, "BRD", "BRD", null);
-
+            else if(tokenSymbol.equalsIgnoreCase("ela"))
+                tokenItem = new TokenItem(null, "ELA", "Elastos", null);
 
             if (tokenItem != null) {
                 tokenItems.add(tokenItem);
