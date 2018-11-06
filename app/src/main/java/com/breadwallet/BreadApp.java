@@ -81,6 +81,8 @@ public class BreadApp extends Application {
     private static Context mContext;
     private ApplicationLifecycleObserver mObserver;
 
+    public static String mLang = "en";
+
     private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null : BreadApp.getBreadContext().getApplicationContext().getPackageName();
 
     static {

@@ -185,10 +185,12 @@ public class WalletsMaster {
         final String[] words;
         List<String> list;
         String languageCode = Locale.getDefault().getLanguage();
+        BreadApp.mLang = languageCode;
         Utility.initLanguage(ctx);
         if (languageCode == null) languageCode = "en";
         list = Bip39Reader.bip39List(ctx, languageCode);
         words = list.toArray(new String[list.size()]);
+        BreadApp.mLang = languageCode;
         final byte[] randomSeed = sr.generateSeed(16);//128bit
         String seedTest = new String(randomSeed);
         if (words.length != 2048) {
