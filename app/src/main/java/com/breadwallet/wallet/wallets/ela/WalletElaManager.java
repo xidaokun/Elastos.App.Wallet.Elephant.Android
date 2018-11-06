@@ -576,13 +576,22 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public BigDecimal getSmallestCryptoForFiat(Context app, BigDecimal amount) {
         if (amount.doubleValue() == 0) return amount;
-        String iso = BRSharedPrefs.getPreferredFiatIso(app);
-        CurrencyEntity ent = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(), iso);
-        if (ent == null) {
-            return amount;
+        String code = BRSharedPrefs.getPreferredFiatIso(app);
+        //fiat rate for btc
+        CurrencyEntity btcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
+        //Btc rate for ela
+        CurrencyEntity elaBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(), "BTC");
+        if (btcRate == null) {
+            return null;
         }
-        double rate = ent.rate;
-        //convert c to $.
-        return amount.divide(new BigDecimal(rate), 8, ROUNDING_MODE).multiply(new BigDecimal("100000000"));
+        if (elaBtcRate == null) {
+            return null;
+        }
+
+        BigDecimal tmp = amount.divide(new BigDecimal(btcRate.rate),8, BRConstants.ROUNDING_MODE).
+                divide(new BigDecimal(elaBtcRate.rate),8, BRConstants.ROUNDING_MODE)
+                .multiply(new BigDecimal(100000000f));
+        Log.i("tmp", "tmp:"+tmp.floatValue());
+        return tmp;
     }
 }
