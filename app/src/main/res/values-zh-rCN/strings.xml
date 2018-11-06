@@ -352,7 +352,7 @@
   <!-- Payment too small alert title -->
   <string name="PaymentProtocol.Errors.smallOutputError">无法付款</string>
   <!-- Amount too small error message -->
-  <string name="PaymentProtocol.Errors.smallPayment">比特币支付不能小于%1$s。</string>
+  <string name="PaymentProtocol.Errors.smallPayment">支付不能小于%1$s。</string>
   <!-- Output too small error message. -->
   <string name="PaymentProtocol.Errors.smallTransaction">比特币交易输出不能小于 %1$s。</string>
   <!-- Unsupported signature type payment protocol error message -->
