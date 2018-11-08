@@ -107,6 +107,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     private WalletElaManager(Context context, BRCoreMasterPubKey masterPubKey,
                              BRCoreChainParams chainParams,
                              double earliestPeerTime) {
+        super(masterPubKey, chainParams, 0);
         mContext = context;
         mUiConfig = new WalletUiConfiguration("#003d79", null,
                 true, WalletManagerHelper.MAX_DECIMAL_PLACES_FOR_UI);
