@@ -1,5 +1,7 @@
 package com.breadwallet.wallet.wallets.ela.response.history;
 
+import java.util.List;
+
 /**
  * BreadWallet
  * <p/>
@@ -24,9 +26,14 @@ package com.breadwallet.wallet.wallets.ela.response.history;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class Vout {
-    public String valueSat;
-    public int n;
-    public long value;
-    public ScriptPubKey scriptPubKey;
+public class History {
+    public String Txid;
+    public String Type;
+    public String Value;
+    public String CreateTime;
+    public int Height;
+    public String Fee;
+    public List<String> Inputs;
+    public List<String> Outputs;
+
 }

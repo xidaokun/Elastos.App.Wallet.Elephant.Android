@@ -21,6 +21,7 @@ import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.SettingsUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
