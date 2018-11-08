@@ -5,6 +5,8 @@ import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.core.BRCoreChainParams;
+import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWalletManager;
 import com.breadwallet.core.ethereum.BREthereumAmount;
@@ -96,13 +98,15 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     public static WalletElaManager getInstance(Context context) {
 
         if (mInstance == null) {
-            mInstance = new WalletElaManager(context);
+            mInstance = new WalletElaManager(context, null, null, 0);
         }
 
         return mInstance;
     }
 
-    private WalletElaManager(Context context) {
+    private WalletElaManager(Context context, BRCoreMasterPubKey masterPubKey,
+                             BRCoreChainParams chainParams,
+                             double earliestPeerTime) {
         mContext = context;
         mUiConfig = new WalletUiConfiguration("#003d79", null,
                 true, WalletManagerHelper.MAX_DECIMAL_PLACES_FOR_UI);
