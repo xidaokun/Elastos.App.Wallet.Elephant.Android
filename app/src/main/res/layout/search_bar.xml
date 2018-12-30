@@ -60,7 +60,7 @@
 
             <com.breadwallet.presenter.customviews.BRButton
                 android:id="@+id/sent_filter"
-                android:layout_width="60dp"
+                android:layout_width="85dp"
                 android:layout_height="50dp"
                 android:layout_marginBottom="16dp"
                 android:layout_marginEnd="4dp"

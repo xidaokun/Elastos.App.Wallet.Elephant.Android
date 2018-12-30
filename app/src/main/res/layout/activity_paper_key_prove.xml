@@ -15,7 +15,6 @@
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
         android:layout_marginTop="0dp"
-        android:background="@drawable/write_down_gradient"
         android:orientation="vertical"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -30,9 +29,8 @@
             android:layout_weight="0.5"
             android:text="@string/SecurityCenter.paperKeyTitle"
             android:textAlignment="center"
-            android:textColor="@color/white"
+            android:textColor="@color/black_333333"
             android:textSize="@dimen/header"
-            app:customTFont="CircularPro-Bold.otf"
             app:layout_constraintLeft_toLeftOf="@+id/description"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
@@ -49,7 +47,7 @@
             android:lineSpacingMultiplier="1.3"
             android:text="@string/ConfirmPaperPhrase.label"
             android:textAlignment="textStart"
-            android:textColor="@color/white"
+            android:textColor="@color/black_999999"
             android:textSize="@dimen/sub_header"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -72,27 +70,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gradient_layout">
-
-
-        <com.breadwallet.presenter.customviews.BRButton
-            android:id="@+id/button_submit"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/big_button_height"
-            android:layout_marginBottom="32dp"
-            android:layout_marginEnd="@dimen/bread_margin"
-            android:layout_marginStart="@dimen/bread_margin"
-            android:layout_marginTop="32dp"
-            android:elevation="8dp"
-            android:padding="10dp"
-            android:text="@string/Button.submit"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            app:buttonType="1"
-            app:isBreadButton="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/line2"/>
 
         <ImageView
             android:id="@+id/check_mark_1"
@@ -128,6 +105,7 @@
             android:layout_marginTop="@dimen/bread_margin"
             android:lineSpacingMultiplier="1.3"
             android:textSize="18sp"
+            android:textColor="@color/black_999999"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
@@ -162,6 +140,7 @@
             android:layout_marginStart="@dimen/bread_margin"
             android:layout_marginTop="@dimen/bread_margin"
             android:textSize="18sp"
+            android:textColor="@color/black_999999"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/line1"/>
 
@@ -193,5 +172,24 @@
             />
 
     </android.support.constraint.ConstraintLayout>
+
+    <com.breadwallet.presenter.customviews.BRButton
+        android:id="@+id/button_submit"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/big_button_height"
+        android:layout_marginBottom="32dp"
+        android:layout_marginEnd="@dimen/bread_margin"
+        android:layout_marginStart="@dimen/bread_margin"
+        android:layout_marginTop="32dp"
+        android:elevation="8dp"
+        android:padding="10dp"
+        android:text="@string/Button.submit"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:buttonType="1"
+        app:isBreadButton="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

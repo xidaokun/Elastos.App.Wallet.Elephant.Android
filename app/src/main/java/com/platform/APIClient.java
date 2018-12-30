@@ -488,8 +488,12 @@ public class APIClient {
         DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
         String httpDate = DATE_FORMAT.format(new Date());
 
-        if(httpDate != null)
-        request = modifiedRequest.header("Date", httpDate.substring(0, httpDate.length() - 6)).build();
+        String[] gmt = httpDate.split("GMT");
+        Log.i(TAG, "httpDate:"+httpDate);
+        if(httpDate!=null && gmt.length==2) {
+            request = modifiedRequest.header("Date", gmt[0].trim()+" GMT").build();
+            Log.i(TAG, "Date:"+gmt[0].trim()+" GMT");
+        }
 
         String queryString = request.url().encodedQuery();
 

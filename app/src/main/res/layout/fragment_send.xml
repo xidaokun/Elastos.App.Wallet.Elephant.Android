@@ -67,6 +67,7 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginLeft="@dimen/bread_margin"
                 android:layout_marginRight="@dimen/bread_margin"
+                android:visibility="gone"
                 android:background="@drawable/faq_question_black"
                 tools:layout_editor_absoluteX="0dp"
                 tools:layout_editor_absoluteY="81dp"/>
@@ -169,6 +170,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
                 android:text="$"
+                android:visibility="invisible"
                 android:textSize="28sp"
                 app:customTFont="CircularPro-Medium.otf"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -180,20 +182,19 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="4dp"
                 android:layout_toEndOf="@id/iso_text"
                 android:background="@android:color/transparent"
                 android:clickable="false"
                 android:cursorVisible="false"
                 android:ems="10"
+                android:hint="@string/Send.balance.hint"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:inputType="numberDecimal"
                 android:textIsSelectable="false"
                 app:layout_constraintBottom_toBottomOf="@+id/iso_text"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintLeft_toRightOf="@+id/iso_text"
+                app:layout_constraintLeft_toLeftOf="@+id/iso_text"
                 app:layout_constraintRight_toLeftOf="@+id/iso_button"
                 app:layout_constraintTop_toTopOf="@+id/iso_text"
                 app:layout_constraintVertical_bias="0.5"/>
@@ -376,25 +377,17 @@
                 />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="70dp">
-
-            <com.breadwallet.presenter.customviews.BREdit
-                android:id="@+id/comment_edit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="16dp"
-                android:layout_marginStart="16dp"
-                android:background="@android:color/transparent"
-                android:hint="@string/Send.descriptionLabel"
-                android:textSize="@dimen/sub_header"
-                android:inputType="textPersonName"
-                android:maxLength="250"
-                />
-
-        </LinearLayout>
+        <com.breadwallet.presenter.customviews.BREdit
+            android:id="@+id/comment_edit"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:minHeight="70dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:background="@android:color/transparent"
+            android:cursorVisible="false"
+            android:maxLength="50"
+            android:hint="@string/Send.descriptionLabel"/>
 
         <View
             android:id="@+id/separator4"

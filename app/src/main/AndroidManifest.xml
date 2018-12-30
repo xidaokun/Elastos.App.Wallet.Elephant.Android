@@ -16,6 +16,10 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.BIND_JOB_SERVICE" />
+
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
@@ -46,7 +50,7 @@
         android:allowBackup="false"
         android:fullBackupContent="false"
         android:icon="@mipmap/ic_launcher"
-        android:label="ElephantWallet"
+        android:label="Elephant"
         android:largeHeap="true"
         android:launchMode="singleTask"
         android:supportsRtl="true"
@@ -55,7 +59,7 @@
         android:windowSoftInputMode="stateVisible|adjustResize">
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.breadwallet"
+            android:authorities="com.elastos.wallet"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -225,9 +229,12 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".presenter.activities.ManageWalletsActivity"
-
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
+
+        <activity android:name=".presenter.activities.settings.ElaNodeActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".tools.listeners.SyncReceiver"
@@ -239,9 +246,25 @@
             android:enabled="true"
             android:exported="false" />
 
-        <meta-data
+        <activity
+            android:name="com.tencent.bugly.beta.ui.BetaActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale"
+            android:theme="@android:style/Theme.Translucent" />
+
+        <provider
+            android:name=".presenter.provider.BuglyFileProvider"
+            android:authorities="${applicationId}.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/bugly_path" />
+        </provider>
+
+ <!--       <meta-data
             android:name="io.fabric.ApiKey"
             android:value="8f7c58228ac371e49f7c5e8b1a94c4c0833986a1" />
+-->
     </application>
 
 </manifest>

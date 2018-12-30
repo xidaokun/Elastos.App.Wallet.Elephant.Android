@@ -23,8 +23,6 @@ public class AboutActivity extends BaseSettingsActivity {
     private static final String TAG = AboutActivity.class.getName();
 
     private static AboutActivity app;
-    private BaseTextView mCopy;
-    private BaseTextView mRewardsId;
     private static final int DEFAULT_VERSION_CODE = 0;
     private static final String DEFAULT_VERSION_NAME = "0";
 
@@ -39,7 +37,7 @@ public class AboutActivity extends BaseSettingsActivity {
 
     @Override
     public int getBackButtonId() {
-        return R.id.back_button;
+        return R.id.back_arrow;
     }
 
     @Override
@@ -60,30 +58,8 @@ public class AboutActivity extends BaseSettingsActivity {
         String versionName = packageInfo != null ? packageInfo.versionName : DEFAULT_VERSION_NAME;
 
         infoText.setText(String.format(Locale.getDefault(), getString(R.string.About_footer), versionName, versionCode));
-
-        ImageView redditShare = findViewById(R.id.reddit_share_button);
-        ImageView twitterShare = findViewById(R.id.twitter_share_button);
         ImageView blogShare = findViewById(R.id.blog_share_button);
-        mRewardsId = findViewById(R.id.brd_rewards_id);
-        mCopy = findViewById(R.id.brd_copy);
 
-        redditShare.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(BRConstants.URL_REDDIT));
-                startActivity(browserIntent);
-                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
-            }
-        });
-
-        twitterShare.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(BRConstants.URL_TWITTER));
-                startActivity(browserIntent);
-                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
-            }
-        });
         blogShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,16 +74,6 @@ public class AboutActivity extends BaseSettingsActivity {
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(BRConstants.URL_PRIVACY_POLICY));
                 startActivity(browserIntent);
                 app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
-            }
-        });
-
-        mRewardsId.setText(BRSharedPrefs.getWalletRewardId(this));
-
-        mCopy.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                BRClipboardManager.putClipboard(AboutActivity.this, mRewardsId.getText().toString());
-                Toast.makeText(AboutActivity.this, getString(R.string.Receive_copied), Toast.LENGTH_SHORT).show();
             }
         });
 

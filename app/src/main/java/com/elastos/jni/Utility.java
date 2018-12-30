@@ -2,14 +2,13 @@ package com.elastos.jni;
 
 import android.content.Context;
 
-import com.breadwallet.BreadApp;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.Bip39Reader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Locale;
 
 /**
  * BreadWallet
@@ -37,37 +36,36 @@ import java.util.Locale;
  */
 public class Utility {
 
-    public static String[] LANGS = {"en", "es", "fr", "ja", "zh"};
-
     private static Utility mInstance;
     private static String mWords = null;
+    private static String mLang = null;
+    private static Context mContext;
 
     static {
         System.loadLibrary("utility");
     }
 
     private Utility(Context context){
-        initLanguage(context);
+        this.mContext = context;
     }
 
     public static Utility getInstance(Context context){
         if(mInstance == null){
             mInstance = new Utility(context);
         }
-        initLanguage(context);
         return mInstance;
     }
 
-    public static void initLanguage(Context context){
-        mWords = getWords(context, BreadApp.mLang +"-BIP39Words.txt");
-    }
-
     public String getSinglePrivateKey(String mnemonic){
-        return getSinglePrivateKey(Bip39Reader.getLanguage(BreadApp.mLang), mnemonic, mWords, "");
+        mLang = Bip39Reader.detectLang(mContext, mnemonic);
+        mWords = getWords(mContext, mLang +"-BIP39Words.txt");
+        return getSinglePrivateKey(Bip39Reader.getLanguage(mLang), mnemonic, mWords, "");
     }
 
     public String getSinglePublicKey(String mnemonic){
-        return getSinglePublicKey(Bip39Reader.getLanguage(BreadApp.mLang), mnemonic, mWords, "");
+        mLang = Bip39Reader.detectLang(mContext, mnemonic);
+        mWords = getWords(mContext, mLang +"-BIP39Words.txt");
+        return getSinglePublicKey(Bip39Reader.getLanguage(mLang), mnemonic, mWords, "");
     }
 
     public String generateMnemonic(String language, String words){
