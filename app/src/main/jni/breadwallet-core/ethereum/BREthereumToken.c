@@ -690,20 +690,6 @@ static struct BREthereumTokenRecord tokens[] = {
         { { { .u64 = {TOKEN_BRD_DEFAULT_GAS_PRICE_IN_WEI_UINT64, 0, 0, 0}}}},
         1
     },
-    
-    {
-        "0x86fa049857e0209aa7d9e616f7eb3b3b78ecfdb0",
-        "EOS",
-        "EOS",
-        "",
-        18,
-        "#000000",
-        "#000000",
-        { TOKEN_BRD_DEFAULT_GAS_LIMIT },
-        { { { .u64 = {TOKEN_BRD_DEFAULT_GAS_PRICE_IN_WEI_UINT64, 0, 0, 0}}}},
-        1
-    },
-    
     {
         "0x5af2be193a6abca9c8817001f45744777db30756",
         "ETHOS",
@@ -1050,19 +1036,6 @@ static struct BREthereumTokenRecord tokens[] = {
         8,
         "#1e1f25",
         "#1e1f25",
-        { TOKEN_BRD_DEFAULT_GAS_LIMIT },
-        { { { .u64 = {TOKEN_BRD_DEFAULT_GAS_PRICE_IN_WEI_UINT64, 0, 0, 0}}}},
-        1
-    },
-    
-    {
-        "0x5d65D971895Edc438f465c17DB6992698a52318D",
-        "NAS",
-        "Nebulas",
-        "",
-        18,
-        "#222222",
-        "#222222",
         { TOKEN_BRD_DEFAULT_GAS_LIMIT },
         { { { .u64 = {TOKEN_BRD_DEFAULT_GAS_PRICE_IN_WEI_UINT64, 0, 0, 0}}}},
         1
