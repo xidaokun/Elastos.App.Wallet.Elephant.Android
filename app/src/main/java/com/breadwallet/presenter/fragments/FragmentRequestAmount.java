@@ -202,7 +202,9 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
                     mReceiveAddress = wm.getAddress();
                 Uri bitcoinUri = CryptoUriParser.createCryptoUrl(getActivity(), wm, wm.decorateAddress(mReceiveAddress),
                         getAmount(), null, null, null);
-                QRUtils.share("sms:", getActivity(), bitcoinUri.toString());
+                if(bitcoinUri != null){
+                    QRUtils.share("sms:", getActivity(), bitcoinUri.toString());
+                }
             }
         });
         mAddress.setOnClickListener(new View.OnClickListener() {

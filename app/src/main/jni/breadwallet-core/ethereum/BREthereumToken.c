@@ -1744,19 +1744,6 @@ static struct BREthereumTokenRecord tokens[] = {
     },
 
     {
-        "0x9e3359f862b6c7f5c660cfd6d1aa6909b1d9504d",
-        "CCC",
-        "Container Crypto Coin",
-        "",
-        18,
-        "#95C121",
-        "#95C121",
-        { TOKEN_BRD_DEFAULT_GAS_LIMIT },
-        { { { .u64 = {TOKEN_BRD_DEFAULT_GAS_PRICE_IN_WEI_UINT64, 0, 0, 0}}}},
-        1
-    },
-
-    {
         "0xbf3f09e4eba5f7805e5fac0ee09fd6ee8eebe4cb",
         "BGX",
         "BIT GAME EXCHANGE",

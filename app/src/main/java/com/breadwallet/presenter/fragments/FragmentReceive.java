@@ -153,7 +153,8 @@ public class FragmentReceive extends ModalDialogFragment implements OnBalanceCha
                 Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager,
                         walletManager.decorateAddress(mReceiveAddress),
                         BigDecimal.ZERO, null, null, null);
-                QRUtils.share("sms:", getActivity(), cryptoUri.toString());
+                if(cryptoUri != null)
+                    QRUtils.share("sms:", getActivity(), cryptoUri.toString());
             }
         });
         mAddress.setOnClickListener(new View.OnClickListener() {
@@ -255,9 +256,11 @@ public class FragmentReceive extends ModalDialogFragment implements OnBalanceCha
                         mAddress.setText(decorated);
                         Utils.correctTextSizeIfNeeded(mAddress);
                         Uri uri = CryptoUriParser.createCryptoUrl(ctx, wm, decorated, BigDecimal.ZERO, null, null, null);
-                        boolean generated = QRUtils.generateQR(ctx, uri.toString(), mQrImage);
-                        if (!generated)
-                            throw new RuntimeException("failed to generate qr image for address");
+                        if(uri != null){
+                            boolean generated = QRUtils.generateQR(ctx, uri.toString(), mQrImage);
+                            if (!generated)
+                                throw new RuntimeException("failed to generate qr image for address");
+                        }
                     }
                 });
             }

@@ -20,6 +20,7 @@ import com.breadwallet.tools.threads.ImportPrivKeyTask;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -307,6 +308,7 @@ public class CryptoUriParser {
 
     public static Uri createCryptoUrl(Context app, BaseWalletManager wm, String
             addr, BigDecimal cryptoAmount, String label, String message, String rURL) {
+        if(wm==null || StringUtil.isNullOrEmpty(addr)) return null;
         String iso = wm.getIso();
         Uri.Builder builder = new Uri.Builder();
         String walletScheme = wm.getScheme();
