@@ -490,7 +490,7 @@ public class APIClient {
 
         String[] gmt = httpDate.split("GMT");
         Log.i(TAG, "httpDate:"+httpDate);
-        if(httpDate!=null && gmt.length==2) {
+        if(httpDate!=null && gmt.length>0) {
             request = modifiedRequest.header("Date", gmt[0].trim()+" GMT").build();
             Log.i(TAG, "Date:"+gmt[0].trim()+" GMT");
         }

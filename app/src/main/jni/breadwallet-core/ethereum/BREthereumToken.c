@@ -1560,20 +1560,7 @@ static struct BREthereumTokenRecord tokens[] = {
         { { { .u64 = {TOKEN_BRD_DEFAULT_GAS_PRICE_IN_WEI_UINT64, 0, 0, 0}}}},
         1
     },
-    
-    {
-        "0xf230b790e05390fc8295f4d3f60332c93bed42e2",
-        "TRX",
-        "TRON",
-        "",
-        6,
-        "#000000",
-        "#000000",
-        { TOKEN_BRD_DEFAULT_GAS_LIMIT },
-        { { { .u64 = {TOKEN_BRD_DEFAULT_GAS_PRICE_IN_WEI_UINT64, 0, 0, 0}}}},
-        1
-    },
-    
+
     {
         "0x92e52a1a235d9a103d970901066ce910aacefd37",
         "UCASH",
@@ -1755,41 +1742,55 @@ static struct BREthereumTokenRecord tokens[] = {
         { { { .u64 = {TOKEN_BRD_DEFAULT_GAS_PRICE_IN_WEI_UINT64, 0, 0, 0}}}},
         1
     },
+
     {
-            "0xbf3f09e4eba5f7805e5fac0ee09fd6ee8eebe4cb",
-            "BGX",
-            "BIT GAME EXCHANGE",
-            "",
-            18,
-            "#ff0000",
-            "#ff0000",
-            { TOKEN_BRD_DEFAULT_GAS_LIMIT },
-            { { { .u64 = {TOKEN_BRD_DEFAULT_GAS_PRICE_IN_WEI_UINT64, 0, 0, 0}}}},
-            1
+        "0x9e3359f862b6c7f5c660cfd6d1aa6909b1d9504d",
+        "CCC",
+        "Container Crypto Coin",
+        "",
+        18,
+        "#95C121",
+        "#95C121",
+        { TOKEN_BRD_DEFAULT_GAS_LIMIT },
+        { { { .u64 = {TOKEN_BRD_DEFAULT_GAS_PRICE_IN_WEI_UINT64, 0, 0, 0}}}},
+        1
+    },
+
+    {
+        "0xbf3f09e4eba5f7805e5fac0ee09fd6ee8eebe4cb",
+        "BGX",
+        "BIT GAME EXCHANGE",
+        "",
+        18,
+        "#ff0000",
+        "#ff0000",
+        { TOKEN_BRD_DEFAULT_GAS_LIMIT },
+        { { { .u64 = {TOKEN_BRD_DEFAULT_GAS_PRICE_IN_WEI_UINT64, 0, 0, 0}}}},
+        1
     },
     {
-            "0x2bba3cf6de6058cc1b4457ce00deb359e2703d7f",
-            "HSC",
-            "Hash Coin",
-            "",
-            18,
-            "#0000ff",
-            "#0000ff",
-            { TOKEN_BRD_DEFAULT_GAS_LIMIT },
-            { { { .u64 = {TOKEN_BRD_DEFAULT_GAS_PRICE_IN_WEI_UINT64, 0, 0, 0}}}},
-            1
+        "0x2bba3cf6de6058cc1b4457ce00deb359e2703d7f",
+        "HSC",
+        "Hash Coin",
+        "",
+        18,
+        "#0000ff",
+        "#0000ff",
+        { TOKEN_BRD_DEFAULT_GAS_LIMIT },
+        { { { .u64 = {TOKEN_BRD_DEFAULT_GAS_PRICE_IN_WEI_UINT64, 0, 0, 0}}}},
+        1
     },
     {
-            "0x0000000000000000000000000000000000000",
-            "IOEX",
-            "Coming soon",
-            "",
-            18,
-            "#0000ff",
-            "#0000ff",
-            { TOKEN_BRD_DEFAULT_GAS_LIMIT },
-            { { { .u64 = {TOKEN_BRD_DEFAULT_GAS_PRICE_IN_WEI_UINT64, 0, 0, 0}}}},
-            1
+        "0x0000000000000000000000000000000000000",
+        "IOEX",
+        "Coming soon",
+        "",
+        18,
+        "#0000ff",
+        "#0000ff",
+        { TOKEN_BRD_DEFAULT_GAS_LIMIT },
+        { { { .u64 = {TOKEN_BRD_DEFAULT_GAS_PRICE_IN_WEI_UINT64, 0, 0, 0}}}},
+        1
     }
 };
 

@@ -152,7 +152,7 @@ public class BreadApp extends Application {
         mObserver = new ApplicationLifecycleObserver();
         ProcessLifecycleOwner.get().getLifecycle().addObserver(mObserver);
 
-        Bugly.init(getApplicationContext(), "8a9b0190e0", true);
+        Bugly.init(getApplicationContext(), BuildConfig.UPGRADE_TESTNET? "8b437eefc0":"8a9b0190e0", true);
         upgradeAction();
     }
 
