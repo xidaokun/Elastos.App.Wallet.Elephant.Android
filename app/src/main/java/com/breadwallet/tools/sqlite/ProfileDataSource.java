@@ -26,8 +26,8 @@ public class ProfileDataSource {
 
     private Context mContext;
 
-    //final String devUrl = "https://api-wallet-did.elastos.org/api/1/blockagent/upchain/data";
-    final String didTestUrl = "https://api-wallet-did-testnet.elastos.org/";
+//    final String DID_URL = "https://api-wallet-did-testnet.elastos.org/";
+    public static final String DID_URL = "https://api-wallet-did.elastos.org/";
 //    final String elaTestUrl = "https://api-wallet-ela-testnet.elastos.org/";
 
     private static ProfileDataSource instance;
@@ -51,7 +51,7 @@ public class ProfileDataSource {
     public String upchain(String data){
         try {
             Log.i("ProfileFunction", "upchain data:"+data);
-            ProfileResponse result = urlPost(didTestUrl+"api/1/blockagent/upchain/data", data);
+            ProfileResponse result = urlPost(DID_URL +"api/1/blockagent/upchain/data", data);
             Log.i("ProfileFunction", "result:"+result);
             if(200 == result.status) return result.result;
         } catch (IOException e) {
@@ -72,12 +72,12 @@ public class ProfileDataSource {
     public boolean isTxExit(String txid){
         Transaction transaction = getTransaction(txid);
         boolean is = !(transaction==null || StringUtil.isNullOrEmpty(transaction.txid));
-        Log.i("xidaokun", "isTxExit:"+is);
+        Log.i("ProfileFunction", "isTxExit:"+is);
         return is;
     }
 
     public String getProfileValue(String did, String key){
-        String url = didTestUrl + "/api/1/did/"+did+"/"+key;
+        String url = DID_URL + "/api/1/did/"+did+"/"+key;
 
         try {
             String result = urlGET(url);
@@ -95,8 +95,8 @@ public class ProfileDataSource {
     }
 
     private Transaction getTransaction(String txid){
-        Log.i("xidaokun", "getTransaction:"+txid);
-        String url = didTestUrl + "api/1/tx/" + txid;
+        Log.i("ProfileFunction", "getTransaction:"+txid);
+        String url = DID_URL + "api/1/tx/" + txid;
         String result = null;
         try {
             result = urlGET(url);
@@ -106,7 +106,7 @@ public class ProfileDataSource {
                 return new Gson().fromJson(result, Transaction.class);
             }
         } catch (Exception e) {
-            Log.i("xidaokun", "getTransaction IOException");
+            Log.i("ProfileFunction", "getTransaction IOException");
             e.printStackTrace();
         }
         return null;
