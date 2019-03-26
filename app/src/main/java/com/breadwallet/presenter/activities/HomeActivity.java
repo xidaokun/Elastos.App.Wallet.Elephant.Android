@@ -125,11 +125,12 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             @Override
             public void run() {
                 mDid.syncInfo();
-                String value = mDid.getInfo("DID/Publickey");
+                String value = mDid.getInfo("Publickey");
                 Log.i("DidOnchain", "value:"+value);
-                if(StringUtil.isNullOrEmpty(value) || !value.contains("DID/Publickey")){
-                    String data = getKeyVale("DID/Publickey", publicKey);
+                if(StringUtil.isNullOrEmpty(value) || !value.contains("Publickey")){
+                    String data = getKeyVale("Publickey", publicKey);
                     String info = mDid.signInfo(mSeed, data);
+                    if(StringUtil.isNullOrEmpty(info)) return;
                     String txid = ProfileDataSource.getInstance(HomeActivity.this).upchain(info);
                     Log.i("DidOnchain", "txid:"+txid);
                 }
