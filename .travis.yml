@@ -41,8 +41,11 @@ deploy:
 notifications:
   email:
   - 15921908346@163.com
-  - lifayi@elastos.org
   - xuliting@elastos.org
+  - songshijun@elastos.org
+  - zuohuahua@elastos.org
+  - mengxiaokun@elastos.org
+  - xuxinlai@elastos.org
 before_cache:
 - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 cache:
