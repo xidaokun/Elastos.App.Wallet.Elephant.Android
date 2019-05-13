@@ -13,7 +13,7 @@ licenses:
 before_install:
 - openssl aes-256-cbc -K $encrypted_c703387b800a_key -iv $encrypted_c703387b800a_iv
   -in elastos.jks.enc -out elastos.jks -d
-yes | sdkmanager --licenses
+yes | sdkmanager "cmake;3.6.4111459" --licenses
 - chmod +x gradlew
 - "./gradlew dependencies || true"
 script:
