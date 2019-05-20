@@ -83,7 +83,7 @@ public class MultiSignQrActivity extends BRActivity {
     private void fixView() {
 
         try {
-            String url = "elaphant://multisign?sign=" + URLEncoder.encode(mTransaction, "utf-8");
+            String url = "elaphant://multitx?tx=" + URLEncoder.encode(mTransaction, "utf-8");
             String utf16 = LZString.compressToUTF16(url);
             Log.d(TAG, "=== utf16 length: " + utf16.length());
             QRUtils.generateQR(this, url, mQRCodeIv);

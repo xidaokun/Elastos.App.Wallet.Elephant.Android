@@ -282,11 +282,11 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                         UiUtils.startSignActivity(this, mUri);
                     } else if(mUri.contains("eladposvote")){
                         UiUtils.startVoteActivity(this, mUri);
-                    } else if(mUri.contains("multisign")){
+                    } else if(mUri.contains("multitx")){
                         Intent intent = new Intent();
                         intent.setClass(this, MultiSignTxActivity.class);
                         try {
-                            intent.putExtra("tx", URLDecoder.decode(mUri.substring("elaphant://multisign?sign=".length()), "utf-8"));
+                            intent.putExtra("tx", URLDecoder.decode(mUri.substring("elaphant://multitx?tx=".length()), "utf-8"));
                         } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();
                         }
