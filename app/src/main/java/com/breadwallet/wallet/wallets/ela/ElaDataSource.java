@@ -536,6 +536,34 @@ public class ElaDataSource implements BRDataSourceInterface {
         return result;
     }
 
+    public synchronized String sendSerializedRawTx(final String rawTransaction) {
+        String result = null;
+        try {
+            String url = getUrl("api/1/sendRawTx");
+            Log.i(TAG, "send raw url:"+url);
+            String json = "{"+"\"data\"" + ":" + "\"" + rawTransaction + "\"" +"}";
+            Log.i(TAG, "rawTransaction:"+rawTransaction);
+            String tmp = urlPost(url, json);
+            JSONObject jsonObject = new JSONObject(tmp);
+            result = jsonObject.getString("result");
+            Log.d(TAG, "send raw tx result: " + tmp);
+            if(result==null || result.contains("ERROR") || result.contains(" ")) {
+                Thread.sleep(3000);
+                if(mActivity!=null) toast(mActivity.getString(R.string.double_spend));
+                return null;
+            }
+            historyTransactionEntity.txReversed = result;
+            cacheSingleTx(historyTransactionEntity);
+            Log.d("postvote", "txId:"+result);
+        } catch (Exception e) {
+            if(mActivity!=null) toast(mActivity.getResources().getString(R.string.SendTransacton_failed));
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+
     public void getProducers(){
         try {
             String jsonRes = urlGET(getUrl("api/1/dpos/rank/height/9999999999999999"));
@@ -639,13 +667,13 @@ public class ElaDataSource implements BRDataSourceInterface {
         }
     }
 
-    public synchronized void cacheProducer(List<ProducerEntity> values){
-        if(values==null || values.size()<=0) return;
+    public synchronized void cacheProducer(List<ProducerEntity> values) {
+        if (values == null || values.size() <= 0) return;
         try {
             database = openDatabase();
             database.beginTransaction();
 
-            for(ProducerEntity entity : values) {
+            for (ProducerEntity entity : values) {
                 ContentValues value = new ContentValues();
                 value.put(BRSQLiteHelper.PEODUCER_PUBLIC_KEY, entity.Producer_public_key);
                 value.put(BRSQLiteHelper.PEODUCER_VALUE, entity.Value);
@@ -663,33 +691,6 @@ public class ElaDataSource implements BRDataSourceInterface {
             database.endTransaction();
             closeDatabase();
         }
-
-    public synchronized String sendSerializedRawTx(final String rawTransaction) {
-        String result = null;
-        try {
-            String url = getUrl("api/1/sendRawTx");
-            Log.i(TAG, "send raw url:"+url);
-            String json = "{"+"\"data\"" + ":" + "\"" + rawTransaction + "\"" +"}";
-            Log.i(TAG, "rawTransaction:"+rawTransaction);
-            String tmp = urlPost(url, json);
-            JSONObject jsonObject = new JSONObject(tmp);
-            result = jsonObject.getString("result");
-            Log.d(TAG, "send raw tx result: " + tmp);
-            if(result==null || result.contains("ERROR") || result.contains(" ")) {
-                Thread.sleep(3000);
-                if(mActivity!=null) toast(mActivity.getString(R.string.double_spend));
-//                toast(result);
-                return null;
-            }
-            elaTransactionEntity.txReversed = result;
-            cacheSingleTx(elaTransactionEntity);
-            Log.d("posvote", "txId:"+result);
-        } catch (Exception e) {
-            if(mActivity!=null) toast(mActivity.getResources().getString(R.string.SendTransacton_failed));
-            e.printStackTrace();
-        }
-
-        return result;
     }
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
