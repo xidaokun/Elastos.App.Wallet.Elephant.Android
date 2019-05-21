@@ -350,7 +350,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         if(entity==null || StringUtil.isNullOrEmpty(backurl)) return;
         String params = new Gson().toJson(entity);
         String ret = DidDataSource.getInstance(this).urlPost(backurl, params);
-        if ((StringUtil.isNullOrEmpty(ret) || StringUtil.isNullOrEmpty(ret) || ret.contains("err code:"))) {
+        if (null==ret || ret.contains("err code:")) {
             toast("callback return error");
         }
     }
