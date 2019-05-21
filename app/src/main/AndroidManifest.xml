@@ -353,7 +353,18 @@
         </activity>
         <activity android:name=".presenter.activities.MultiSignQrActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".presenter.activities.MultiSignTxActivity" />
+        <activity android:name=".presenter.activities.MultiSignTxActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:scheme="content"
+                    android:host="*"
+                    android:pathPattern="/.*\\.json"
+                    android:mimeType="*/*"/>
+            </intent-filter>
+        </activity>
         <activity android:name=".presenter.activities.MultiSignCreateActivity" />
 
         <provider
@@ -364,6 +375,16 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/bugly_path" />
+        </provider>
+
+        <provider
+            android:name=".presenter.provider.ImageFileProvider"
+            android:authorities="${applicationId}.imageprovider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/share_image_path" />
         </provider>
 
  <!--       <meta-data

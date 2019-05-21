@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -31,6 +32,11 @@ import com.google.gson.Gson;
 import org.elastos.sdk.keypair.ElastosKeypairSign;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
@@ -61,9 +67,17 @@ public class MultiSignTxActivity extends BRActivity {
 
     private void initView() {
         Intent intent = getIntent();
-        mRequiredCount = intent.getIntExtra("require", 0);
-        mPublicKeys = intent.getStringArrayExtra("publicKeys");
-        mTransaction = intent.getStringExtra("tx");
+        Uri uri = (Uri)intent.getData();
+        if (uri != null) {
+            mTransaction = readTxFromFile(uri);
+        } else {
+            mTransaction = intent.getStringExtra("tx");
+        }
+        if (StringUtil.isNullOrEmpty(mTransaction)) {
+            Log.e(TAG, "transaction is empty");
+            finish();
+            return;
+        }
         Log.d(TAG, "tx: " + mTransaction);
 
         ElaTransactionRes res = new Gson().fromJson(mTransaction, ElaTransactionRes.class);
@@ -182,7 +196,29 @@ public class MultiSignTxActivity extends BRActivity {
         mListView.setAdapter(adapter);
     }
 
+    private String readTxFromFile(Uri uri) {
+        try {
+            InputStream in = getContentResolver().openInputStream(uri);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
+            reader.close();
+            in.close();
+            return sb.toString();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
+
     private void getBalance() {
+        if (StringUtil.isNullOrEmpty(mAddress)) return;
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
