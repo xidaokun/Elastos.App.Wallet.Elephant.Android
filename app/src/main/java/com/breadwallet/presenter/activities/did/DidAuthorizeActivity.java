@@ -268,6 +268,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                 || StringUtil.isNullOrEmpty(PK) || StringUtil.isNullOrEmpty(randomNumber)) {
             Toast.makeText(DidAuthorizeActivity.this, "invalid params", Toast.LENGTH_SHORT).show();
             finish();
+            return;
         }
 
         boolean isValid = AuthorizeManager.verify(DidAuthorizeActivity.this, did, PK, appName, appId);

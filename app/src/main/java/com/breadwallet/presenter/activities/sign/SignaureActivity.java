@@ -161,6 +161,7 @@ public class SignaureActivity extends BRActivity {
                 || StringUtil.isNullOrEmpty(PK)) {
             Toast.makeText(this, "invalid params", Toast.LENGTH_SHORT).show();
             finish();
+            return;
         }
 
         boolean isValid = AuthorizeManager.verify(this, did, PK, appName, appId);
