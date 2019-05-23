@@ -274,6 +274,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         if (!isValid) {
             Toast.makeText(this, "verify failed", Toast.LENGTH_SHORT);
             finish();
+            return;
         }
 
         final String backurl = uriFactory.getCallbackUrl();
