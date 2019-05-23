@@ -167,6 +167,7 @@ public class SignaureActivity extends BRActivity {
         if(!isValid) {
             Toast.makeText(this, "verify failed", Toast.LENGTH_SHORT);
             finish();
+            return;
         }
         final String backurl = uriFactory.getCallbackUrl();
         final String returnUrl = uriFactory.getReturnUrl();
