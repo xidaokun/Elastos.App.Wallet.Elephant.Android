@@ -161,12 +161,14 @@ public class SignaureActivity extends BRActivity {
                 || StringUtil.isNullOrEmpty(PK)) {
             Toast.makeText(this, "invalid params", Toast.LENGTH_SHORT).show();
             finish();
+            return;
         }
 
         boolean isValid = AuthorizeManager.verify(this, did, PK, appName, appId);
         if(!isValid) {
             Toast.makeText(this, "verify failed", Toast.LENGTH_SHORT);
             finish();
+            return;
         }
         final String backurl = uriFactory.getCallbackUrl();
         final String returnUrl = uriFactory.getReturnUrl();
