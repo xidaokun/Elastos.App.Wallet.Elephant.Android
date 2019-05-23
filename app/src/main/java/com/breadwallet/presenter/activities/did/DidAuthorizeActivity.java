@@ -274,6 +274,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         if (!isValid) {
             Toast.makeText(this, "verify failed", Toast.LENGTH_SHORT);
             finish();
+            return;
         }
 
         final String backurl = uriFactory.getCallbackUrl();
@@ -350,7 +351,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         if(entity==null || StringUtil.isNullOrEmpty(backurl)) return;
         String params = new Gson().toJson(entity);
         String ret = DidDataSource.getInstance(this).urlPost(backurl, params);
-        if ((StringUtil.isNullOrEmpty(ret) || StringUtil.isNullOrEmpty(ret) || ret.contains("err code:"))) {
+        if (null==ret || ret.contains("err code:")) {
             toast("callback return error");
         }
     }
