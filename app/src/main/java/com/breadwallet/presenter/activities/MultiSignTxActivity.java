@@ -31,12 +31,15 @@ import com.google.gson.Gson;
 
 import org.elastos.sdk.keypair.ElastosKeypairSign;
 import org.json.JSONObject;
+import org.wallet.library.AuthorizeManager;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
@@ -61,24 +64,50 @@ public class MultiSignTxActivity extends BRActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_multi_sign_tx);
+
+        if (!initData()) {
+            finish();
+            return;
+        }
+
         initView();
         getBalance();
     }
 
-    private void initView() {
+    private boolean initData() {
         Intent intent = getIntent();
-        Uri uri = (Uri)intent.getData();
-        if (uri != null) {
-            mTransaction = readTxFromFile(uri);
-        } else {
-            mTransaction = intent.getStringExtra("tx");
+        Uri uri = intent.getData();
+        if (uri == null) return false;
+
+        if (!uri.getScheme().equals("elaphant")) {
+            uri = readTxFromFile(uri);
+            if (uri == null) return false;
+        }
+
+        String appName = uri.getQueryParameter("AppName");
+        String appID = uri.getQueryParameter("AppID");
+        String publicKey = uri.getQueryParameter("PublicKey");
+        String did = uri.getQueryParameter("DID");
+        if (!AuthorizeManager.verify(this, did, publicKey, appName, appID)) {
+            Log.e(TAG, "check app ID failed!");
+            return false;
+        }
+
+        try {
+            mTransaction = URLDecoder.decode(uri.getQueryParameter("Tx"), "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
         if (StringUtil.isNullOrEmpty(mTransaction)) {
             Log.e(TAG, "transaction is empty");
-            finish();
-            return;
+            return false;
         }
         Log.d(TAG, "tx: " + mTransaction);
+        return true;
+    }
+
+    private void initView() {
+
 
         ElaTransactionRes res = new Gson().fromJson(mTransaction, ElaTransactionRes.class);
         ElaTransactions tx = res.Transactions.get(0);
@@ -196,7 +225,7 @@ public class MultiSignTxActivity extends BRActivity {
         mListView.setAdapter(adapter);
     }
 
-    private String readTxFromFile(Uri uri) {
+    private Uri readTxFromFile(Uri uri) {
         try {
             InputStream in = getContentResolver().openInputStream(uri);
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
@@ -207,14 +236,14 @@ public class MultiSignTxActivity extends BRActivity {
             }
             reader.close();
             in.close();
-            return sb.toString();
+            return Uri.parse(sb.toString());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return "";
+        return null;
     }
 
     private void getBalance() {

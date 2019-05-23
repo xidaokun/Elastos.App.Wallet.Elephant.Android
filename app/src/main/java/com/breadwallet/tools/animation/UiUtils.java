@@ -15,7 +15,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -30,6 +29,8 @@ import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.ExploreWebActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.LoginActivity;
+import com.breadwallet.presenter.activities.MultiSignCreateActivity;
+import com.breadwallet.presenter.activities.MultiSignTxActivity;
 import com.breadwallet.presenter.activities.VoteActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
@@ -182,6 +183,21 @@ public class UiUtils {
         txDetails.setTransaction(item);
         txDetails.show(app.getFragmentManager(), "txDetails");
 
+    }
+
+    public static void startMultiTxActivity(Context context, Uri uri) {
+        Intent intent = new Intent();
+        intent.setClass(context, MultiSignTxActivity.class);
+        intent.setData(uri);
+        context.startActivity(intent);
+    }
+
+    public static void startMultiCreateActivity(Context context, String url) {
+        Intent intent = new Intent();
+        intent.setClass(context, MultiSignCreateActivity.class);
+        Uri uri = Uri.parse(url);
+        intent.setData(uri);
+        context.startActivity(intent);
     }
 
     public static void startVoteActivity(Context context, String url){
