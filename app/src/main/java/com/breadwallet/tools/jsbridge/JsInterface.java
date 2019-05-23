@@ -1,19 +1,12 @@
 package com.breadwallet.tools.jsbridge;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 
-import com.breadwallet.presenter.activities.ExploreWebActivity;
-import com.breadwallet.presenter.activities.MultiSignCreateActivity;
-import com.breadwallet.presenter.activities.MultiSignQrActivity;
-import com.breadwallet.presenter.activities.MultiSignTxActivity;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
-import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.breadwallet.wallet.wallets.ela.request.CreateTx;
 import com.breadwallet.wallet.wallets.ela.request.Outputs;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaTransactionRes;
@@ -21,7 +14,6 @@ import com.breadwallet.wallet.wallets.ela.response.create.Meno;
 import com.google.gson.Gson;
 
 import org.elastos.sdk.keypair.ElastosKeypair;
-import org.elastos.sdk.keypair.ElastosKeypairSign;
 import org.json.JSONObject;
 
 public class JsInterface {
@@ -43,7 +35,7 @@ public class JsInterface {
         return data;
     }
 
-    private boolean checkAppId(String publicKey, String appName, String appId) {
+    public static boolean checkAppId(String publicKey, String appName, String appId) {
         if (StringUtil.isNullOrEmpty(appName) || StringUtil.isNullOrEmpty(appId)) {
             return false;
         }
@@ -55,36 +47,6 @@ public class JsInterface {
         signed.buf = hexStringToByteArray(appId);
 
         return ElastosKeypair.verify(publicKey, data, data.buf.length, signed, signed.buf.length);
-    }
-
-    @JavascriptInterface
-    public String getElaPublicKey(String publicKey, String appName, String appId) {
-        if (!checkAppId(publicKey, appName, appId)) {
-            Log.e(TAG,"check app id failed");
-            return "";
-        }
-        return WalletElaManager.getInstance(mContext).getPublicKey();
-    }
-
-
-    @JavascriptInterface
-    public void createMultiSignWallet(String publicKey, String appName, String appId, String[] publicKeys, int requiredCount) {
-        if (!checkAppId(publicKey, appName, appId)) {
-            Log.e(TAG,"check app id faile");
-            return;
-        }
-
-        if (publicKeys == null || publicKeys.length == 0 || requiredCount <= 0) {
-            Log.e(TAG, "please send public keys");
-            return;
-        }
-
-        Intent intent = new Intent();
-        intent.setClass(mContext, MultiSignCreateActivity.class);
-        intent.putExtra("publicKeys", publicKeys);
-        intent .putExtra("requiredCount", requiredCount);
-        mContext.startActivityForResult(intent, ExploreWebActivity.REQUEST_CREATE_WALLET);
-
     }
 
     @JavascriptInterface
@@ -100,6 +62,7 @@ public class JsInterface {
         }
 
         String url = ElaDataSource.getUrl("api/1/createVoteTx");
+        Log.d(TAG, "url: " + url);
 
         CreateTx tx = new CreateTx();
         tx.inputs.add(from);
@@ -124,10 +87,7 @@ public class JsInterface {
                 res.Transactions.get(0).Memo = new Meno("text", memo).toString();
             }
 
-            Intent intent = new Intent();
-            intent.setClass(mContext, MultiSignTxActivity.class);
-            intent.putExtra("tx", new Gson().toJson(res));
-            mContext.startActivity(intent);
+            return new Gson().toJson(res);
 
         } catch (Exception e) {
             e.printStackTrace();

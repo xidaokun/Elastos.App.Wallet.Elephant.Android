@@ -1,7 +1,9 @@
 package com.breadwallet.presenter.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.Gravity;
@@ -14,13 +16,21 @@ import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.jsbridge.JsInterface;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
+import com.elastos.jni.Utility;
 import com.google.gson.Gson;
 
 import org.elastos.sdk.keypair.ElastosKeypairSign;
+import org.wallet.library.AuthorizeManager;
+
+import java.net.URLDecoder;
+import java.util.Arrays;
+import java.util.List;
 
 public class MultiSignCreateActivity extends BRActivity {
     private final String TAG = "MultiSignCreateActivity";
@@ -28,25 +38,15 @@ public class MultiSignCreateActivity extends BRActivity {
     private int mRequiredCount;
     private String[] mPublicKeys;
     private String mAddress;
+    private String mReturnUrl;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_multi_sign_create);
 
-        Intent intent = getIntent();
-        mPublicKeys = intent.getStringArrayExtra("publicKeys");
-        mRequiredCount = intent.getIntExtra("requiredCount", 0);
-        if (mRequiredCount == 0 || mPublicKeys == null || mPublicKeys.length == 0) {
-            Log.e(TAG, "no public keys");
-            setResultAndFinish(-1, "no public keys");
-            return;
-        }
-
-        mAddress = ElastosKeypairSign.getMultiSignAddress(mPublicKeys, mPublicKeys.length, mRequiredCount);
-        if(StringUtil.isNullOrEmpty(mAddress)) {
-            Log.e(TAG, "get multi sign wallet address failed");
-            setResultAndFinish(-2, "get wallet address failed");
+        if (!initData()) {
+            finish();
             return;
         }
 
@@ -55,10 +55,95 @@ public class MultiSignCreateActivity extends BRActivity {
 
     }
 
-    private void setResultAndFinish(int code, String data) {
-        Intent intent = new Intent();
-        intent.putExtra("data", data);
-        setResult(code, intent);
+    private boolean initData() {
+        Intent intent = getIntent();
+        Uri uri = intent.getData();
+        if (uri == null) {
+            return false;
+        }
+
+        String appName = uri.getQueryParameter("AppName");
+        String appID = uri.getQueryParameter("AppID");
+        String publicKey = uri.getQueryParameter("PublicKey");
+        String did = uri.getQueryParameter("DID");
+        if (!AuthorizeManager.verify(this, did, publicKey, appName, appID)) {
+            Log.e(TAG, "check app ID failed!");
+            return false;
+        }
+
+        String publicKeys = uri.getQueryParameter("PublicKeys");
+        if(StringUtil.isNullOrEmpty(publicKeys)) {
+            Log.e(TAG, "no public keys");
+            return false;
+        }
+        String pubkeys = URLDecoder.decode(publicKeys);
+        List<String> list= Arrays.asList(pubkeys.split(","));
+        mPublicKeys = (String[]) list.toArray();
+
+        String require = uri.getQueryParameter("RequiredCount");
+        if(StringUtil.isNullOrEmpty(require)) {
+            Log.e(TAG, "no require count");
+            return false;
+        }
+        mRequiredCount = Integer.parseInt(require);
+
+        String returnurl = uri.getQueryParameter("ReturnUrl");
+        if(StringUtil.isNullOrEmpty(returnurl)) {
+            Log.e(TAG, "return url is empty");
+            return false;
+        }
+        mReturnUrl = URLDecoder.decode(returnurl);
+
+        mAddress = ElastosKeypairSign.getMultiSignAddress(mPublicKeys, mPublicKeys.length, mRequiredCount);
+        if(StringUtil.isNullOrEmpty(mAddress)) {
+            Log.e(TAG, "get multi sign wallet address failed");
+            return false;
+        }
+
+        return true;
+    }
+
+    private String getMn() {
+        byte[] phrase = null;
+        try {
+            phrase = BRKeyStore.getPhrase(this, 0);
+            if (phrase != null) {
+                return new String(phrase);
+            }
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private void setResultAndFinish(String address) {
+        final String mne = getMn();
+        final String pk = Utility.getInstance(this).getSinglePrivateKey(mne);
+        final String myPK = Utility.getInstance(this).getSinglePublicKey(mne);
+        final String myDid = Utility.getInstance(this).getDid(myPK);
+
+        MultiCreateReturn data = new MultiCreateReturn();
+        data.DID = myDid;
+        data.PublicKey = myPK;
+        data.Address = address;
+
+        String dataStr = new Gson().toJson(data);
+
+        String sign = AuthorizeManager.sign(this, pk, dataStr);
+
+        String url;
+        if (mReturnUrl.contains("?")) {
+            url = mReturnUrl + "&Data=";
+        } else {
+            url = mReturnUrl + "?Data=";
+        }
+        url += Uri.encode(dataStr) + "&Sign=" + Uri.encode(sign) + "&Scheme=multicreate";
+
+        if (url.startsWith("file://")) {
+            UiUtils.startWebviewActivity(this, url);
+        } else {
+            UiUtils.openUrlByBrowser(this, url);
+        }
         finish();
     }
 
@@ -132,6 +217,12 @@ public class MultiSignCreateActivity extends BRActivity {
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
 
-        setResultAndFinish(0, mAddress);
+        setResultAndFinish(mAddress);
+    }
+
+    private class MultiCreateReturn {
+        String DID;
+        String PublicKey;
+        String Address;
     }
 }

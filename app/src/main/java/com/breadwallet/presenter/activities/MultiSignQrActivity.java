@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.qrcode.QRUtils;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 
 
@@ -93,10 +94,18 @@ public class MultiSignQrActivity extends BRActivity {
         }
     }
 
+    private String getUrl() throws UnsupportedEncodingException {
+        return "elaphant://multitx?AppName=" + BRConstants.ELAPHANT_APP_NAME +
+                "&AppID=" + BRConstants.ELAPHANT_APP_ID +
+                "&PublicKey=" + BRConstants.ELAPHANT_APP_PUBLICKEY +
+                "&DID=" + BRConstants.ELAPHANT_APP_DID +
+                "&Tx=" + URLEncoder.encode(mTransaction, "utf-8");
+    }
+
     private void fixView() {
 
         try {
-            String url = "elaphant://multitx?tx=" + URLEncoder.encode(mTransaction, "utf-8");
+            String url = getUrl();
             String utf16 = LZString.compressToUTF16(url);
             Log.d(TAG, "=== utf16 length: " + utf16.length());
             mBitmap = generateQR(this, url, mQRCodeIv);
@@ -143,14 +152,14 @@ public class MultiSignQrActivity extends BRActivity {
             File imagePath = new File(getCacheDir(), "images");
             imagePath.mkdirs();
 
-            FileOutputStream fOut = new FileOutputStream(imagePath + "/tx.json");
+            FileOutputStream fOut = new FileOutputStream(imagePath + "/tx.elasign");
             OutputStreamWriter outWriter = new OutputStreamWriter(fOut);
-            outWriter.write(mTransaction);
+            outWriter.write(getUrl());
             outWriter.close();
             fOut.flush();
             fOut.close();
 
-            share("tx.json");
+            share("tx.elasign");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -166,7 +175,7 @@ public class MultiSignQrActivity extends BRActivity {
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        if (fileName.contains(".json")) {
+        if (fileName.contains(".elasign")) {
             shareIntent.setDataAndType(contentUri, "text/plain");
         } else {
             shareIntent.setDataAndType(contentUri, getContentResolver().getType(contentUri));

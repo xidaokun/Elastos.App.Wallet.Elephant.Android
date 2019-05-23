@@ -2,6 +2,7 @@ package com.breadwallet.presenter.activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
@@ -51,7 +52,6 @@ public class ExploreWebActivity extends BRActivity {
 
         initView();
         initListener();
-
     }
 
     private void initView(){
@@ -246,7 +246,11 @@ public class ExploreWebActivity extends BRActivity {
             finish();
         } else if(url.contains("elaphant") && url.contains("eladposvote")) {
             UiUtils.startVoteActivity(ExploreWebActivity.this, url);
-        }else {
+        } else if (url.contains("elaphant") && url.contains("multicreate")) {
+            UiUtils.startMultiCreateActivity(this, url);
+        } else if (url.contains("elaphant") && url.contains("multitx")) {
+            UiUtils.startMultiTxActivity(this, Uri.parse(url));
+        } else {
             webView.loadUrl(url);
         }
     }
