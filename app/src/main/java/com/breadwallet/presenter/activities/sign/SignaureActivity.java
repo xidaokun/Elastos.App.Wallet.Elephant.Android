@@ -166,7 +166,7 @@ public class SignaureActivity extends BRActivity {
 
         boolean isValid = AuthorizeManager.verify(this, did, PK, appName, appId);
         if(!isValid) {
-            Toast.makeText(this, "verify failed", Toast.LENGTH_SHORT);
+            Toast.makeText(this, "verify failed", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
