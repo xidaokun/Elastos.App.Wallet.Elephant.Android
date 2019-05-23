@@ -1,7 +1,6 @@
 package com.breadwallet.wallet.wallets.ela;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
@@ -10,9 +9,9 @@ import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWalletManager;
 import com.breadwallet.core.ethereum.BREthereumAmount;
-import com.breadwallet.presenter.activities.ExploreWebActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
+import com.breadwallet.presenter.entities.ElapayEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -33,8 +32,10 @@ import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.WalletManagerHelper;
-import com.breadwallet.wallet.wallets.ela.data.ElaTransactionEntity;
+import com.breadwallet.wallet.wallets.ela.data.HistoryTransactionEntity;
 import com.elastos.jni.Utility;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -125,7 +126,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public BREthereumAmount.Unit getUnit() {
         Log.i(TAG, "getUnit");
-        throw new RuntimeException("stub");
+        return BREthereumAmount.Unit.TOKEN_DECIMAL;
     }
 
     public String getPrivateKey() {
@@ -170,22 +171,35 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public byte[] signAndPublishTransaction(CryptoTransaction tx, byte[] seed) {
         Log.i(TAG, "signAndPublishTransaction");
-        if(tx == null) return new byte[1];
-        BRElaTransaction raw = tx.getElaTx();
-        if(raw == null) return new byte[1];
-        String mRwTxid = ElaDataSource.getInstance(mContext).sendElaRawTx(raw.getTx());
+        try {
+            if(tx == null) return new byte[1];
+            BRElaTransaction raw = tx.getElaTx();
+            if(raw == null) return new byte[1];
+            String mRwTxid = ElaDataSource.getInstance(mContext).sendElaRawTx(raw.getTx());
 
-        if(StringUtil.isNullOrEmpty(mRwTxid)) return new byte[1];
-        TxManager.getInstance().updateTxList(mContext);
-        if(!StringUtil.isNullOrEmpty(WalletActivity.mCallbackUrl)) {
-            if(WalletActivity.mCallbackUrl.contains("?")){
-                UiUtils.startWebviewActivity(mContext, WalletActivity.mCallbackUrl+"&txid="+mRwTxid);
-            } else {
-                UiUtils.startWebviewActivity(mContext, WalletActivity.mCallbackUrl+"?txid="+mRwTxid);
+            if(StringUtil.isNullOrEmpty(mRwTxid)) return new byte[1];
+            TxManager.getInstance().updateTxList(mContext);
+            if(!StringUtil.isNullOrEmpty(WalletActivity.mCallbackUrl)) { //call back url
+                ElapayEntity elapayEntity = new ElapayEntity();
+                elapayEntity.OrderID = WalletActivity.mOrderId;
+                elapayEntity.TXID = mRwTxid;
+                ElaDataSource.getInstance(mContext).urlPost(WalletActivity.mCallbackUrl, new Gson().toJson(elapayEntity));
             }
+            if(!StringUtil.isNullOrEmpty(WalletActivity.mReturnUrl)) { //call return url
+                if(WalletActivity.mReturnUrl.contains("?")){
+                    UiUtils.startWebviewActivity(mContext, WalletActivity.mReturnUrl+"&TXID="+mRwTxid+"&OrderID"+WalletActivity.mOrderId);
+                } else {
+                    UiUtils.startWebviewActivity(mContext, WalletActivity.mReturnUrl+"?TXID="+mRwTxid+"&OrderID"+WalletActivity.mOrderId);
+                }
+            }
+            WalletActivity.mCallbackUrl = null;
+            WalletActivity.mReturnUrl = null;
+            WalletActivity.mOrderId = null;
+            return mRwTxid.getBytes();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        WalletActivity.mCallbackUrl = null;
-        return mRwTxid.getBytes();
+        return new byte[1];
     }
 
     public void updateTxHistory() {
@@ -351,10 +365,10 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public List<TxUiHolder> getTxUiHolders(Context app) {
-        List<ElaTransactionEntity> transactionEntities = ElaDataSource.getInstance(mContext).getAllTransactions();
+        List<HistoryTransactionEntity> transactionEntities = ElaDataSource.getInstance(mContext).getHistoryTransactions();
         List<TxUiHolder> uiTxs = new ArrayList<>();
         try {
-            for (ElaTransactionEntity entity : transactionEntities) {
+            for (HistoryTransactionEntity entity : transactionEntities) {
                 BigDecimal fee = new BigDecimal(entity.fee).divide(ONE_ELA_TO_SALA, 8, BRConstants.ROUNDING_MODE);
                 BigDecimal amount = new BigDecimal(entity.amount).divide(ONE_ELA_TO_SALA, 8, BRConstants.ROUNDING_MODE);
                 TxUiHolder txUiHolder = new TxUiHolder(null,
@@ -367,9 +381,10 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
                         entity.toAddress,
                         entity.fromAddress,
                         new BigDecimal(String.valueOf(entity.balanceAfterTx))
-                        , entity.txSize,
-                        amount
-                        , entity.isValid);
+                        ,entity.txSize
+                         ,amount
+                        , entity.isValid
+                        ,entity.isVote);
                 txUiHolder.memo = entity.memo;
                 uiTxs.add(txUiHolder);
             }
@@ -434,7 +449,17 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public CryptoTransaction createTransaction(BigDecimal amount, String address, String meno) {
         Log.i(TAG, "createTransaction");
-        BRElaTransaction brElaTransaction = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno);
+        BRElaTransaction brElaTransaction = null;
+        boolean autoVote = BRSharedPrefs.getAutoVote(mContext);
+        String candidatesStr = BRSharedPrefs.getCandidate(mContext);
+        Log.d("posvote", "autoVote:"+autoVote);
+        if(autoVote && !StringUtil.isNullOrEmpty(candidatesStr)){
+            List candidates = new Gson().fromJson(candidatesStr, new TypeToken<List<String>>(){}.getType());
+            brElaTransaction = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno, candidates);
+        } else {
+            brElaTransaction = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno);
+        }
+
         return new CryptoTransaction(brElaTransaction);
     }
 

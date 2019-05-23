@@ -187,6 +187,29 @@ public class ProfileActivity extends BRActivity {
         return new Gson().toJson(keyValues, new TypeToken<List<KeyValue>>(){}.getType());
     }
 
+    class PhoneNumber {
+        public String PhoneNumber;
+        public String CountryCode;
+    }
+
+    class KeyValuePhone {
+        public String Key;
+        public PhoneNumber Value;
+    }
+
+    private String getPhoneNumberValue(String path, String area, String number){
+        PhoneNumber phoneNumber = new PhoneNumber();
+        phoneNumber.CountryCode = area;
+        phoneNumber.PhoneNumber = number;
+
+        KeyValuePhone keyValueId = new KeyValuePhone();
+        keyValueId.Key = APPID + "/" + path;
+        keyValueId.Value = phoneNumber;
+
+        List<KeyValue> keyValues = new ArrayList<>();
+        return new Gson().toJson(keyValues, new TypeToken<List<KeyValue>>(){}.getType());
+    }
+
     private Did mDid;
     private String mSeed;
     private void initDid(){
@@ -199,6 +222,7 @@ public class ProfileActivity extends BRActivity {
             String words = Utility.getWords(ProfileActivity.this,  language +"-BIP39Words.txt");
             Log.i("ProfileFunction", "words is null:"+ (null==words));
             mSeed = IdentityManager.getSeed(mnemonic, Utility.getLanguage(language), words, "");
+            if(StringUtil.isNullOrEmpty(mSeed)) return;
             Identity identity = IdentityManager.createIdentity(getFilesDir().getAbsolutePath());
             BlockChainNode node = new BlockChainNode(ProfileDataSource.DID_URL);
             DidManager didManager = identity.createDidManager(mSeed);
@@ -237,9 +261,10 @@ public class ProfileActivity extends BRActivity {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
+                if(null == mDid) return;
                 mDid.syncInfo();
                 PayloadInfo payloadInfo = null;
-                String nickname = mDid.getInfo(APPID+"/NickName");
+                String nickname = mDid.getInfo(APPID+"/Nickname");
                 payloadInfo = getPayloadInfo(nickname);
                 String nickTxid = BRSharedPrefs.getCacheTxid(ProfileActivity.this, BRSharedPrefs.NICKNAME_txid);
                 if(null!=payloadInfo && (StringUtil.isNullOrEmpty(nickTxid) || nickTxid.equals(payloadInfo.txid))){
@@ -278,6 +303,7 @@ public class ProfileActivity extends BRActivity {
 
     private String uploadData(String data){
         Log.i("ProfileFunction", "upload Data:"+ data);
+        if(null == mDid) return null;
         String info = mDid.signInfo(mSeed, data);
         Log.i("ProfileFunction", "sign info:"+info);
         String txid = ProfileDataSource.getInstance(ProfileActivity.this).upchain(info);
@@ -308,7 +334,7 @@ public class ProfileActivity extends BRActivity {
                     String nickname = data.getStringExtra("nickname");
                     Log.i("ProfileFunction", "nickname:"+nickname);
                     if(null == nickname) return;
-                    String data = getKeyVale("NickName", nickname);
+                    String data = getKeyVale("Nickname", nickname);
                     if(BuildConfig.CAN_UPLOAD.contains("nickname")) txid = uploadData(data);
                     if(!StringUtil.isNullOrEmpty(txid) || !BuildConfig.CAN_UPLOAD.contains("nickname")){
                         canRefresh = true;
@@ -346,14 +372,16 @@ public class ProfileActivity extends BRActivity {
 
                 } else if(BRConstants.PROFILE_REQUEST_MOBILE == requestCode){
                     String mobile = data.getStringExtra("mobile");
-                    Log.i("ProfileFunction", "mobile:"+mobile);
+                    String area = data.getStringExtra("area");
+                    Log.i("ProfileFunction", "area:"+area+" mobile:"+mobile);
                     if(null == mobile) return;
-                    String data = getKeyVale("Mobile", mobile);
+                    String data = getPhoneNumberValue("Mobile", area, mobile);
                     if(BuildConfig.CAN_UPLOAD.contains("mobile")) txid = uploadData(data);
                     if(!StringUtil.isNullOrEmpty(txid) || !BuildConfig.CAN_UPLOAD.contains("mobile")){
                         canRefresh = true;
+                        BRSharedPrefs.putArea(ProfileActivity.this, area);
                         BRSharedPrefs.putMobile(ProfileActivity.this, mobile);
-                        if(mobile.equals("86,")){
+                        if(mobile.equals("")){
                             BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.MOBILE_STATE,
                                     BuildConfig.CAN_UPLOAD.contains("mobile")?SettingsUtil.IS_SAVING:SettingsUtil.IS_PENDING);
                         } else {

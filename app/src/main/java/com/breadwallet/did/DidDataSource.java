@@ -49,6 +49,28 @@ public class DidDataSource implements BRDataSourceInterface {
         return mInstance;
     }
 
+    public void cacheSignApp(SignInfo info){
+        try {
+            database = openDatabase();
+            database.beginTransaction();
+            ContentValues values = new ContentValues();
+            values.put(BRSQLiteHelper.SIGN_APP_NAME, info.getAppName());
+            values.put(BRSQLiteHelper.SIGN_APP_ID, info.getAppId());
+            values.put(BRSQLiteHelper.SIGN_DID, info.getDid());
+            values.put(BRSQLiteHelper.SIGN_PURPOSE, info.getPurpose());
+            values.put(BRSQLiteHelper.SIGN_CONTENT, info.getContent());
+
+            long l = database.insertWithOnConflict(BRSQLiteHelper.SIGN_AUTHOR_TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+            Log.i(TAG, "l:"+l);
+            database.setTransactionSuccessful();
+        } catch (Exception e) {
+             e.printStackTrace();
+        } finally {
+            database.endTransaction();
+            closeDatabase();
+        }
+    }
+
     public void putAuthorApp(AuthorInfo info){
         try {
             database = openDatabase();
@@ -58,6 +80,7 @@ public class DidDataSource implements BRDataSourceInterface {
             value.put(BRSQLiteHelper.DID_AUTHOR_NICKNAME, info.getNickName());
             value.put(BRSQLiteHelper.DID_AUTHOR_DID, info.getDid());
             value.put(BRSQLiteHelper.DID_AUTHOR_PK, info.getPK());
+            value.put(BRSQLiteHelper.DID_AUTHOR_APP_ID, info.getAppId());
             value.put(BRSQLiteHelper.DID_AUTHOR_AUTHOR_TIME, info.getAuthorTime());
             value.put(BRSQLiteHelper.DID_AUTHOR_EXP_TIME, info.getExpTime());
             value.put(BRSQLiteHelper.DID_AUTHOR_APP_NAME, info.getAppName());
@@ -80,7 +103,7 @@ public class DidDataSource implements BRDataSourceInterface {
 
         try {
             database = openDatabase();
-            cursor = database.query(BRSQLiteHelper.DID_AUTHOR_TABLE_NAME, allColumns, null, null, null, null, "authortime desc");
+            cursor = database.query(BRSQLiteHelper.DID_AUTHOR_TABLE_NAME, allColumns, null, null, null, null, null);
 
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -128,10 +151,11 @@ public class DidDataSource implements BRDataSourceInterface {
             BRSQLiteHelper.DID_AUTHOR_NICKNAME,//0
             BRSQLiteHelper.DID_AUTHOR_DID,//1
             BRSQLiteHelper.DID_AUTHOR_PK,//2
-            BRSQLiteHelper.DID_AUTHOR_AUTHOR_TIME,//3
-            BRSQLiteHelper.DID_AUTHOR_EXP_TIME,//4
-            BRSQLiteHelper.DID_AUTHOR_APP_NAME,//5
-            BRSQLiteHelper.DID_AUTHOR_APP_ICON//6
+            BRSQLiteHelper.DID_AUTHOR_APP_ID,//3
+            BRSQLiteHelper.DID_AUTHOR_AUTHOR_TIME,//4
+            BRSQLiteHelper.DID_AUTHOR_EXP_TIME,//5
+            BRSQLiteHelper.DID_AUTHOR_APP_NAME,//6
+            BRSQLiteHelper.DID_AUTHOR_APP_ICON,//7
     };
 
     private AuthorInfo cursorToInfo(Cursor cursor) {
@@ -139,30 +163,13 @@ public class DidDataSource implements BRDataSourceInterface {
         authorInfo.setNickName(cursor.getString(0));
         authorInfo.setDid(cursor.getString(1));
         authorInfo.setPK(cursor.getString(2));
-        authorInfo.setAuthorTime(cursor.getLong(3));
-        authorInfo.setExpTime(cursor.getLong(4));
-        authorInfo.setAppName(cursor.getString(5));
-        authorInfo.setAppIcon(cursor.getString(6));
+        authorInfo.setAppId(cursor.getString(3));
+        authorInfo.setAuthorTime(cursor.getLong(4));
+        authorInfo.setExpTime(cursor.getLong(5));
+        authorInfo.setAppName(cursor.getString(6));
+        authorInfo.setAppIcon(cursor.getString(7));
         return authorInfo;
     }
-
-    public String callBackUrl(String url, CallbackEntity entity){
-        if(entity==null || StringUtil.isNullOrEmpty(url)) return null;
-        String params = new Gson().toJson(entity);
-        Log.i("DidDataSource", "callBackUrl: "+"url:"+url+" params:"+params);
-        String tmp = urlPost(url, params);
-        Log.i("DidDataSource", "callBackUrl: result:"+tmp);
-        return tmp;
-    }
-
-    // "http://localhost:8081/packet/grabed/12-1-0?did=ihKwfxiFpYme8mb11roShjjpZcHt1Ru5VB"
-    public String callReturnUrl(String url, String did){
-        if(StringUtil.isNullOrEmpty(url)) return null;
-        String returnUrl = url+"?did="+did;
-        Log.i("DidDataSource", "returnUrl: "+returnUrl);
-        return urlGET(returnUrl);
-    }
-
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     public synchronized String urlPost(String url, String json) {
@@ -184,6 +191,10 @@ public class DidDataSource implements BRDataSourceInterface {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public void callReturnUrl(String url){
+        urlGET(url);
     }
 
     @WorkerThread

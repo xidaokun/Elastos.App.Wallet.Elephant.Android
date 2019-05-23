@@ -19,11 +19,15 @@ import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
@@ -37,6 +41,7 @@ import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.fragments.utils.ModalDialogFragment;
 import com.breadwallet.presenter.viewmodels.SendViewModel;
+import com.breadwallet.tools.adapter.VoteNodeAdapter;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.animation.SpringAnimator;
@@ -50,14 +55,19 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.vote.ProducerEntity;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.util.CryptoUriParser;
-import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
+import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.breadwallet.wallet.util.CryptoUriParser.parseRequest;
 import static com.platform.HTTPServer.URL_SUPPORT;
@@ -119,9 +129,15 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     private SendViewModel mViewModel;
     private ViewGroup mBackgroundLayout;
     private ViewGroup mSignalLayout;
+    private CheckBox mAutoVoteCb;
+    private BaseTextView mNodeLvTitle;
+    private BaseTextView mNodePasteTv;
 
-    public static boolean mFromRedPackage = false;
+    public static boolean mFromElapay = false;
     public static boolean mIsSend = false;
+
+    private VoteNodeAdapter mAdapter;
+    private List<ProducerEntity> mProducers = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -149,6 +165,10 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mFeeLayout = rootView.findViewById(R.id.fee_buttons_layout);
         mFeeDescription = rootView.findViewById(R.id.fee_description);
         mEconomyFeeWarningText = rootView.findViewById(R.id.warning_text);
+        mVoteNodeLv = rootView.findViewById(R.id.send_vote_node_lv);
+        mAutoVoteCb = rootView.findViewById(R.id.auto_vote_checkbox);
+        mNodeLvTitle = rootView.findViewById(R.id.send_list_title);
+        mNodePasteTv = rootView.findViewById(R.id.send_vote_paste_tv);
 
         mRegularFeeButton = rootView.findViewById(R.id.left_button);
         mEconomyFeeButton = rootView.findViewById(R.id.right_button);
@@ -206,7 +226,60 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         return rootView;
     }
 
+    private void showVoteView(){
+        mVoteNodeLv.setVisibility(View.VISIBLE);
+        mNodeLvTitle.setVisibility(View.VISIBLE);
+        mNodePasteTv.setVisibility(View.VISIBLE);
+    }
+
+    private void hideVoteView(){
+        mVoteNodeLv.setVisibility(View.GONE);
+        mNodeLvTitle.setVisibility(View.GONE);
+        mNodePasteTv.setVisibility(View.GONE);
+    }
+
+    private ListView mVoteNodeLv;
+    private void initVoteAdapter(){
+        BigDecimal balance = BRSharedPrefs.getCachedBalance(getContext(), "ELA");
+        String candidatesStr = BRSharedPrefs.getCandidate(getContext());
+        String iso = BRSharedPrefs.getCurrentWalletIso(getContext());
+        if(StringUtil.isNullOrEmpty(iso) || !iso.equalsIgnoreCase("ELA") ||
+                balance.longValue()<1 || StringUtil.isNullOrEmpty(candidatesStr)){
+            mAutoVoteCb.setVisibility(View.GONE);
+            hideVoteView();
+            return;
+        }
+
+        List<String> candidates = null;
+        if(candidatesStr.contains("[")){
+            candidates = new Gson().fromJson(candidatesStr, new TypeToken<List<String>>(){}.getType());
+        } else {
+            candidates = Utils.spliteByComma(candidatesStr);
+        }
+        List<ProducerEntity> tmp = ElaDataSource.getInstance(getContext()).getProducersByPK(candidates);
+        if(tmp!=null && tmp.size()>0) {
+            mProducers.clear();
+            mProducers.addAll(tmp);
+            mNodeLvTitle.setText(String.format(getString(R.string.node_list_title), tmp.size()));
+            mAdapter = new VoteNodeAdapter(getContext(), mProducers);
+            mVoteNodeLv.setAdapter(mAdapter);
+        }
+    }
+
     private void setListeners() {
+        mAutoVoteCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Log.i("posvote", "isChecked:"+isChecked);
+                BRSharedPrefs.setAutoVote(getContext(), isChecked);
+                if(isChecked) {
+                    showVoteView();
+                } else {
+                    hideVoteView();
+                }
+            }
+        });
+
         mCurrencyCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -400,7 +473,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            if (wm.containsAddress(obj.address)) {
+                            /*if (wm.containsAddress(obj.address)) {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -415,7 +488,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                                     }
                                 });
 
-                            } else if (wm.addressIsUsed(obj.address)) {
+                            } else */if (wm.addressIsUsed(obj.address)) {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -620,10 +693,27 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             }
         });
 
+        mNodePasteTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                copyText();
+            }
+        });
+
+    }
+
+    private void copyText() {
+        StringBuilder sb = new StringBuilder();
+        if(mProducers==null || mProducers.size()<=0) return;
+        for(ProducerEntity producerEntity : mProducers){
+            sb.append(producerEntity.Nickname).append("\n");
+        }
+        BRClipboardManager.putClipboard(getContext(), sb.toString());
+        Toast.makeText(getContext(), getString(R.string.Receive_copied), Toast.LENGTH_SHORT).show();
     }
 
     private void showKeyboard(boolean b) {
-        if (!b || mFromRedPackage) {
+        if (!b || mFromElapay) {
             mSignalLayout.removeView(mKeyboardLayout);
 
         } else {
@@ -707,12 +797,22 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     public void onResume() {
         super.onResume();
         loadViewModelData();
-        mAmountEdit.setEnabled(!mFromRedPackage);
-        mAddressEdit.setEnabled(!mFromRedPackage);
-        mCommentEdit.setEnabled(!mFromRedPackage);
-        mScan.setClickable(!mFromRedPackage);
-        mPaste.setClickable(!mFromRedPackage);
-        mCurrencyCodeButton.setClickable(!mFromRedPackage);
+        mAmountEdit.setEnabled(!mFromElapay);
+        mAddressEdit.setEnabled(!mFromElapay);
+        mCommentEdit.setEnabled(!mFromElapay);
+        mScan.setClickable(!mFromElapay);
+        mPaste.setClickable(!mFromElapay);
+        mCurrencyCodeButton.setClickable(!mFromElapay);
+
+        boolean isAuto = BRSharedPrefs.getAutoVote(getContext());
+        mAutoVoteCb.setChecked(isAuto);
+        boolean isChecked = mAutoVoteCb.isChecked();
+        if(isChecked) {
+            showVoteView();
+        } else {
+            hideVoteView();
+        }
+        initVoteAdapter();
     }
 
     @Override
@@ -725,8 +825,12 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mScan.setClickable(true);
         mPaste.setClickable(true);
         mCurrencyCodeButton.setClickable(true);
-        mFromRedPackage = false;
-        if(!mIsSend) WalletActivity.mCallbackUrl = null;
+        mFromElapay = false;
+        if(!mIsSend) {
+            WalletActivity.mReturnUrl = null;
+            WalletActivity.mCallbackUrl = null;
+            WalletActivity.mOrderId = null;
+        }
     }
 
     private void handleClick(String key) {
@@ -792,7 +896,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         BigDecimal mCurrentBalance = wm.getCachedBalance(app);
         if (!mIsAmountLabelShown)
             mCurrencyCode.setText(CurrencyUtils.getSymbolByIso(app, mSelectedCurrencyCode));
-        mCurrencyCodeButton.setText(mSelectedCurrencyCode);
+        mCurrencyCodeButton.setText(mFromElapay? wm.getIso(): mSelectedCurrencyCode);
 
         //is the chosen ISO a crypto (could be also a fiat currency)
         boolean isIsoCrypto = WalletsMaster.getInstance(app).isIsoCrypto(app, mSelectedCurrencyCode);
@@ -916,7 +1020,12 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                 mAddressEdit.setText(walletManager.decorateAddress(mViewModel.getAddress()));
             }
             if (!Utils.isNullOrEmpty(mViewModel.getMemo())) {
-                mCommentEdit.setText(mViewModel.getMemo());
+                String comment = mViewModel.getMemo();
+                if(StringUtil.isNullOrEmpty(comment) || comment.equals("null")) {
+                    mCommentEdit.setText("");
+                } else {
+                    mCommentEdit.setText(comment);
+                }
             }
             if (!Utils.isNullOrEmpty(mViewModel.getChosenCode())) {
                 mSelectedCurrencyCode = mViewModel.getChosenCode().toUpperCase();
@@ -932,24 +1041,31 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         String code = null;
         String amount = null;
         String memo = null;
-        if (request == null) {
+        BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(BreadApp.mContext);
+        if (request==null) {
             if (mCommentEdit != null) {
                 memo = mCommentEdit.getText().toString();
                 address = mAddressEdit.getText().toString();
                 code = mSelectedCurrencyCode;
             }
         } else {
-            BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(BreadApp.mContext);
             address = request.address;
             memo = request.message;
             code = request.iso;
 
-            if(code.equalsIgnoreCase("ELA") && request.amount!=null) {
+            if(request.amount!=null) {
                 amount = request.amount.toPlainString();
-            } else if (request.amount != null) {
-                BigDecimal satoshiAmount = request.amount.multiply(new BigDecimal(BaseBitcoinWalletManager.ONE_BITCOIN_IN_SATOSHIS));
-                amount = wm.getFiatForSmallestCrypto(getActivity(), satoshiAmount, null).toPlainString();
-            } else if (request.value != null) {
+            } /*else if (request.amount != null) {
+                if(!StringUtil.isNullOrEmpty(code) && code.equalsIgnoreCase("BTC")) {
+                    BigDecimal satoshiAmount = request.amount.multiply(new BigDecimal(BaseBitcoinWalletManager.ONE_BITCOIN_IN_SATOSHIS));
+                    BigDecimal fiat = wm.getFiatForSmallestCrypto(getActivity(), satoshiAmount, null);
+                    if(null != fiat){
+                        amount = fiat.toPlainString();
+                    }
+                } else {
+                    amount = request.amount.toPlainString();
+                }
+            }*/ else if (request.value != null) {
                 // ETH request amount param is named `value`
                 BigDecimal fiatAmount = wm.getFiatForSmallestCrypto(getActivity(), request.value, null);
                 fiatAmount = fiatAmount.setScale(2, RoundingMode.HALF_EVEN);
@@ -1015,7 +1131,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             }
         }
         if(!Utils.isNullOrEmpty(code)){
-            mCurrencyCodeButton.setText(code.toUpperCase());
+            mCurrencyCodeButton.setText(mFromElapay? wm.getIso():code.toUpperCase());
         }
         if (!Utils.isNullOrEmpty(address)) {
             mViewModel.setAddress(address);

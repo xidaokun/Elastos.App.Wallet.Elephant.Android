@@ -131,9 +131,9 @@ public class CryptoUriParser {
 
         if (scheme == null) {
             scheme = wm.getScheme();
-            obj.iso = wm.getIso();
+//            obj.iso = wm.getIso();
 
-        } else {
+        } /*else {
             List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(app).getAllWallets(app));
             for (BaseWalletManager walletManager : list) {
                 if (scheme.equalsIgnoreCase(walletManager.getScheme())) {
@@ -141,9 +141,10 @@ public class CryptoUriParser {
                     break;
                 }
             }
-        }
+        }*/
 
         obj.scheme = scheme;
+        obj.iso = wm.getIso();
 
         String schemeSpecific = u.getSchemeSpecificPart();
         if (schemeSpecific.startsWith("//")) {
@@ -176,12 +177,14 @@ public class CryptoUriParser {
             }
             if (keyValue[0].trim().equals("amount")) {
                 try {
-                    BigDecimal bigDecimal = new BigDecimal(keyValue[1].trim());
-                    if(scheme.equalsIgnoreCase("elastos")) {
-                        obj.amount = bigDecimal;
-                    } else {
-                        obj.amount = bigDecimal.multiply(new BigDecimal("100000000"));
-                    }
+                    obj.amount = new BigDecimal(keyValue[1].trim());
+//                    BigDecimal bigDecimal = new BigDecimal(keyValue[1].trim());
+//                    obj.amount = bigDecimal;
+//                    if(scheme.equalsIgnoreCase("elastos")) {
+//                        obj.amount = bigDecimal;
+//                    } else {
+//                        obj.amount = bigDecimal.multiply(new BigDecimal("100000000"));
+//                    }
 
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
@@ -263,18 +266,18 @@ public class CryptoUriParser {
         if (requestObject == null || requestObject.address == null || requestObject.address.isEmpty())
             return false;
         final BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
-        if (requestObject.iso != null && !requestObject.iso.equalsIgnoreCase(wallet.getIso())) {
-            if (!(WalletsMaster.getInstance(app).isIsoErc20(app, wallet.getIso()) && requestObject.iso.equalsIgnoreCase("ETH"))) {
-                BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error),
-                        String.format(app.getString(R.string.Send_invalidAddressMessage), wallet.getName()), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-                            @Override
-                            public void onClick(BRDialogView brDialogView) {
-                                brDialogView.dismiss();
-                            }
-                        }, null, null, 0);
-                return true; //true since it's a crypto url but different iso than the currently chosen one
-            } //  else ->   //allow tokens to scan ETH so continue ..
-        }
+//        if (requestObject.iso != null && !requestObject.iso.equalsIgnoreCase(wallet.getIso())) {
+//            if (!(WalletsMaster.getInstance(app).isIsoErc20(app, wallet.getIso()) && requestObject.iso.equalsIgnoreCase("ETH"))) {
+//                BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error),
+//                        String.format(app.getString(R.string.Send_invalidAddressMessage), wallet.getName()), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+//                            @Override
+//                            public void onClick(BRDialogView brDialogView) {
+//                                brDialogView.dismiss();
+//                            }
+//                        }, null, null, 0);
+//                return true; //true since it's a crypto url but different iso than the currently chosen one
+//            } //  else ->   //allow tokens to scan ETH so continue ..
+//        }
 
         if (requestObject.amount == null || requestObject.amount.compareTo(BigDecimal.ZERO) == 0) {
             BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {

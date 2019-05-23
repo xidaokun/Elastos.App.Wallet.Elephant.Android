@@ -163,7 +163,7 @@ public class BRSharedPrefs {
     }
 
     public static void putNickname(Context context, String nickname) {
-        if(StringUtil.isNullOrEmpty(nickname)) nickname = "Your Name";
+        if(StringUtil.isNullOrEmpty(nickname)) nickname = "Your Nickname";
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("nickname", nickname);
@@ -191,6 +191,19 @@ public class BRSharedPrefs {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("mobile", mobile);
+        editor.apply();
+    }
+
+    public static String getArea(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("area", "86");
+    }
+
+    public static void putArea(Context context, String area) {
+        if(StringUtil.isNullOrEmpty(area)) area="86";
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("area", area);
         editor.apply();
     }
 
@@ -659,5 +672,65 @@ public class BRSharedPrefs {
     public static boolean getDisclaimShow(Context context){
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean("disclaimshow", true);
+    }
+
+    public static void setAutoVote(Context context, boolean is){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("autoVote", is);
+        editor.apply();
+    }
+
+    public static boolean getAutoVote(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean("autoVote", false);
+    }
+
+    public static void cacheCandidate(Context context, String candidate){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("candidate", candidate);
+        editor.apply();
+    }
+
+    public static String getCandidate(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("candidate", "");
+    }
+
+    public static void setExploreFrom(Context context, String from){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("exploreFrom", from);
+        editor.apply();
+    }
+
+    public static String getExploreFrom(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("exploreFrom", "");
+    }
+
+    public static void putDid2ChainTime(Context context, long time){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong("did2Chain", time);
+        editor.apply();
+    }
+
+    public static long getDid2ChainTime(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getLong("did2Chain", 0);
+    }
+
+    public static void putRequestInfo(Context context, String value){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("requestInfo", value);
+        editor.apply();
+    }
+
+    public static String getRequestInfo(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("requestInfo", null);
     }
 }

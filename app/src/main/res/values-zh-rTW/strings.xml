@@ -733,9 +733,9 @@
     <!-- Send status text: 'In progress: 20%' -->
     <string name="Transaction.sendingStatus">處理中：%1$s</string>
     <!-- sending to <address> -->
-    <string name="Transaction.sendingTo">正在寄送至 %1$s</string>
+    <string name="Transaction.sendingTo">正在寄送</string>
     <!-- sent to <address> -->
-    <string name="Transaction.sentTo">寄送至 %1$s</string>
+    <string name="Transaction.sentTo">寄送至</string>
     <!-- eg. Starting balance: $50.00 -->
     <string name="Transaction.starting">開始餘額：%1$s</string>
     <!-- e.g. "[The money you paid was a] Fee for token transfer: Elephant" (Elephant is the token that was transfered) -->
@@ -793,11 +793,11 @@
     <!-- received from <address> -->
     <string name="TransactionDetails.receivedFrom">已收取自 %1$s</string>
     <!-- received via <address> -->
-    <string name="TransactionDetails.receivedVia">已經 %1$s 收到</string>
+    <string name="TransactionDetails.receivedVia">收到</string>
     <!-- receiving from <address> -->
     <string name="TransactionDetails.receivingFrom">正收取自 %1$s</string>
     <!-- receiving via <address> -->
-    <string name="TransactionDetails.receivingVia">正在經 %1$s 收到</string>
+    <string name="TransactionDetails.receivingVia">正在接收</string>
     <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
     <string name="TransactionDetails.sent">已送出 %1$s</string>
     <!-- Sent $5.00 -->
@@ -993,9 +993,17 @@
     <string name="My.Profile.Mobile">手機</string>
     <string name="My.Profile.ID">中國居民身份證</string>
     <string name="My.Profile.Real.Name">真實姓名</string>
-    <string name="My.Profile.Title.Nickname">暱稱</string>
     <string name="My.Profile.Title.Email">郵箱</string>
     <string name="My.Profile.Title.Mobile">手機</string>
+    <string name="My.Profile.Title.Nickname">暱稱</string>
+    <string name="Did.Detail.Ela.Address">- Ela地址</string>
+    <string name="Did.Detail.Btc.Address">- Btc地址</string>
+    <string name="Did.Detail.Bch.Address">- Bch地址</string>
+    <string name="Did.Detail.Eth.Address">- Eth地址</string>
+    <string name="Did.Detail.Ioex.Address">- Ioex地址</string>
+    <string name="Did.Detail.Email">- 邮箱</string>
+    <string name="Did.Detail.Phone.Number">- 手机号</string>
+    <string name="Did.Detail.Chinese.Id.Card">- 中国身份证</string>
     <string name="My.Profile.Message">-完善個人信息，構建個人信用-</string>
     <string name="My.Profile.List.Title">信息</string>
 
@@ -1011,4 +1019,16 @@
     <string name="invalid_number">無效號碼</string>
     <string name="invalid_email">無效郵件</string>
     <string name="invalid_id">無效ID</string>
+    <string name="vote_title">投票</string>
+    <string name="pin_author_vote">授权投票</string>
+    <string name="vote_cancel_btn_txt">取消</string>
+    <string name="vote_confirm_btn_txt">确认</string>
+    <string name="vote_hint">你只需要支付少量的手續費: 0.0001 ELA.</string>
+    <string name="vote_hint2">投票結束後，您可以隨時使用ELA，但您的投票將被取消。</string>
+    <string name="votes_ela">选票:(ELA)</string>
+    <string name="vote_wallet_balance_title">錢包餘額:</string>
+    <string name="pin_author_vote_msg">請輸入PIN碼授權投票</string>
+    <string name="auto_vote_hint">自動使用ELA餘額投票</string>
+    <string name="explore_vote_about_desc1">ELA投票</string>
+    <string name="explore_vote_aoubt_desc2">ELA投票應用程序將允許任何ELA持有者一次投票最多36個DPO超節點</string>
 </resources>

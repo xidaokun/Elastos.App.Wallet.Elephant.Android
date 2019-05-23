@@ -25,8 +25,11 @@ import android.widget.Toast;
 
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
@@ -150,6 +153,11 @@ public class Utils {
         return (int) (dps * scale + 0.5f);
     }
 
+    public static int dp2px(Context context, float dps){
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dps * scale + 0.5f);
+    }
+
     public static String bytesToHex(byte[] in) {
         final StringBuilder builder = new StringBuilder();
         for (byte b : in) {
@@ -206,7 +214,7 @@ public class Utils {
                 pInfo = app.getPackageManager().getPackageInfo(app.getPackageName(), 0);
                 versionNumber = pInfo.versionCode;
 
-            } catch (PackageManager.NameNotFoundException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -280,6 +288,12 @@ public class Utils {
         }
 
         return false;
+    }
+
+    public static List<String> spliteByComma(String value){
+        if(StringUtil.isNullOrEmpty(value)) return null;
+        String[] trimArray = value.trim().split(",");
+        return Arrays.asList(trimArray);
     }
 
     public static void correctTextSizeIfNeeded(TextView v) {

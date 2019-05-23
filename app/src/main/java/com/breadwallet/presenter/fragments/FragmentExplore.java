@@ -1,6 +1,5 @@
 package com.breadwallet.presenter.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,10 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.ExploreWebActivity;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.StringUtil;
+import com.breadwallet.tools.util.Utils;
 
 import java.util.Locale;
 
@@ -35,6 +34,7 @@ public class FragmentExplore extends Fragment {
     private View mBannerview1;
     private View mBannerview2;
     private View mBannerview3;
+    private View mBannerview4;
     private View mOkBtn;
 
     @Nullable
@@ -53,6 +53,7 @@ public class FragmentExplore extends Fragment {
         mBannerview1 = rootView.findViewById(R.id.explore_banner1);
         mBannerview2 = rootView.findViewById(R.id.explore_banner2);
         mBannerview3 = rootView.findViewById(R.id.explore_banner3);
+        mBannerview4 = rootView.findViewById(R.id.explore_banner4);
         mOkBtn = rootView.findViewById(R.id.disclaim_ok_btn);
     }
 
@@ -61,13 +62,15 @@ public class FragmentExplore extends Fragment {
         super.onResume();
         String languageCode = Locale.getDefault().getLanguage();
         if(!StringUtil.isNullOrEmpty(languageCode)){
-            mBannerview1.setBackgroundResource(languageCode.contains("en")? (R.drawable.explore_banner1_en): (R.drawable.explore_banner1_zh));
-            mBannerview2.setBackgroundResource(languageCode.contains("en")? (R.drawable.explore_banner2_en): (R.drawable.explore_banner2_zh));
-            mBannerview3.setBackgroundResource(languageCode.contains("en")? (R.drawable.explore_banner3_en): (R.drawable.explore_banner3_zh));
+            mBannerview1.setBackgroundResource(languageCode.contains("zh")? (R.drawable.explore_banner1_zh): (R.drawable.explore_banner1_en));
+            mBannerview2.setBackgroundResource(languageCode.contains("zh")? (R.drawable.explore_banner2_zh): (R.drawable.explore_banner2_en));
+            mBannerview3.setBackgroundResource(languageCode.contains("zh")? (R.drawable.explore_banner3_zh): (R.drawable.explore_banner3_en));
+            mBannerview4.setBackgroundResource(languageCode.contains("zh")? (R.drawable.explore_banner4_zh): (R.drawable.explore_banner4_en));
         } else {
             mBannerview1.setBackgroundResource(R.drawable.explore_banner1_en);
             mBannerview2.setBackgroundResource(R.drawable.explore_banner2_en);
             mBannerview3.setBackgroundResource(R.drawable.explore_banner3_en);
+            mBannerview4.setBackgroundResource(R.drawable.explore_banner4_en);
         }
     }
 
@@ -75,14 +78,31 @@ public class FragmentExplore extends Fragment {
         mBannerview1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UiUtils.startWebviewActivity(getContext(), "http://aiyong.dafysz.cn/sale-m/18090500-zq.html#/insurance-source_bxfx?source=bxfx_yly");
+                UiUtils.openUrlByBrowser(getContext(), "http://aiyong.dafysz.cn/sale-m/18090500-zq.html#/insurance-source_bxfx?source=bxfx_yly");
             }
         });
 
         mBannerview2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                BRSharedPrefs.setExploreFrom(getContext(), "redpacket");
                 UiUtils.startWebviewActivity(getContext(), "https://redpacket.elastos.org");
+            }
+        });
+
+        mBannerview3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                BRSharedPrefs.setExploreFrom(getContext(), "vote");
+                UiUtils.startWebviewActivity(getContext(), "http://elaphant.net/");
+            }
+        });
+
+        mBannerview4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BRSharedPrefs.setExploreFrom(getContext(), "exchange");
+                UiUtils.startWebviewActivity(getContext(), /*"https://dev.elabank.net/Decentralized/index.html"*/"http://swft.elabank.net ");
             }
         });
         mOkBtn.setOnClickListener(new View.OnClickListener() {

@@ -736,9 +736,9 @@
     <!-- Send status text: 'In progress: 20%' -->
     <string name="Transaction.sendingStatus">In progress: %1$s</string>
     <!-- sending to <address> -->
-    <string name="Transaction.sendingTo">sending to %1$s</string>
+    <string name="Transaction.sendingTo">sending</string>
     <!-- sent to <address> -->
-    <string name="Transaction.sentTo">sent to %1$s</string>
+    <string name="Transaction.sentTo">sent</string>
     <!-- eg. Starting balance: $50.00 -->
     <string name="Transaction.starting">Starting balance: %1$s</string>
     <!-- e.g. "[The money you paid was a] Fee for token transfer: Elephant" (Elephant is the token that was transfered) -->
@@ -796,11 +796,11 @@
     <!-- received from <address> -->
     <string name="TransactionDetails.receivedFrom">received from %1$s</string>
     <!-- received via <address> -->
-    <string name="TransactionDetails.receivedVia">received via %1$s</string>
+    <string name="TransactionDetails.receivedVia">received</string>
     <!-- receiving from <address> -->
     <string name="TransactionDetails.receivingFrom">receiving from %1$s</string>
     <!-- receiving via <address> -->
-    <string name="TransactionDetails.receivingVia">receiving via %1$s</string>
+    <string name="TransactionDetails.receivingVia">receiving</string>
     <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
     <string name="TransactionDetails.sent">Sent %1$s</string>
     <!-- Sent $5.00 -->
@@ -974,6 +974,14 @@
     <string name="Did.Author.Info">Auth information</string>
     <string name="Did.Nick.Name">Nick name</string>
     <string name="Did.Public.Key">Public key</string>
+    <string name="Did.Btc.Address">BTC address</string>
+    <string name="Did.Eth.Address">ETH address</string>
+    <string name="Did.Bch.Address">BCH address</string>
+    <string name="Did.Usd.Address">USDT address</string>
+    <string name="Did.Ela.Address">ELA address</string>
+    <string name="Did.PhoneNumber">Phone number</string>
+    <string name="Did.Email">Email</string>
+    <string name="Did.Chinese.ID">Chinese ID Card</string>
     <string name="Did.What.Did">What is DID?</string>
     <string name="Did.Quest">Questions</string>
     <string name="Did.Required">Required</string>
@@ -988,10 +996,17 @@
     <string name="Did.Detail.Author.Time">Auth time:</string>
     <string name="Did.Detail.Expiration">Expiration:</string>
     <string name="Did.Detail.Auth.Info">Auth information:</string>
-    <string name="Did.Detail.Nick.Name">- Nick name</string>
-    <string name="Did.Detail.DID">- DID</string>
+    <string name="Did.Detail.DID">- Elastos DID</string>
     <string name="Did.Detail.Public.Key">- Public key</string>
-
+    <string name="Did.Detail.Nick.Name">- Nick name</string>
+    <string name="Did.Detail.Ela.Address">- ELA address</string>
+    <string name="Did.Detail.Btc.Address">- BTC address</string>
+    <string name="Did.Detail.Bch.Address">- BCH address</string>
+    <string name="Did.Detail.Eth.Address">- ETH address</string>
+    <string name="Did.Detail.Ioex.Address">- IOEX address</string>
+    <string name="Did.Detail.Email">- Email</string>
+    <string name="Did.Detail.Phone.Number">- Phone number</string>
+    <string name="Did.Detail.Chinese.Id.Card">- Chinese ID Card</string>
     <string name="User.Not.Author.Message">Your operation system does not support standard KeyStore technology on Android which we use to store your private key, to continue to use our app, please upgrade your operation system to Android 8.0 or later, or tap Continue to always allow our app to access your KeyStore without permission request.
 </string>
     <string name="User.Not.Author.Exit">Exit</string>
@@ -1017,11 +1032,49 @@
     <string name="My.Profile.Completed">Completed</string>
 
     <string name="disclaim_title">Disclaimer</string>
-    <string name="disclaim_content">Applications in Explore are provided by third party vendors. /n/nEither Elephant or Elastos has no control over the contents of any app and is not responsible for these apps or their content or availability.</string>
+    <string name="disclaim_content">Applications in Explore are provided by third party vendors. \n\nEither Elephant or Elastos has no control over the contents of any app and is not responsible for these apps or their content or availability.</string>
     <string name="disclaim_ok">OK</string>
 
     <string name="invalid_number">invalid number</string>
     <string name="invalid_email">invalid email</string>
     <string name="invalid_id">invalid ID</string>
+
+    <string name="explore_menu_about">About</string>
+    <string name="explore_menu_cancel">Cancel</string>
+    <string name="redpackage_title">Red Packet</string>
+    <string name="vote_title">Voting</string>
+    <string name="vote_nodes_count">You are going to vote %1$d nodes(36 max)</string>
+    <string name="vote_balance">%1$s ELA</string>
+    <string name="vote_wallet_balance_title">Wallet Balance:</string>
+    <string name="vote_hint">You only need to pay a little transaction fee: 0.0000486 ELA</string>
+    <string name="vote_hint2">You can spend your ELA anytime after vote while your votes will be revoked.</string>
+    <string name="pin_author_vote">Authorize Vote</string>
+    <string name="vote_cancel_btn_txt">Cancel</string>
+    <string name="vote_confirm_btn_txt">Confirm</string>
+    <string name="votes_ela">Votes:(ELA)</string>
+    <string name="pin_author_vote_msg">Please enter your PIN to authorize this vote</string>
+    <string name="loading_hint">Loading....</string>
+    <string name="auto_vote_hint">Auto keep my last vote using my ELA balance</string>
+    <string name="explore_vote_about_desc1">ELA Voting</string>
+    <string name="explore_vote_about_desc2">ELA voting app will allow any ELA holder to vote up to 36 DPoS supernodes at a time.</string>
+    <string name="vote_balance_not_insufficient">Your balance is less than 1 ELA.</string>
+    <string name="vote_candidates_is_none">There are no nodes selected, please select at least one node and try again.</string>
+    <string name="beyond_max_vote_node">At most 36 nodes</string>
+    <string name="redpackage_hint1">Red Packet</string>
+    <string name="redpackage_hint2">With the ELA red packet mini program, you can send an ELA red packet to your friends.</string>
+    <string name="exchange_hint1">SWFT</string>
+    <string name="exchange_hint2">"New World, New Money." SWFT Blockchain is a “Next-Generation Blockchain Global Transfer Agreement.” We focus on integrating the world’s major exchanges and blockchains to effectively hedge risks and provide customers with an efficient and easy-to-use platform for cryptocurrency transfers.</string>
+    <string name="double_spend">There is another transaction being processed, please try again 2 minutes later.</string>
     
+    <string name="sign_signature_request_title">Signature Request</string>
+    <string name="sign_request_information">Request information:</string>
+    <string name="sign_developer_did">Developer DID</string>
+    <string name="sign_timestamp">Timestamp</string>
+    <string name="sign_purpose">Purpose</string>
+    <string name="sign_content">Content</string>
+    <string name="sign_add_limitation">Add limitation</string>
+    <string name="sign_view_all_detail">View all details</string>
+    <string name="sign_sign_btn">Sign</string>
+
+    <string name="node_list_title">Node list of these %1$d nodes:</string>
 </resources>

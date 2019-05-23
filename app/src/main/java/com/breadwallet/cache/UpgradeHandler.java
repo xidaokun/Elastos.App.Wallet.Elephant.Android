@@ -8,6 +8,7 @@ import com.breadwallet.tools.sqlite.BRDataSourceInterface;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.util.BRConstants;
 
+import static com.breadwallet.tools.sqlite.BRSQLiteHelper.ELA_TX_TABLE_NAME;
 import static com.platform.sqlite.PlatformSqliteHelper.KV_STORE_TABLE_NAME;
 
 public class UpgradeHandler implements BRDataSourceInterface {
@@ -54,10 +55,46 @@ public class UpgradeHandler implements BRDataSourceInterface {
         }
     }
 
+    public static final String ELA_TX_TABLE_NAME = "elaTransactionTable";
+    public static final String ELA_COLUMN_ID = "_id";
+    public static final String ELA_COLUMN_ISRECEIVED ="isReceived";//0 false,1 true
+    public static final String ELA_COLUMN_TIMESTAMP ="timeStamp";
+    public static final String ELA_COLUMN_BLOCKHEIGHT ="blockHeight";
+    public static final String ELA_COLUMN_HASH ="hash";
+    public static final String ELA_COLUMN_TXREVERSED ="txReversed";
+    public static final String ELA_COLUMN_FEE ="fee";
+    public static final String ELA_COLUMN_TO ="toAddress";
+    public static final String ELA_COLUMN_FROM ="fromAddress";
+    public static final String ELA_COLUMN_BALANCEAFTERTX ="balanceAfterTx";
+    public static final String ELA_COLUMN_TXSIZE ="txSize";
+    public static final String ELA_COLUMN_AMOUNT ="amount";
+    public static final String ELA_COLUMN_MENO ="meno";
+    public static final String ELA_COLUMN_ISVALID ="isValid";
+    public static final String ELA_COLUMN_ISVOTE ="isVote";
+
+    private static final String ELA_TX_DATABASE_CREATE = "create table if not exists " + ELA_TX_TABLE_NAME + " (" +
+            ELA_COLUMN_ID + " integer, " +
+            ELA_COLUMN_ISRECEIVED + " integer, " +
+            ELA_COLUMN_TIMESTAMP + " integer DEFAULT '0' , " +
+            ELA_COLUMN_BLOCKHEIGHT + " interger, " +
+            ELA_COLUMN_HASH + " blob, " +
+            ELA_COLUMN_TXREVERSED+ " text primary key , " +
+            ELA_COLUMN_FEE + " real, " +
+            ELA_COLUMN_TO + " text, " +
+            ELA_COLUMN_FROM + " text, " +
+            ELA_COLUMN_BALANCEAFTERTX + " integer, " +
+            ELA_COLUMN_TXSIZE + " integer, " +
+            ELA_COLUMN_AMOUNT + " real, " +
+            ELA_COLUMN_MENO + " text, " +
+            ELA_COLUMN_ISVALID + " interger, " +
+            ELA_COLUMN_ISVOTE +" integer);";
+
     public void deleteAllTransactions() {
         try {
             mDatabase = openDatabase();
-            mDatabase.delete(BRSQLiteHelper.ELA_TX_TABLE_NAME, null, null);
+//            mDatabase.delete(ELA_TX_TABLE_NAME, null, null);
+            mDatabase.execSQL("DROP TABLE IF EXISTS " + ELA_TX_TABLE_NAME);
+            mDatabase.execSQL(ELA_TX_DATABASE_CREATE);
         } finally {
             closeDatabase();
         }
@@ -73,6 +110,5 @@ public class UpgradeHandler implements BRDataSourceInterface {
 
     @Override
     public void closeDatabase() {
-
     }
 }

@@ -3,7 +3,6 @@ package com.breadwallet.tools.sqlite;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -11,7 +10,6 @@ import android.util.Log;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
-import com.breadwallet.tools.manager.BRReportsManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +53,44 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     }
 
     public static final String DATABASE_NAME = "breadwallet.db";
-    private static final int DATABASE_VERSION = 16;
+    private static final int DATABASE_VERSION = 18;
+
+    /**
+     * History Producer table
+     */
+    public static final String HISTORY_PRODUCER_TABLE_NAME = "historyProducerTable";
+    public static final String HISTORY_PRODUCER_TXID = "txid";
+    public static final String HISTORY_PRODUCER_OWN_PUBLICKEY = "ownPublicKey";
+    public static final String HISTORY_PRODUCER_NOD_PUBLICKEY = "nodePublicKey";
+    public static final String HISTORY_PRODUCER_NICKNAME = "nickName";
+    private static final String HISTORY_PRODUCER_DATABASE_CREATE = "create table if not exists " + HISTORY_PRODUCER_TABLE_NAME + " (" +
+            HISTORY_PRODUCER_TXID + " text, " +
+            HISTORY_PRODUCER_OWN_PUBLICKEY + " text, " +
+            HISTORY_PRODUCER_NOD_PUBLICKEY + " text, " +
+            HISTORY_PRODUCER_NICKNAME +" text, " +
+            "PRIMARY KEY (" + HISTORY_PRODUCER_TXID + ", " + HISTORY_PRODUCER_OWN_PUBLICKEY + ")" +
+            ");";
+
+    /**
+     * sign table
+     */
+    public static final String SIGN_AUTHOR_TABLE_NAME = "signTable";
+    public static final String SIGN_APP_NAME = "signAppName";
+    public static final String SIGN_APP_ID = "signAppId";
+    public static final String SIGN_APP_ICON = "signAppIcon";
+    public static final String SIGN_DID = "signDid";
+    public static final String SIGN_TIMESTAMP = "signTimestamp";
+    public static final String SIGN_PURPOSE = "signPrupose";
+    public static final String SIGN_CONTENT = "signContent";
+
+    private static final String SIGN_DATABASE_CREATE = "create table if not exists " + SIGN_AUTHOR_TABLE_NAME + " (" +
+            SIGN_APP_NAME + " text, " +
+            SIGN_APP_ID + " text, " +
+            SIGN_APP_ICON + " text, " +
+            SIGN_DID + " text primary key , " +
+            SIGN_TIMESTAMP + " integer, " +
+            SIGN_PURPOSE + " text, " +
+            SIGN_CONTENT +" text);";
 
     /**
      * DID author table
@@ -65,6 +100,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String DID_AUTHOR_NICKNAME = "nickname";
     public static final String DID_AUTHOR_DID = "did";
     public static final String DID_AUTHOR_PK = "PK";
+    public static final String DID_AUTHOR_APP_ID = "appId";
     public static final String DID_AUTHOR_AUTHOR_TIME = "authortime";
     public static final String DID_AUTHOR_EXP_TIME = "exptime";
     public static final String DID_AUTHOR_APP_NAME = "appname";
@@ -75,10 +111,32 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             DID_AUTHOR_NICKNAME + " text, " +
             DID_AUTHOR_DID + " text primary key , " +
             DID_AUTHOR_PK + " text, " +
+            DID_AUTHOR_APP_ID + " text, " +
             DID_AUTHOR_APP_NAME + " text, " +
             DID_AUTHOR_AUTHOR_TIME + " integer DEFAULT '0' , " +
             DID_AUTHOR_EXP_TIME + " integer DEFAULT '0' , " +
             DID_AUTHOR_APP_ICON +" text);";
+
+    /**
+     * ELA Producers table
+     */
+
+    public static final String ELA_PRODUCER_TABLE_NAME = "elaProducerTable";
+    public static final String PEODUCER_PUBLIC_KEY = "publicKey";
+    public static final String PEODUCER_VALUE = "value";
+    public static final String PEODUCER_RANK = "rank";
+    public static final String PEODUCER_ADDRESS = "address";
+    public static final String PEODUCER_NICKNAME = "nickname";
+    public static final String PEODUCER_VOTES = "votes";
+
+    private static final String ELA_PRODUCER_DATABASE_CREATE = "create table if not exists " + ELA_PRODUCER_TABLE_NAME + " (" +
+            PEODUCER_PUBLIC_KEY + " text primary key , " +
+            PEODUCER_VALUE + " text, " +
+            PEODUCER_RANK + " interger, " +
+            PEODUCER_ADDRESS + " text, " +
+            PEODUCER_NICKNAME + " text, " +
+            PEODUCER_VOTES +" text);";
+
     /**
      * ELA transaction table
      */
@@ -98,6 +156,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String ELA_COLUMN_AMOUNT ="amount";
     public static final String ELA_COLUMN_MENO ="meno";
     public static final String ELA_COLUMN_ISVALID ="isValid";
+    public static final String ELA_COLUMN_ISVOTE ="isVote";
 
     private static final String ELA_TX_DATABASE_CREATE = "create table if not exists " + ELA_TX_TABLE_NAME + " (" +
             ELA_COLUMN_ID + " integer, " +
@@ -113,7 +172,8 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             ELA_COLUMN_TXSIZE + " integer, " +
             ELA_COLUMN_AMOUNT + " real, " +
             ELA_COLUMN_MENO + " text, " +
-            ELA_COLUMN_ISVALID +" integer);";
+            ELA_COLUMN_ISVALID + " interger, " +
+            ELA_COLUMN_ISVOTE +" integer);";
 
     /**
      * MerkleBlock table
@@ -196,6 +256,9 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
         Log.e(TAG, "onCreate: " + TX_DATABASE_CREATE);
         Log.e(TAG, "onCreate: " + PEER_DATABASE_CREATE);
         Log.e(TAG, "onCreate: " + CURRENCY_DATABASE_CREATE);
+        database.execSQL(HISTORY_PRODUCER_DATABASE_CREATE);
+        database.execSQL(ELA_PRODUCER_DATABASE_CREATE);
+        database.execSQL(SIGN_DATABASE_CREATE);
         database.execSQL(DID_AUTHOR_DATABASE_CREATE);
         database.execSQL(ELA_TX_DATABASE_CREATE);
         database.execSQL(MB_DATABASE_CREATE);
@@ -213,6 +276,11 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+        if(oldVersion == 16) {
+            db.execSQL("DROP TABLE IF EXISTS " + ELA_TX_TABLE_NAME);
+            db.execSQL(ELA_TX_DATABASE_CREATE);
+        }
 
         if (/*oldVersion < 13 && (newVersion >= 13)*/ newVersion==16) {
             boolean migrationNeeded = !tableExists(MB_TABLE_NAME, db);

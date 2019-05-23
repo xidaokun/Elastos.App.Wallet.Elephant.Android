@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.activities;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.NonNull;
@@ -15,6 +16,7 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.fragments.FragmentExplore;
 import com.breadwallet.presenter.fragments.FragmentSetting;
 import com.breadwallet.presenter.fragments.FragmentWallet;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.ProfileDataSource;
@@ -47,6 +49,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     private Fragment mSettingFragment;
     private FragmentManager mFragmentManager;
     private BottomNavigationView navigation;
+    public static Activity mHomeActivity;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -86,8 +89,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
         transaction.add(R.id.frame_layout, mWalletFragment).show(mWalletFragment).commitAllowingStateLoss();
 
-        initDid();
         didIsOnchain();
+        mHomeActivity = this;
     }
 
     class KeyValue {
@@ -108,31 +111,47 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     private String mSeed;
     private String publicKey;
     private void initDid(){
-        String mnemonic = getMn();
-        String language = Utility.detectLang(HomeActivity.this, mnemonic);
-        String words = Utility.getWords(HomeActivity.this,  language +"-BIP39Words.txt");
-        mSeed = IdentityManager.getSeed(mnemonic, Utility.getLanguage(language), words, "");
-        Identity identity = IdentityManager.createIdentity(getFilesDir().getAbsolutePath());
-        DidManager didManager = identity.createDidManager(mSeed);
-        BlockChainNode node = new BlockChainNode(ProfileDataSource.DID_URL);
-        mDid = didManager.createDid(0);
-        mDid.setNode(node);
-        publicKey = Utility.getInstance(HomeActivity.this).getSinglePublicKey(mnemonic);
+        if(null == mDid){
+            String mnemonic = getMn();
+            if(StringUtil.isNullOrEmpty(mnemonic)) return;
+            String language = Utility.detectLang(HomeActivity.this, mnemonic);
+            if(StringUtil.isNullOrEmpty(language)) return;
+            String words = Utility.getWords(HomeActivity.this,  language +"-BIP39Words.txt");
+            if(StringUtil.isNullOrEmpty(words)) return;
+            mSeed = IdentityManager.getSeed(mnemonic, Utility.getLanguage(language), words, "");
+            if(StringUtil.isNullOrEmpty(mSeed)) return;
+            Identity identity = IdentityManager.createIdentity(getFilesDir().getAbsolutePath());
+            DidManager didManager = identity.createDidManager(mSeed);
+            BlockChainNode node = new BlockChainNode(ProfileDataSource.DID_URL);
+            mDid = didManager.createDid(0);
+            mDid.setNode(node);
+            publicKey = Utility.getInstance(HomeActivity.this).getSinglePublicKey(mnemonic);
+        }
     }
 
     private void didIsOnchain(){
+        long nowTime = System.currentTimeMillis();
+        long didTime = BRSharedPrefs.getDid2ChainTime(this);
+        Log.d("didIsOnchain", "nowTime-didTime:"+(nowTime-didTime));
+        if(nowTime-didTime < 15*60*1000) return;
+        Log.d("didIsOnchain", "nowTime-didTime > 15*60*1000");
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
+                initDid();
+                if(null == mDid) return;
                 mDid.syncInfo();
-                String value = mDid.getInfo("Publickey");
-                Log.i("DidOnchain", "value:"+value);
-                if(StringUtil.isNullOrEmpty(value) || !value.contains("Publickey")){
-                    String data = getKeyVale("Publickey", publicKey);
+                String value = mDid.getInfo("PublicKey");
+                Log.i("didIsOnchain", "value:"+value);
+                if(StringUtil.isNullOrEmpty(value) || !value.contains("PublicKey")){
+                    if(StringUtil.isNullOrEmpty(publicKey)) return;
+                    String data = getKeyVale("PublicKey", publicKey);
+                    if(StringUtil.isNullOrEmpty(data) || StringUtil.isNullOrEmpty(mSeed)) return;
                     String info = mDid.signInfo(mSeed, data);
                     if(StringUtil.isNullOrEmpty(info)) return;
                     String txid = ProfileDataSource.getInstance(HomeActivity.this).upchain(info);
-                    Log.i("DidOnchain", "txid:"+txid);
+                    BRSharedPrefs.putDid2ChainTime(HomeActivity.this, System.currentTimeMillis());
+                    Log.d("didIsOnchain", "txid:"+txid);
                 }
             }
         });
@@ -185,5 +204,11 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     public void onConnectionChanged(boolean isConnected) {
         if (mWalletFragment != null)
             mWalletFragment.onConnectionChanged(isConnected);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mHomeActivity = null;
     }
 }

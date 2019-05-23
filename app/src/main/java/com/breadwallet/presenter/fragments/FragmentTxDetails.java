@@ -16,6 +16,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -23,23 +24,34 @@ import com.breadwallet.R;
 import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.core.ethereum.BREthereumToken;
 import com.breadwallet.core.ethereum.BREthereumTransaction;
+import com.breadwallet.presenter.activities.VoteActivity;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
+import com.breadwallet.tools.adapter.TxProducerAdapter;
+import com.breadwallet.tools.adapter.VoteNodeAdapter;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.TxManager;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.vote.ProducerEntity;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.ela.ElaDataSource;
+import com.breadwallet.wallet.wallets.ela.data.TxProducerEntity;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
+import com.google.gson.Gson;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by byfieldj on 2/26/18.
@@ -93,6 +105,10 @@ public class FragmentTxDetails extends DialogFragment {
 
     private ImageButton mCloseButton;
     private LinearLayout mDetailsContainer;
+
+    private BaseTextView mVoteTitleTv;
+    private BaseTextView mPaseTv;
+    private ListView mVoteNodeLv;
 
     boolean mDetailsShowing = false;
 
@@ -154,6 +170,10 @@ public class FragmentTxDetails extends DialogFragment {
         mGasLimitContainer = rootView.findViewById(R.id.gas_limit_container);
         mWhenSentLabel = rootView.findViewById(R.id.label_when_sent);
 
+        mVoteTitleTv = rootView.findViewById(R.id.vote_nodes_list_title);
+        mPaseTv = rootView.findViewById(R.id.transaction_detail_vote_paste_tv);
+        mVoteNodeLv = rootView.findViewById(R.id.transaction_detail_vote_node_lv);
+
         mCloseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -161,6 +181,17 @@ public class FragmentTxDetails extends DialogFragment {
             }
         });
 
+        mMemoText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        int color = mToFromAddress.getTextColors().getDefaultColor();
+        mMemoText.setTextColor(color);
+
+        initListener();
+        updateUi();
+        initTxAdapter();
+        return rootView;
+    }
+
+    private void initListener(){
         mShowHide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -176,12 +207,22 @@ public class FragmentTxDetails extends DialogFragment {
             }
         });
 
-        mMemoText.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        int color = mToFromAddress.getTextColors().getDefaultColor();
-        mMemoText.setTextColor(color);
+        mPaseTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                copyText();
+            }
+        });
+    }
 
-        updateUi();
-        return rootView;
+    private void copyText() {
+        StringBuilder sb = new StringBuilder();
+        if(mProducers==null || mProducers.size()<=0) return;
+        for(TxProducerEntity txProducerEntity : mProducers){
+            sb.append(txProducerEntity.Nickname).append("\n");
+        }
+        BRClipboardManager.putClipboard(getContext(), sb.toString());
+        Toast.makeText(getContext(), getString(R.string.Receive_copied), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -191,6 +232,27 @@ public class FragmentTxDetails extends DialogFragment {
 
     public void setTransaction(TxUiHolder item) {
         this.mTransaction = item;
+    }
+
+    private TxProducerAdapter mAdapter;
+    private List<TxProducerEntity> mProducers = new ArrayList<>();
+    private void initTxAdapter(){
+        List<TxProducerEntity> tmp = ElaDataSource.getInstance(getContext()).getTxProducerByTxid(mTransaction.txReversed);
+        if(mTransaction.isVote() && (tmp!=null && tmp.size()>0)) {
+            mVoteTitleTv.setVisibility(View.VISIBLE);
+            mPaseTv.setVisibility(View.VISIBLE);
+            mVoteNodeLv.setVisibility(View.VISIBLE);
+
+            mProducers.clear();
+            mProducers.addAll(tmp);
+            mVoteTitleTv.setText(String.format(getString(R.string.node_list_title), tmp.size()));
+            mAdapter = new TxProducerAdapter(getContext(), mProducers);
+            mVoteNodeLv.setAdapter(mAdapter);
+        } else {
+            mVoteTitleTv.setVisibility(View.GONE);
+            mPaseTv.setVisibility(View.GONE);
+            mVoteNodeLv.setVisibility(View.GONE);
+        }
     }
 
     private void updateUi() {
@@ -300,7 +362,12 @@ public class FragmentTxDetails extends DialogFragment {
             mTxAction.setText(!received ? getString(R.string.TransactionDetails_titleSent) : getString(R.string.TransactionDetails_titleReceived));
             mToFrom.setText(!received ? getString(R.string.Confirmation_to) + " " : getString(R.string.TransactionDetails_addressViaHeader) + " ");
 
-            mToFromAddress.setText(walletManager.decorateAddress(received?mTransaction.getFrom():mTransaction.getTo())); //showing only the destination address
+            String from = mTransaction.getFrom();
+            if(StringUtil.isNullOrEmpty(from)){
+                mToFromAddress.setText(mTransaction.getTo());
+            } else {
+                mToFromAddress.setText(walletManager.decorateAddress(received?mTransaction.getFrom():mTransaction.getTo())); //showing only the destination address
+            }
 
             // Allow the to/from address to be copyable
             mToFromAddress.setOnClickListener(new View.OnClickListener() {
@@ -427,7 +494,9 @@ public class FragmentTxDetails extends DialogFragment {
         // Update the memo field on the transaction and save it
         if (mTxMetaData == null) mTxMetaData = new TxMetaData();
         mTxMetaData.comment = mMemoText.getText().toString();
-        KVStoreManager.getInstance().putTxMetaData(getContext(), mTxMetaData, mTransaction.getTxHash());
+        if(null != mTransaction){
+            KVStoreManager.getInstance().putTxMetaData(getContext(), mTxMetaData, mTransaction.getTxHash());
+        }
         mTxMetaData = null;
 
         // Hide softkeyboard if it's visible

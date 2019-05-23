@@ -734,9 +734,9 @@
     <!-- Send status text: 'In progress: 20%' -->
     <string name="Transaction.sendingStatus">进行中：%1$s</string>
     <!-- sending to <address> -->
-    <string name="Transaction.sendingTo">正在发送至 %1$s</string>
+    <string name="Transaction.sendingTo">正在发送</string>
     <!-- sent to <address> -->
-    <string name="Transaction.sentTo">已发送至 %1$s</string>
+    <string name="Transaction.sentTo">已发送</string>
     <!-- eg. Starting balance: $50.00 -->
     <string name="Transaction.starting">期初余额：%1$s</string>
     <!-- e.g. "[The money you paid was a] Fee for token transfer: Elephant" (Elephant is the token that was transfered) -->
@@ -794,11 +794,11 @@
     <!-- received from <address> -->
     <string name="TransactionDetails.receivedFrom">已接收，来自 %1$s</string>
     <!-- received via <address> -->
-    <string name="TransactionDetails.receivedVia">已通过 %1$s 接收</string>
+    <string name="TransactionDetails.receivedVia">收到</string>
     <!-- receiving from <address> -->
     <string name="TransactionDetails.receivingFrom">正在接收，来自 %1$s</string>
     <!-- receiving via <address> -->
-    <string name="TransactionDetails.receivingVia">正在通过 %1$s 接收</string>
+    <string name="TransactionDetails.receivingVia">正在接收</string>
     <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
     <string name="TransactionDetails.sent">已发送 %1$s</string>
     <!-- Sent $5.00 -->
@@ -967,6 +967,14 @@
     <string name="Did.Author.Info">授权信息</string>
     <string name="Did.Nick.Name">昵称</string>
     <string name="Did.Public.Key">公钥</string>
+    <string name="Did.Btc.Address">比特币地址</string>
+    <string name="Did.Eth.Address">以太坊地址</string>
+    <string name="Did.Bch.Address">比特现金地址</string>
+    <string name="Did.Usd.Address">USDT地址</string>
+    <string name="Did.Ela.Address">ELA地址</string>
+    <string name="Did.PhoneNumber">手机号</string>
+    <string name="Did.Email">邮箱</string>
+    <string name="Did.Chinese.ID">中国居民身份证</string>
     <string name="Did.What.Did">DID是什么？</string>
     <string name="Did.Quest">问题</string>
     <string name="Did.Required">必选</string>
@@ -982,9 +990,17 @@
     <string name="Did.Detail.Author.Time">授权时间:</string>
     <string name="Did.Detail.Expiration">过期时间:</string>
     <string name="Did.Detail.Auth.Info">授权信息:</string>
-    <string name="Did.Detail.Nick.Name">- 昵称</string>
-    <string name="Did.Detail.DID">- DID</string>
+    <string name="Did.Detail.DID">- Elastos DID</string>
     <string name="Did.Detail.Public.Key">- 公钥</string>
+    <string name="Did.Detail.Nick.Name">- 昵称</string>
+    <string name="Did.Detail.Ela.Address">- ELA地址</string>
+    <string name="Did.Detail.Btc.Address">- 比特币地址</string>
+    <string name="Did.Detail.Bch.Address">- 比特现金地址</string>
+    <string name="Did.Detail.Eth.Address">- 以太坊地址</string>
+    <string name="Did.Detail.Ioex.Address">- IOEX地址</string>
+    <string name="Did.Detail.Email">- 邮箱</string>
+    <string name="Did.Detail.Phone.Number">- 手机号</string>
+    <string name="Did.Detail.Chinese.Id.Card">- 中国身份证</string>
     <string name="User.Not.Author.Message">您的手机系统不支持安卓标准KeyStore技术，而我们用这个技术来存储你的私钥，如果你想继续使用我们的app，请升级手机操作系统到安卓8.0或以上，或者点击继续按钮来允许我们app不经过您的授权即可访问您的keystore信息。</string>
     <string name="User.Not.Author.Exit">退出</string>
     <string name="User.Not.Author.Continue">继续</string>
@@ -1013,6 +1029,45 @@
     <string name="disclaim_ok">我知道了</string>
 
     <string name="invalid_number">无效号码</string>
-    <string name="invalid_email">无效邮件</string>
+    <string name="invalid_email">无效邮箱</string>
     <string name="invalid_id">无效ID</string>
+
+    <string name="explore_menu_about">关于</string>
+    <string name="explore_menu_cancel">取消</string>
+
+    <string name="redpackage_title">红包</string>
+    <string name="vote_title">投票</string>
+    <string name="vote_nodes_count">你正在向%1$d个节点投票(最多36个)</string>
+    <string name="vote_hint">投票只需要很少的手续费:0.0000486 ELA</string>
+    <string name="vote_hint2">投票结束后，您可以随时使用ELA，但您的投票将被取消。</string>
+    <string name="pin_author_vote">授权投票</string>
+    <string name="vote_cancel_btn_txt">取消</string>
+    <string name="vote_confirm_btn_txt">确认</string>
+    <string name="votes_ela">票数:(ELA)</string>
+    <string name="vote_wallet_balance_title">钱包余额:</string>
+    <string name="pin_author_vote_msg">请输入PIN码授权投票</string>
+
+    <string name="loading_hint">请稍后....</string>
+    <string name="auto_vote_hint">自动使用ELA余额投票</string>
+    <string name="explore_vote_about_desc1">ELA投票</string>
+    <string name="explore_vote_about_desc2">投票小程序允许你每次最多投给36个DPoS超级节点。</string>
+    <string name="vote_balance_not_insufficient">ELA余额少于1</string>
+    <string name="vote_candidates_is_none">候选人列表为空</string>
+    <string name="beyond_max_vote_node">最多36个节点</string>
+    <string name="redpackage_hint1">红包</string>
+    <string name="redpackage_hint2">使用ELA红包小程序，你可以给好友发ELA红包啦!</string>
+    <string name="exchange_hint1">SWFT</string>
+    <string name="exchange_hint2">SWFT Blockchain是“下一代区块链全球转移协议”。专注于整合全球主流交易所和区块链项目，以有效对冲风险，并为客户提供一个高效、易用的加密货币兑换平台。</string>
+    <string name="double_spend">您有另外一笔交易正在处理，请在2分钟后重试</string>
+
+    <string name="sign_signature_request_title">签名请求</string>
+    <string name="sign_request_information">请求信息:</string>
+    <string name="sign_developer_did">开发者DID</string>
+    <string name="sign_timestamp">时间戳</string>
+    <string name="sign_purpose">用途</string>
+    <string name="sign_content">内容</string>
+    <string name="sign_add_limitation">添加限制</string>
+    <string name="sign_view_all_detail">显示详情</string>
+    <string name="sign_sign_btn">签名</string>
+    <string name="node_list_title">%1$d个节点列表:</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.breadwallet.presenter.activities.did;
+package com.breadwallet.tools.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.did.AuthorInfo;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.StringUtil;
 
 import java.util.List;
 
@@ -55,9 +56,19 @@ public class AuthorAdapter extends BaseAdapter {
         }
 
         AuthorInfo info = mData.get(i);
-        int iconResourceId = mContext.getResources().getIdentifier("redpackage", BRConstants.DRAWABLE, mContext.getPackageName());
-        holder.iconTv.setImageDrawable(mContext.getDrawable(iconResourceId));
         holder.nameTv.setText(info.getAppName());
+        String appId = info.getAppId();
+        int iconResourceId = mContext.getResources().getIdentifier("unknow", BRConstants.DRAWABLE, mContext.getPackageName());
+        if(!StringUtil.isNullOrEmpty(appId)) {
+            if(appId.equals(BRConstants.REA_PACKAGE_ID)){
+                iconResourceId = mContext.getResources().getIdentifier("redpackage", BRConstants.DRAWABLE, mContext.getPackageName());
+            } else if(appId.equals(BRConstants.DEVELOPER_WEBSITE) || appId.equals(BRConstants.DEVELOPER_WEBSITE_TEST)){
+                iconResourceId = mContext.getResources().getIdentifier("developerweb", BRConstants.DRAWABLE, mContext.getPackageName());
+            } else if(appId.equals(BRConstants.HASH_ID)){
+                iconResourceId = mContext.getResources().getIdentifier("hash", BRConstants.DRAWABLE, mContext.getPackageName());
+            }
+        }
+        holder.iconTv.setImageDrawable(mContext.getDrawable(iconResourceId));
 
         return convertView;
     }
