@@ -175,27 +175,11 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
             if(tx == null) return new byte[1];
             BRElaTransaction raw = tx.getElaTx();
             if(raw == null) return new byte[1];
-            String mRwTxid = ElaDataSource.getInstance(mContext).sendElaRawTx(raw.getTx());
+            String rawTxTxid = ElaDataSource.getInstance(mContext).sendElaRawTx(raw.getTx());
 
-            if(StringUtil.isNullOrEmpty(mRwTxid)) return new byte[1];
+            if(StringUtil.isNullOrEmpty(rawTxTxid)) return new byte[1];
             TxManager.getInstance().updateTxList(mContext);
-            if(!StringUtil.isNullOrEmpty(WalletActivity.mCallbackUrl)) { //call back url
-                ElapayEntity elapayEntity = new ElapayEntity();
-                elapayEntity.OrderID = WalletActivity.mOrderId;
-                elapayEntity.TXID = mRwTxid;
-                ElaDataSource.getInstance(mContext).urlPost(WalletActivity.mCallbackUrl, new Gson().toJson(elapayEntity));
-            }
-            if(!StringUtil.isNullOrEmpty(WalletActivity.mReturnUrl)) { //call return url
-                if(WalletActivity.mReturnUrl.contains("?")){
-                    UiUtils.startWebviewActivity(mContext, WalletActivity.mReturnUrl+"&TXID="+mRwTxid+"&OrderID"+WalletActivity.mOrderId);
-                } else {
-                    UiUtils.startWebviewActivity(mContext, WalletActivity.mReturnUrl+"?TXID="+mRwTxid+"&OrderID"+WalletActivity.mOrderId);
-                }
-            }
-            WalletActivity.mCallbackUrl = null;
-            WalletActivity.mReturnUrl = null;
-            WalletActivity.mOrderId = null;
-            return mRwTxid.getBytes();
+            return rawTxTxid.getBytes();
         } catch (Exception e) {
             e.printStackTrace();
         }

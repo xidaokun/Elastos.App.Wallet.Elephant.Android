@@ -39,6 +39,7 @@ import com.breadwallet.presenter.activities.sign.SignaureActivity;
 import com.breadwallet.presenter.activities.sign.SignaureEditActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
+import com.breadwallet.presenter.entities.ElapayEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.presenter.fragments.FragmentReceive;
 import com.breadwallet.presenter.fragments.FragmentRequestAmount;
@@ -49,9 +50,12 @@ import com.breadwallet.presenter.fragments.FragmentTxDetails;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
+import com.breadwallet.wallet.wallets.ela.ElaDataSource;
+import com.google.gson.Gson;
 
 import org.wallet.library.Constants;
 
@@ -411,6 +415,37 @@ public class UiUtils {
         intent.putExtra("from", from);
         intent.putExtra("value", value);
         activity.startActivityForResult(intent, requestCode);
+    }
+
+    public static void payReturnData(Context context, String txid){
+        payReturn(context, txid);
+        payCallback(context, txid);
+        WalletActivity.mCallbackUrl = null;
+        WalletActivity.mReturnUrl = null;
+        WalletActivity.mOrderId = null;
+    }
+
+    private static void payReturn(Context context, String txid){
+        if(!StringUtil.isNullOrEmpty(WalletActivity.mReturnUrl)) { //call return url
+            if(WalletActivity.mReturnUrl.contains("?")){
+                UiUtils.startWebviewActivity(context, WalletActivity.mReturnUrl+"&TXID="+txid+"&OrderID"+WalletActivity.mOrderId);
+            } else {
+                UiUtils.startWebviewActivity(context, WalletActivity.mReturnUrl+"?TXID="+txid+"&OrderID"+WalletActivity.mOrderId);
+            }
+        }
+    }
+
+    private static void payCallback(Context context, String txid){
+        try {
+            if(!StringUtil.isNullOrEmpty(WalletActivity.mCallbackUrl)) { //call back url
+                ElapayEntity elapayEntity = new ElapayEntity();
+                elapayEntity.OrderID = WalletActivity.mOrderId;
+                elapayEntity.TXID = txid;
+                ElaDataSource.getInstance(context).urlPost(WalletActivity.mCallbackUrl, new Gson().toJson(elapayEntity));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }
