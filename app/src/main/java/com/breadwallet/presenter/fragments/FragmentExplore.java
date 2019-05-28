@@ -4,20 +4,21 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.breadwallet.R;
-import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.adapter.ExploreAppsAdapter;
+import com.breadwallet.tools.animation.SimpleItemTouchHelperCallback;
+import com.breadwallet.tools.listeners.OnStartDragListener;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.util.StringUtil;
-import com.breadwallet.tools.util.Utils;
 
-import java.util.Locale;
-
-public class FragmentExplore extends Fragment {
+public class FragmentExplore extends Fragment implements OnStartDragListener {
 
     public static FragmentExplore newInstance(String text) {
 
@@ -30,11 +31,10 @@ public class FragmentExplore extends Fragment {
         return f;
     }
 
+    private RecyclerView mMyAppsRv;
+    private ExploreAppsAdapter mAdapter;
     private View mDisclaimLayout;
-    private View mBannerview1;
-    private View mBannerview2;
-    private View mBannerview3;
-    private View mBannerview4;
+    private ItemTouchHelper mItemTouchHelper;
     private View mOkBtn;
 
     @Nullable
@@ -50,61 +50,18 @@ public class FragmentExplore extends Fragment {
 
     private void initView(View rootView){
         mDisclaimLayout = rootView.findViewById(R.id.disclaim_layout);
-        mBannerview1 = rootView.findViewById(R.id.explore_banner1);
-        mBannerview2 = rootView.findViewById(R.id.explore_banner2);
-        mBannerview3 = rootView.findViewById(R.id.explore_banner3);
-        mBannerview4 = rootView.findViewById(R.id.explore_banner4);
         mOkBtn = rootView.findViewById(R.id.disclaim_ok_btn);
-    }
+        mMyAppsRv = rootView.findViewById(R.id.explore_my_apps_lv);
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        String languageCode = Locale.getDefault().getLanguage();
-        if(!StringUtil.isNullOrEmpty(languageCode)){
-            mBannerview1.setBackgroundResource(languageCode.contains("zh")? (R.drawable.explore_banner1_zh): (R.drawable.explore_banner1_en));
-            mBannerview2.setBackgroundResource(languageCode.contains("zh")? (R.drawable.explore_banner2_zh): (R.drawable.explore_banner2_en));
-            mBannerview3.setBackgroundResource(languageCode.contains("zh")? (R.drawable.explore_banner3_zh): (R.drawable.explore_banner3_en));
-            mBannerview4.setBackgroundResource(languageCode.contains("zh")? (R.drawable.explore_banner4_zh): (R.drawable.explore_banner4_en));
-        } else {
-            mBannerview1.setBackgroundResource(R.drawable.explore_banner1_en);
-            mBannerview2.setBackgroundResource(R.drawable.explore_banner2_en);
-            mBannerview3.setBackgroundResource(R.drawable.explore_banner3_en);
-            mBannerview4.setBackgroundResource(R.drawable.explore_banner4_en);
-        }
+        mMyAppsRv.setLayoutManager(new LinearLayoutManager(getContext()));
+        mMyAppsRv.setAdapter(mAdapter);
+
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mAdapter);
+        mItemTouchHelper = new ItemTouchHelper(callback);
+        mItemTouchHelper.attachToRecyclerView(mMyAppsRv);
     }
 
     private void initListener(){
-        mBannerview1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                UiUtils.openUrlByBrowser(getContext(), "http://aiyong.dafysz.cn/sale-m/18090500-zq.html#/insurance-source_bxfx?source=bxfx_yly");
-            }
-        });
-
-        mBannerview2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                BRSharedPrefs.setExploreFrom(getContext(), "redpacket");
-                UiUtils.startWebviewActivity(getContext(), "https://redpacket.elastos.org");
-            }
-        });
-
-        mBannerview3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                BRSharedPrefs.setExploreFrom(getContext(), "vote");
-                UiUtils.startWebviewActivity(getContext(), "http://elaphant.net/");
-            }
-        });
-
-        mBannerview4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BRSharedPrefs.setExploreFrom(getContext(), "exchange");
-                UiUtils.startWebviewActivity(getContext(), /*"https://dev.elabank.net/Decentralized/index.html"*/"http://swft.elabank.net ");
-            }
-        });
         mOkBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -118,5 +75,10 @@ public class FragmentExplore extends Fragment {
                 return true;
             }
         });
+    }
+
+    @Override
+    public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
+        mItemTouchHelper.startDrag(viewHolder);
     }
 }

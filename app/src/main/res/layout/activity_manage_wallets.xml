@@ -41,7 +41,7 @@
         android:layout_below="@+id/toolbar"/>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/token_list"
+        android:id="@+id/explore_my_apps_lv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/toolbar"
