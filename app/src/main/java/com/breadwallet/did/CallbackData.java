@@ -17,6 +17,5 @@ public class CallbackData {
     public String RandomNumber;
     public String RequesterDID;
     public String RequestedConent;
-    public long Timestamp;
     public String UseStatement;
 }

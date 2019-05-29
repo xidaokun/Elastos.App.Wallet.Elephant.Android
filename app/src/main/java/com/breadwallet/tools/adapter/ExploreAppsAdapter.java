@@ -14,6 +14,7 @@ import com.breadwallet.presenter.entities.MyAppItem;
 import com.breadwallet.tools.animation.ItemTouchHelperAdapter;
 
 import java.util.Collections;
+import java.util.List;
 
 public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.MyAppsViewHolder> implements ItemTouchHelperAdapter{
 
@@ -34,21 +35,21 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull MyAppsViewHolder holder, int position) {
-        final MyAppItem item = mData.get(position);
-        holder.mTitle.setText(item.getName());
-        holder.mDeveloper.setText(item.getDeveloper());
-        //TODO daokun.xi
-//        holder.mLogo.setImageResource();
-        boolean delete = item.isDelete();
-        if(delete){
-            holder.mAbout.setVisibility(View.GONE);
-            holder.mDelete.setVisibility(View.VISIBLE);
-            holder.mTouch.setVisibility(View.VISIBLE);
-        } else {
-            holder.mAbout.setVisibility(View.VISIBLE);
-            holder.mDelete.setVisibility(View.GONE);
-            holder.mTouch.setVisibility(View.GONE);
-        }
+//        final MyAppItem item = mData.get(position);
+//        holder.mTitle.setText(item.getName());
+//        holder.mDeveloper.setText(item.getDeveloper());
+//        //TODO daokun.xi
+////        holder.mLogo.setImageResource();
+//        boolean delete = item.isDelete();
+//        if(delete){
+//            holder.mAbout.setVisibility(View.GONE);
+//            holder.mDelete.setVisibility(View.VISIBLE);
+//            holder.mTouch.setVisibility(View.VISIBLE);
+//        } else {
+//            holder.mAbout.setVisibility(View.VISIBLE);
+//            holder.mDelete.setVisibility(View.GONE);
+//            holder.mTouch.setVisibility(View.GONE);
+//        }
     }
 
     @Override

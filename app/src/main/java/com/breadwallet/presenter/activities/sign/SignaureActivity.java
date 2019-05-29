@@ -14,6 +14,7 @@ import com.breadwallet.R;
 import com.breadwallet.did.CallbackData;
 import com.breadwallet.did.CallbackEntity;
 import com.breadwallet.did.DidDataSource;
+import com.breadwallet.did.SignCallbackData;
 import com.breadwallet.did.SignInfo;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
@@ -175,7 +176,7 @@ public class SignaureActivity extends BRActivity {
         String myPK = Utility.getInstance(this).getSinglePublicKey(phrase);
         String myDid = Utility.getInstance(this).getDid(myPK);
 
-        CallbackData callbackData = new CallbackData();
+        SignCallbackData callbackData = new SignCallbackData();
         callbackData.DID = myDid;
         callbackData.PublicKey = myPK;
         callbackData.RequesterDID = mSignInfo.getDid();
