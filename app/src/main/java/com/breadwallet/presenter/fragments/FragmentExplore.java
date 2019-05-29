@@ -5,6 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,11 +23,20 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.entities.MyAppItem;
 import com.breadwallet.tools.adapter.ExploreAppsAdapter;
 import com.breadwallet.tools.animation.SimpleItemTouchHelperCallback;
 import com.breadwallet.tools.listeners.OnStartDragListener;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.StringUtil;
+import com.google.gson.Gson;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class FragmentExplore extends Fragment implements OnStartDragListener {
 
@@ -46,6 +57,10 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
     private ExploreAppsAdapter mAdapter;
     private View mDisclaimLayout;
     private ItemTouchHelper mItemTouchHelper;
+    private View mDoneBtn;
+    private View mCancelBtn;
+    private View mAddBtn;
+    private View mEditBtn;
     private View mOkBtn;
 
     @Nullable
@@ -62,7 +77,9 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
     private void initView(View rootView){
         mDisclaimLayout = rootView.findViewById(R.id.disclaim_layout);
         mOkBtn = rootView.findViewById(R.id.disclaim_ok_btn);
-        mMyAppsRv = rootView.findViewById(R.id.explore_my_apps_lv);
+        mDoneBtn = rootView.findViewById(R.id.explore_done_tv);
+        mCancelBtn = rootView.findViewById(R.id.explore_cancel_tv);
+        mMyAppsRv = rootView.findViewById(R.id.app_list_rv);
 
         mMyAppsRv.setLayoutManager(new LinearLayoutManager(getContext()));
         mMyAppsRv.setAdapter(mAdapter);
@@ -73,6 +90,13 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
     }
 
     private void initListener(){
+        mDoneBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                downloadCapsule("https://xidaokun.github.io/vote.capsule");
+            }
+        });
+
         mOkBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,6 +117,24 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
         mItemTouchHelper.startDrag(viewHolder);
     }
 
+    private List<MyAppItem> getAppItems(){
+        File capsule = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule");
+        File[] files = capsule.listFiles();
+        for(File file : files){
+            if(file.isDirectory()){
+                MyAppItem myAppItem = new MyAppItem();
+                File jsonFile = new File(file, "app.json");
+                File logoFile = new File(file, "banner/en/bannar1x.png");
+                String json = getJsonFromCapsule(jsonFile);
+                String logoPath = logoFile.getAbsolutePath();
+                new Gson().fromJson(json, MyAppItem.class);
+
+            }
+        }
+        return null;
+    }
+
+    private DownloadManager manager;
     private long downloadCapsule(String url){
         Log.d(TAG, "capsule url:"+url);
         if(StringUtil.isNullOrEmpty(url)) return -1;
@@ -102,11 +144,9 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
             String fileName = uri.getLastPathSegment();
             request = new DownloadManager.Request(uri);
             request.setDestinationInExternalFilesDir(getContext(), Environment.DIRECTORY_DOWNLOADS, fileName+".zip");
-            DownloadManager manager = (DownloadManager) getContext().getApplicationContext().getSystemService(Context.DOWNLOAD_SERVICE);
+            manager = (DownloadManager) getContext().getApplicationContext().getSystemService(Context.DOWNLOAD_SERVICE);
             long downloadId =  manager.enqueue(request);
-            Uri downloadUri = manager.getUriForDownloadedFile(downloadId);
-            Log.d(TAG, "cache capsule path:"+downloadUri.getPath());
-            registerDownloadReceiver(downloadId, downloadUri);
+            registerDownloadReceiver();
             return downloadId;
         } catch (Exception e) {
             e.printStackTrace();
@@ -114,26 +154,136 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
         return -1;
     }
 
-    private void registerDownloadReceiver(final long downloadId, final Uri uri){
+    private void registerDownloadReceiver(){
         IntentFilter intentFilter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
-                Log.d(TAG, "downloadId:"+downloadId);
-                Log.d(TAG, "uri:"+uri.getPath());
-                Log.d(TAG, "id:"+id);
-                if(id == downloadId){
-                    decompression(uri);
-                }
+
+                decompression();
+                deleteDownloadCapsule();
+//                //TODO test
+//                File appJsonPath = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule/vote.capsule/app.json");
+//                File appIconPath = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule/vote.capsule/banner/en/bannar1x.png");
+//                String tmp = getJsonFromCapsule(appJsonPath);
+//                Bitmap tmp1 = getIconFromCapsule(appIconPath);
+
+                logFile("capsule", new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule"));
+                logFile("download", getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile());
+                logFile("vote.capsule", new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule/vote.capsule"));
+
                 context.unregisterReceiver(this);
             }
         };
         getContext().registerReceiver(broadcastReceiver, intentFilter);
     }
 
-    private void decompression(Uri uri){
-
+    private String getJsonFromCapsule(File filePath){
+        FileInputStream inputStream;
+        StringBuilder sb = new StringBuilder();
+        try {
+            inputStream = new FileInputStream(filePath);
+            byte buffer[] = new byte[1024];
+            int len;
+            while ((len = inputStream.read(buffer)) > 0){
+                sb.append(new String(buffer, 0, len));
+            }
+            inputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return sb.toString();
     }
 
+    private Bitmap getIconFromCapsule(File filePath){
+//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//        try {
+//            FileInputStream inputStream = new FileInputStream(filePath);
+//            byte buffer[] = new byte[1024];
+//            int len;
+//            while ((len=inputStream.read(buffer)) > 0) {
+//                outputStream.write(buffer, 0, len);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        byte[] data = outputStream.toByteArray();
+//        Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+
+        return BitmapFactory.decodeFile(filePath.getAbsolutePath());
+    }
+
+    private void decompression(){
+        try {
+            File file = getZipFile();
+            if(null == file) return;
+            File cacheFile = getContext().getExternalCacheDir().getAbsoluteFile();
+            File capsuleFile = new File(cacheFile, "capsule");
+
+            unZipFolder(file.getAbsolutePath(), capsuleFile.getAbsolutePath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void deleteDownloadCapsule(){
+        File file = getZipFile();
+        if(null != file) file.delete();
+    }
+
+    private File getZipFile(){
+        File downloadFile = getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile();
+        if(downloadFile.exists()){
+            File[] files = downloadFile.listFiles();
+            if(files==null || files.length==0) return null;
+            for(File file : files){
+                String name = file.getName();
+                if(!StringUtil.isNullOrEmpty(name) && name.contains("capsule")){
+                    return file;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private void logFile(String flag, File path){
+        File[] files = path.listFiles();
+        for(File file : files){
+            String name = file.getName();
+            Log.d(TAG, flag+" fileName:"+name);
+        }
+    }
+
+    public static void unZipFolder(String zipFileString, String outPathString) throws Exception {
+        ZipInputStream inZip = new ZipInputStream(new FileInputStream(zipFileString));
+        ZipEntry zipEntry;
+        String  szName = "";
+        while ((zipEntry = inZip.getNextEntry()) != null) {
+            szName = zipEntry.getName();
+            if (zipEntry.isDirectory()) {
+                szName = szName.substring(0, szName.length() - 1);
+                File folder = new File(outPathString + File.separator + szName);
+                folder.mkdirs();
+            } else {
+                Log.d(TAG,outPathString + File.separator + szName);
+                File file = new File(outPathString + File.separator + szName);
+                if (!file.exists()){
+                    file.getParentFile().mkdirs();
+                    file.createNewFile();
+                }
+                FileOutputStream out = new FileOutputStream(file);
+                int len;
+                byte[] buffer = new byte[1024];
+                while ((len = inZip.read(buffer)) != -1) {
+                    out.write(buffer, 0, len);
+                    out.flush();
+                }
+                out.close();
+            }
+        }
+        inZip.close();
+    }
 }

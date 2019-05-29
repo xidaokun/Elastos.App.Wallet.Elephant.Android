@@ -10,18 +10,17 @@ import android.view.ViewGroup;
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.RoundImageView;
-import com.breadwallet.presenter.entities.MyAppsItem;
+import com.breadwallet.presenter.entities.MyAppItem;
 import com.breadwallet.tools.animation.ItemTouchHelperAdapter;
 
 import java.util.Collections;
-import java.util.List;
 
 public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.MyAppsViewHolder> implements ItemTouchHelperAdapter{
 
     private Context mContext;
-    private List<MyAppsItem> mData;
+    private List<MyAppItem> mData;
 
-    public ExploreAppsAdapter(Context context, List<MyAppsItem> data){
+    public ExploreAppsAdapter(Context context, List<MyAppItem> data){
         this.mContext = context;
         this.mData = data;
     }
@@ -35,7 +34,7 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull MyAppsViewHolder holder, int position) {
-        final MyAppsItem item = mData.get(position);
+        final MyAppItem item = mData.get(position);
         holder.mTitle.setText(item.getName());
         holder.mDeveloper.setText(item.getDeveloper());
         //TODO daokun.xi
