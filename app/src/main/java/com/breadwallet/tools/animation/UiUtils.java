@@ -24,8 +24,11 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.OvershootInterpolator;
+import android.widget.Toast;
 
 import com.breadwallet.R;
+import com.breadwallet.did.CallbackEntity;
+import com.breadwallet.did.DidDataSource;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.ExploreWebActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
@@ -415,6 +418,42 @@ public class UiUtils {
         intent.putExtra("from", from);
         intent.putExtra("value", value);
         activity.startActivityForResult(intent, requestCode);
+    }
+
+    public static void returnDataNeedSign(Activity activity, String returnUrl, String Data, String Sign, String appId, String targe){
+        if (!StringUtil.isNullOrEmpty(returnUrl)) {
+            String url;
+            if (returnUrl.contains("?")) {
+                url = returnUrl + "&Data="+Uri.encode(Data)+"&Sign="+Uri.encode(Sign)+"&browser=elaphant";
+            } else {
+                url = returnUrl + "?Data="+Uri.encode(Data)+"&Sign="+Uri.encode(Sign)+"&browser=elaphant";
+            }
+
+            if(BRConstants.REA_PACKAGE_ID.equals(appId) || BRConstants.DPOS_VOTE_ID.equals(appId)
+                    || BRConstants.EXCHANGE_ID.equalsIgnoreCase(appId) || (!StringUtil.isNullOrEmpty(targe) && targe.equals("internal"))){
+                UiUtils.startWebviewActivity(activity, url);
+            } else {
+                UiUtils.openUrlByBrowser(activity, url);
+            }
+        }
+    }
+
+    public static void callbackDataNeedSign(Activity activity, String backurl, CallbackEntity entity){
+        if(entity==null || StringUtil.isNullOrEmpty(backurl)) return;
+        String params = new Gson().toJson(entity);
+        String ret = DidDataSource.getInstance(activity).urlPost(backurl, params);
+        if ((StringUtil.isNullOrEmpty(ret) || StringUtil.isNullOrEmpty(ret) || ret.contains("err code:"))) {
+            toast(activity,"callback return error");
+        }
+    }
+
+    public static void toast(final Activity activity, final String message) {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public static void payReturnData(Context context, String txid){

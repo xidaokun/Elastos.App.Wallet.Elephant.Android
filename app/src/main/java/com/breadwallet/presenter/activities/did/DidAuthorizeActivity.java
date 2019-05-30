@@ -264,6 +264,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         String appName = uriFactory.getAppName();
         String PK = uriFactory.getPublicKey();
         String randomNumber = uriFactory.getRandomNumber();
+        final String target = uriFactory.getTarget();
         if(StringUtil.isNullOrEmpty(did) || StringUtil.isNullOrEmpty(appId) || StringUtil.isNullOrEmpty(appName)
                 || StringUtil.isNullOrEmpty(PK) || StringUtil.isNullOrEmpty(randomNumber)) {
             Toast.makeText(DidAuthorizeActivity.this, "invalid params", Toast.LENGTH_SHORT).show();
@@ -335,49 +336,14 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
             @Override
             public void run() {
                 try {
-                    callBackUrl(backurl, entity);
-                    callReturnUrl(returnUrl, Data, Sign, appId);
+                    UiUtils.callbackDataNeedSign(DidAuthorizeActivity.this, backurl, entity);
+                    UiUtils.returnDataNeedSign(DidAuthorizeActivity.this, returnUrl, Data, Sign, appId, target);
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
                     dialogDismiss();
                     finish();
                 }
-            }
-        });
-    }
-
-    private void callBackUrl(String backurl, CallbackEntity entity){
-        if(entity==null || StringUtil.isNullOrEmpty(backurl)) return;
-        String params = new Gson().toJson(entity);
-        String ret = DidDataSource.getInstance(this).urlPost(backurl, params);
-        if (null==ret || ret.contains("err code:")) {
-            toast("callback return error");
-        }
-    }
-
-    private void callReturnUrl(String returnUrl, String Data, String Sign, String appId){
-        if (!StringUtil.isNullOrEmpty(returnUrl)) {
-            String url;
-            if (returnUrl.contains("?")) {
-                url = returnUrl + "&Data="+Uri.encode(Data)+"&Sign="+Uri.encode(Sign);
-            } else {
-                url = returnUrl + "?Data="+Uri.encode(Data)+"&Sign="+Uri.encode(Sign);
-            }
-
-            if(BRConstants.REA_PACKAGE_ID.equals(appId) || BRConstants.DPOS_VOTE_ID.equals(appId) || BRConstants.EXCHANGE_ID.equalsIgnoreCase(appId)){
-                UiUtils.startWebviewActivity(DidAuthorizeActivity.this, url);
-            } else {
-                UiUtils.openUrlByBrowser(DidAuthorizeActivity.this, url);
-            }
-        }
-    }
-
-    private void toast(final String message) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(DidAuthorizeActivity.this, message, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -415,10 +381,6 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         long time = date.getTime();
 
         return time;
-    }
-
-    private String timeTest(long time) {
-        return BRDateUtil.getAuthorDate(time);
     }
 
     private String getMn() {
