@@ -40,6 +40,7 @@ public class MultiSignQrActivity extends BRActivity {
     private Bitmap mBitmap = null;
 
     private String mTransaction;
+    private String mTxid;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,6 +49,7 @@ public class MultiSignQrActivity extends BRActivity {
 
         Intent intent = getIntent();
         mTransaction = intent.getStringExtra("tx");
+        mTxid = intent.getStringExtra("txid");
 
         initView();
         if (!StringUtil.isNullOrEmpty(mTransaction)) {
@@ -70,12 +72,18 @@ public class MultiSignQrActivity extends BRActivity {
         TextView passOrSent = findViewById(R.id.multisign_pass_or_sent);
         TextView or = findViewById(R.id.multisign_qr_share_or);
 
-        if (StringUtil.isNullOrEmpty(mTransaction)) {
+        if (!StringUtil.isNullOrEmpty(mTxid)) {
             mQRCodeIv.setVisibility(View.INVISIBLE);
             shareQr.setVisibility(View.INVISIBLE);
             shareJson.setVisibility(View.INVISIBLE);
             or.setVisibility(View.INVISIBLE);
             passOrSent.setText(R.string.multisign_send_succeeded);
+        } else if (StringUtil.isNullOrEmpty(mTransaction)) {
+            mQRCodeIv.setVisibility(View.INVISIBLE);
+            shareQr.setVisibility(View.INVISIBLE);
+            shareJson.setVisibility(View.INVISIBLE);
+            or.setVisibility(View.INVISIBLE);
+            passOrSent.setVisibility(View.INVISIBLE);
         } else {
             shareJson.setOnClickListener(new View.OnClickListener() {
                 @Override
