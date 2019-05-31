@@ -58,6 +58,11 @@ public class MultiSignTxActivity extends BRActivity {
     private String mTransaction;
     private String mAddress;
 
+    private String mReturnUrl;
+    private String mCallbackUrl;
+
+    private String mMyPublicKey;
+
     private boolean mSend = false;
 
     @Override
@@ -71,7 +76,6 @@ public class MultiSignTxActivity extends BRActivity {
         }
 
         initView();
-        getBalance();
     }
 
     private boolean initData() {
@@ -83,6 +87,8 @@ public class MultiSignTxActivity extends BRActivity {
             uri = readTxFromFile(uri);
             if (uri == null) return false;
         }
+
+        Log.d(TAG, "uri: " + uri.toString());
 
         String appName = uri.getQueryParameter("AppName");
         String appID = uri.getQueryParameter("AppID");
@@ -103,12 +109,28 @@ public class MultiSignTxActivity extends BRActivity {
             return false;
         }
         Log.d(TAG, "tx: " + mTransaction);
+
+        String returnurl = uri.getQueryParameter("ReturnUrl");
+        if(!StringUtil.isNullOrEmpty(returnurl)) {
+            mReturnUrl = URLDecoder.decode(returnurl);
+        }
+
+        String callbackurl = uri.getQueryParameter("CallbackUrl");
+        if(!StringUtil.isNullOrEmpty(callbackurl)) {
+            mCallbackUrl = URLDecoder.decode(returnurl);
+        }
+
+        mMyPublicKey = WalletElaManager.getInstance(this).getPublicKey();
+        // if public key is null, finish and return.
+        // The app will show authentication screen
+        if (mMyPublicKey == null) {
+            return false;
+        }
+
         return true;
     }
 
     private void initView() {
-
-
         ElaTransactionRes res = new Gson().fromJson(mTransaction, ElaTransactionRes.class);
         ElaTransactions tx = res.Transactions.get(0);
 
@@ -123,7 +145,10 @@ public class MultiSignTxActivity extends BRActivity {
         mRequiredCount = param.RequiredCount;
         mPublicKeys = param.PublicKeys;
 
-        initListView();
+        if (initListView()) {
+            startNextAndFinish("", "");
+            return;
+        }
 
         TextView from = mListView.findViewById(R.id.multisign_tx_from);
         TextView to = mListView.findViewById(R.id.multisign_tx_to);
@@ -182,14 +207,15 @@ public class MultiSignTxActivity extends BRActivity {
 
         mLoadingDialog = new LoadingDialog(this, R.style.progressDialog);
         mLoadingDialog.setCanceledOnTouchOutside(false);
+
+        getBalance();
     }
 
-    private void initListView() {
+    private boolean initListView() {
         mListView = findViewById(R.id.multisign_tx_pubkey_list);
         View headerView = LayoutInflater.from(this).inflate(R.layout.multi_sign_tx_header, mListView, false);
         mListView.addHeaderView(headerView);
 
-        String mPublicKey = WalletElaManager.getInstance(this).getPublicKey();
         Integer outLength = 0;
         String[] signedSigners = ElastosKeypairSign.getSignedSigners(mTransaction, outLength);
 
@@ -198,7 +224,7 @@ public class MultiSignTxActivity extends BRActivity {
         ArrayList<PublicKeyAdapter.PublicKey> publicKeys = new ArrayList<>();
         for (String publicKey : mPublicKeys) {
             String str;
-            if (mPublicKey.equals(publicKey)) {
+            if (mMyPublicKey.equals(publicKey)) {
                 str = publicKey + "(me)";
             } else {
                 str = publicKey;
@@ -207,6 +233,9 @@ public class MultiSignTxActivity extends BRActivity {
             boolean signed = false;
             if (signedSigners != null) {
                 for (String signedSigner : signedSigners) {
+                    if (mMyPublicKey.equals(signedSigner)) {
+                        return true;
+                    }
                     if (signedSigner.equals(publicKey)) {
                         signed = true;
                         break;
@@ -223,6 +252,8 @@ public class MultiSignTxActivity extends BRActivity {
 
         ArrayAdapter adapter = new PublicKeyAdapter(this, R.layout.publickey_label, publicKeys);
         mListView.setAdapter(adapter);
+
+        return false;
     }
 
     private Uri readTxFromFile(Uri uri) {
@@ -300,7 +331,7 @@ public class MultiSignTxActivity extends BRActivity {
         String signed =  ElastosKeypairSign.multiSignTransaction(privateKey, mPublicKeys,
                 mPublicKeys.length, mRequiredCount, mTransaction);
         if (!mSend) {
-            startNextAndFinish(signed);
+            startNextAndFinish(signed, "");
             return;
         }
 
@@ -311,10 +342,7 @@ public class MultiSignTxActivity extends BRActivity {
             Log.d(TAG, "txid:" + txid);
             closeDialog();
             if (!StringUtil.isNullOrEmpty(txid)) {
-                Intent intent = new Intent();
-                intent.setClass(this, MultiSignQrActivity.class);
-                startActivity(intent);
-                finish();
+                startNextAndFinish("", txid);
                 return;
             }
         }
@@ -322,10 +350,15 @@ public class MultiSignTxActivity extends BRActivity {
         BRDialog.showSimpleDialog(this, getString(R.string.Alerts_sendFailure), "Failed to send transaction");
     }
 
-    private void startNextAndFinish(String tx) {
+    private void startNextAndFinish(String tx, String txid) {
         Intent intent = new Intent();
         intent.setClass(this, MultiSignQrActivity.class);
-        intent.putExtra("tx", tx);
+        if (!StringUtil.isNullOrEmpty(tx)) {
+            intent.putExtra("tx", tx);
+        }
+        if (!StringUtil.isNullOrEmpty(txid)) {
+            intent.putExtra("txid", txid);
+        }
         startActivity(intent);
         finish();
     }

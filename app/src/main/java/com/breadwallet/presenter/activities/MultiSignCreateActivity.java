@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
+import com.breadwallet.did.DidDataSource;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.jsbridge.JsInterface;
@@ -39,6 +40,7 @@ public class MultiSignCreateActivity extends BRActivity {
     private String[] mPublicKeys;
     private String mAddress;
     private String mReturnUrl;
+    private String mCallbackUrl;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,6 +64,8 @@ public class MultiSignCreateActivity extends BRActivity {
             return false;
         }
 
+        Log.d(TAG, "uri: " + uri.toString());
+
         String appName = uri.getQueryParameter("AppName");
         String appID = uri.getQueryParameter("AppID");
         String publicKey = uri.getQueryParameter("PublicKey");
@@ -77,6 +81,7 @@ public class MultiSignCreateActivity extends BRActivity {
             return false;
         }
         String pubkeys = URLDecoder.decode(publicKeys);
+        Log.d(TAG, "publickeys: " + pubkeys);
         List<String> list= Arrays.asList(pubkeys.split(","));
         mPublicKeys = (String[]) list.toArray();
 
@@ -88,13 +93,17 @@ public class MultiSignCreateActivity extends BRActivity {
         mRequiredCount = Integer.parseInt(require);
 
         String returnurl = uri.getQueryParameter("ReturnUrl");
-        if(StringUtil.isNullOrEmpty(returnurl)) {
-            Log.e(TAG, "return url is empty");
-            return false;
+        if(!StringUtil.isNullOrEmpty(returnurl)) {
+            mReturnUrl = URLDecoder.decode(returnurl);
         }
-        mReturnUrl = URLDecoder.decode(returnurl);
+
+        String callbackurl = uri.getQueryParameter("CallbackUrl");
+        if(!StringUtil.isNullOrEmpty(callbackurl)) {
+            mCallbackUrl = URLDecoder.decode(returnurl);
+        }
 
         mAddress = ElastosKeypairSign.getMultiSignAddress(mPublicKeys, mPublicKeys.length, mRequiredCount);
+        Log.d(TAG, "addr: " + mAddress);
         if(StringUtil.isNullOrEmpty(mAddress)) {
             Log.e(TAG, "get multi sign wallet address failed");
             return false;
@@ -131,19 +140,30 @@ public class MultiSignCreateActivity extends BRActivity {
 
         String sign = AuthorizeManager.sign(this, pk, dataStr);
 
-        String url;
-        if (mReturnUrl.contains("?")) {
-            url = mReturnUrl + "&Data=";
-        } else {
-            url = mReturnUrl + "?Data=";
+        if (!StringUtil.isNullOrEmpty(mCallbackUrl)) {
+            String body = "{\"Data\":\"" + dataStr.replace("\"", "\\\"") + "\", \"Sign\":\"" + sign + "\"}";
+            Log.d(TAG, "post body: " + body);
+            DidDataSource.getInstance(this).urlPost(mCallbackUrl, dataStr);
         }
-        url += Uri.encode(dataStr) + "&Sign=" + Uri.encode(sign) + "&Scheme=multicreate";
 
-        if (url.startsWith("file://")) {
-            UiUtils.startWebviewActivity(this, url);
-        } else {
-            UiUtils.openUrlByBrowser(this, url);
+        if (!StringUtil.isNullOrEmpty(mReturnUrl)) {
+            String url;
+            if (mReturnUrl.contains("?")) {
+                url = mReturnUrl + "&Data=";
+            } else {
+                url = mReturnUrl + "?Data=";
+            }
+            url += Uri.encode(dataStr) + "&Sign=" + Uri.encode(sign) + "&Scheme=multicreate";
+
+            Log.d(TAG, "url: " + url);
+
+            if (url.startsWith("file://")) {
+                UiUtils.startWebviewActivity(this, url);
+            } else {
+                UiUtils.openUrlByBrowser(this, url);
+            }
         }
+
         finish();
     }
 
@@ -183,6 +203,13 @@ public class MultiSignCreateActivity extends BRActivity {
 
     private void initPublicKey() {
         String myPublicKey = WalletElaManager.getInstance(this).getPublicKey();
+        // if public key is null, finish and return.
+        // The app will show authentication screen
+        if (myPublicKey == null) {
+            finish();
+            return;
+        }
+
         LinearLayout page = findViewById(R.id.multisign_create_page);
 
         for (String publicKey : mPublicKeys) {
