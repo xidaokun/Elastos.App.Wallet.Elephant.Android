@@ -12,6 +12,7 @@ import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.RoundImageView;
 import com.breadwallet.presenter.entities.MyAppItem;
 import com.breadwallet.tools.animation.ItemTouchHelperAdapter;
+import com.breadwallet.tools.animation.ItemTouchHelperViewHolder;
 import com.breadwallet.tools.util.StringUtil;
 
 import java.util.Collections;
@@ -86,7 +87,7 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
 
     }
 
-    public class MyAppsViewHolder extends RecyclerView.ViewHolder  {
+    public class MyAppsViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
         private RoundImageView mLogo;
         private BaseTextView mTitle;
         private BaseTextView mDeveloper;
@@ -103,6 +104,16 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
             mDelete = itemView.findViewById(R.id.explore_item_delete_tv);
             mTouch = itemView.findViewById(R.id.explore_item_touch_tv);
             mAbout = itemView.findViewById(R.id.explore_item_about_tv);
+        }
+
+        @Override
+        public void onItemSelected() {
+
+        }
+
+        @Override
+        public void onItemClear() {
+
         }
     }
 }
