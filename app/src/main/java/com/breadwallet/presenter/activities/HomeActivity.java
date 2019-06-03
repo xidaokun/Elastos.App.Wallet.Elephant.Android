@@ -211,7 +211,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
         if(data == null) return;
         if(requestCode == BRConstants.ADD_APP_URL_REQUEST){
             String url = data.getStringExtra("result");
@@ -219,6 +218,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 mExploreFragment.downloadCapsule(url);
             }
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

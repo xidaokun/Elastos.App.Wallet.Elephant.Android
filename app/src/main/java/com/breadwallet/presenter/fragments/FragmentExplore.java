@@ -306,12 +306,15 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
 
                     File appJsonPath = new File(file, "/app.json");
                     String json = getJsonFromCapsule(appJsonPath);
+                    Toast.makeText(getContext(), "下载完成", Toast.LENGTH_SHORT).show();
                     MyAppItem item = new Gson().fromJson(json, MyAppItem.class);
                     if (item != null) {
+                        for(MyAppItem myAppItem : mItems){
+                            if(item.appId.equals(myAppItem.appId)) return;
+                        }
                         mItems.add(item);
                         mAdapter.notifyDataSetChanged();
                     }
-                    Toast.makeText(getContext(), "下载完成", Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
