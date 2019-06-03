@@ -12,18 +12,25 @@ import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.RoundImageView;
 import com.breadwallet.presenter.entities.MyAppItem;
 import com.breadwallet.tools.animation.ItemTouchHelperAdapter;
+import com.breadwallet.tools.util.StringUtil;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.MyAppsViewHolder> implements ItemTouchHelperAdapter{
 
     private Context mContext;
     private List<MyAppItem> mData;
+    private boolean mIsDelete;
 
     public ExploreAppsAdapter(Context context, List<MyAppItem> data){
         this.mContext = context;
         this.mData = data;
+    }
+
+    public void isDelete(boolean isDelete){
+        this.mIsDelete = isDelete;
     }
 
     @NonNull
@@ -35,21 +42,28 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull MyAppsViewHolder holder, int position) {
-//        final MyAppItem item = mData.get(position);
-//        holder.mTitle.setText(item.getName());
-//        holder.mDeveloper.setText(item.getDeveloper());
-//        //TODO daokun.xi
-////        holder.mLogo.setImageResource();
-//        boolean delete = item.isDelete();
-//        if(delete){
-//            holder.mAbout.setVisibility(View.GONE);
-//            holder.mDelete.setVisibility(View.VISIBLE);
-//            holder.mTouch.setVisibility(View.VISIBLE);
-//        } else {
-//            holder.mAbout.setVisibility(View.VISIBLE);
-//            holder.mDelete.setVisibility(View.GONE);
-//            holder.mTouch.setVisibility(View.GONE);
-//        }
+        final MyAppItem item = mData.get(position);
+
+        String languageCode = Locale.getDefault().getLanguage();
+        if(!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")){
+            holder.mTitle.setText(item.name.cn);
+        } else {
+            holder.mTitle.setText(item.name.en);
+        }
+
+        holder.mDeveloper.setText(item.developer);
+        holder.mLogo.setImageResource(R.drawable.btc); //TODO tmp
+
+        //TODO daokun.xi
+        if(mIsDelete){
+            holder.mAbout.setVisibility(View.GONE);
+            holder.mDelete.setVisibility(View.VISIBLE);
+            holder.mTouch.setVisibility(View.VISIBLE);
+        } else {
+            holder.mAbout.setVisibility(View.VISIBLE);
+            holder.mDelete.setVisibility(View.GONE);
+            holder.mTouch.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -88,7 +102,7 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
             mDeveloper = itemView.findViewById(R.id.explore_item_developer_tv);
             mDelete = itemView.findViewById(R.id.explore_item_delete_tv);
             mTouch = itemView.findViewById(R.id.explore_item_touch_tv);
-            mAbout = itemView.findViewById(R.id.explore_about_tv);
+            mAbout = itemView.findViewById(R.id.explore_item_about_tv);
         }
     }
 }

@@ -15,10 +15,9 @@ import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.ethereum.BREthereumToken;
-import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -26,7 +25,6 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Bip39Reader;
 import com.breadwallet.tools.util.TrustedNode;
-import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
@@ -35,7 +33,7 @@ import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
-import com.elastos.jni.Utility;
+import com.breadwallet.wallet.wallets.ioex.WalletIoexManager;
 import com.platform.entities.TokenListMetaData;
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
@@ -104,11 +102,11 @@ public class WalletsMaster {
             enabled.add(new TokenListMetaData.TokenInfo("BTC", false, null));
             enabled.add(new TokenListMetaData.TokenInfo("USDT", true, "0xdAC17F958D2ee523a2206206994597C13D831ec7"));
             enabled.add(new TokenListMetaData.TokenInfo("ELA", false, null));
+            enabled.add(new TokenListMetaData.TokenInfo("IOEX", false, null));
             enabled.add(new TokenListMetaData.TokenInfo("ETH", false, null));
             enabled.add(new TokenListMetaData.TokenInfo("BGX", true, "0xbf3f09e4eba5f7805e5fac0ee09fd6ee8eebe4cb"));
             enabled.add(new TokenListMetaData.TokenInfo("HSC", true, "0x2bba3cf6de6058cc1b4457ce00deb359e2703d7f"));
             enabled.add(new TokenListMetaData.TokenInfo("BCH", false, null));
-            enabled.add(new TokenListMetaData.TokenInfo("IOEX", true, "0x2bba3cf6de6058cc1b4457ce00deb359e2703d7d"));
             if(ethWallet!=null && ethWallet.node!=null){
 //                BREthereumWallet brdWallet = ethWallet.node.getWallet(ethWallet.node.tokenBRD);
 //                enabled.add(new TokenListMetaData.TokenInfo(brdWallet.getToken().getSymbol(), true, brdWallet.getToken().getAddress()));
@@ -124,6 +122,8 @@ public class WalletsMaster {
 
             if(enabled.symbol.equalsIgnoreCase("ELA") && !isHidden){
                 mWallets.add(WalletElaManager.getInstance(app));
+            } else if (enabled.symbol.equalsIgnoreCase("IOEX") && !isHidden) {
+                mWallets.add(WalletIoexManager.getInstance(app));
             } else if (enabled.symbol.equalsIgnoreCase("BTC") && !isHidden) {
                 //BTC wallet
                 mWallets.add(WalletBitcoinManager.getInstance(app));

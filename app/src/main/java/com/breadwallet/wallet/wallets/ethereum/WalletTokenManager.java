@@ -112,7 +112,11 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
         String address = mTokenIsos.get(iso.toLowerCase());
         address = address == null ? null : address.toLowerCase();
         if (address == null) {
-            if (!iso.equalsIgnoreCase("BTC") && !iso.equalsIgnoreCase("BCH") && !iso.equalsIgnoreCase("ETH") && !iso.equalsIgnoreCase("ELA"))
+            if (!iso.equalsIgnoreCase("BTC")
+                    && !iso.equalsIgnoreCase("BCH")
+                    && !iso.equalsIgnoreCase("ETH")
+                    && !iso.equalsIgnoreCase("ELA")
+                    && !iso.equalsIgnoreCase("IOEX"))
                 BRReportsManager.reportBug(new NullPointerException("getTokenWalletByIso: address is null for: " + iso));
             return null;
         }

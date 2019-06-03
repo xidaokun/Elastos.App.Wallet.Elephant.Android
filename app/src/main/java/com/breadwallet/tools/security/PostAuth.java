@@ -218,7 +218,8 @@ public class PostAuth {
                 if (mCryptoRequest != null && mCryptoRequest.amount != null && mCryptoRequest.address != null) {
 
                     CryptoTransaction tx = null;
-                    if(mWalletManager.getIso().equalsIgnoreCase("ELA")){
+                    if(mWalletManager.getIso().equalsIgnoreCase("ELA")
+                            || mWalletManager.getIso().equalsIgnoreCase("IOEX")){
                         tx = mWalletManager.createTransaction(mCryptoRequest.amount, mCryptoRequest.address, mCryptoRequest.message);
                     } else {
                         tx = mWalletManager.createTransaction(mCryptoRequest.amount, mCryptoRequest.address);

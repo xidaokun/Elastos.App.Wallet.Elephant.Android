@@ -28,19 +28,21 @@ import com.breadwallet.tools.adapter.ExploreAppsAdapter;
 import com.breadwallet.tools.animation.SimpleItemTouchHelperCallback;
 import com.breadwallet.tools.listeners.OnStartDragListener;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class FragmentExplore extends Fragment implements OnStartDragListener {
 
-    private static final String TAG = FragmentExplore.class.getSimpleName()+"_log";
+    private static final String TAG = FragmentExplore.class.getSimpleName() + "_log";
 
     public static FragmentExplore newInstance(String text) {
 
@@ -62,26 +64,77 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
     private View mAddBtn;
     private View mEditBtn;
     private View mOkBtn;
+    private View mEditPopView;
+    private View mAddPopView;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_explore_layout, container, false);
         initView(rootView);
+        initAdapter();
         initListener();
-        if(BRSharedPrefs.getDisclaimShow(getContext())) mDisclaimLayout.setVisibility(View.VISIBLE);
+        if (BRSharedPrefs.getDisclaimShow(getContext()))
+            mDisclaimLayout.setVisibility(View.VISIBLE);
         return rootView;
     }
 
+    private List<MyAppItem> mItems = new ArrayList<>();
 
-    private void initView(View rootView){
+    private void initView(View rootView) {
         mDisclaimLayout = rootView.findViewById(R.id.disclaim_layout);
         mOkBtn = rootView.findViewById(R.id.disclaim_ok_btn);
         mDoneBtn = rootView.findViewById(R.id.explore_done_tv);
         mCancelBtn = rootView.findViewById(R.id.explore_cancel_tv);
+        mAddBtn = rootView.findViewById(R.id.explore_add_tv);
+        mEditBtn = rootView.findViewById(R.id.explore_edit_tv);
         mMyAppsRv = rootView.findViewById(R.id.app_list_rv);
+        mEditPopView = rootView.findViewById(R.id.explore_edit_pop);
+        mAddPopView = rootView.findViewById(R.id.explore_add_pop);
+    }
+
+    private void initAdapter(){
+        mItems.clear();
+        MyAppItem redPackageItem = new MyAppItem();
+        redPackageItem.appId = BRConstants.REA_PACKAGE_ID;
+        redPackageItem.name_zh_CN = "红包";
+        redPackageItem.name_en = "red package";
+        redPackageItem.url = "https://redpacket.elastos.org";
+        redPackageItem.developer = "elastos";
+        redPackageItem.shortDesc_zh_CN = "红包";
+        redPackageItem.shortDesc_en = "red package";
+        redPackageItem.longDesc_en = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+        redPackageItem.longDesc_zh_CN = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+        mItems.add(redPackageItem);
+
+        MyAppItem dposVoteItem = new MyAppItem();
+        dposVoteItem.appId = BRConstants.DPOS_VOTE_ID;
+        dposVoteItem.name_zh_CN = "dpos投票";
+        dposVoteItem.name_en = "dpos vote";
+        dposVoteItem.url = "http://elaphant.net/";
+        dposVoteItem.developer = "elastos";
+        dposVoteItem.shortDesc_en = "dpos投票";
+        dposVoteItem.shortDesc_zh_CN = "dpos vote";
+        mItems.add(dposVoteItem);
+
+        MyAppItem exchageItem = new MyAppItem();
+        exchageItem.appId = BRConstants.EXCHANGE_ID;
+        exchageItem.name_zh_CN = "兑换";
+        exchageItem.name_en = "exchage";
+        exchageItem.url = "http://swft.elabank.net";
+        exchageItem.developer = "elastos";
+        dposVoteItem.shortDesc_zh_CN = "兑换";
+        dposVoteItem.shortDesc_en = "exchage";
+        mItems.add(exchageItem);
+
+        List<MyAppItem> items = getAppItems();
+        if (items != null) {
+            mItems.addAll(items);
+        }
 
         mMyAppsRv.setLayoutManager(new LinearLayoutManager(getContext()));
+        mAdapter = new ExploreAppsAdapter(getContext(), mItems);
+        mAdapter.isDelete(false);
         mMyAppsRv.setAdapter(mAdapter);
 
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mAdapter);
@@ -89,11 +142,35 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
         mItemTouchHelper.attachToRecyclerView(mMyAppsRv);
     }
 
-    private void initListener(){
+    private void initListener() {
+        mAddBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAddPopView.setVisibility(View.VISIBLE);
+            }
+        });
+
+        mEditBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEditPopView.setVisibility(View.VISIBLE);
+                changeView(true);
+                mAdapter.isDelete(true);
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+
+        mCancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeView(false);
+            }
+        });
+
         mDoneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                downloadCapsule("https://xidaokun.github.io/vote.capsule");
+//                downloadCapsule("https://xidaokun.github.io/vote.capsule");
             }
         });
 
@@ -112,40 +189,49 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
         });
     }
 
+    private void changeView(boolean isEdit){
+        mAddBtn.setVisibility(isEdit?View.GONE:View.VISIBLE);
+        mEditBtn.setVisibility(isEdit?View.GONE:View.VISIBLE);
+        mCancelBtn.setVisibility(isEdit?View.VISIBLE:View.GONE);
+        mDoneBtn.setVisibility(isEdit?View.VISIBLE:View.GONE);
+    }
+
     @Override
     public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
         mItemTouchHelper.startDrag(viewHolder);
     }
 
-    private List<MyAppItem> getAppItems(){
+
+    private List<MyAppItem> getAppItems() {
+        List<MyAppItem> items = new ArrayList<>();
         File capsule = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule");
         File[] files = capsule.listFiles();
-        for(File file : files){
-            if(file.isDirectory()){
-                MyAppItem myAppItem = new MyAppItem();
+        if(null == files) return null;
+        for (File file : files) {
+            if (file.isDirectory()) {
                 File jsonFile = new File(file, "app.json");
-                File logoFile = new File(file, "banner/en/bannar1x.png");
                 String json = getJsonFromCapsule(jsonFile);
-                String logoPath = logoFile.getAbsolutePath();
-                new Gson().fromJson(json, MyAppItem.class);
-
+                MyAppItem item = new Gson().fromJson(json, MyAppItem.class);
+                items.add(item);
             }
         }
-        return null;
+        return items;
     }
 
     private DownloadManager manager;
-    private long downloadCapsule(String url){
-        Log.d(TAG, "capsule url:"+url);
-        if(StringUtil.isNullOrEmpty(url)) return -1;
+    private String mDoloadFileName;
+    private long downloadCapsule(String url) {
+        Log.d(TAG, "capsule url:" + url);
+        if (StringUtil.isNullOrEmpty(url)) return -1;
         DownloadManager.Request request;
-        try{
+        try {
             Uri uri = Uri.parse(url);
-            String fileName = uri.getLastPathSegment();
+            mDoloadFileName = uri.getLastPathSegment();
+            if (StringUtil.isNullOrEmpty(mDoloadFileName)) return -1;
             request = new DownloadManager.Request(uri);
-            request.setDestinationInExternalFilesDir(getContext(), Environment.DIRECTORY_DOWNLOADS, fileName+".zip");
+            request.setDestinationInExternalFilesDir(getContext(), Environment.DIRECTORY_DOWNLOADS, mDoloadFileName + ".zip");
             manager = (DownloadManager) getContext().getApplicationContext().getSystemService(Context.DOWNLOAD_SERVICE);
-            long downloadId =  manager.enqueue(request);
+            long downloadId = manager.enqueue(request);
             registerDownloadReceiver();
             return downloadId;
         } catch (Exception e) {
@@ -154,20 +240,27 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
         return -1;
     }
 
-    private void registerDownloadReceiver(){
+    private void registerDownloadReceiver() {
         IntentFilter intentFilter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
-
                 decompression();
                 deleteDownloadCapsule();
-//                //TODO test
+                File appJsonPath = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule/" + mDoloadFileName + "/app.json");
+                String json = getJsonFromCapsule(appJsonPath);
+                MyAppItem item = new Gson().fromJson(json, MyAppItem.class);
+                if (item != null) {
+                    mItems.add(item);
+                }
+
+                //TODO test
+//                long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
 //                File appJsonPath = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule/vote.capsule/app.json");
 //                File appIconPath = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule/vote.capsule/banner/en/bannar1x.png");
 //                String tmp = getJsonFromCapsule(appJsonPath);
 //                Bitmap tmp1 = getIconFromCapsule(appIconPath);
+
 
                 logFile("capsule", new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule"));
                 logFile("download", getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile());
@@ -179,14 +272,14 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
         getContext().registerReceiver(broadcastReceiver, intentFilter);
     }
 
-    private String getJsonFromCapsule(File filePath){
+    private String getJsonFromCapsule(File filePath) {
         FileInputStream inputStream;
         StringBuilder sb = new StringBuilder();
         try {
             inputStream = new FileInputStream(filePath);
             byte buffer[] = new byte[1024];
             int len;
-            while ((len = inputStream.read(buffer)) > 0){
+            while ((len = inputStream.read(buffer)) > 0) {
                 sb.append(new String(buffer, 0, len));
             }
             inputStream.close();
@@ -196,7 +289,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
         return sb.toString();
     }
 
-    private Bitmap getIconFromCapsule(File filePath){
+    private Bitmap getIconFromCapsule(File filePath) {
 //        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 //        try {
 //            FileInputStream inputStream = new FileInputStream(filePath);
@@ -215,10 +308,10 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
         return BitmapFactory.decodeFile(filePath.getAbsolutePath());
     }
 
-    private void decompression(){
+    private void decompression() {
         try {
             File file = getZipFile();
-            if(null == file) return;
+            if (null == file) return;
             File cacheFile = getContext().getExternalCacheDir().getAbsoluteFile();
             File capsuleFile = new File(cacheFile, "capsule");
 
@@ -228,19 +321,19 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
         }
     }
 
-    private void deleteDownloadCapsule(){
+    private void deleteDownloadCapsule() {
         File file = getZipFile();
-        if(null != file) file.delete();
+        if (null != file) file.delete();
     }
 
-    private File getZipFile(){
+    private File getZipFile() {
         File downloadFile = getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile();
-        if(downloadFile.exists()){
+        if (downloadFile.exists()) {
             File[] files = downloadFile.listFiles();
-            if(files==null || files.length==0) return null;
-            for(File file : files){
+            if (files == null || files.length == 0) return null;
+            for (File file : files) {
                 String name = file.getName();
-                if(!StringUtil.isNullOrEmpty(name) && name.contains("capsule")){
+                if (!StringUtil.isNullOrEmpty(name) && name.contains("capsule")) {
                     return file;
                 }
             }
@@ -249,18 +342,18 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
         return null;
     }
 
-    private void logFile(String flag, File path){
+    private void logFile(String flag, File path) {
         File[] files = path.listFiles();
-        for(File file : files){
+        for (File file : files) {
             String name = file.getName();
-            Log.d(TAG, flag+" fileName:"+name);
+            Log.d(TAG, flag + " fileName:" + name);
         }
     }
 
     public static void unZipFolder(String zipFileString, String outPathString) throws Exception {
         ZipInputStream inZip = new ZipInputStream(new FileInputStream(zipFileString));
         ZipEntry zipEntry;
-        String  szName = "";
+        String szName = "";
         while ((zipEntry = inZip.getNextEntry()) != null) {
             szName = zipEntry.getName();
             if (zipEntry.isDirectory()) {
@@ -268,9 +361,9 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
                 File folder = new File(outPathString + File.separator + szName);
                 folder.mkdirs();
             } else {
-                Log.d(TAG,outPathString + File.separator + szName);
+                Log.d(TAG, outPathString + File.separator + szName);
                 File file = new File(outPathString + File.separator + szName);
-                if (!file.exists()){
+                if (!file.exists()) {
                     file.getParentFile().mkdirs();
                     file.createNewFile();
                 }
