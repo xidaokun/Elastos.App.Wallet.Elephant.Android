@@ -153,10 +153,12 @@ public class WalletsMaster {
     //return the needed wallet for the iso
     public BaseWalletManager getWalletByIso(Context app, String iso) {
 //        Log.d(TAG, "getWalletByIso() Getting wallet by ISO -> " + iso);
-        if(iso.equalsIgnoreCase("ELA"))
-            return WalletElaManager.getInstance(app);
         if (Utils.isNullOrEmpty(iso))
             throw new RuntimeException("getWalletByIso with iso = null, Cannot happen!");
+        if(iso.equalsIgnoreCase("ELA"))
+            return WalletElaManager.getInstance(app);
+        if(iso.equalsIgnoreCase("IOEX"))
+            return WalletIoexManager.getInstance(app);
         if (iso.equalsIgnoreCase("BTC"))
             return WalletBitcoinManager.getInstance(app);
         if (iso.equalsIgnoreCase("BCH"))

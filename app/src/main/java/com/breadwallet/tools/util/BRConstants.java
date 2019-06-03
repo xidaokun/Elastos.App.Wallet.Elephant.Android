@@ -62,6 +62,7 @@ public final class BRConstants {
     public static final int SCANNER_REQUEST = 201;
     public static final int REQUEST_IMAGE_CAPTURE = 203;
     public static final int SCANNER_DID_REQUEST = 204;
+    public static final int ADD_APP_URL_REQUEST = 205;
 
     public static final String CANARY_STRING = "canary";
 

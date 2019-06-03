@@ -9,6 +9,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
 import com.breadwallet.presenter.customviews.BREdit;
 import com.breadwallet.presenter.customviews.BaseTextView;
+import com.breadwallet.tools.util.StringUtil;
 
 public class AddAppsActivity extends BaseSettingsActivity {
 
@@ -23,7 +24,7 @@ public class AddAppsActivity extends BaseSettingsActivity {
 
     @Override
     public int getBackButtonId() {
-        return R.id.close_button;
+        return R.id.back_button;
     }
 
     @Override
@@ -35,7 +36,7 @@ public class AddAppsActivity extends BaseSettingsActivity {
 
     private void initView(){
         mUrl = findViewById(R.id.add_apps_edt);
-        mAdd = findViewById(R.id.close_button);
+        mAdd = findViewById(R.id.add_button);
         mClean = findViewById(R.id.add_apps_clean);
     }
 
@@ -43,9 +44,13 @@ public class AddAppsActivity extends BaseSettingsActivity {
         mAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.putExtra("url", mUrl.getText().toString());
-                setResult(RESULT_OK, intent);
+                String url = mUrl.getText().toString();
+                if(!StringUtil.isNullOrEmpty(url)){
+                    Intent intent = new Intent();
+                    intent.putExtra("result", url);
+                    setResult(RESULT_OK, intent);
+                }
+                finish();
             }
         });
 

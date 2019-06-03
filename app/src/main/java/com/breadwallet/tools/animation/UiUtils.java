@@ -11,6 +11,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.did.CallbackEntity;
 import com.breadwallet.did.DidDataSource;
+import com.breadwallet.presenter.activities.AddAppsActivity;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.ExploreWebActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
@@ -411,6 +413,11 @@ public class UiUtils {
         }
 
         return 0;
+    }
+
+    public static void startAddAppsActivity(Activity activity, int requestCode){
+        Intent intent = new Intent(activity, AddAppsActivity.class);
+        activity.startActivityForResult(intent, requestCode);
     }
 
     public static void startSignEditActivity(Activity activity, String from, String value, int requestCode){

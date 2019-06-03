@@ -46,9 +46,9 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
 
         String languageCode = Locale.getDefault().getLanguage();
         if(!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")){
-            holder.mTitle.setText(item.name.cn);
+            holder.mTitle.setText(item.name_zh_CN);
         } else {
-            holder.mTitle.setText(item.name.en);
+            holder.mTitle.setText(item.name_en);
         }
 
         holder.mDeveloper.setText(item.developer);

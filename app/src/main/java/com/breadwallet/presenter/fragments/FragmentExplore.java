@@ -21,11 +21,13 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.entities.MyAppItem;
 import com.breadwallet.tools.adapter.ExploreAppsAdapter;
 import com.breadwallet.tools.animation.SimpleItemTouchHelperCallback;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.listeners.OnStartDragListener;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
@@ -58,6 +60,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
     private RecyclerView mMyAppsRv;
     private ExploreAppsAdapter mAdapter;
     private View mDisclaimLayout;
+    private View mPopLayout;
     private ItemTouchHelper mItemTouchHelper;
     private View mDoneBtn;
     private View mCancelBtn;
@@ -66,6 +69,8 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
     private View mOkBtn;
     private View mEditPopView;
     private View mAddPopView;
+    private View mAddUrlView;
+    private View mAddScanView;
 
     @Nullable
     @Override
@@ -83,6 +88,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
 
     private void initView(View rootView) {
         mDisclaimLayout = rootView.findViewById(R.id.disclaim_layout);
+        mPopLayout = rootView.findViewById(R.id.explore_pop_layout);
         mOkBtn = rootView.findViewById(R.id.disclaim_ok_btn);
         mDoneBtn = rootView.findViewById(R.id.explore_done_tv);
         mCancelBtn = rootView.findViewById(R.id.explore_cancel_tv);
@@ -91,6 +97,8 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
         mMyAppsRv = rootView.findViewById(R.id.app_list_rv);
         mEditPopView = rootView.findViewById(R.id.explore_edit_pop);
         mAddPopView = rootView.findViewById(R.id.explore_add_pop);
+        mAddUrlView = rootView.findViewById(R.id.explore_url_pop);
+        mAddScanView = rootView.findViewById(R.id.explore_scan_pop);
     }
 
     private void initAdapter(){
@@ -146,17 +154,45 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
         mAddBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAddPopView.setVisibility(View.VISIBLE);
+                mPopLayout.setVisibility(mAddPopView.getVisibility()==View.VISIBLE?View.GONE:View.VISIBLE);
+                mAddPopView.setVisibility(mAddPopView.getVisibility()==View.VISIBLE?View.GONE:View.VISIBLE);
+                mEditPopView.setVisibility(View.GONE);
             }
         });
 
         mEditBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mEditPopView.setVisibility(View.VISIBLE);
+                mPopLayout.setVisibility(mEditPopView.getVisibility()==View.VISIBLE?View.GONE:View.VISIBLE);
+                mEditPopView.setVisibility(mEditPopView.getVisibility()==View.VISIBLE?View.GONE:View.VISIBLE);
+                mAddPopView.setVisibility(View.GONE);
+            }
+        });
+
+        mEditPopView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEditPopView.setVisibility(View.GONE);
+                mPopLayout.setVisibility(View.GONE);
                 changeView(true);
                 mAdapter.isDelete(true);
                 mAdapter.notifyDataSetChanged();
+            }
+        });
+
+        mAddUrlView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPopLayout.setVisibility(View.GONE);
+                UiUtils.startAddAppsActivity(getActivity(), BRConstants.ADD_APP_URL_REQUEST);
+            }
+        });
+
+        mAddScanView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPopLayout.setVisibility(View.GONE);
+                UiUtils.openScanner(getActivity(), BRConstants.ADD_APP_URL_REQUEST);
             }
         });
 
@@ -171,6 +207,9 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
             @Override
             public void onClick(View v) {
 //                downloadCapsule("https://xidaokun.github.io/vote.capsule");
+                changeView(false);
+                mAdapter.isDelete(false);
+                mAdapter.notifyDataSetChanged();
             }
         });
 
@@ -184,6 +223,15 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
         mDisclaimLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
+                return true;
+            }
+        });
+        mPopLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                mPopLayout.setVisibility(View.GONE);
+                mAddPopView.setVisibility(View.GONE);
+                mEditPopView.setVisibility(View.GONE);
                 return true;
             }
         });
@@ -212,7 +260,9 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
                 File jsonFile = new File(file, "app.json");
                 String json = getJsonFromCapsule(jsonFile);
                 MyAppItem item = new Gson().fromJson(json, MyAppItem.class);
-                items.add(item);
+                if(item != null){
+                    items.add(item);
+                }
             }
         }
         return items;
@@ -220,7 +270,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
 
     private DownloadManager manager;
     private String mDoloadFileName;
-    private long downloadCapsule(String url) {
+    public long downloadCapsule(String url) {
         Log.d(TAG, "capsule url:" + url);
         if (StringUtil.isNullOrEmpty(url)) return -1;
         DownloadManager.Request request;
@@ -233,6 +283,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
             manager = (DownloadManager) getContext().getApplicationContext().getSystemService(Context.DOWNLOAD_SERVICE);
             long downloadId = manager.enqueue(request);
             registerDownloadReceiver();
+            Toast.makeText(getContext(), "开始下载", Toast.LENGTH_SHORT).show();
             return downloadId;
         } catch (Exception e) {
             e.printStackTrace();
@@ -245,26 +296,25 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                decompression();
-                deleteDownloadCapsule();
-                File appJsonPath = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule/" + mDoloadFileName + "/app.json");
-                String json = getJsonFromCapsule(appJsonPath);
-                MyAppItem item = new Gson().fromJson(json, MyAppItem.class);
-                if (item != null) {
-                    mItems.add(item);
+                try {
+//                    logFile("download", getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile());
+                    File file = decompression();
+                    Log.d(TAG, "unzip path:"+file.getAbsolutePath());
+                    deleteDownloadCapsule();
+                    if(file == null) return;
+//                    logFile("capsule", file);
+
+                    File appJsonPath = new File(file, "/app.json");
+                    String json = getJsonFromCapsule(appJsonPath);
+                    MyAppItem item = new Gson().fromJson(json, MyAppItem.class);
+                    if (item != null) {
+                        mItems.add(item);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                    Toast.makeText(getContext(), "下载完成", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-                //TODO test
-//                long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
-//                File appJsonPath = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule/vote.capsule/app.json");
-//                File appIconPath = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule/vote.capsule/banner/en/bannar1x.png");
-//                String tmp = getJsonFromCapsule(appJsonPath);
-//                Bitmap tmp1 = getIconFromCapsule(appIconPath);
-
-
-                logFile("capsule", new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule"));
-                logFile("download", getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile());
-                logFile("vote.capsule", new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule/vote.capsule"));
 
                 context.unregisterReceiver(this);
             }
@@ -308,17 +358,16 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
         return BitmapFactory.decodeFile(filePath.getAbsolutePath());
     }
 
-    private void decompression() {
+    private File decompression() {
         try {
             File file = getZipFile();
-            if (null == file) return;
-            File cacheFile = getContext().getExternalCacheDir().getAbsoluteFile();
-            File capsuleFile = new File(cacheFile, "capsule");
-
-            unZipFolder(file.getAbsolutePath(), capsuleFile.getAbsolutePath());
+            if (null == file) return null;
+            return unZipFolder(file.getAbsolutePath(), new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule").getAbsolutePath());
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return null;
     }
 
     private void deleteDownloadCapsule() {
@@ -327,35 +376,49 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
     }
 
     private File getZipFile() {
-        File downloadFile = getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile();
-        if (downloadFile.exists()) {
-            File[] files = downloadFile.listFiles();
-            if (files == null || files.length == 0) return null;
-            for (File file : files) {
-                String name = file.getName();
-                if (!StringUtil.isNullOrEmpty(name) && name.contains("capsule")) {
-                    return file;
+        try {
+            File downloadFile = getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile();
+            if (downloadFile.exists()) {
+                File[] files = downloadFile.listFiles();
+                if (files == null || files.length == 0) return null;
+                for (File file : files) {
+                    String name = file.getName();
+                    if (!StringUtil.isNullOrEmpty(name) && name.contains(".capsule")) {
+                        return file;
+                    }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return null;
     }
 
     private void logFile(String flag, File path) {
+        Log.d(TAG, "<-----------------------------"+path.getAbsolutePath()+" start------------------------------>");
         File[] files = path.listFiles();
+        if(files == null) return;
         for (File file : files) {
             String name = file.getName();
             Log.d(TAG, flag + " fileName:" + name);
         }
+        Log.d(TAG, "<-----------------------------"+path.getAbsolutePath()+" end------------------------------>");
+        Log.d(TAG, "\n\n");
     }
 
-    public static void unZipFolder(String zipFileString, String outPathString) throws Exception {
+    public static File unZipFolder(String zipFileString, String outPathString) throws Exception {
+        boolean isFirstName = true;
         ZipInputStream inZip = new ZipInputStream(new FileInputStream(zipFileString));
         ZipEntry zipEntry;
         String szName = "";
+        String firstName = null;
         while ((zipEntry = inZip.getNextEntry()) != null) {
             szName = zipEntry.getName();
+            if(isFirstName){
+                firstName = zipEntry.getName();
+                isFirstName = false;
+            }
             if (zipEntry.isDirectory()) {
                 szName = szName.substring(0, szName.length() - 1);
                 File folder = new File(outPathString + File.separator + szName);
@@ -378,5 +441,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
             }
         }
         inZip.close();
+
+        return new File(outPathString + File.separator + firstName);
     }
 }

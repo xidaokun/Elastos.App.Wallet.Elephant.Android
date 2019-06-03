@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.NonNull;
@@ -21,6 +22,7 @@ import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.ProfileDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 import com.elastos.jni.Utility;
 import com.google.gson.Gson;
@@ -204,6 +206,19 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     public void onConnectionChanged(boolean isConnected) {
         if (mWalletFragment != null)
             mWalletFragment.onConnectionChanged(isConnected);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(data == null) return;
+        if(requestCode == BRConstants.ADD_APP_URL_REQUEST){
+            String url = data.getStringExtra("result");
+            if(null != mExploreFragment){
+                mExploreFragment.downloadCapsule(url);
+            }
+        }
     }
 
     @Override
