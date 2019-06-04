@@ -348,9 +348,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".presenter.activities.ExploreAboutActivity">
+        <activity android:name=".presenter.activities.AppAboutActivity"
+            android:screenOrientation="portrait"/>
 
-        </activity>
+        <activity android:name=".presenter.activities.AddAppsActivity"
+            android:screenOrientation="portrait"/>
 
         <provider
             android:name=".presenter.provider.BuglyFileProvider"

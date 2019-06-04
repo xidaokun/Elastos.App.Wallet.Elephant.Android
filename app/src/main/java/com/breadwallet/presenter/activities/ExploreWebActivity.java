@@ -24,7 +24,6 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.tools.animation.UiUtils;
-import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.StringUtil;
 
 import org.wallet.library.AuthorizeManager;
@@ -99,7 +98,7 @@ public class ExploreWebActivity extends BRActivity {
         mAboutTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ExploreWebActivity.this, ExploreAboutActivity.class);
+                Intent intent = new Intent(ExploreWebActivity.this, AppAboutActivity.class);
                 startActivity(intent);
                 mMenuLayout.setVisibility(View.GONE);
             }

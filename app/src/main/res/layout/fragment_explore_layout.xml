@@ -6,6 +6,7 @@
     android:background="@color/primary_background"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.breadwallet.presenter.activities.settings.WebViewActivity">
+
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
@@ -19,51 +20,76 @@
         android:layout_marginTop="10dp"
         android:text="@string/My.explore.title"/>
 
-    <View
-        android:id="@+id/explore_banner1"
-        android:layout_width="match_parent"
-        android:layout_height="112dp"
-        android:layout_marginTop="18dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/explore_cancel_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:textColor="@color/black_999999"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="20dp"
         android:visibility="gone"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title"/>
+        android:text="Cancel"/>
 
-    <View
-        android:id="@+id/explore_banner2"
-        android:layout_width="match_parent"
-        android:layout_height="112dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        app:layout_constraintLeft_toLeftOf="parent"
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/explore_done_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:textColor="#ff3365"
+        android:layout_marginTop="15dp"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/explore_banner1"/>
-
-    <View
-        android:id="@+id/explore_banner3"
-        android:layout_width="match_parent"
-        android:layout_height="112dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/explore_banner2"/>
-
-    <View
-        android:id="@+id/explore_banner4"
-        android:layout_width="match_parent"
-        android:layout_height="112dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
+        android:layout_marginRight="20dp"
         android:visibility="gone"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:text="Done"/>
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/explore_add_tv"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/explore_banner3"/>
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="56dp"
+        android:background="@drawable/ic_explore_add"/>
+
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/explore_edit_tv"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/ic_explore_edit"/>
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/my_apps_title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="32dp"
+        android:text="My apps"
+        android:textSize="15sp"
+        android:textColor="#1f1f1f"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/app_list_rv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/my_apps_title_tv"
+        android:layout_marginTop="18dp"/>
+
+    <include
+        android:id="@+id/explore_pop_layout"
+        android:visibility="gone"
+        layout="@layout/explore_pop_layout"/>
 
     <include
         android:id="@+id/disclaim_layout"

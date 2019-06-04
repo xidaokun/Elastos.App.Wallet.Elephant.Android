@@ -116,7 +116,7 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
         mAddress = rootView.findViewById(R.id.address_text);
         mQrImage = rootView.findViewById(R.id.qr_image);
         mShareButton = rootView.findViewById(R.id.share_button);
-        mCloseButton = rootView.findViewById(R.id.close_button);
+        mCloseButton = rootView.findViewById(R.id.add_button);
         mKeyboardIndex = mSignalLayout.indexOfChild(mKeyboardLayout);
 
         ImageButton faq = rootView.findViewById(R.id.faq_button);

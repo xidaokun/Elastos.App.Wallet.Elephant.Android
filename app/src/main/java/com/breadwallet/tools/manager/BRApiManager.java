@@ -12,14 +12,12 @@ import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
-import com.breadwallet.wallet.wallets.ela.ElaDataSource;
+import com.breadwallet.tools.sqlite.ElaDataSource;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
-import com.google.gson.Gson;
 import com.platform.APIClient;
 
 import org.json.JSONArray;
@@ -27,8 +25,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.wallet.library.utils.HexUtils;
 
-import java.io.IOException;
-import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
@@ -45,7 +41,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import okhttp3.Request;
-import okhttp3.Response;
 
 /**
  * BreadWallet

@@ -18,6 +18,7 @@ import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.SendManager;
@@ -217,7 +218,8 @@ public class PostAuth {
                 if (mCryptoRequest != null && mCryptoRequest.amount != null && mCryptoRequest.address != null) {
 
                     CryptoTransaction tx = null;
-                    if(mWalletManager.getIso().equalsIgnoreCase("ELA")){
+                    if(mWalletManager.getIso().equalsIgnoreCase("ELA")
+                            || mWalletManager.getIso().equalsIgnoreCase("IOEX")){
                         tx = mWalletManager.createTransaction(mCryptoRequest.amount, mCryptoRequest.address, mCryptoRequest.message);
                     } else {
                         tx = mWalletManager.createTransaction(mCryptoRequest.amount, mCryptoRequest.address);
@@ -235,6 +237,7 @@ public class PostAuth {
                         return;
                     }
                     final byte[] txHash = mWalletManager.signAndPublishTransaction(tx, rawPhrase);
+                    if(txHash!=null && txHash.length>1)    UiUtils.payReturnData(activity, new String(txHash));
 
                     txMetaData = new TxMetaData();
                     txMetaData.comment = mCryptoRequest.message;
@@ -314,6 +317,7 @@ public class PostAuth {
             @Override
             public void run() {
                 byte[] txHash = WalletsMaster.getInstance(activity).getCurrentWallet(activity).signAndPublishTransaction(mPaymentProtocolTx, paperKey);
+                if(txHash!=null && txHash.length>1)    UiUtils.payReturnData(activity, new String(txHash));
                 if (Utils.isNullOrEmpty(txHash)) {
                     Log.e(TAG, "run: txHash is null");
                 }

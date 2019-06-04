@@ -15,7 +15,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -24,8 +23,12 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.OvershootInterpolator;
+import android.widget.Toast;
 
 import com.breadwallet.R;
+import com.breadwallet.did.CallbackEntity;
+import com.breadwallet.did.DidDataSource;
+import com.breadwallet.presenter.activities.AddAppsActivity;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.ExploreWebActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
@@ -39,6 +42,7 @@ import com.breadwallet.presenter.activities.sign.SignaureActivity;
 import com.breadwallet.presenter.activities.sign.SignaureEditActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
+import com.breadwallet.presenter.entities.ElapayEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.presenter.fragments.FragmentReceive;
 import com.breadwallet.presenter.fragments.FragmentRequestAmount;
@@ -49,9 +53,12 @@ import com.breadwallet.presenter.fragments.FragmentTxDetails;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
+import com.breadwallet.tools.sqlite.ElaDataSource;
+import com.google.gson.Gson;
 
 import org.wallet.library.Constants;
 
@@ -406,11 +413,83 @@ public class UiUtils {
         return 0;
     }
 
+    public static void startAddAppsActivity(Activity activity, int requestCode){
+        Intent intent = new Intent(activity, AddAppsActivity.class);
+        activity.startActivityForResult(intent, requestCode);
+    }
+
     public static void startSignEditActivity(Activity activity, String from, String value, int requestCode){
         Intent intent = new Intent(activity, SignaureEditActivity.class);
         intent.putExtra("from", from);
         intent.putExtra("value", value);
         activity.startActivityForResult(intent, requestCode);
+    }
+
+    public static void returnDataNeedSign(Activity activity, String returnUrl, String Data, String Sign, String appId, String targe){
+        if (!StringUtil.isNullOrEmpty(returnUrl)) {
+            String url;
+            if (returnUrl.contains("?")) {
+                url = returnUrl + "&Data="+Uri.encode(Data)+"&Sign="+Uri.encode(Sign)+"&browser=elaphant";
+            } else {
+                url = returnUrl + "?Data="+Uri.encode(Data)+"&Sign="+Uri.encode(Sign)+"&browser=elaphant";
+            }
+
+            if(BRConstants.REA_PACKAGE_ID.equals(appId) || BRConstants.DPOS_VOTE_ID.equals(appId)
+                    || BRConstants.EXCHANGE_ID.equalsIgnoreCase(appId) || (!StringUtil.isNullOrEmpty(targe) && targe.equals("internal"))){
+                UiUtils.startWebviewActivity(activity, url);
+            } else {
+                UiUtils.openUrlByBrowser(activity, url);
+            }
+        }
+    }
+
+    public static void callbackDataNeedSign(Activity activity, String backurl, CallbackEntity entity){
+        if(entity==null || StringUtil.isNullOrEmpty(backurl)) return;
+        String params = new Gson().toJson(entity);
+        String ret = DidDataSource.getInstance(activity).urlPost(backurl, params);
+        if ((StringUtil.isNullOrEmpty(ret) || StringUtil.isNullOrEmpty(ret) || ret.contains("err code:"))) {
+            toast(activity,"callback return error");
+        }
+    }
+
+    public static void toast(final Activity activity, final String message) {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public static void payReturnData(Context context, String txid){
+        payReturn(context, txid);
+        payCallback(context, txid);
+        WalletActivity.mCallbackUrl = null;
+        WalletActivity.mReturnUrl = null;
+        WalletActivity.mOrderId = null;
+    }
+
+    private static void payReturn(Context context, String txid){
+        if(!StringUtil.isNullOrEmpty(WalletActivity.mReturnUrl)) { //call return url
+            if(WalletActivity.mReturnUrl.contains("?")){
+                UiUtils.startWebviewActivity(context, WalletActivity.mReturnUrl+"&TXID="+txid+"&OrderID"+WalletActivity.mOrderId);
+            } else {
+                UiUtils.startWebviewActivity(context, WalletActivity.mReturnUrl+"?TXID="+txid+"&OrderID"+WalletActivity.mOrderId);
+            }
+        }
+    }
+
+    private static void payCallback(Context context, String txid){
+        try {
+            if(!StringUtil.isNullOrEmpty(WalletActivity.mCallbackUrl)) { //call back url
+                ElapayEntity elapayEntity = new ElapayEntity();
+                elapayEntity.OrderID = WalletActivity.mOrderId;
+                elapayEntity.TXID = txid;
+                ElaDataSource.getInstance(context).urlPost(WalletActivity.mCallbackUrl, new Gson().toJson(elapayEntity));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

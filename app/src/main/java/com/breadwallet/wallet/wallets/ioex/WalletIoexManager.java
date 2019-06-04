@@ -1,4 +1,4 @@
-package com.breadwallet.wallet.wallets.ela;
+package com.breadwallet.wallet.wallets.ioex;
 
 import android.content.Context;
 import android.util.Log;
@@ -15,12 +15,10 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.sqlite.ElaDataSource;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.SettingsUtil;
 import com.breadwallet.tools.util.StringUtil;
-import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
@@ -30,6 +28,8 @@ import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.WalletManagerHelper;
+import com.breadwallet.wallet.wallets.ela.BRElaTransaction;
+import com.breadwallet.tools.sqlite.ElaDataSource;
 import com.breadwallet.wallet.wallets.ela.data.HistoryTransactionEntity;
 import com.elastos.jni.Utility;
 import com.google.gson.Gson;
@@ -39,47 +39,23 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * BreadWallet
- * <p/>
- * Created by Mihail Gutan <mihail@breadwallet.com> on 8/4/15.
- * Copyright (c) 2016 breadwallet LLC
- * <p/>
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * <p/>
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * <p/>
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-public class WalletElaManager extends BRCoreWalletManager implements BaseWalletManager {
+public class WalletIoexManager extends BRCoreWalletManager implements BaseWalletManager {
 
-    private static final String TAG = WalletElaManager.class.getSimpleName();
+    private static final String TAG = WalletIoexManager.class.getSimpleName();
 
-    public static final String ONE_ELA_IN_SALA = "100000000"; // 1 ela in sala, 100 millions
-    public static final String MAX_ELA = "10000000000"; //Max amount in ela
-    public static final String ELA_SYMBOL = "ELA";
-    private static final String SCHEME = "elastos";
-    private static final String NAME = "Elastos";
-    private static final String ELA_ADDRESS_PREFIX = "E";
+    public static final String ONE_IOEX_IN_SALA = "100000000"; // 1 ela in sala, 100 millions
+    public static final String MAX_IOEX = "10000000000"; //Max amount in ela
+    public static final String ELA_SYMBOL = "IOEX";
+    private static final String SCHEME = "ioex";
+    private static final String NAME = "Ioex";
+    private static final String IOEX_ADDRESS_PREFIX = "E";
 
 
-    public static final BigDecimal ONE_ELA_TO_SALA = new BigDecimal(ONE_ELA_IN_SALA);
+    public static final BigDecimal ONE_IOEX_TO_SALA = new BigDecimal(ONE_IOEX_IN_SALA);
 
-    private static WalletElaManager mInstance;
+    private static WalletIoexManager mInstance;
 
-    private final BigDecimal MAX_SALA = new BigDecimal(MAX_ELA);
+    private final BigDecimal MAX_SALA = new BigDecimal(MAX_IOEX);
 
     private final BigDecimal MIN_SALA = new BigDecimal("0");
 
@@ -92,16 +68,16 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     private static Context mContext;
 
-    public static WalletElaManager getInstance(Context context) {
+    public static WalletIoexManager getInstance(Context context) {
 
         if (mInstance == null) {
-            mInstance = new WalletElaManager(context, null, null, 0);
+            mInstance = new WalletIoexManager(context, null, null, 0);
         }
 
         return mInstance;
     }
 
-    private WalletElaManager(Context context, BRCoreMasterPubKey masterPubKey,
+    private WalletIoexManager(Context context, BRCoreMasterPubKey masterPubKey,
                              BRCoreChainParams chainParams,
                              double earliestPeerTime) {
         super(masterPubKey, chainParams, 0);
@@ -161,8 +137,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public boolean isAddressValid(String address) {
         Log.i(TAG, "isAddressValid");
-        return !Utils.isNullOrEmpty(address) && (address.startsWith(ELA_ADDRESS_PREFIX)
-                || address.startsWith("8"));
+        return true;
     }
 
     @Override
@@ -271,7 +246,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         return new CryptoTransaction[0];
     }
 
-    private static final BigDecimal ELA_FEE = new BigDecimal(4860).divide(ONE_ELA_TO_SALA, 8, BRConstants.ROUNDING_MODE);
+    private static final BigDecimal ELA_FEE = new BigDecimal(4860).divide(ONE_IOEX_TO_SALA, 8, BRConstants.ROUNDING_MODE);
 
     @Override
     public BigDecimal getTxFee(CryptoTransaction tx) {
@@ -350,8 +325,8 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         List<TxUiHolder> uiTxs = new ArrayList<>();
         try {
             for (HistoryTransactionEntity entity : transactionEntities) {
-                BigDecimal fee = new BigDecimal(entity.fee).divide(ONE_ELA_TO_SALA, 8, BRConstants.ROUNDING_MODE);
-                BigDecimal amount = new BigDecimal(entity.amount).divide(ONE_ELA_TO_SALA, 8, BRConstants.ROUNDING_MODE);
+                BigDecimal fee = new BigDecimal(entity.fee).divide(ONE_IOEX_TO_SALA, 8, BRConstants.ROUNDING_MODE);
+                BigDecimal amount = new BigDecimal(entity.amount).divide(ONE_IOEX_TO_SALA, 8, BRConstants.ROUNDING_MODE);
                 TxUiHolder txUiHolder = new TxUiHolder(null,
                         entity.isReceived,
                         entity.timeStamp,
@@ -363,7 +338,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
                         entity.fromAddress,
                         new BigDecimal(String.valueOf(entity.balanceAfterTx))
                         ,entity.txSize
-                         ,amount
+                        ,amount
                         , entity.isValid
                         ,entity.isVote);
                 txUiHolder.memo = entity.memo;
@@ -399,7 +374,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public String getIso() {
-        return "ELA";//图标的选取，数量，价格都是根据这个iso来获取的
+        return "IOEX";
     }
 
     @Override
@@ -414,7 +389,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public String getDenominator() {
-        return String.valueOf(ONE_ELA_IN_SALA);
+        return String.valueOf(ONE_IOEX_IN_SALA);
     }
 
     @Override
@@ -436,9 +411,9 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         Log.d("posvote", "autoVote:"+autoVote);
         if(autoVote && !StringUtil.isNullOrEmpty(candidatesStr)){
             List candidates = new Gson().fromJson(candidatesStr, new TypeToken<List<String>>(){}.getType());
-            brElaTransaction = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno, candidates);
+            brElaTransaction = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_IOEX_TO_SALA).longValue(), meno, candidates);
         } else {
-            brElaTransaction = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno);
+            brElaTransaction = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_IOEX_TO_SALA).longValue(), meno);
         }
 
         return new CryptoTransaction(brElaTransaction);
