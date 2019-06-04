@@ -1,4 +1,4 @@
-package com.breadwallet.wallet.wallets.ela;
+package com.breadwallet.tools.sqlite;
 
 import android.app.Activity;
 import android.content.ContentValues;
@@ -13,14 +13,13 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.sqlite.BRDataSourceInterface;
-import com.breadwallet.tools.sqlite.BRSQLiteHelper;
-import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.vote.ProducerEntity;
 import com.breadwallet.vote.ProducersEntity;
+import com.breadwallet.wallet.wallets.ela.BRElaTransaction;
+import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.breadwallet.wallet.wallets.ela.data.HistoryTransactionEntity;
 import com.breadwallet.wallet.wallets.ela.data.MultiTxProducerEntity;
 import com.breadwallet.wallet.wallets.ela.data.TxProducerEntity;

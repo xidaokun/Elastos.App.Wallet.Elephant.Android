@@ -17,7 +17,6 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.breadwallet.R;
@@ -27,7 +26,7 @@ import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.wallets.ela.ElaDataSource;
+import com.breadwallet.tools.sqlite.ElaDataSource;
 
 import java.math.BigDecimal;
 

@@ -2,17 +2,15 @@ package com.breadwallet.tools.manager;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.constraint.ConstraintLayout;
 import android.util.Log;
 
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
-import com.breadwallet.wallet.wallets.ela.ElaDataSource;
+import com.breadwallet.tools.sqlite.ElaDataSource;
 
 import org.json.JSONArray;
 
 import java.math.BigDecimal;
-import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
