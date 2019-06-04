@@ -57,7 +57,7 @@ import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
-import com.breadwallet.tools.sqlite.ElaDataSource;
+import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.google.gson.Gson;
 
 import org.wallet.library.Constants;

@@ -6,7 +6,7 @@ import android.util.Log;
 
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
-import com.breadwallet.tools.sqlite.ElaDataSource;
+import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 
 import org.json.JSONArray;
 
