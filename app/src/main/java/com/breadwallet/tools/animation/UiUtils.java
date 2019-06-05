@@ -64,6 +64,8 @@ import com.google.gson.Gson;
 
 import org.wallet.library.Constants;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import static android.content.Context.ACTIVITY_SERVICE;
@@ -509,4 +511,13 @@ public class UiUtils {
         }
     }
 
+    public static String getStringMd5(String data) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        md.update(data.getBytes());
+        byte[] digest = md.digest();
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : digest) hexString.append(Integer.toHexString(0xFF & b));
+
+        return hexString.toString();
+    }
 }
