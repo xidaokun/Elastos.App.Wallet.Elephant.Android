@@ -312,6 +312,8 @@
     <string name="MenuButton.scan">Scan QR Code</string>
     <!-- Menu button title -->
     <string name="MenuButton.security">Security Settings</string>
+    <!-- E-sign title -->
+    <string name="MenuButton.e.sign">e-Sign</string>
     <!-- Menu button title -->
     <string name="MenuButton.settings">Settings</string>
     <!-- Menu button title -->

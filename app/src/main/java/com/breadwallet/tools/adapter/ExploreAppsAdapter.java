@@ -91,7 +91,7 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
         private RoundImageView mLogo;
         private BaseTextView mTitle;
         private BaseTextView mDeveloper;
-        private BaseTextView mDelete;
+        private RoundImageView mDelete;
         private BaseTextView mTouch;
         private BaseTextView mAbout;
 

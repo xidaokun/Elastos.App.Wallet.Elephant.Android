@@ -7,13 +7,13 @@
     android:paddingBottom="5dp"
     android:maxHeight="60dp">
 
-    <com.breadwallet.presenter.customviews.BaseTextView
+    <com.breadwallet.presenter.customviews.RoundImageView
         android:id="@+id/explore_item_delete_tv"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_marginLeft="20dp"
         android:layout_centerVertical="true"
-        android:background="@drawable/ic_explore_delete"/>
+        android:src="@drawable/ic_explore_delete"/>
 
     <com.breadwallet.presenter.customviews.RoundImageView
         android:id="@+id/explore_item_logo_tv"

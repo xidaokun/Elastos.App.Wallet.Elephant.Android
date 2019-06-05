@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.view.View;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.EsignActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.ManageWalletsActivity;
 import com.breadwallet.presenter.activities.did.DidAuthListActivity;
@@ -121,6 +122,15 @@ public final class SettingsUtil {
                 activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }, false, R.drawable.ic_security_settings));
+
+        settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_e_sign), "", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(activity, EsignActivity.class);
+                activity.startActivity(intent);
+                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+            }
+        }, false, R.drawable.ic_e_sign));
 
 //        settingsItems.add(new BRSettingsItem(activity.getString(R.string.Did_Create_Ela_Red_Package), "", new View.OnClickListener() {
 //            @Override

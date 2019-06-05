@@ -318,7 +318,7 @@
 
         <activity android:name=".presenter.activities.ExploreWebActivity"
             android:screenOrientation="portrait"/>
-        
+
         <activity android:name=".presenter.activities.sign.SignaureActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTask">
@@ -352,6 +352,12 @@
             android:screenOrientation="portrait"/>
 
         <activity android:name=".presenter.activities.AddAppsActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".presenter.activities.EsignActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".presenter.activities.EsignHistoryActivity"
             android:screenOrientation="portrait"/>
 
         <provider

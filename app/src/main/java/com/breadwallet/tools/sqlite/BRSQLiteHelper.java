@@ -55,6 +55,16 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "breadwallet.db";
     private static final int DATABASE_VERSION = 18;
 
+    public static final String ESIGN_HISTORY_TABLE_NAME = "historyEsignTable";
+    public static final String ESIGN_COLUMN_ID = "esignId";
+    public static final String ESIGN_SIGN_DATA = "esignSignData";
+    public static final String ESIGN_SIGNED_DATA = "esignSignedData";
+    private static final String ESIGN_HISTORY_DATABASE_CREATE = "create table if not exists " + ESIGN_HISTORY_TABLE_NAME + " (" +
+            ESIGN_COLUMN_ID + " integer primary key autoincrement, " +
+            ESIGN_SIGN_DATA + " text, " +
+            ESIGN_SIGNED_DATA + " text, " +
+            ");";
+
     /**
      * History Producer table
      */
@@ -256,6 +266,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
         Log.e(TAG, "onCreate: " + TX_DATABASE_CREATE);
         Log.e(TAG, "onCreate: " + PEER_DATABASE_CREATE);
         Log.e(TAG, "onCreate: " + CURRENCY_DATABASE_CREATE);
+        database.execSQL(ESIGN_HISTORY_DATABASE_CREATE);
         database.execSQL(HISTORY_PRODUCER_DATABASE_CREATE);
         database.execSQL(ELA_PRODUCER_DATABASE_CREATE);
         database.execSQL(SIGN_DATABASE_CREATE);
