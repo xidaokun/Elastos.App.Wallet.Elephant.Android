@@ -9,17 +9,16 @@ import android.widget.BaseAdapter;
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.entities.SignHistoryItem;
+import com.breadwallet.tools.util.BRDateUtil;
 
 import java.util.List;
 
 public class SignHistoryAdapter extends BaseAdapter {
 
-    private Context mContext;
     private LayoutInflater mInflater;
     private List<SignHistoryItem> mData;
 
     public SignHistoryAdapter(Context context, List<SignHistoryItem> data){
-        this.mContext = context;
         this.mData = data;
         mInflater = LayoutInflater.from(context);
     }
@@ -44,13 +43,17 @@ public class SignHistoryAdapter extends BaseAdapter {
         ViewHolder viewHolder = null;
         if(null == convertView){
             viewHolder = new ViewHolder();
-            convertView = mInflater.inflate(R.layout.did_auth_item_layout, parent, false);
+            convertView = mInflater.inflate(R.layout.signature_history_item_layout, parent, false);
+
+            viewHolder.mTime = convertView.findViewById(R.id.sign_date);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        viewHolder.mTime.setText(mData.get(position).time+"");
+        long time = mData.get(position).time;
+        String timeFormat = BRDateUtil.getAuthorDate((time==0) ? System.currentTimeMillis() : time);
+        viewHolder.mTime.setText(timeFormat);
 
         return convertView;
     }

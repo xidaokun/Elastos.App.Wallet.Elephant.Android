@@ -11,6 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
+        android:textColor="@color/black"
+        android:textSize="14sp"
         android:layout_marginLeft="10dp"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView

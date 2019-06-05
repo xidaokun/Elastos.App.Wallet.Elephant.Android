@@ -53,17 +53,18 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     }
 
     public static final String DATABASE_NAME = "breadwallet.db";
-    private static final int DATABASE_VERSION = 18;
+    private static final int DATABASE_VERSION = 19;
 
     public static final String ESIGN_HISTORY_TABLE_NAME = "historyEsignTable";
     public static final String ESIGN_COLUMN_ID = "esignId";
+    public static final String ESIGN_SIGN_TIME = "timeStamp";
     public static final String ESIGN_SIGN_DATA = "esignSignData";
     public static final String ESIGN_SIGNED_DATA = "esignSignedData";
     private static final String ESIGN_HISTORY_DATABASE_CREATE = "create table if not exists " + ESIGN_HISTORY_TABLE_NAME + " (" +
             ESIGN_COLUMN_ID + " integer primary key autoincrement, " +
+            ESIGN_SIGN_TIME + " integer, " +
             ESIGN_SIGN_DATA + " text, " +
-            ESIGN_SIGNED_DATA + " text, " +
-            ");";
+            ESIGN_SIGNED_DATA + " text);";
 
     /**
      * History Producer table
@@ -293,7 +294,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             db.execSQL(ELA_TX_DATABASE_CREATE);
         }
 
-        if (/*oldVersion < 13 && (newVersion >= 13)*/ newVersion==16) {
+        if (/*oldVersion < 13 && (newVersion >= 13)*/ newVersion==19) {
             boolean migrationNeeded = !tableExists(MB_TABLE_NAME, db);
             onCreate(db); //create new db tables
 

@@ -15,6 +15,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -30,6 +31,7 @@ import com.breadwallet.did.CallbackEntity;
 import com.breadwallet.did.DidDataSource;
 import com.breadwallet.presenter.activities.AddAppsActivity;
 import com.breadwallet.presenter.activities.DisabledActivity;
+import com.breadwallet.presenter.activities.EsignHistoryActivity;
 import com.breadwallet.presenter.activities.ExploreWebActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.LoginActivity;
@@ -38,6 +40,7 @@ import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.presenter.activities.did.DidAuthorizeActivity;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
+import com.breadwallet.presenter.activities.sign.SignDetailActivity;
 import com.breadwallet.presenter.activities.sign.SignaureActivity;
 import com.breadwallet.presenter.activities.sign.SignaureEditActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
@@ -218,6 +221,18 @@ public class UiUtils {
     public static void startSignActivity(Context context, String url){
         Intent intent = new Intent(context, SignaureActivity.class);
         intent.putExtra(Constants.INTENT_EXTRA_KEY.META_EXTRA, url);
+        context.startActivity(intent);
+    }
+
+    public static void startSignDetailActivity(Context context, String signed, String sign){
+        Intent intent = new Intent(context, SignDetailActivity.class);
+        intent.putExtra("signed", signed);
+        intent.putExtra("sign", sign);
+        context.startActivity(intent);
+    }
+
+    public static void startSignHistoryActivity(Context context){
+        Intent intent = new Intent(context, EsignHistoryActivity.class);
         context.startActivity(intent);
     }
 

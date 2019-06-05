@@ -30,6 +30,7 @@
             android:textSize="20sp" />
         
         <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/esign_history"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_centerVertical="true"
