@@ -1,27 +1,26 @@
 package com.breadwallet.presenter.activities;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
+import com.google.gson.Gson;
 
 
 import java.io.File;
@@ -30,17 +29,23 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-
-import rufus.lzstring4java.LZString;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
 public class MultiSignQrActivity extends BRActivity {
 
     private final String TAG = "MultiSignQrActivity";
     private ImageView mQRCodeIv;
     private Bitmap mBitmap = null;
+    private ArrayList<Bitmap> mBitmaps;
 
     private String mTransaction;
     private String mTxid;
+
+    private Handler mHandler = null;
+    private int mIndex = 0;
+    private int mTotal = 0;
+    private final static int INTERVAL = 500;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,6 +62,16 @@ public class MultiSignQrActivity extends BRActivity {
         }
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mHandler != null) {
+            mHandler.removeCallbacks(runnable);
+            mHandler = null;
+        }
+    }
+
+
     private void initView() {
         mQRCodeIv = findViewById(R.id.multisign_qr_iv);
         ImageButton backButton = findViewById(R.id.back_button);
@@ -67,22 +82,16 @@ public class MultiSignQrActivity extends BRActivity {
             }
         });
 
-        TextView shareQr = findViewById(R.id.multisign_qr_share_qr);
         TextView shareJson = findViewById(R.id.multisign_qr_share_json);
         TextView passOrSent = findViewById(R.id.multisign_pass_or_sent);
-        TextView or = findViewById(R.id.multisign_qr_share_or);
 
         if (!StringUtil.isNullOrEmpty(mTxid)) {
             mQRCodeIv.setVisibility(View.INVISIBLE);
-            shareQr.setVisibility(View.INVISIBLE);
             shareJson.setVisibility(View.INVISIBLE);
-            or.setVisibility(View.INVISIBLE);
             passOrSent.setText(R.string.multisign_send_succeeded);
         } else if (StringUtil.isNullOrEmpty(mTransaction)) {
             mQRCodeIv.setVisibility(View.INVISIBLE);
-            shareQr.setVisibility(View.INVISIBLE);
             shareJson.setVisibility(View.INVISIBLE);
-            or.setVisibility(View.INVISIBLE);
             passOrSent.setVisibility(View.INVISIBLE);
         } else {
             shareJson.setOnClickListener(new View.OnClickListener() {
@@ -92,12 +101,6 @@ public class MultiSignQrActivity extends BRActivity {
                 }
             });
 
-            shareQr.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    shareQrcode();
-                }
-            });
             passOrSent.setText(R.string.multisign_pass_next);
         }
     }
@@ -111,46 +114,46 @@ public class MultiSignQrActivity extends BRActivity {
     }
 
     private void fixView() {
-
         try {
             String url = getUrl();
-            String utf16 = LZString.compressToUTF16(url);
-            Log.d(TAG, "=== utf16 length: " + utf16.length());
-            mBitmap = generateQR(this, url, mQRCodeIv);
+            Log.d(TAG, "url: " + url);
+
+            mTotal = (int) Math.ceil((double) url.length() / (double) 500);
+            Log.d(TAG, "qrcount: " + mTotal);
+
+            if (mTotal > 1) {
+                mBitmaps = new ArrayList<>(mTotal);
+                String md5str = UiUtils.getStringMd5(url);
+                Log.d(TAG, "md5: " + md5str);
+                for (int i = 0; i < mTotal; i++) {
+                    ScanQRActivity.MultiPartQrcode qr = new ScanQRActivity.MultiPartQrcode();
+                    qr.name = "MultiQrContent";
+                    qr.total = mTotal;
+                    qr.index = i;
+
+                    int start = i * 500;
+                    if (start > url.length()) break;
+                    int end = (i + 1) * 500;
+                    if (end > url.length()) end = url.length();
+                    qr.data = url.substring(start, end);
+                    qr.md5 = md5str;
+
+                    String qrstr = new Gson().toJson(qr);
+                    Log.d(TAG, "qrstr: " + qrstr);
+                    Bitmap bitmap = QRUtils.generateQRBitmap(this, qrstr);
+                    mBitmaps.add(i, bitmap);
+                }
+                mHandler = new Handler();
+                mIndex = 0;
+                changeQrcode();
+            } else {
+                mBitmap = QRUtils.generateQRBitmap(this, url);
+                mQRCodeIv.setImageBitmap(mBitmap);
+            }
+
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-        }
-    }
-
-    public Bitmap generateQR(Context ctx, String bitcoinURL, ImageView qrcode) {
-        if (qrcode == null || bitcoinURL == null || bitcoinURL.isEmpty()) return null;
-        WindowManager manager = (WindowManager) ctx.getSystemService(Activity.WINDOW_SERVICE);
-        Display display = manager.getDefaultDisplay();
-        Point point = new Point();
-        display.getSize(point);
-        int width = point.x;
-        int height = point.y;
-        int smallerDimension = width < height ? width : height;
-        smallerDimension = (int) (smallerDimension * 0.45f);
-        Bitmap bitmap = null;
-        bitmap = QRUtils.encodeAsBitmap(bitcoinURL, smallerDimension);
-        if (bitmap == null) return null;
-        qrcode.setImageBitmap(bitmap);
-        return bitmap;
-
-    }
-
-    private void shareQrcode() {
-        try {
-            File imagePath = new File(getCacheDir(), "images");
-            imagePath.mkdirs();
-            FileOutputStream stream = new FileOutputStream(imagePath + "/image.png");
-            mBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            stream.close();
-
-            share("image.png");
-
-        } catch (IOException e) {
+        } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
     }
@@ -192,4 +195,18 @@ public class MultiSignQrActivity extends BRActivity {
         shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
         startActivity(Intent.createChooser(shareIntent, "Share"));
     }
+
+    private void changeQrcode() {
+        mQRCodeIv.setImageBitmap(mBitmaps.get(mIndex));
+        mIndex++;
+        if (mIndex >= mTotal) mIndex = 0;
+        mHandler.postDelayed(runnable, INTERVAL);
+    }
+
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            changeQrcode();
+        }
+    };
 }

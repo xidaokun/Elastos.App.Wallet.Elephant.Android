@@ -18,10 +18,15 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.qrcode.QRCodeReaderView;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.platform.tools.BRBitId;
+
+import java.security.NoSuchAlgorithmException;
 
 
 /**
@@ -58,6 +63,9 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
     public static boolean appVisible = false;
     private static ScanQRActivity app;
     private static final int MY_PERMISSION_REQUEST_CAMERA = 56432;
+
+    private MultiPartQrcode[] mQrArray = null;
+    private String mData;
 
     private ViewGroup mainLayout;
 
@@ -177,24 +185,8 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
         if (handlingCode) return;
         handlingCode = true;
         if (CryptoUriParser.isCryptoUrl(this, text) || BRBitId.isBitId(text)
-                || text.contains("redpacket") || text.contains("elaphant")) {
-            Log.e(TAG, "onQRCodeRead: isCrypto");
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        cameraGuide.setImageResource(R.drawable.cameraguide);
-                        descriptionText.setText("");
-                        Intent returnIntent = new Intent();
-                        returnIntent.putExtra("result", text);
-                        setResult(Activity.RESULT_OK, returnIntent);
-                        finish();
-                    } finally {
-                        handlingCode = false;
-                    }
-
-                }
-            });
+                || text.contains("redpacket") || text.contains("elaphant") || text.contains("MultiQrContent")) {
+            handleData(text);
         } else {
             Log.e(TAG, "onQRCodeRead: not a crypto url");
             runOnUiThread(new Runnable() {
@@ -214,11 +206,84 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
 
     }
 
+    private void handleData(final String text) {
+        Log.d(TAG, "multiqr data: " + text);
+
+        try {
+            MultiPartQrcode part = new Gson().fromJson(text, MultiPartQrcode.class);
+            if (mQrArray == null) {
+                mQrArray = new MultiPartQrcode[part.total];
+            }
+
+            if (part.index < part.total && mQrArray[part.index] == null) {
+                mQrArray[part.index] = part;
+            }
+
+            for (MultiPartQrcode qr : mQrArray) {
+                if (qr == null) {
+                    handlingCode = false;
+                    return;
+                }
+            }
+
+            StringBuilder qrText = new StringBuilder();
+            for (MultiPartQrcode qr : mQrArray) {
+                qrText.append(qr.data);
+            }
+
+            Log.d(TAG, "multiqr text: " + qrText);
+
+            mData = qrText.toString();
+            String md5str = UiUtils.getStringMd5(mData);
+            Log.d(TAG, "multiqr md5 checksum: " + md5str);
+
+            if (!md5str.equals(part.md5)) {
+                Log.e(TAG, "multiqr code data md5 verify failed");
+                handlingCode = false;
+                return;
+            }
+
+        } catch (JsonSyntaxException ignored) {
+            Log.i(TAG, "qr code text is not a json object");
+            mData = text;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            handlingCode = false;
+            return;
+        }
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    mQrArray = null;
+                    cameraGuide.setImageResource(R.drawable.cameraguide);
+                    descriptionText.setText("");
+                    Intent returnIntent = new Intent();
+                    returnIntent.putExtra("result", mData);
+                    setResult(Activity.RESULT_OK, returnIntent);
+                    finish();
+                } finally {
+                    handlingCode = false;
+                }
+
+            }
+        });
+    }
+
     private void initQRCodeReaderView() {
         qrCodeReaderView = findViewById(R.id.qrdecoderview);
         qrCodeReaderView.setAutofocusInterval(500L);
         qrCodeReaderView.setOnQRCodeReadListener(this);
         qrCodeReaderView.setBackCamera();
         qrCodeReaderView.startCamera();
+    }
+
+    public static class MultiPartQrcode {
+        public String name;
+        public int total;
+        public int index;
+        public String data;
+        public String md5;
     }
 }

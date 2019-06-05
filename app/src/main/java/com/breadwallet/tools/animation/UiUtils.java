@@ -56,6 +56,8 @@ import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 
 import org.wallet.library.Constants;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import static android.content.Context.ACTIVITY_SERVICE;
@@ -429,4 +431,14 @@ public class UiUtils {
         activity.startActivityForResult(intent, requestCode);
     }
 
+    public static String getStringMd5(String data) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        md.update(data.getBytes());
+        byte[] digest = md.digest();
+        StringBuffer hexString = new StringBuffer();
+        for (int i=0; i< digest.length; i++)
+            hexString.append(Integer.toHexString(0xFF & digest[i]));
+
+        return hexString.toString();
+    }
 }

@@ -79,38 +79,14 @@
         app:layout_constraintTop_toBottomOf="@+id/multisign_pass_or_sent" />
 
     <TextView
-        android:id="@+id/multisign_qr_share_qr"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/multisign_share_qrcode"
-        android:textColor="@color/create_new_wallet_button_dark"
-        android:textSize="12sp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/multisign_qr_iv"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/multisign_qr_share_or"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/multisign_share_or"
-        android:textColor="@color/black"
-        android:textSize="12sp"
-        android:layout_marginTop="4dp"
-        app:layout_constraintTop_toBottomOf="@id/multisign_qr_share_qr"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
         android:id="@+id/multisign_qr_share_json"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/multisign_share_json"
         android:textColor="@color/create_new_wallet_button_dark"
         android:textSize="12sp"
-        android:layout_marginTop="4dp"
-        app:layout_constraintTop_toBottomOf="@id/multisign_qr_share_or"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/multisign_qr_iv"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 </android.support.constraint.ConstraintLayout>
