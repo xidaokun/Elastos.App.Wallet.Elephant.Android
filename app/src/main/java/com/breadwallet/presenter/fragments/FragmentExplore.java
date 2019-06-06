@@ -10,6 +10,9 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
+import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -30,9 +33,20 @@ import com.breadwallet.tools.animation.SimpleItemTouchHelperCallback;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.listeners.OnStartDragListener;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.sqlite.ProfileDataSource;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
+import com.elastos.jni.Utility;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.elastos.sdk.wallet.BlockChainNode;
+import org.elastos.sdk.wallet.Did;
+import org.elastos.sdk.wallet.DidManager;
+import org.elastos.sdk.wallet.Identity;
+import org.elastos.sdk.wallet.IdentityManager;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,7 +56,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class FragmentExplore extends Fragment implements OnStartDragListener {
+public class FragmentExplore extends Fragment implements OnStartDragListener, ExploreAppsAdapter.OnDeleteClickListener {
 
     private static final String TAG = FragmentExplore.class.getSimpleName() + "_log";
 
@@ -71,6 +85,17 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
     private View mAddPopView;
     private View mAddUrlView;
     private View mAddScanView;
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            List<MyAppItem> tmp = ProfileDataSource.getInstance(getContext()).getMyAppItems();
+            if(null != tmp){
+                mItems.addAll(tmp);
+                mAdapter.notifyDataSetChanged();
+            }
+        }
+    };
 
     @Nullable
     @Override
@@ -79,12 +104,12 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
         initView(rootView);
         initAdapter();
         initListener();
-        if (BRSharedPrefs.getDisclaimShow(getContext()))
-            mDisclaimLayout.setVisibility(View.VISIBLE);
+        initDid();
+        resetMiniApps();
         return rootView;
     }
 
-    private List<MyAppItem> mItems = new ArrayList<>();
+    private List<String> mAppIds = new ArrayList<>();
 
     private void initView(View rootView) {
         mDisclaimLayout = rootView.findViewById(R.id.disclaim_layout);
@@ -99,47 +124,57 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
         mAddPopView = rootView.findViewById(R.id.explore_add_pop);
         mAddUrlView = rootView.findViewById(R.id.explore_url_pop);
         mAddScanView = rootView.findViewById(R.id.explore_scan_pop);
+        if (BRSharedPrefs.getDisclaimShow(getContext()))
+            mDisclaimLayout.setVisibility(View.VISIBLE);
     }
 
-    private void initAdapter(){
-        mItems.clear();
-        MyAppItem redPackageItem = new MyAppItem();
-        redPackageItem.appId = BRConstants.REA_PACKAGE_ID;
-        redPackageItem.name_zh_CN = "红包";
-        redPackageItem.name_en = "red package";
-        redPackageItem.url = "https://redpacket.elastos.org";
-        redPackageItem.developer = "elastos";
-        redPackageItem.shortDesc_zh_CN = "红包";
-        redPackageItem.shortDesc_en = "red package";
-        redPackageItem.longDesc_en = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-        redPackageItem.longDesc_zh_CN = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-        mItems.add(redPackageItem);
-
-        MyAppItem dposVoteItem = new MyAppItem();
-        dposVoteItem.appId = BRConstants.DPOS_VOTE_ID;
-        dposVoteItem.name_zh_CN = "dpos投票";
-        dposVoteItem.name_en = "dpos vote";
-        dposVoteItem.url = "http://elaphant.net/";
-        dposVoteItem.developer = "elastos";
-        dposVoteItem.shortDesc_en = "dpos投票";
-        dposVoteItem.shortDesc_zh_CN = "dpos vote";
-        mItems.add(dposVoteItem);
-
-        MyAppItem exchageItem = new MyAppItem();
-        exchageItem.appId = BRConstants.EXCHANGE_ID;
-        exchageItem.name_zh_CN = "兑换";
-        exchageItem.name_en = "exchage";
-        exchageItem.url = "http://swft.elabank.net";
-        exchageItem.developer = "elastos";
-        dposVoteItem.shortDesc_zh_CN = "兑换";
-        dposVoteItem.shortDesc_en = "exchage";
-        mItems.add(exchageItem);
-
-        List<MyAppItem> items = getAppItems();
-        if (items != null) {
-            mItems.addAll(items);
+    private void initInterApps(){
+        String redPackageStatus = getAppStatus(BRConstants.REA_PACKAGE_ID);
+        if(StringUtil.isNullOrEmpty(redPackageStatus) || redPackageStatus.equals("normal")) {
+            MyAppItem redPackageItem = new MyAppItem();
+            redPackageItem.appId = BRConstants.REA_PACKAGE_ID;
+            redPackageItem.name_zh_CN = "红包";
+            redPackageItem.name_en = "red package";
+            redPackageItem.url = "https://redpacket.elastos.org";
+            redPackageItem.developer = "elastos";
+            redPackageItem.shortDesc_zh_CN = "红包";
+            redPackageItem.shortDesc_en = "red package";
+            redPackageItem.longDesc_en = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+            redPackageItem.longDesc_zh_CN = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+            mAppIds.add(BRConstants.REA_PACKAGE_ID);
+            ProfileDataSource.getInstance(getContext()).putMyAppItem(redPackageItem);
         }
+        String exchangeStatus = getAppStatus(BRConstants.DPOS_VOTE_ID);
+        if(StringUtil.isNullOrEmpty(exchangeStatus) || exchangeStatus.equals("normal")) {
+            MyAppItem dposVoteItem = new MyAppItem();
+            dposVoteItem.appId = BRConstants.DPOS_VOTE_ID;
+            dposVoteItem.name_zh_CN = "dpos投票";
+            dposVoteItem.name_en = "dpos vote";
+            dposVoteItem.url = "http://elaphant.net/";
+            dposVoteItem.developer = "elastos";
+            dposVoteItem.shortDesc_en = "dpos投票";
+            dposVoteItem.shortDesc_zh_CN = "dpos vote";
+            mAppIds.add(BRConstants.DPOS_VOTE_ID);
+            ProfileDataSource.getInstance(getContext()).putMyAppItem(dposVoteItem);
+        }
+        String dposVoteStatus = getAppStatus(BRConstants.DPOS_VOTE_ID);
+        if(StringUtil.isNullOrEmpty(dposVoteStatus) || dposVoteStatus.equals("normal")) {
+            MyAppItem exchageItem = new MyAppItem();
+            exchageItem.appId = BRConstants.EXCHANGE_ID;
+            exchageItem.name_zh_CN = "兑换";
+            exchageItem.name_en = "exchage";
+            exchageItem.url = "http://swft.elabank.net";
+            exchageItem.developer = "elastos";
+            exchageItem.shortDesc_zh_CN = "兑换";
+            exchageItem.shortDesc_en = "exchage";
+            mAppIds.add(BRConstants.EXCHANGE_ID);
+            ProfileDataSource.getInstance(getContext()).putMyAppItem(exchageItem);
+        }
+        mHandler.sendEmptyMessage(0x01);
+    }
 
+    private List<MyAppItem> mItems = new ArrayList<>();
+    private void initAdapter(){
         mMyAppsRv.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = new ExploreAppsAdapter(getContext(), mItems);
         mAdapter.isDelete(false);
@@ -148,6 +183,8 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mAdapter);
         mItemTouchHelper = new ItemTouchHelper(callback);
         mItemTouchHelper.attachToRecyclerView(mMyAppsRv);
+
+        mHandler.sendEmptyMessage(0x01);
     }
 
     private void initListener() {
@@ -206,7 +243,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
         mDoneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                downloadCapsule("https://xidaokun.github.io/vote.capsule");
                 changeView(false);
                 mAdapter.isDelete(false);
                 mAdapter.notifyDataSetChanged();
@@ -249,23 +285,31 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
         mItemTouchHelper.startDrag(viewHolder);
     }
 
+    private void resetMiniApps(){
+        mAppIds.clear();
+        mItems.clear();
+        mHandler.sendEmptyMessage(0x01);
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                //inter app
+                initInterApps();
 
-    private List<MyAppItem> getAppItems() {
-        List<MyAppItem> items = new ArrayList<>();
-        File capsule = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule");
-        File[] files = capsule.listFiles();
-        if(null == files) return null;
-        for (File file : files) {
-            if (file.isDirectory()) {
-                File jsonFile = new File(file, "app.json");
-                String json = getJsonFromCapsule(jsonFile);
-                MyAppItem item = new Gson().fromJson(json, MyAppItem.class);
-                if(item != null){
-                    items.add(item);
+                //third app
+                String value = getMiniApps();
+                if(StringUtil.isNullOrEmpty(value)) return;
+                List<String> appIds = new Gson().fromJson(value, new TypeToken<List<String>>(){}.getType());
+                if(null == appIds) return;
+                for(String appId : appIds){
+                    String status = getAppStatus(appId);
+                    if(StringUtil.isNullOrEmpty(status) || status.equals("normal")){
+                        String url = getAppsUrl(appId);
+                        if(StringUtil.isNullOrEmpty(url)) return;
+                        downloadCapsule(url);
+                    }
                 }
             }
-        }
-        return items;
+        });
     }
 
     private DownloadManager manager;
@@ -291,29 +335,139 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
         return -1;
     }
 
+    @Override
+    public void onDelete(MyAppItem item, int position) {
+        String appId = item.appId;
+        if(!StringUtil.isNullOrEmpty(appId)){
+            ProfileDataSource.getInstance(getContext()).deleteAppItem(appId);
+            mHandler.sendEmptyMessage(0x01);
+        }
+    }
+
+    class KeyValue {
+        public String Key;
+        public String Value;
+    }
+
+    private String getKeyVale(String path, String value){
+        KeyValue key = new KeyValue();
+        key.Key = path;
+        key.Value = value;
+        List<KeyValue> keys = new ArrayList<>();
+        keys.add(key);
+
+        return new Gson().toJson(keys, new TypeToken<List<KeyValue>>(){}.getType());
+    }
+
+    private void upAppUrlData(final String miniAppId, final String value){
+        if(StringUtil.isNullOrEmpty(miniAppId) || StringUtil.isNullOrEmpty(value)) return;
+        String path = mDidStr+"/Apps/"+miniAppId;
+        String data = getKeyVale(path, value);
+        String info = mDid.signInfo(mSeed, data);
+        ProfileDataSource.getInstance(getContext()).upchain(info);
+    }
+
+    private void upAppStatus(String miniAppId, String status){
+        if(StringUtil.isNullOrEmpty(mDidStr) || StringUtil.isNullOrEmpty(miniAppId)) return;
+        String path = mDidStr+"/Apps/"+BRConstants.ELAPHANT_APP_ID+"/MiniPrograms/"+miniAppId+"/Status";
+        String data = getKeyVale(path, status);
+        String info = mDid.signInfo(mSeed, data);
+        ProfileDataSource.getInstance(getContext()).upchain(info);
+    }
+
+    private void upAppIds(List<String> appIds){
+        String ids = new Gson().toJson(appIds);
+        String path = mDidStr+"/Apps";
+        String data = getKeyVale(path, ids);
+        String info = mDid.signInfo(mSeed, data);
+        ProfileDataSource.getInstance(getContext()).upchain(info);
+    }
+
+    private String getMiniApps(){
+        String path = mDidStr+"/Apps";
+        mDid.syncInfo();
+        String appIds = mDid.getInfo(path);
+        return appIds;
+    }
+
+    private String getAppStatus(String miniAppId){
+        String path = mDidStr+"/Apps/"+BRConstants.ELAPHANT_APP_ID+"/MiniPrograms/"+miniAppId+"/Status";
+        mDid.syncInfo();
+        String value = mDid.getInfo(path);
+        return value;
+    }
+
+    private String getAppsUrl(String miniAppId){
+        String path = mDidStr+"/Apps/"+miniAppId;
+        mDid.syncInfo();
+        String url = mDid.getInfo(path);
+        return url;
+    }
+
+    private String getMn(){
+        byte[] phrase = null;
+        try {
+            phrase = BRKeyStore.getPhrase(getContext(), 0);
+            if(phrase != null) {
+                return new String(phrase);
+            }
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private Did mDid;
+    private String mSeed;
+    private String mPublicKey;
+    private String mDidStr;
+    private void initDid(){
+        if(null==mDid || null==mPublicKey){
+            String mnemonic = getMn();
+            if(StringUtil.isNullOrEmpty(mnemonic)) return;
+            String language = Utility.detectLang(getContext(), mnemonic);
+            if(StringUtil.isNullOrEmpty(language)) return;
+            String words = Utility.getWords(getContext(),  language +"-BIP39Words.txt");
+            if(StringUtil.isNullOrEmpty(words)) return;
+            mSeed = IdentityManager.getSeed(mnemonic, Utility.getLanguage(language), words, "");
+            if(StringUtil.isNullOrEmpty(mSeed)) return;
+            Identity identity = IdentityManager.createIdentity(getContext().getFilesDir().getAbsolutePath());
+            DidManager didManager = identity.createDidManager(mSeed);
+            BlockChainNode node = new BlockChainNode(ProfileDataSource.DID_URL);
+            mDid = didManager.createDid(0);
+            mDid.setNode(node);
+            mPublicKey = Utility.getInstance(getContext()).getSinglePublicKey(mnemonic);
+            mDidStr = Utility.getInstance(getContext()).getDid(mPublicKey);
+        }
+    }
+
     private void registerDownloadReceiver() {
         IntentFilter intentFilter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 try {
-//                    logFile("download", getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile());
                     File file = decompression();
                     Log.d(TAG, "unzip path:"+file.getAbsolutePath());
                     deleteDownloadCapsule();
                     if(file == null) return;
-//                    logFile("capsule", file);
 
                     File appJsonPath = new File(file, "/app.json");
                     String json = getJsonFromCapsule(appJsonPath);
                     Toast.makeText(getContext(), "下载完成", Toast.LENGTH_SHORT).show();
                     MyAppItem item = new Gson().fromJson(json, MyAppItem.class);
+                    item.path = file.getAbsolutePath();
                     if (item != null) {
-                        for(MyAppItem myAppItem : mItems){
-                            if(item.appId.equals(myAppItem.appId)) return;
+                        for(String appId : mAppIds){
+                            if(item.appId.equals(appId)) return;
                         }
-                        mItems.add(item);
-                        mAdapter.notifyDataSetChanged();
+                        mAppIds.add(item.appId);
+                        mHandler.sendEmptyMessage(0x01);
+
+                        ProfileDataSource.getInstance(getContext()).putMyAppItem(item);
+                        upAppStatus(item.appId, "normal");
+                        upAppUrlData(item.appId, item.url);
+                        upAppIds(mAppIds);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -343,21 +497,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener {
     }
 
     private Bitmap getIconFromCapsule(File filePath) {
-//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//        try {
-//            FileInputStream inputStream = new FileInputStream(filePath);
-//            byte buffer[] = new byte[1024];
-//            int len;
-//            while ((len=inputStream.read(buffer)) > 0) {
-//                outputStream.write(buffer, 0, len);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        byte[] data = outputStream.toByteArray();
-//        Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-
         return BitmapFactory.decodeFile(filePath.getAbsolutePath());
     }
 

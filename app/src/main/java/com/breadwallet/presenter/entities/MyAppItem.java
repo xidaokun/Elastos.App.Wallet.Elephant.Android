@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.entities;
 
 public class MyAppItem {
+    public int index;
     public String name;
     public String name_en;
     public String name_zh_CN;
@@ -31,4 +32,5 @@ public class MyAppItem {
     public String developer;
     public long size;
     public String hash;
+    public String path;
 }

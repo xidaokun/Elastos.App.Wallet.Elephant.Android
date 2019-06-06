@@ -512,7 +512,7 @@ public class ElaDataSource implements BRDataSourceInterface {
         try {
             String url = getUrl("api/1/sendRawTx");
             Log.i(TAG, "send raw url:"+url);
-            String rawTransaction = ElastosKeypairSign.generateRawTransaction(transaction);
+            String rawTransaction = ElastosKeypairSign.generateRawTransaction(transaction, BRConstants.ELA_ASSET_ID);
             String json = "{"+"\"data\"" + ":" + "\"" + rawTransaction + "\"" +"}";
             Log.i(TAG, "rawTransaction:"+rawTransaction);
             String tmp = urlPost(url, json);

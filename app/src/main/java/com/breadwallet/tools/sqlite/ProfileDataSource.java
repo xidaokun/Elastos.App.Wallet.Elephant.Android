@@ -1,9 +1,15 @@
 package com.breadwallet.tools.sqlite;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.presenter.entities.MyAppItem;
+import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.google.gson.Gson;
@@ -13,8 +19,10 @@ import org.apache.shiro.crypto.hash.SimpleHash;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import okhttp3.MediaType;
@@ -22,7 +30,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ProfileDataSource {
+public class ProfileDataSource implements BRDataSourceInterface{
 
     private Context mContext;
 
@@ -31,6 +39,10 @@ public class ProfileDataSource {
 //    final String elaTestUrl = "https://api-wallet-ela-testnet.elastos.org/";
 
     private static ProfileDataSource instance;
+
+    private final BRSQLiteHelper dbHelper;
+
+    private SQLiteDatabase database;
 
     public static ProfileDataSource getInstance(Context context) {
         if (instance == null) {
@@ -41,6 +53,20 @@ public class ProfileDataSource {
 
     public ProfileDataSource(Context context) {
         this.mContext = context;
+        dbHelper = BRSQLiteHelper.getInstance(context);
+    }
+
+    @Override
+    public SQLiteDatabase openDatabase() {
+        if (database == null || !database.isOpen())
+            database = dbHelper.getWritableDatabase();
+        dbHelper.setWriteAheadLoggingEnabled(BRConstants.WRITE_AHEAD_LOGGING);
+        return database;
+    }
+
+    @Override
+    public void closeDatabase() {
+
     }
 
     static class ProfileResponse {
@@ -48,18 +74,127 @@ public class ProfileDataSource {
         public int status;
     }
 
-    public String upchain(String data){
+    private final String[] allColumns = {
+            BRSQLiteHelper.ADD_APPS_NAME_EN,
+            BRSQLiteHelper.ADD_APPS_NAME_ZH_CN,
+            BRSQLiteHelper.ADD_APPS_APP_ID,
+            BRSQLiteHelper.ADD_APPS_DID,
+            BRSQLiteHelper.ADD_APPS_PUBLICKEY,
+            BRSQLiteHelper.ADD_APPS_ICON_XXHDPI,
+            BRSQLiteHelper.ADD_APPS_SHORTDESC_EN,
+            BRSQLiteHelper.ADD_APPS_SHORTDESC_ZH_CN,
+            BRSQLiteHelper.ADD_APPS_LONGDESC_EN,
+            BRSQLiteHelper.ADD_APPS_LONGDESC_ZH_CN,
+            BRSQLiteHelper.ADD_APPS_DEVELOPER,
+            BRSQLiteHelper.ADD_APPS_URL,
+            BRSQLiteHelper.ADD_APPS_PATH,
+            BRSQLiteHelper.ADD_APPS_HASH
+    };
+
+    private MyAppItem cursorToInfo(Cursor cursor){
+        MyAppItem item = new MyAppItem();
+        item.name_en = cursor.getString(0);
+        item.name_zh_CN = cursor.getString(1);
+        item.appId = cursor.getString(2);
+        item.did = cursor.getString(3);
+        item.publicKey = cursor.getString(4);
+        item.icon_xxhdpi = cursor.getString(5);
+        item.shortDesc_en = cursor.getString(6);
+        item.shortDesc_zh_CN = cursor.getString(7);
+        item.longDesc_en = cursor.getString(8);
+        item.longDesc_zh_CN = cursor.getString(9);
+        item.developer = cursor.getString(10);
+        item.url = cursor.getString(11);
+        item.path = cursor.getString(12);
+        item.hash = cursor.getString(13);
+
+        return item;
+    }
+
+    public void deleteAppItem(String appId){
+        if(StringUtil.isNullOrEmpty(appId)) return;
         try {
-            Log.i("ProfileFunction", "upchain data:"+data);
-            ProfileResponse result = urlPost(DID_URL +"api/1/blockagent/upchain/data", data);
-            Log.i("ProfileFunction", "result:"+result);
-            if(200 == result.status) return result.result;
-        } catch (IOException e) {
-            Log.i("ProfileFunction", "upchain exception");
+            database = openDatabase();
+            database.beginTransaction();
+            long l = database.delete(BRSQLiteHelper.ADD_APPS_TABLE_NAME, "app_id=?", new String[]{appId});
+        } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            closeDatabase();
+        }
+    }
+
+    public void putMyAppItem(MyAppItem item){
+        if(null == item) return;
+        try {
+            database = openDatabase();
+            database.beginTransaction();
+            ContentValues value = new ContentValues();
+            value.put(BRSQLiteHelper.ADD_APPS_NAME_EN, item.name_en);
+            value.put(BRSQLiteHelper.ADD_APPS_NAME_ZH_CN, item.name_zh_CN);
+            value.put(BRSQLiteHelper.ADD_APPS_APP_ID, item.appId);
+            value.put(BRSQLiteHelper.ADD_APPS_DID, item.did);
+            value.put(BRSQLiteHelper.ADD_APPS_PUBLICKEY, item.publicKey);
+            value.put(BRSQLiteHelper.ADD_APPS_ICON_XXHDPI, item.banner_en_xxhdpi);
+            value.put(BRSQLiteHelper.ADD_APPS_SHORTDESC_EN, item.shortDesc_en);
+            value.put(BRSQLiteHelper.ADD_APPS_SHORTDESC_ZH_CN, item.shortDesc_zh_CN);
+            value.put(BRSQLiteHelper.ADD_APPS_LONGDESC_EN, item.longDesc_en);
+            value.put(BRSQLiteHelper.ADD_APPS_LONGDESC_ZH_CN, item.longDesc_zh_CN);
+            value.put(BRSQLiteHelper.ADD_APPS_DEVELOPER, item.developer);
+            value.put(BRSQLiteHelper.ADD_APPS_URL, item.url);
+            value.put(BRSQLiteHelper.ADD_APPS_PATH, item.path);
+            value.put(BRSQLiteHelper.ADD_APPS_HASH, item.hash);
+            value.put(BRSQLiteHelper.ADD_APPS_INDEX, item.index);
+
+            long l = database.insertWithOnConflict(BRSQLiteHelper.ADD_APPS_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
+            database.setTransactionSuccessful();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            database.endTransaction();
+            closeDatabase();
+        }
+    }
+
+    public List<MyAppItem> getMyAppItems() {
+        List<MyAppItem> infos = new ArrayList<>();
+        Cursor cursor = null;
+
+        try {
+            database = openDatabase();
+            cursor = database.query(BRSQLiteHelper.ADD_APPS_TABLE_NAME, allColumns, null, null, null, null, "appIndex desc");
+
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                MyAppItem curEntity = cursorToInfo(cursor);
+                infos.add(curEntity);
+                cursor.moveToNext();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null)
+                cursor.close();
+            closeDatabase();
         }
 
-        return null;
+        return infos;
+    }
+
+    public void upchain(final String data){
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Log.i("ProfileFunction", "upchain data:"+data);
+                    ProfileResponse result = urlPost(DID_URL +"api/1/blockagent/upchain/data", data);
+                    Log.i("ProfileFunction", "result:"+result);
+                } catch (IOException e) {
+                    Log.i("ProfileFunction", "upchain exception");
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     static class Transaction {

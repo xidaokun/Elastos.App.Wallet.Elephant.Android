@@ -151,9 +151,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                     if(StringUtil.isNullOrEmpty(data) || StringUtil.isNullOrEmpty(mSeed)) return;
                     String info = mDid.signInfo(mSeed, data);
                     if(StringUtil.isNullOrEmpty(info)) return;
-                    String txid = ProfileDataSource.getInstance(HomeActivity.this).upchain(info);
+                    ProfileDataSource.getInstance(HomeActivity.this).upchain(info);
                     BRSharedPrefs.putDid2ChainTime(HomeActivity.this, System.currentTimeMillis());
-                    Log.d("didIsOnchain", "txid:"+txid);
                 }
             }
         });

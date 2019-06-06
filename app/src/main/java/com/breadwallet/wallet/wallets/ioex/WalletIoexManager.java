@@ -15,6 +15,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.sqlite.IoexDataSource;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.SettingsUtil;
@@ -29,7 +30,6 @@ import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.WalletManagerHelper;
 import com.breadwallet.wallet.wallets.ela.BRElaTransaction;
-import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.breadwallet.wallet.wallets.ela.data.HistoryTransactionEntity;
 import com.elastos.jni.Utility;
 import com.google.gson.Gson;
@@ -43,7 +43,7 @@ public class WalletIoexManager extends BRCoreWalletManager implements BaseWallet
 
     private static final String TAG = WalletIoexManager.class.getSimpleName();
 
-    public static final String ONE_IOEX_IN_SALA = "100000000"; // 1 ela in sala, 100 millions
+    public static final String ONE_IOEX_IN_SATOSHI = "100000000"; // 1 ela in sala, 100 millions
     public static final String MAX_IOEX = "10000000000"; //Max amount in ela
     public static final String ELA_SYMBOL = "IOEX";
     private static final String SCHEME = "ioex";
@@ -51,7 +51,7 @@ public class WalletIoexManager extends BRCoreWalletManager implements BaseWallet
     private static final String IOEX_ADDRESS_PREFIX = "E";
 
 
-    public static final BigDecimal ONE_IOEX_TO_SALA = new BigDecimal(ONE_IOEX_IN_SALA);
+    public static final BigDecimal ONE_IOEX_TO_SATOSHI = new BigDecimal(ONE_IOEX_IN_SATOSHI);
 
     private static WalletIoexManager mInstance;
 
@@ -147,7 +147,7 @@ public class WalletIoexManager extends BRCoreWalletManager implements BaseWallet
             if(tx == null) return new byte[1];
             BRElaTransaction raw = tx.getElaTx();
             if(raw == null) return new byte[1];
-            String rawTxTxid = ElaDataSource.getInstance(mContext).sendElaRawTx(raw.getTx());
+            String rawTxTxid = IoexDataSource.getInstance(mContext).sendElaRawTx(raw.getTx());
 
             if(StringUtil.isNullOrEmpty(rawTxTxid)) return new byte[1];
             TxManager.getInstance().updateTxList(mContext);
@@ -156,13 +156,6 @@ public class WalletIoexManager extends BRCoreWalletManager implements BaseWallet
             e.printStackTrace();
         }
         return new byte[1];
-    }
-
-    public void updateTxHistory() {
-        String address = getAddress();
-        if(StringUtil.isNullOrEmpty(address)) return;
-        ElaDataSource.getInstance(mContext).getHistory(address);
-        TxManager.getInstance().updateTxList(mContext);
     }
 
     @Override
@@ -246,7 +239,7 @@ public class WalletIoexManager extends BRCoreWalletManager implements BaseWallet
         return new CryptoTransaction[0];
     }
 
-    private static final BigDecimal ELA_FEE = new BigDecimal(4860).divide(ONE_IOEX_TO_SALA, 8, BRConstants.ROUNDING_MODE);
+    private static final BigDecimal ELA_FEE = new BigDecimal(4860).divide(ONE_IOEX_TO_SATOSHI, 8, BRConstants.ROUNDING_MODE);
 
     @Override
     public BigDecimal getTxFee(CryptoTransaction tx) {
@@ -310,7 +303,7 @@ public class WalletIoexManager extends BRCoreWalletManager implements BaseWallet
             String address = getAddress();
             Log.i("balance_test", "address:"+address);
             if(address == null) return;
-            String balance = ElaDataSource.getInstance(mContext).getElaBalance(address);
+            String balance = IoexDataSource.getInstance(mContext).getBalance(address);
             if(balance == null) return;
             final BigDecimal tmp = new BigDecimal((balance == null || balance.equals("")) ? "0" : balance);
             BRSharedPrefs.putCachedBalance(app, getIso(), tmp);
@@ -321,12 +314,12 @@ public class WalletIoexManager extends BRCoreWalletManager implements BaseWallet
 
     @Override
     public List<TxUiHolder> getTxUiHolders(Context app) {
-        List<HistoryTransactionEntity> transactionEntities = ElaDataSource.getInstance(mContext).getHistoryTransactions();
         List<TxUiHolder> uiTxs = new ArrayList<>();
+        List<HistoryTransactionEntity> transactionEntities = IoexDataSource.getInstance(mContext).getHistoryTransactions();
         try {
             for (HistoryTransactionEntity entity : transactionEntities) {
-                BigDecimal fee = new BigDecimal(entity.fee).divide(ONE_IOEX_TO_SALA, 8, BRConstants.ROUNDING_MODE);
-                BigDecimal amount = new BigDecimal(entity.amount).divide(ONE_IOEX_TO_SALA, 8, BRConstants.ROUNDING_MODE);
+                BigDecimal fee = new BigDecimal(entity.fee).divide(ONE_IOEX_TO_SATOSHI, 8, BRConstants.ROUNDING_MODE);
+                BigDecimal amount = new BigDecimal(entity.amount).divide(ONE_IOEX_TO_SATOSHI, 8, BRConstants.ROUNDING_MODE);
                 TxUiHolder txUiHolder = new TxUiHolder(null,
                         entity.isReceived,
                         entity.timeStamp,
@@ -369,7 +362,7 @@ public class WalletIoexManager extends BRCoreWalletManager implements BaseWallet
 
     @Override
     public String getSymbol(Context app) {
-        return "ELA";
+        return "IOEX";
     }
 
     @Override
@@ -389,7 +382,7 @@ public class WalletIoexManager extends BRCoreWalletManager implements BaseWallet
 
     @Override
     public String getDenominator() {
-        return String.valueOf(ONE_IOEX_IN_SALA);
+        return String.valueOf(ONE_IOEX_IN_SATOSHI);
     }
 
     @Override
@@ -405,16 +398,7 @@ public class WalletIoexManager extends BRCoreWalletManager implements BaseWallet
     @Override
     public CryptoTransaction createTransaction(BigDecimal amount, String address, String meno) {
         Log.i(TAG, "createTransaction");
-        BRElaTransaction brElaTransaction = null;
-        boolean autoVote = BRSharedPrefs.getAutoVote(mContext);
-        String candidatesStr = BRSharedPrefs.getCandidate(mContext);
-        Log.d("posvote", "autoVote:"+autoVote);
-        if(autoVote && !StringUtil.isNullOrEmpty(candidatesStr)){
-            List candidates = new Gson().fromJson(candidatesStr, new TypeToken<List<String>>(){}.getType());
-            brElaTransaction = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_IOEX_TO_SALA).longValue(), meno, candidates);
-        } else {
-            brElaTransaction = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_IOEX_TO_SALA).longValue(), meno);
-        }
+        BRElaTransaction brElaTransaction = IoexDataSource.getInstance(mContext).createTx(getAddress(), address, amount.multiply(ONE_IOEX_TO_SATOSHI).longValue(), meno);
 
         return new CryptoTransaction(brElaTransaction);
     }
@@ -451,7 +435,6 @@ public class WalletIoexManager extends BRCoreWalletManager implements BaseWallet
     @Override
     public void wipeData(Context app) {
         BRSharedPrefs.putCachedBalance(app, getIso(),  new BigDecimal(0));
-        ElaDataSource.getInstance(app).deleteAllTransactions();
         mPrivateKey = null;
         mAddress = null;
         mInstance = null;

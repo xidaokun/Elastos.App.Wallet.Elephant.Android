@@ -24,6 +24,7 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
     private Context mContext;
     private List<MyAppItem> mData;
     private boolean mIsDelete;
+    private OnDeleteClickListener mListener;
 
     public ExploreAppsAdapter(Context context, List<MyAppItem> data){
         this.mContext = context;
@@ -34,6 +35,10 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
         this.mIsDelete = isDelete;
     }
 
+    public void setOnDeleteClick(OnDeleteClickListener listener ){
+        this.mListener = listener;
+    }
+
     @NonNull
     @Override
     public MyAppsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -42,7 +47,7 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyAppsViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyAppsViewHolder holder, final int position) {
         final MyAppItem item = mData.get(position);
 
         String languageCode = Locale.getDefault().getLanguage();
@@ -65,6 +70,14 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
             holder.mDelete.setVisibility(View.GONE);
             holder.mTouch.setVisibility(View.GONE);
         }
+        holder.mDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mListener != null){
+                    mListener.onDelete(item, position);
+                }
+            }
+        });
     }
 
     @Override
@@ -115,5 +128,9 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
         public void onItemClear() {
 
         }
+    }
+
+    public interface OnDeleteClickListener {
+        public void onDelete(MyAppItem item, int position);
     }
 }

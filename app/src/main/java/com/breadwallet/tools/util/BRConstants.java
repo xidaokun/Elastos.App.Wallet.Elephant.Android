@@ -148,6 +148,15 @@ public final class BRConstants {
     public static final String EXCHANGE_ID = "3c9de10ab6bd6e86dd9891bd5b62c8a1c0cdd2e32172fc950a13a1e62c7e5fe0a162c971562be4a18ea3ccad722d2d8fd351aa05808f57028278bf6e49d0d210";
     public static final String HASH_ID = "14bd1d772afc8e633ce95b988646bd9ed5df65cb33ec98a43b41e6cb6de5276ca9cce91d069dc688619f1a250842b37d380d4fb984c9f912a2f86edcf5dddba9";
 
+
+    public static final String ELAPHANT_APP_NAME = "elaphant";
+    public static final String ELAPHANT_APP_ID = "8816ed501878a9f4404f5926c4fb2df56239424e41da9c449b4db35e9a8b99d5f976a0537858d709511b5b41cf11c0e88be8778008eb5f918a6aa712ac20c421";
+    public static final String ELAPHANT_APP_PUBLICKEY = "03de176db829872772bf9e9d8bd79dd48cb6fd33d463f9d8620c9bad3fed790b59";
+    public static final String ELAPHANT_APP_DID = "iocKHcPLRQKoyNrf8yMRtuWkeAgi3Ed9ns";
+
+    public static final String ELA_ASSET_ID = "a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0";
+    public static final String IOEX_ASSET_ID = "61ccbfae9f8ce9660a71321041917139cb72cbb85bd105e92f0ed32cb1d1298f";
+
     private BRConstants() {
     }
 
