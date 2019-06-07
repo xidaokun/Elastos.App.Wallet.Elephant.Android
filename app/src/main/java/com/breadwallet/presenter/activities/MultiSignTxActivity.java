@@ -221,8 +221,16 @@ public class MultiSignTxActivity extends BRActivity {
 
         mSend = signedSigners != null && signedSigners.length >= mRequiredCount - 1;
 
+        //TODO: for debug,remove later
+        if (signedSigners != null) {
+            for(String signed : signedSigners) {
+                Log.d(TAG, "signed: " + signed);
+            }
+        }
+
         ArrayList<PublicKeyAdapter.PublicKey> publicKeys = new ArrayList<>();
         for (String publicKey : mPublicKeys) {
+            Log.d(TAG, "publicKey: " + publicKey);
             String str;
             if (mMyPublicKey.equals(publicKey)) {
                 str = publicKey + "(me)";
@@ -326,8 +334,6 @@ public class MultiSignTxActivity extends BRActivity {
 
     private void approve() {
         String privateKey = WalletElaManager.getInstance(this).getPrivateKey();
-        Log.d(TAG, "private key: " + privateKey);
-        Log.d(TAG, "public key: " + WalletElaManager.getInstance(this).getPublicKey());
         String signed =  ElastosKeypairSign.multiSignTransaction(privateKey, mPublicKeys,
                 mPublicKeys.length, mRequiredCount, mTransaction);
         if (!mSend) {

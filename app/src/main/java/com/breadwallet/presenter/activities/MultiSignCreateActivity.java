@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.did.DidDataSource;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.jsbridge.JsInterface;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -90,7 +91,15 @@ public class MultiSignCreateActivity extends BRActivity {
             Log.e(TAG, "no require count");
             return false;
         }
-        mRequiredCount = Integer.parseInt(require);
+        try {
+            mRequiredCount = Integer.parseInt(require);
+        } catch (NumberFormatException ignored) {
+            mRequiredCount = 0;
+        }
+        if (mRequiredCount <= 0 || mRequiredCount > mPublicKeys.length) {
+            Log.d(TAG, "require count is illegal. requireCount: " + require);
+            return false;
+        }
 
         String returnurl = uri.getQueryParameter("ReturnUrl");
         if(!StringUtil.isNullOrEmpty(returnurl)) {
@@ -127,6 +136,12 @@ public class MultiSignCreateActivity extends BRActivity {
 
     private void setResultAndFinish(String address) {
         final String mne = getMn();
+        if (StringUtil.isNullOrEmpty(mne)) {
+            Log.e(TAG, "get men failed");
+            BRDialog.showSimpleDialog(this, getString(R.string.multisign_create_failed_title),
+                    getString(R.string.multisign_create_failed));
+            return;
+        }
         final String pk = Utility.getInstance(this).getSinglePrivateKey(mne);
         final String myPK = Utility.getInstance(this).getSinglePublicKey(mne);
         final String myDid = Utility.getInstance(this).getDid(myPK);

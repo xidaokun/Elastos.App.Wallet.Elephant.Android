@@ -1094,4 +1094,6 @@
     <string name="multisign_create_addr">钱包地址</string>
     <string name="multisign_create_keys">公钥总数：%1$d</string>
     <string name="multisign_create_unlock_keys">审批需要私钥数：%1$d</string>
+    <string name="multisign_create_failed_title">失败</string>
+    <string name="multisign_create_failed">创建失败，请重试</string>
 </resources>

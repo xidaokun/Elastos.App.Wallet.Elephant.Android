@@ -1101,4 +1101,6 @@
     <string name="multisign_create_addr">Address</string>
     <string name="multisign_create_keys">Total keys: %1$d</string>
     <string name="multisign_create_unlock_keys">Unlock keys required: %1$d</string>
+    <string name="multisign_create_failed_title">Failed</string>
+    <string name="multisign_create_failed">Create failed. Please try again</string>
 </resources>
