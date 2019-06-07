@@ -26,16 +26,13 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.tools.animation.UiUtils;
-import com.breadwallet.tools.jsbridge.JsInterface;
+
 import com.breadwallet.tools.util.StringUtil;
-import com.google.gson.Gson;
 
 import org.wallet.library.AuthorizeManager;
 
 public class ExploreWebActivity extends BRActivity {
     private final String TAG = ExploreWebActivity.class.getName();
-
-    public static final int REQUEST_CREATE_WALLET = 3333;
 
     private WebView webView;
     private LoadingDialog mLoadingDialog;
@@ -120,31 +117,6 @@ public class ExploreWebActivity extends BRActivity {
         webView.loadUrl(url);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CREATE_WALLET) {
-            Log.d(TAG, "REQUEST_CREATE_WALLET " + resultCode);
-            WalletResult ret = new WalletResult();
-            ret.result = resultCode;
-            ret.data = data == null ? "" : data.getStringExtra("data");
-            onWalletCreated(new Gson().toJson(ret));
-        }
-    }
-
-    private void onWalletCreated(String address) {
-        Log.d(TAG, address);
-        final int version = Build.VERSION.SDK_INT;
-        String script = "javascript:onWalletCreated("+ address + ")";
-        Log.d(TAG, "script: " + script);
-        if (version < 18) {
-            webView.loadUrl(script);
-        } else {
-            webView.evaluateJavascript(script, null);
-        }
-
-    }
-
-
     private void webviewSetting() {
         WebSettings webSettings = webView.getSettings();
         webSettings.setDomStorageEnabled(true);
@@ -152,8 +124,6 @@ public class ExploreWebActivity extends BRActivity {
         webSettings.setBlockNetworkImage(false);
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
         webSettings.setLoadsImagesAutomatically(true);
-
-        webView.addJavascriptInterface(new JsInterface(this), "Android");
 
         webView.setWebChromeClient(new WebChromeClient());
         webView.setWebViewClient(new WebViewClient() {
@@ -263,10 +233,4 @@ public class ExploreWebActivity extends BRActivity {
             mLoadingDialog = null;
         }
     }
-
-    private class WalletResult {
-        int result;
-        String data;
-    }
-
 }

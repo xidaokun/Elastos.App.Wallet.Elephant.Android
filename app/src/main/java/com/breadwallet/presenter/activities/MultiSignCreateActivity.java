@@ -19,7 +19,6 @@ import com.breadwallet.did.DidDataSource;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
-import com.breadwallet.tools.jsbridge.JsInterface;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.StringUtil;
@@ -248,7 +247,7 @@ public class MultiSignCreateActivity extends BRActivity {
     }
 
     private void create() {
-        JsInterface.MultiSignParam param = new JsInterface.MultiSignParam();
+        MultiSignParam param = new MultiSignParam();
         param.PublicKeys = mPublicKeys;
         param.RequiredCount = mRequiredCount;
 
@@ -266,5 +265,10 @@ public class MultiSignCreateActivity extends BRActivity {
         String DID;
         String PublicKey;
         String Address;
+    }
+
+    public static class MultiSignParam {
+        public String[] PublicKeys;
+        public int RequiredCount;
     }
 }
