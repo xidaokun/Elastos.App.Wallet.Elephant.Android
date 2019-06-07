@@ -18,7 +18,6 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRDialog;
-import com.breadwallet.tools.jsbridge.JsInterface;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -141,7 +140,7 @@ public class MultiSignTxActivity extends BRActivity {
             return;
         }
 
-        JsInterface.MultiSignParam param = new Gson().fromJson(pref, JsInterface.MultiSignParam.class);
+        MultiSignCreateActivity.MultiSignParam param = new Gson().fromJson(pref, MultiSignCreateActivity.MultiSignParam.class);
         mRequiredCount = param.RequiredCount;
         mPublicKeys = param.PublicKeys;
 
