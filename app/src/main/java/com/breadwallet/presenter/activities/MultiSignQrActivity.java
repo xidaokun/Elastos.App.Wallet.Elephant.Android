@@ -46,6 +46,7 @@ public class MultiSignQrActivity extends BRActivity {
     private int mIndex = 0;
     private int mTotal = 0;
     private final static int INTERVAL = 500;
+    private static final String FILE_SUFFIX = ".elasign";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -163,14 +164,14 @@ public class MultiSignQrActivity extends BRActivity {
             File imagePath = new File(getCacheDir(), "images");
             imagePath.mkdirs();
 
-            FileOutputStream fOut = new FileOutputStream(imagePath + "/tx.elasign");
+            FileOutputStream fOut = new FileOutputStream(imagePath + "/tx" + FILE_SUFFIX);
             OutputStreamWriter outWriter = new OutputStreamWriter(fOut);
             outWriter.write(getUrl());
             outWriter.close();
             fOut.flush();
             fOut.close();
 
-            share("tx.elasign");
+            share("tx" + FILE_SUFFIX);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -186,7 +187,7 @@ public class MultiSignQrActivity extends BRActivity {
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        if (fileName.contains(".elasign")) {
+        if (fileName.contains(FILE_SUFFIX)) {
             shareIntent.setDataAndType(contentUri, "text/plain");
         } else {
             shareIntent.setDataAndType(contentUri, getContentResolver().getType(contentUri));

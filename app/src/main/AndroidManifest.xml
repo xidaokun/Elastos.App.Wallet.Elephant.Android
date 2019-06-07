@@ -364,7 +364,7 @@
                 <data
                     android:scheme="content"
                     android:host="*"
-                    android:pathPattern="/.*\\.elasign"
+                    android:pathPattern="/.*\\.elasign.*"
                     android:mimeType="*/*"/>
             </intent-filter>
             <intent-filter>
