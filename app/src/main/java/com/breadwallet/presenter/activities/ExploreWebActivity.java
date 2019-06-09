@@ -232,10 +232,4 @@ public class ExploreWebActivity extends BRActivity {
             mLoadingDialog = null;
         }
     }
-
-    private class WalletResult {
-        int result;
-        String data;
-    }
-
 }

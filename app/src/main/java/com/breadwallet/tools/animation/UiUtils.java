@@ -435,9 +435,8 @@ public class UiUtils {
         MessageDigest md = MessageDigest.getInstance("MD5");
         md.update(data.getBytes());
         byte[] digest = md.digest();
-        StringBuffer hexString = new StringBuffer();
-        for (int i=0; i< digest.length; i++)
-            hexString.append(Integer.toHexString(0xFF & digest[i]));
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : digest) hexString.append(Integer.toHexString(0xFF & b));
 
         return hexString.toString();
     }
