@@ -229,7 +229,7 @@ public class MultiSignCreateActivity extends BRActivity {
         for (String publicKey : mPublicKeys) {
             TextView lableView = new TextView(this);
             if (myPublicKey.equals(publicKey)) {
-                lableView.setText(myPublicKey + "(me)");
+                lableView.setText(myPublicKey + getString(R.string.multisign_wallet_pubkey_me));
             } else {
                 lableView.setText(publicKey);
             }
