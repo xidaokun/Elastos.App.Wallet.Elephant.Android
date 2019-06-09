@@ -1103,4 +1103,5 @@
     <string name="multisign_create_unlock_keys">Unlock keys required: %1$d</string>
     <string name="multisign_create_failed_title">Failed</string>
     <string name="multisign_create_failed">Create failed. Please try again</string>
+    <string name="multisign_wallet_pubkey_me">(me)</string>
 </resources>

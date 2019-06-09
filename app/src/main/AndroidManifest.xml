@@ -356,7 +356,8 @@
 
         <activity android:name=".presenter.activities.MultiSignQrActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".presenter.activities.MultiSignTxActivity" >
+        <activity android:name=".presenter.activities.MultiSignTxActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -375,7 +376,8 @@
                     android:host="multitx"/>
             </intent-filter>
         </activity>
-        <activity android:name=".presenter.activities.MultiSignCreateActivity" >
+        <activity android:name=".presenter.activities.MultiSignCreateActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.BROWSABLE"/>

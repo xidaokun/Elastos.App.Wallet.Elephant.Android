@@ -232,7 +232,7 @@ public class MultiSignTxActivity extends BRActivity {
             Log.d(TAG, "publicKey: " + publicKey);
             String str;
             if (mMyPublicKey.equals(publicKey)) {
-                str = publicKey + "(me)";
+                str = publicKey + getString(R.string.multisign_wallet_pubkey_me);
             } else {
                 str = publicKey;
             }
