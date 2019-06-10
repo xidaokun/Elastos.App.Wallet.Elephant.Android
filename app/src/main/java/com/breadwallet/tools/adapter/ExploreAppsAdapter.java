@@ -24,7 +24,8 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
     private Context mContext;
     private List<MyAppItem> mData;
     private boolean mIsDelete;
-    private OnDeleteClickListener mListener;
+    private OnDeleteClickListener mDeleteListener;
+    private OnTouchMoveListener mMoveListener;
 
     public ExploreAppsAdapter(Context context, List<MyAppItem> data){
         this.mContext = context;
@@ -35,8 +36,12 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
         this.mIsDelete = isDelete;
     }
 
+    public void setOnMoveListener(OnTouchMoveListener listener){
+        this.mMoveListener = listener;
+    }
+
     public void setOnDeleteClick(OnDeleteClickListener listener ){
-        this.mListener = listener;
+        this.mDeleteListener = listener;
     }
 
     @NonNull
@@ -73,8 +78,8 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
         holder.mDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mListener != null){
-                    mListener.onDelete(item, position);
+                if(mDeleteListener != null){
+                    mDeleteListener.onDelete(item, position);
                 }
             }
         });
@@ -90,9 +95,9 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
         notifyItemMoved(fromPosition, toPosition);
         int bound = mData.size();
         if(fromPosition>=bound || toPosition>=bound) return;
-        Collections.swap(mData, fromPosition, toPosition);
-
-        //TODO 交换数据库中数据的位置
+        if(mMoveListener != null){
+            mMoveListener.onMove(fromPosition, toPosition);
+        }
     }
 
     @Override
@@ -128,6 +133,10 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
         public void onItemClear() {
 
         }
+    }
+
+    public interface OnTouchMoveListener {
+        public void onMove(int from, int to);
     }
 
     public interface OnDeleteClickListener {

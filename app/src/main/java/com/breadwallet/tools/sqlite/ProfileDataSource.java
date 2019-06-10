@@ -124,37 +124,73 @@ public class ProfileDataSource implements BRDataSourceInterface{
         }
     }
 
-    public void putMyAppItem(MyAppItem item){
-        if(null == item) return;
+    public void updateMyAppItem(List<MyAppItem> entities){
+        if(entities==null || entities.size()<=0) return;
         try {
             database = openDatabase();
             database.beginTransaction();
-            ContentValues value = new ContentValues();
-            value.put(BRSQLiteHelper.ADD_APPS_NAME_EN, item.name_en);
-            value.put(BRSQLiteHelper.ADD_APPS_NAME_ZH_CN, item.name_zh_CN);
-            value.put(BRSQLiteHelper.ADD_APPS_APP_ID, item.appId);
-            value.put(BRSQLiteHelper.ADD_APPS_DID, item.did);
-            value.put(BRSQLiteHelper.ADD_APPS_PUBLICKEY, item.publicKey);
-            value.put(BRSQLiteHelper.ADD_APPS_ICON_XXHDPI, item.banner_en_xxhdpi);
-            value.put(BRSQLiteHelper.ADD_APPS_SHORTDESC_EN, item.shortDesc_en);
-            value.put(BRSQLiteHelper.ADD_APPS_SHORTDESC_ZH_CN, item.shortDesc_zh_CN);
-            value.put(BRSQLiteHelper.ADD_APPS_LONGDESC_EN, item.longDesc_en);
-            value.put(BRSQLiteHelper.ADD_APPS_LONGDESC_ZH_CN, item.longDesc_zh_CN);
-            value.put(BRSQLiteHelper.ADD_APPS_DEVELOPER, item.developer);
-            value.put(BRSQLiteHelper.ADD_APPS_URL, item.url);
-            value.put(BRSQLiteHelper.ADD_APPS_PATH, item.path);
-            value.put(BRSQLiteHelper.ADD_APPS_HASH, item.hash);
-            value.put(BRSQLiteHelper.ADD_APPS_INDEX, item.index);
+            for(int i=0; i< entities.size(); i++){
+                MyAppItem item = entities.get(i);
+                if(item == null) return;
+                ContentValues value = new ContentValues();
+                value.put(BRSQLiteHelper.ADD_APPS_NAME_EN, item.name_en);
+                value.put(BRSQLiteHelper.ADD_APPS_NAME_ZH_CN, item.name_zh_CN);
+                value.put(BRSQLiteHelper.ADD_APPS_APP_ID, item.appId);
+                value.put(BRSQLiteHelper.ADD_APPS_DID, item.did);
+                value.put(BRSQLiteHelper.ADD_APPS_PUBLICKEY, item.publicKey);
+                value.put(BRSQLiteHelper.ADD_APPS_ICON_XXHDPI, item.banner_en_xxhdpi);
+                value.put(BRSQLiteHelper.ADD_APPS_SHORTDESC_EN, item.shortDesc_en);
+                value.put(BRSQLiteHelper.ADD_APPS_SHORTDESC_ZH_CN, item.shortDesc_zh_CN);
+                value.put(BRSQLiteHelper.ADD_APPS_LONGDESC_EN, item.longDesc_en);
+                value.put(BRSQLiteHelper.ADD_APPS_LONGDESC_ZH_CN, item.longDesc_zh_CN);
+                value.put(BRSQLiteHelper.ADD_APPS_DEVELOPER, item.developer);
+                value.put(BRSQLiteHelper.ADD_APPS_URL, item.url);
+                value.put(BRSQLiteHelper.ADD_APPS_PATH, item.path);
+                value.put(BRSQLiteHelper.ADD_APPS_HASH, item.hash);
+                value.put(BRSQLiteHelper.ADD_APPS_INDEX, i);
 
-            long l = database.insertWithOnConflict(BRSQLiteHelper.ADD_APPS_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
+                long l = database.insertWithOnConflict(BRSQLiteHelper.ADD_APPS_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
+            }
             database.setTransactionSuccessful();
         } catch (Exception e) {
+            closeDatabase();
             e.printStackTrace();
         } finally {
             database.endTransaction();
             closeDatabase();
         }
     }
+
+//    public void putMyAppItem(MyAppItem item){
+//        if(null == item) return;
+//        try {
+//            database = openDatabase();
+//            database.beginTransaction();
+//            ContentValues value = new ContentValues();
+//            value.put(BRSQLiteHelper.ADD_APPS_NAME_EN, item.name_en);
+//            value.put(BRSQLiteHelper.ADD_APPS_NAME_ZH_CN, item.name_zh_CN);
+//            value.put(BRSQLiteHelper.ADD_APPS_APP_ID, item.appId);
+//            value.put(BRSQLiteHelper.ADD_APPS_DID, item.did);
+//            value.put(BRSQLiteHelper.ADD_APPS_PUBLICKEY, item.publicKey);
+//            value.put(BRSQLiteHelper.ADD_APPS_ICON_XXHDPI, item.banner_en_xxhdpi);
+//            value.put(BRSQLiteHelper.ADD_APPS_SHORTDESC_EN, item.shortDesc_en);
+//            value.put(BRSQLiteHelper.ADD_APPS_SHORTDESC_ZH_CN, item.shortDesc_zh_CN);
+//            value.put(BRSQLiteHelper.ADD_APPS_LONGDESC_EN, item.longDesc_en);
+//            value.put(BRSQLiteHelper.ADD_APPS_LONGDESC_ZH_CN, item.longDesc_zh_CN);
+//            value.put(BRSQLiteHelper.ADD_APPS_DEVELOPER, item.developer);
+//            value.put(BRSQLiteHelper.ADD_APPS_URL, item.url);
+//            value.put(BRSQLiteHelper.ADD_APPS_PATH, item.path);
+//            value.put(BRSQLiteHelper.ADD_APPS_HASH, item.hash);
+//
+//            long l = database.insertWithOnConflict(BRSQLiteHelper.ADD_APPS_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
+//            database.setTransactionSuccessful();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            database.endTransaction();
+//            closeDatabase();
+//        }
+//    }
 
     public List<MyAppItem> getMyAppItems() {
         List<MyAppItem> infos = new ArrayList<>();

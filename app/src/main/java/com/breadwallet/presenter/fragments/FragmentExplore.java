@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -52,11 +53,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class FragmentExplore extends Fragment implements OnStartDragListener, ExploreAppsAdapter.OnDeleteClickListener {
+public class FragmentExplore extends Fragment implements OnStartDragListener, ExploreAppsAdapter.OnDeleteClickListener, ExploreAppsAdapter.OnTouchMoveListener {
 
     private static final String TAG = FragmentExplore.class.getSimpleName() + "_log";
 
@@ -85,14 +87,28 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     private View mAddPopView;
     private View mAddUrlView;
     private View mAddScanView;
+    private static final int INIT_APPS_MSG = 0x01;
+    private static final int UPDATE_APPS_MSG = 0x02;
+    @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            List<MyAppItem> tmp = ProfileDataSource.getInstance(getContext()).getMyAppItems();
-            if(null != tmp){
-                mItems.addAll(tmp);
-                mAdapter.notifyDataSetChanged();
+            int flag = msg.what;
+            switch (flag) {
+                case INIT_APPS_MSG:
+                    mAppIds.clear();
+                    mItems.clear();
+                    List<MyAppItem> tmp = ProfileDataSource.getInstance(getContext()).getMyAppItems();
+                    mItems.addAll(tmp);
+                    mAdapter.notifyDataSetChanged();
+                    break;
+                case UPDATE_APPS_MSG:
+                    ProfileDataSource.getInstance(getContext()).updateMyAppItem(mItems);
+                    mAdapter.notifyDataSetChanged();
+                    break;
+                default:
+                    break;
             }
         }
     };
@@ -128,9 +144,9 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             mDisclaimLayout.setVisibility(View.VISIBLE);
     }
 
-    private void initInterApps(){
+    private void initInterApps() {
         String redPackageStatus = getAppStatus(BRConstants.REA_PACKAGE_ID);
-        if(StringUtil.isNullOrEmpty(redPackageStatus) || redPackageStatus.equals("normal")) {
+        if (StringUtil.isNullOrEmpty(redPackageStatus) || redPackageStatus.equals("normal")) {
             MyAppItem redPackageItem = new MyAppItem();
             redPackageItem.appId = BRConstants.REA_PACKAGE_ID;
             redPackageItem.name_zh_CN = "红包";
@@ -142,10 +158,10 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             redPackageItem.longDesc_en = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
             redPackageItem.longDesc_zh_CN = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
             mAppIds.add(BRConstants.REA_PACKAGE_ID);
-            ProfileDataSource.getInstance(getContext()).putMyAppItem(redPackageItem);
+            mItems.add(redPackageItem);
         }
         String exchangeStatus = getAppStatus(BRConstants.DPOS_VOTE_ID);
-        if(StringUtil.isNullOrEmpty(exchangeStatus) || exchangeStatus.equals("normal")) {
+        if (StringUtil.isNullOrEmpty(exchangeStatus) || exchangeStatus.equals("normal")) {
             MyAppItem dposVoteItem = new MyAppItem();
             dposVoteItem.appId = BRConstants.DPOS_VOTE_ID;
             dposVoteItem.name_zh_CN = "dpos投票";
@@ -155,10 +171,10 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             dposVoteItem.shortDesc_en = "dpos投票";
             dposVoteItem.shortDesc_zh_CN = "dpos vote";
             mAppIds.add(BRConstants.DPOS_VOTE_ID);
-            ProfileDataSource.getInstance(getContext()).putMyAppItem(dposVoteItem);
+            mItems.add(dposVoteItem);
         }
         String dposVoteStatus = getAppStatus(BRConstants.DPOS_VOTE_ID);
-        if(StringUtil.isNullOrEmpty(dposVoteStatus) || dposVoteStatus.equals("normal")) {
+        if (StringUtil.isNullOrEmpty(dposVoteStatus) || dposVoteStatus.equals("normal")) {
             MyAppItem exchageItem = new MyAppItem();
             exchageItem.appId = BRConstants.EXCHANGE_ID;
             exchageItem.name_zh_CN = "兑换";
@@ -168,13 +184,14 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             exchageItem.shortDesc_zh_CN = "兑换";
             exchageItem.shortDesc_en = "exchage";
             mAppIds.add(BRConstants.EXCHANGE_ID);
-            ProfileDataSource.getInstance(getContext()).putMyAppItem(exchageItem);
+            mItems.add(exchageItem);
         }
-        mHandler.sendEmptyMessage(0x01);
+        mHandler.sendEmptyMessage(UPDATE_APPS_MSG);
     }
 
     private List<MyAppItem> mItems = new ArrayList<>();
-    private void initAdapter(){
+
+    private void initAdapter() {
         mMyAppsRv.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = new ExploreAppsAdapter(getContext(), mItems);
         mAdapter.isDelete(false);
@@ -184,15 +201,15 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         mItemTouchHelper = new ItemTouchHelper(callback);
         mItemTouchHelper.attachToRecyclerView(mMyAppsRv);
 
-        mHandler.sendEmptyMessage(0x01);
+        mHandler.sendEmptyMessage(INIT_APPS_MSG);
     }
 
     private void initListener() {
         mAddBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPopLayout.setVisibility(mAddPopView.getVisibility()==View.VISIBLE?View.GONE:View.VISIBLE);
-                mAddPopView.setVisibility(mAddPopView.getVisibility()==View.VISIBLE?View.GONE:View.VISIBLE);
+                mPopLayout.setVisibility(mAddPopView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+                mAddPopView.setVisibility(mAddPopView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
                 mEditPopView.setVisibility(View.GONE);
             }
         });
@@ -200,8 +217,8 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         mEditBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPopLayout.setVisibility(mEditPopView.getVisibility()==View.VISIBLE?View.GONE:View.VISIBLE);
-                mEditPopView.setVisibility(mEditPopView.getVisibility()==View.VISIBLE?View.GONE:View.VISIBLE);
+                mPopLayout.setVisibility(mEditPopView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+                mEditPopView.setVisibility(mEditPopView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
                 mAddPopView.setVisibility(View.GONE);
             }
         });
@@ -271,13 +288,16 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 return true;
             }
         });
+
+        mAdapter.setOnDeleteClick(this);
+        mAdapter.setOnMoveListener(this);
     }
 
-    private void changeView(boolean isEdit){
-        mAddBtn.setVisibility(isEdit?View.GONE:View.VISIBLE);
-        mEditBtn.setVisibility(isEdit?View.GONE:View.VISIBLE);
-        mCancelBtn.setVisibility(isEdit?View.VISIBLE:View.GONE);
-        mDoneBtn.setVisibility(isEdit?View.VISIBLE:View.GONE);
+    private void changeView(boolean isEdit) {
+        mAddBtn.setVisibility(isEdit ? View.GONE : View.VISIBLE);
+        mEditBtn.setVisibility(isEdit ? View.GONE : View.VISIBLE);
+        mCancelBtn.setVisibility(isEdit ? View.VISIBLE : View.GONE);
+        mDoneBtn.setVisibility(isEdit ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -285,10 +305,8 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         mItemTouchHelper.startDrag(viewHolder);
     }
 
-    private void resetMiniApps(){
-        mAppIds.clear();
-        mItems.clear();
-        mHandler.sendEmptyMessage(0x01);
+    private void resetMiniApps() {
+        mHandler.sendEmptyMessage(INIT_APPS_MSG);
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -297,14 +315,15 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
 
                 //third app
                 String value = getMiniApps();
-                if(StringUtil.isNullOrEmpty(value)) return;
-                List<String> appIds = new Gson().fromJson(value, new TypeToken<List<String>>(){}.getType());
-                if(null == appIds) return;
-                for(String appId : appIds){
+                if (StringUtil.isNullOrEmpty(value)) return;
+                List<String> appIds = new Gson().fromJson(value, new TypeToken<List<String>>() {
+                }.getType());
+                if (null == appIds) return;
+                for (String appId : appIds) {
                     String status = getAppStatus(appId);
-                    if(StringUtil.isNullOrEmpty(status) || status.equals("normal")){
+                    if (StringUtil.isNullOrEmpty(status) || status.equals("normal")) {
                         String url = getAppsUrl(appId);
-                        if(StringUtil.isNullOrEmpty(url)) return;
+                        if (StringUtil.isNullOrEmpty(url)) return;
                         downloadCapsule(url);
                     }
                 }
@@ -314,6 +333,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
 
     private DownloadManager manager;
     private String mDoloadFileName;
+
     public long downloadCapsule(String url) {
         Log.d(TAG, "capsule url:" + url);
         if (StringUtil.isNullOrEmpty(url)) return -1;
@@ -338,10 +358,17 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     @Override
     public void onDelete(MyAppItem item, int position) {
         String appId = item.appId;
-        if(!StringUtil.isNullOrEmpty(appId)){
+        if (!StringUtil.isNullOrEmpty(appId)) {
+            mItems.remove(position);
             ProfileDataSource.getInstance(getContext()).deleteAppItem(appId);
-            mHandler.sendEmptyMessage(0x01);
+            mHandler.sendEmptyMessage(UPDATE_APPS_MSG);
         }
+    }
+
+    @Override
+    public void onMove(int from, int to) {
+        Collections.swap(mItems, from, to);
+        mHandler.sendEmptyMessage(UPDATE_APPS_MSG);
     }
 
     class KeyValue {
@@ -349,66 +376,67 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         public String Value;
     }
 
-    private String getKeyVale(String path, String value){
+    private String getKeyVale(String path, String value) {
         KeyValue key = new KeyValue();
         key.Key = path;
         key.Value = value;
         List<KeyValue> keys = new ArrayList<>();
         keys.add(key);
 
-        return new Gson().toJson(keys, new TypeToken<List<KeyValue>>(){}.getType());
+        return new Gson().toJson(keys, new TypeToken<List<KeyValue>>() {
+        }.getType());
     }
 
-    private void upAppUrlData(final String miniAppId, final String value){
-        if(StringUtil.isNullOrEmpty(miniAppId) || StringUtil.isNullOrEmpty(value)) return;
-        String path = mDidStr+"/Apps/"+miniAppId;
+    private void upAppUrlData(final String miniAppId, final String value) {
+        if (StringUtil.isNullOrEmpty(miniAppId) || StringUtil.isNullOrEmpty(value)) return;
+        String path = mDidStr + "/Apps/" + miniAppId;
         String data = getKeyVale(path, value);
         String info = mDid.signInfo(mSeed, data);
         ProfileDataSource.getInstance(getContext()).upchain(info);
     }
 
-    private void upAppStatus(String miniAppId, String status){
-        if(StringUtil.isNullOrEmpty(mDidStr) || StringUtil.isNullOrEmpty(miniAppId)) return;
-        String path = mDidStr+"/Apps/"+BRConstants.ELAPHANT_APP_ID+"/MiniPrograms/"+miniAppId+"/Status";
+    private void upAppStatus(String miniAppId, String status) {
+        if (StringUtil.isNullOrEmpty(mDidStr) || StringUtil.isNullOrEmpty(miniAppId)) return;
+        String path = mDidStr + "/Apps/" + BRConstants.ELAPHANT_APP_ID + "/MiniPrograms/" + miniAppId + "/Status";
         String data = getKeyVale(path, status);
         String info = mDid.signInfo(mSeed, data);
         ProfileDataSource.getInstance(getContext()).upchain(info);
     }
 
-    private void upAppIds(List<String> appIds){
+    private void upAppIds(List<String> appIds) {
         String ids = new Gson().toJson(appIds);
-        String path = mDidStr+"/Apps";
+        String path = mDidStr + "/Apps";
         String data = getKeyVale(path, ids);
         String info = mDid.signInfo(mSeed, data);
         ProfileDataSource.getInstance(getContext()).upchain(info);
     }
 
-    private String getMiniApps(){
-        String path = mDidStr+"/Apps";
+    private String getMiniApps() {
+        String path = mDidStr + "/Apps";
         mDid.syncInfo();
         String appIds = mDid.getInfo(path);
         return appIds;
     }
 
-    private String getAppStatus(String miniAppId){
-        String path = mDidStr+"/Apps/"+BRConstants.ELAPHANT_APP_ID+"/MiniPrograms/"+miniAppId+"/Status";
+    private String getAppStatus(String miniAppId) {
+        String path = mDidStr + "/Apps/" + BRConstants.ELAPHANT_APP_ID + "/MiniPrograms/" + miniAppId + "/Status";
         mDid.syncInfo();
         String value = mDid.getInfo(path);
         return value;
     }
 
-    private String getAppsUrl(String miniAppId){
-        String path = mDidStr+"/Apps/"+miniAppId;
+    private String getAppsUrl(String miniAppId) {
+        String path = mDidStr + "/Apps/" + miniAppId;
         mDid.syncInfo();
         String url = mDid.getInfo(path);
         return url;
     }
 
-    private String getMn(){
+    private String getMn() {
         byte[] phrase = null;
         try {
             phrase = BRKeyStore.getPhrase(getContext(), 0);
-            if(phrase != null) {
+            if (phrase != null) {
                 return new String(phrase);
             }
         } catch (UserNotAuthenticatedException e) {
@@ -421,16 +449,17 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     private String mSeed;
     private String mPublicKey;
     private String mDidStr;
-    private void initDid(){
-        if(null==mDid || null==mPublicKey){
+
+    private void initDid() {
+        if (null == mDid || null == mPublicKey) {
             String mnemonic = getMn();
-            if(StringUtil.isNullOrEmpty(mnemonic)) return;
+            if (StringUtil.isNullOrEmpty(mnemonic)) return;
             String language = Utility.detectLang(getContext(), mnemonic);
-            if(StringUtil.isNullOrEmpty(language)) return;
-            String words = Utility.getWords(getContext(),  language +"-BIP39Words.txt");
-            if(StringUtil.isNullOrEmpty(words)) return;
+            if (StringUtil.isNullOrEmpty(language)) return;
+            String words = Utility.getWords(getContext(), language + "-BIP39Words.txt");
+            if (StringUtil.isNullOrEmpty(words)) return;
             mSeed = IdentityManager.getSeed(mnemonic, Utility.getLanguage(language), words, "");
-            if(StringUtil.isNullOrEmpty(mSeed)) return;
+            if (StringUtil.isNullOrEmpty(mSeed)) return;
             Identity identity = IdentityManager.createIdentity(getContext().getFilesDir().getAbsolutePath());
             DidManager didManager = identity.createDidManager(mSeed);
             BlockChainNode node = new BlockChainNode(ProfileDataSource.DID_URL);
@@ -448,9 +477,9 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             public void onReceive(Context context, Intent intent) {
                 try {
                     File file = decompression();
-                    Log.d(TAG, "unzip path:"+file.getAbsolutePath());
+                    Log.d(TAG, "unzip path:" + file.getAbsolutePath());
                     deleteDownloadCapsule();
-                    if(file == null) return;
+                    if (file == null) return;
 
                     File appJsonPath = new File(file, "/app.json");
                     String json = getJsonFromCapsule(appJsonPath);
@@ -458,13 +487,13 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                     MyAppItem item = new Gson().fromJson(json, MyAppItem.class);
                     item.path = file.getAbsolutePath();
                     if (item != null) {
-                        for(String appId : mAppIds){
-                            if(item.appId.equals(appId)) return;
+                        for (String appId : mAppIds) {
+                            if (item.appId.equals(appId)) return;
                         }
                         mAppIds.add(item.appId);
-                        mHandler.sendEmptyMessage(0x01);
+                        mItems.add(item);
+                        mHandler.sendEmptyMessage(UPDATE_APPS_MSG);
 
-                        ProfileDataSource.getInstance(getContext()).putMyAppItem(item);
                         upAppStatus(item.appId, "normal");
                         upAppUrlData(item.appId, item.url);
                         upAppIds(mAppIds);
@@ -538,14 +567,14 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     }
 
     private void logFile(String flag, File path) {
-        Log.d(TAG, "<-----------------------------"+path.getAbsolutePath()+" start------------------------------>");
+        Log.d(TAG, "<-----------------------------" + path.getAbsolutePath() + " start------------------------------>");
         File[] files = path.listFiles();
-        if(files == null) return;
+        if (files == null) return;
         for (File file : files) {
             String name = file.getName();
             Log.d(TAG, flag + " fileName:" + name);
         }
-        Log.d(TAG, "<-----------------------------"+path.getAbsolutePath()+" end------------------------------>");
+        Log.d(TAG, "<-----------------------------" + path.getAbsolutePath() + " end------------------------------>");
         Log.d(TAG, "\n\n");
     }
 
@@ -557,7 +586,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         String firstName = null;
         while ((zipEntry = inZip.getNextEntry()) != null) {
             szName = zipEntry.getName();
-            if(isFirstName){
+            if (isFirstName) {
                 firstName = zipEntry.getName();
                 isFirstName = false;
             }
