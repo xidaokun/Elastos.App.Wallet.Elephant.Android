@@ -41,6 +41,7 @@ public class MultiSignCreateActivity extends BRActivity {
     private String mAddress;
     private String mReturnUrl;
     private String mCallbackUrl;
+    private int mMyIndex = -1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,6 +59,13 @@ public class MultiSignCreateActivity extends BRActivity {
     }
 
     private boolean initData() {
+        String myPublicKey = WalletElaManager.getInstance(this).getPublicKey();
+        // if public key is null, finish and return.
+        // The app will show authentication screen
+        if (myPublicKey == null) {
+            return false;
+        }
+
         Intent intent = getIntent();
         Uri uri = intent.getData();
         if (uri == null) {
@@ -84,6 +92,18 @@ public class MultiSignCreateActivity extends BRActivity {
         Log.d(TAG, "publickeys: " + pubkeys);
         List<String> list= Arrays.asList(pubkeys.split(","));
         mPublicKeys = (String[]) list.toArray();
+
+        for (int i = 0; i < mPublicKeys.length; i++) {
+            if (myPublicKey.equals(mPublicKeys[i])) {
+                mMyIndex = i;
+                break;
+            }
+        }
+        if (mMyIndex < 0) {
+            Log.e(TAG, "my public key is not in the pulickey list");
+            UiUtils.toast(getApplicationContext(), R.string.multisign_create_pubkey_not_in_list);
+            return false;
+        }
 
         String require = uri.getQueryParameter("RequiredCount");
         if(StringUtil.isNullOrEmpty(require)) {
@@ -114,6 +134,7 @@ public class MultiSignCreateActivity extends BRActivity {
         Log.d(TAG, "addr: " + mAddress);
         if(StringUtil.isNullOrEmpty(mAddress)) {
             Log.e(TAG, "get multi sign wallet address failed");
+            UiUtils.toast(getApplicationContext(), R.string.multisign_create_failed);
             return false;
         }
 
@@ -133,13 +154,13 @@ public class MultiSignCreateActivity extends BRActivity {
         return null;
     }
 
-    private void setResultAndFinish(String address) {
+    private boolean setResult(String address) {
         final String mne = getMn();
         if (StringUtil.isNullOrEmpty(mne)) {
             Log.e(TAG, "get men failed");
             BRDialog.showSimpleDialog(this, getString(R.string.multisign_create_failed_title),
                     getString(R.string.multisign_create_failed));
-            return;
+            return false;
         }
         final String pk = Utility.getInstance(this).getSinglePrivateKey(mne);
         final String myPK = Utility.getInstance(this).getSinglePublicKey(mne);
@@ -177,8 +198,7 @@ public class MultiSignCreateActivity extends BRActivity {
                 UiUtils.openUrlByBrowser(this, url);
             }
         }
-
-        finish();
+        return true;
     }
 
     private void initView() {
@@ -216,22 +236,14 @@ public class MultiSignCreateActivity extends BRActivity {
     }
 
     private void initPublicKey() {
-        String myPublicKey = WalletElaManager.getInstance(this).getPublicKey();
-        // if public key is null, finish and return.
-        // The app will show authentication screen
-        if (myPublicKey == null) {
-            finish();
-            return;
-        }
-
         LinearLayout page = findViewById(R.id.multisign_create_page);
 
-        for (String publicKey : mPublicKeys) {
+        for (int i = 0; i < mPublicKeys.length; i++) {
             TextView lableView = new TextView(this);
-            if (myPublicKey.equals(publicKey)) {
-                lableView.setText(myPublicKey + getString(R.string.multisign_wallet_pubkey_me));
+            if (i == mMyIndex) {
+                lableView.setText(mPublicKeys[i] + getString(R.string.multisign_wallet_pubkey_me));
             } else {
-                lableView.setText(publicKey);
+                lableView.setText(mPublicKeys[i]);
             }
 
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -247,18 +259,18 @@ public class MultiSignCreateActivity extends BRActivity {
     }
 
     private void create() {
+        if (!setResult(mAddress)) {
+            return;
+        }
+
         MultiSignParam param = new MultiSignParam();
         param.PublicKeys = mPublicKeys;
         param.RequiredCount = mRequiredCount;
 
         BRSharedPrefs.putMultiSignInfo(this, mAddress, new Gson().toJson(param));
+        UiUtils.toast(getApplicationContext(), R.string.multisign_created);
 
-        Toast toast = Toast.makeText(getApplicationContext(),
-                    R.string.multisign_created, Toast.LENGTH_LONG);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
-
-        setResultAndFinish(mAddress);
+        finish();
     }
 
     private class MultiCreateReturn {

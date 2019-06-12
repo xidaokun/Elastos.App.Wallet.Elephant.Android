@@ -19,10 +19,12 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.OvershootInterpolator;
+import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.DisabledActivity;
@@ -440,4 +442,11 @@ public class UiUtils {
 
         return hexString.toString();
     }
+
+    public static void toast(Context context, int resId) {
+        Toast toast = Toast.makeText(context, resId, Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+    }
+
 }

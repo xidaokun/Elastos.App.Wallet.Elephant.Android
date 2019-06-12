@@ -64,14 +64,26 @@ public class MultiSignQrActivity extends BRActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (mHandler != null && mBitmaps.size() != 0) {
+            changeQrcode();
+        }
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         if (mHandler != null) {
             mHandler.removeCallbacks(runnable);
-            mHandler = null;
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mHandler = null;
+    }
 
     private void initView() {
         mQRCodeIv = findViewById(R.id.multisign_qr_iv);
