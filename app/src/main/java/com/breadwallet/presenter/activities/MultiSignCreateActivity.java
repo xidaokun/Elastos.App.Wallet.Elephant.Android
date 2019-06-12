@@ -6,17 +6,18 @@ import android.os.Bundle;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.did.DidDataSource;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.presenter.customviews.NoScrollListView;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -30,11 +31,14 @@ import org.elastos.sdk.keypair.ElastosKeypairSign;
 import org.wallet.library.AuthorizeManager;
 
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class MultiSignCreateActivity extends BRActivity {
     private final String TAG = "MultiSignCreateActivity";
+
+    private NoScrollListView mListView;
 
     private int mRequiredCount;
     private String[] mPublicKeys;
@@ -54,8 +58,6 @@ public class MultiSignCreateActivity extends BRActivity {
         }
 
         initView();
-        initPublicKey();
-
     }
 
     private boolean initData() {
@@ -202,6 +204,7 @@ public class MultiSignCreateActivity extends BRActivity {
     }
 
     private void initView() {
+        initListView();
         ImageButton backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -235,27 +238,30 @@ public class MultiSignCreateActivity extends BRActivity {
         required.setText(String.format(getResources().getString(R.string.multisign_create_unlock_keys), mRequiredCount));
     }
 
-    private void initPublicKey() {
-        LinearLayout page = findViewById(R.id.multisign_create_page);
+    private void initListView() {
+        mListView = findViewById(R.id.multisign_create_pubkey_list);
+        View headerView = LayoutInflater.from(this).inflate(R.layout.multi_sign_create_header, mListView, false);
+        mListView.addHeaderView(headerView);
+
+        View footerView = LayoutInflater.from(this).inflate(R.layout.multi_sign_create_footer, mListView, false);
+        mListView.addFooterView(footerView);
+
+        ArrayList<PublicKeyAdapter.PublicKey> publicKeys = new ArrayList<>();
 
         for (int i = 0; i < mPublicKeys.length; i++) {
-            TextView lableView = new TextView(this);
+            String str = mPublicKeys[i];
             if (i == mMyIndex) {
-                lableView.setText(mPublicKeys[i] + getString(R.string.multisign_wallet_pubkey_me));
-            } else {
-                lableView.setText(mPublicKeys[i]);
+                str += getString(R.string.multisign_wallet_pubkey_me);
             }
 
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            lp.topMargin = getResources().getDimensionPixelOffset(R.dimen.radius);
-
-            lableView.setTextSize(12);
-            lableView.setTextColor(getResources().getColor(R.color.black_333333));
-
-            lableView.setLayoutParams(lp);
-            page.addView(lableView);
+            PublicKeyAdapter.PublicKey pubObj = new PublicKeyAdapter.PublicKey();
+            pubObj.mPublicKey = str;
+            pubObj.mSigned = false;
+            publicKeys.add(pubObj);
         }
+
+        ArrayAdapter adapter = new PublicKeyAdapter(this, R.layout.publickey_label, publicKeys);
+        mListView.setAdapter(adapter);
     }
 
     private void create() {

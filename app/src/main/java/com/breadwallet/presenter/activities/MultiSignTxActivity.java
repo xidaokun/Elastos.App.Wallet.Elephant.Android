@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.LoadingDialog;
+import com.breadwallet.presenter.customviews.NoScrollListView;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
@@ -50,7 +51,7 @@ public class MultiSignTxActivity extends BRActivity {
 
     private Button mAcceptBtn;
     private TextView mBalanceText;
-    private ListView mListView;
+    private NoScrollListView mListView;
 
     private LoadingDialog mLoadingDialog;
 
