@@ -25,6 +25,7 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
+import com.breadwallet.wallet.wallets.ela.response.create.ElaAttribute;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaTransactionRes;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaTransactions;
 import com.google.gson.Gson;
@@ -190,6 +191,20 @@ public class MultiSignTxActivity extends BRActivity {
             memo.setText(getString(R.string.TransactionDetails_commentsHeader)
                     + ": " + tx.Memo.substring(index < 0 ? 0 : index + 4));
             memo.setVisibility(View.VISIBLE);
+        } else if (tx.Attributes.size() != 0) {
+            for (ElaAttribute attr : tx.Attributes) {
+                if (attr.usage != 0x81) continue;
+
+                try {
+                    String str = new String(hexStringToByteArray(attr.data), "UTF-8");
+                    memo.setText(getString(R.string.TransactionDetails_commentsHeader) + ": " + str);
+                    memo.setVisibility(View.VISIBLE);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
+                break;
+            }
         }
 
         signedText.setText(String.format(getResources().getString(R.string.multisign_signed_title),
@@ -350,6 +365,7 @@ public class MultiSignTxActivity extends BRActivity {
         String privateKey = WalletElaManager.getInstance(this).getPrivateKey();
         String signed =  ElastosKeypairSign.multiSignTransaction(privateKey, mPublicKeys,
                 mPublicKeys.length, mRequiredCount, mTransaction);
+        Log.d(TAG, "signed: " + signed);
         if (!mSend) {
             startNextAndFinish(signed, "");
             return;
@@ -408,4 +424,14 @@ public class MultiSignTxActivity extends BRActivity {
         closeDialog();
     }
 
+    private byte[] hexStringToByteArray(String s) {
+        int len = s.length();
+        byte[] data = new byte[len/2];
+
+        for(int i = 0; i < len; i+=2){
+            data[i/2] = (byte) ((Character.digit(s.charAt(i), 16) << 4) + Character.digit(s.charAt(i+1), 16));
+        }
+
+        return data;
+    }
 }
