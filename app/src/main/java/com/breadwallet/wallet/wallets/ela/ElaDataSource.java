@@ -36,6 +36,7 @@ import com.breadwallet.wallet.wallets.ela.response.history.TxHistory;
 import com.google.gson.Gson;
 import com.platform.APIClient;
 
+import org.elastos.sdk.keypair.ElastosKeypairCrypto;
 import org.elastos.sdk.keypair.ElastosKeypairSign;
 import org.json.JSONObject;
 
@@ -458,7 +459,15 @@ public class ElaDataSource implements BRDataSourceInterface {
             JSONObject jsonObject = new JSONObject(result);
             String tranactions = jsonObject.getString("result");
             ElaTransactionRes res = new Gson().fromJson(tranactions, ElaTransactionRes.class);
-            if(!StringUtil.isNullOrEmpty(memo)) res.Transactions.get(0).Memo = new Meno("text", memo).toString();
+            if(!StringUtil.isNullOrEmpty(memo)) {
+                String outPutPublickey = getPublicKeyByAddress(outputsAddress);
+                String meno = new Meno("text", memo).toString();
+                if(StringUtil.isNullOrEmpty(outPutPublickey)) {
+                    res.Transactions.get(0).Memo = memo;
+                } else {
+                    ElastosKeypairCrypto.eciesEncrypt(outPutPublickey, meno);
+                }
+            }
 
             List<ElaUTXOInputs> inputs = res.Transactions.get(0).UTXOInputs;
             for(int i=0; i<inputs.size(); i++){
@@ -505,6 +514,18 @@ public class ElaDataSource implements BRDataSourceInterface {
         return brElaTransaction;
     }
 
+    public String getPublicKeyByAddress(String address){
+        String url = getUrl("/api/1/pubkey/"+address);
+        try {
+            String result = urlGET(url);
+            JSONObject object = new JSONObject(result);
+            return object.getString("result");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
     public synchronized String sendElaRawTx(final String transaction){
 
