@@ -16,14 +16,17 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.LoadingDialog;
+import com.breadwallet.presenter.customviews.NoScrollListView;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
+import com.breadwallet.wallet.wallets.ela.response.create.ElaAttribute;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaTransactionRes;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaTransactions;
 import com.google.gson.Gson;
@@ -48,7 +51,7 @@ public class MultiSignTxActivity extends BRActivity {
 
     private Button mAcceptBtn;
     private TextView mBalanceText;
-    private ListView mListView;
+    private NoScrollListView mListView;
 
     private LoadingDialog mLoadingDialog;
 
@@ -61,6 +64,7 @@ public class MultiSignTxActivity extends BRActivity {
     private String mCallbackUrl;
 
     private String mMyPublicKey;
+    private int mMyIndex = -1;
 
     private boolean mSend = false;
 
@@ -89,7 +93,13 @@ public class MultiSignTxActivity extends BRActivity {
 
         Log.d(TAG, "uri: " + uri.toString());
 
-        String appName = uri.getQueryParameter("AppName");
+        String appName = null;
+        try {
+            appName = URLDecoder.decode(uri.getQueryParameter("AppName"), "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return false;
+        }
         String appID = uri.getQueryParameter("AppID");
         String publicKey = uri.getQueryParameter("PublicKey");
         String did = uri.getQueryParameter("DID");
@@ -136,6 +146,7 @@ public class MultiSignTxActivity extends BRActivity {
         String pref = BRSharedPrefs.getMultiSignInfo(this, tx.UTXOInputs.get(0).address);
         if(StringUtil.isNullOrEmpty(pref)) {
             Log.e(TAG, tx.UTXOInputs.get(0).address + " is not created");
+            UiUtils.toast(getApplicationContext(), R.string.multisign_wallet_not_created);
             finish();
             return;
         }
@@ -143,6 +154,19 @@ public class MultiSignTxActivity extends BRActivity {
         MultiSignCreateActivity.MultiSignParam param = new Gson().fromJson(pref, MultiSignCreateActivity.MultiSignParam.class);
         mRequiredCount = param.RequiredCount;
         mPublicKeys = param.PublicKeys;
+
+        for (int i = 0; i < mPublicKeys.length; i++) {
+            if (mMyPublicKey.equals(mPublicKeys[i])) {
+                mMyIndex = i;
+                break;
+            }
+        }
+        if (mMyIndex < 0) {
+            Log.e(TAG, "my public key is not in the pulickey list");
+            UiUtils.toast(getApplicationContext(), R.string.multisign_tx_pubkey_not_in_list);
+            finish();
+            return;
+        }
 
         if (initListView()) {
             startNextAndFinish("", "");
@@ -161,7 +185,7 @@ public class MultiSignTxActivity extends BRActivity {
         mBalanceText = mListView.findViewById(R.id.multisign_tx_balance);
 
         double ela =  (double) tx.Outputs.get(0).amount / 100000000L;
-        DecimalFormat df = new DecimalFormat("#.######");
+        DecimalFormat df = new DecimalFormat("#.########");
         String amountStr = df.format(ela) + " ELA";
         amount.setText(amountStr);
 
@@ -171,8 +195,23 @@ public class MultiSignTxActivity extends BRActivity {
         toAmount.setText(amountStr);
         if (tx.Memo != null && !tx.Memo.isEmpty()) {
             int index = tx.Memo.indexOf("msg:");
-            memo.setText("memo: " + tx.Memo.substring(index + 4));
+            memo.setText(getString(R.string.TransactionDetails_commentsHeader)
+                    + ": " + tx.Memo.substring(index < 0 ? 0 : index + 4));
             memo.setVisibility(View.VISIBLE);
+        } else if (tx.Attributes.size() != 0) {
+            for (ElaAttribute attr : tx.Attributes) {
+                if (attr.usage != 0x81) continue;
+
+                try {
+                    String str = new String(hexStringToByteArray(attr.data), "UTF-8");
+                    memo.setText(getString(R.string.TransactionDetails_commentsHeader) + ": " + str);
+                    memo.setVisibility(View.VISIBLE);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
+                break;
+            }
         }
 
         signedText.setText(String.format(getResources().getString(R.string.multisign_signed_title),
@@ -228,13 +267,11 @@ public class MultiSignTxActivity extends BRActivity {
         }
 
         ArrayList<PublicKeyAdapter.PublicKey> publicKeys = new ArrayList<>();
-        for (String publicKey : mPublicKeys) {
-            Log.d(TAG, "publicKey: " + publicKey);
-            String str;
-            if (mMyPublicKey.equals(publicKey)) {
-                str = publicKey + getString(R.string.multisign_wallet_pubkey_me);
-            } else {
-                str = publicKey;
+        for (int i = 0; i < mPublicKeys.length; i++) {
+            Log.d(TAG, "publicKey: " + mPublicKeys[i]);
+            String str = mPublicKeys[i];
+            if (i == mMyIndex) {
+                str += getString(R.string.multisign_wallet_pubkey_me);
             }
 
             boolean signed = false;
@@ -243,7 +280,7 @@ public class MultiSignTxActivity extends BRActivity {
                     if (mMyPublicKey.equals(signedSigner)) {
                         return true;
                     }
-                    if (signedSigner.equals(publicKey)) {
+                    if (signedSigner.equals(mPublicKeys[i])) {
                         signed = true;
                         break;
                     }
@@ -335,6 +372,7 @@ public class MultiSignTxActivity extends BRActivity {
         String privateKey = WalletElaManager.getInstance(this).getPrivateKey();
         String signed =  ElastosKeypairSign.multiSignTransaction(privateKey, mPublicKeys,
                 mPublicKeys.length, mRequiredCount, mTransaction);
+        Log.d(TAG, "signed: " + signed);
         if (!mSend) {
             startNextAndFinish(signed, "");
             return;
@@ -393,4 +431,14 @@ public class MultiSignTxActivity extends BRActivity {
         closeDialog();
     }
 
+    private byte[] hexStringToByteArray(String s) {
+        int len = s.length();
+        byte[] data = new byte[len/2];
+
+        for(int i = 0; i < len; i+=2){
+            data[i/2] = (byte) ((Character.digit(s.charAt(i), 16) << 4) + Character.digit(s.charAt(i+1), 16));
+        }
+
+        return data;
+    }
 }

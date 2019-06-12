@@ -31,4 +31,5 @@ public class ElaTransactions {
     public long Fee;
     public String Memo;
     public List<ElaUTXOInputs> UTXOInputs;
+    public List<ElaAttribute> Attributes;
 }

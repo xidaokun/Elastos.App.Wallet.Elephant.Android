@@ -217,7 +217,7 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
 
         try {
             MultiPartQrcode part = new Gson().fromJson(text, MultiPartQrcode.class);
-            if (mQrArray == null) {
+            if (mQrArray == null || mQrArray.length != part.total) {
                 mQrArray = new MultiPartQrcode[part.total];
             }
 

@@ -1097,4 +1097,7 @@
     <string name="multisign_create_failed_title">失败</string>
     <string name="multisign_create_failed">创建失败，请重试</string>
     <string name="multisign_wallet_pubkey_me">(我)</string>
+    <string name="multisign_create_pubkey_not_in_list">创建钱包失败，因为您的公钥不在批准列表里。</string>
+    <string name="multisign_wallet_not_created">多签钱包还没创建成功，请稍后重试。</string>
+    <string name="multisign_tx_pubkey_not_in_list">您的公钥不在批准列表里，请查看你的公钥或切换到正确的钱包。</string>
 </resources>

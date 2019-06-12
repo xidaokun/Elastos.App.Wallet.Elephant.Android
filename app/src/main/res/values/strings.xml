@@ -1083,8 +1083,8 @@
     <string name="multisign_approve_send">Approve and Send</string>
     <string name="multisign_spend">From :</string>
     <string name="multisign_accept">To :</string>
-    <string name="multisign_signed_title">%1$d of %2$d keys are required to approve this expense.</string>
-    <string name="multisign_toolbar_title">Approve Request</string>
+    <string name="multisign_signed_title">%1$d out of %2$d keys are required to approve this expense.</string>
+    <string name="multisign_toolbar_title">Approval Request</string>
     <string name="multisign_spend_desc">is being spent in the  shared wallet</string>
     <string name="multisign_balance">Balance:</string>
     <string name="multisign_approved">You have approved the request successfully.</string>
@@ -1095,13 +1095,16 @@
     <string name="multisign_approved_title">Approved</string>
     <string name="multisign_send_succeeded">The ELAs have been sent.</string>
     <string name="multisign_wallet_creation">Shared Wallet Creation</string>
-    <string name="multisign_create">create</string>
+    <string name="multisign_create">Create</string>
     <string name="multisign_create_desc">A shared wallet is being created.</string>
-    <string name="multisign_created">Wallet created</string>
+    <string name="multisign_created">Wallet Created</string>
     <string name="multisign_create_addr">Address</string>
     <string name="multisign_create_keys">Total keys: %1$d</string>
     <string name="multisign_create_unlock_keys">Unlock keys required: %1$d</string>
     <string name="multisign_create_failed_title">Failed</string>
     <string name="multisign_create_failed">Create failed. Please try again</string>
     <string name="multisign_wallet_pubkey_me">(me)</string>
+    <string name="multisign_create_pubkey_not_in_list">Failed to create the wallet, since your public key is not in the approval list.</string>
+    <string name="multisign_wallet_not_created">The multi-signature wallet is not created successfully yet, please try again later.</string>
+    <string name="multisign_tx_pubkey_not_in_list">Your public key is not in the approval list, please check your public key or switch to the correct wallet.</string>
 </resources>
