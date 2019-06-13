@@ -93,7 +93,13 @@ public class MultiSignTxActivity extends BRActivity {
 
         Log.d(TAG, "uri: " + uri.toString());
 
-        String appName = uri.getQueryParameter("AppName");
+        String appName = null;
+        try {
+            appName = URLDecoder.decode(uri.getQueryParameter("AppName"), "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return false;
+        }
         String appID = uri.getQueryParameter("AppID");
         String publicKey = uri.getQueryParameter("PublicKey");
         String did = uri.getQueryParameter("DID");
