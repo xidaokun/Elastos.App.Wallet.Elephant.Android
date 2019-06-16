@@ -1,6 +1,8 @@
 package com.breadwallet.tools.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,7 +16,9 @@ import com.breadwallet.presenter.entities.MyAppItem;
 import com.breadwallet.tools.animation.ItemTouchHelperAdapter;
 import com.breadwallet.tools.animation.ItemTouchHelperViewHolder;
 import com.breadwallet.tools.util.StringUtil;
+import com.breadwallet.tools.util.Utils;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -25,6 +29,7 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
     private List<MyAppItem> mData;
     private boolean mIsDelete;
     private OnDeleteClickListener mDeleteListener;
+    private OnAboutClickListener mAboutListener;
     private OnTouchMoveListener mMoveListener;
 
     public ExploreAppsAdapter(Context context, List<MyAppItem> data){
@@ -42,6 +47,10 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
 
     public void setOnDeleteClick(OnDeleteClickListener listener ){
         this.mDeleteListener = listener;
+    }
+
+    public void setOnAboutClick(OnAboutClickListener listener){
+        this.mAboutListener = listener;
     }
 
     @NonNull
@@ -63,7 +72,15 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
         }
 
         holder.mDeveloper.setText(item.developer);
-        holder.mLogo.setImageResource(R.drawable.btc); //TODO tmp
+        Bitmap bitmap = null;
+        if(!StringUtil.isNullOrEmpty(item.path)){
+            bitmap = Utils.getIconFromPath(new File(item.path+"/"+item.icon_xxhdpi));
+        }
+        if(null != bitmap){
+            holder.mLogo.setImageBitmap(bitmap);
+        } else {
+            holder.mLogo.setImageResource(R.drawable.unknow);
+        }
 
         //TODO daokun.xi
         if(mIsDelete){
@@ -75,12 +92,18 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
             holder.mDelete.setVisibility(View.GONE);
             holder.mTouch.setVisibility(View.GONE);
         }
+
+        holder.mAbout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mAboutListener != null) mAboutListener.onAbout(item, position);
+            }
+        });
+
         holder.mDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mDeleteListener != null){
-                    mDeleteListener.onDelete(item, position);
-                }
+                if(mDeleteListener != null) mDeleteListener.onDelete(item, position);
             }
         });
     }
@@ -136,10 +159,14 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
     }
 
     public interface OnTouchMoveListener {
-        public void onMove(int from, int to);
+        void onMove(int from, int to);
     }
 
     public interface OnDeleteClickListener {
-        public void onDelete(MyAppItem item, int position);
+        void onDelete(MyAppItem item, int position);
+    }
+
+    public interface OnAboutClickListener {
+        void onAbout(MyAppItem item, int position);
     }
 }

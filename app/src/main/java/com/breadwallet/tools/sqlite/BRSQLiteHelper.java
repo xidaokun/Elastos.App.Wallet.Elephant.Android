@@ -40,7 +40,7 @@ import java.util.List;
  */
 
 public class BRSQLiteHelper extends SQLiteOpenHelper {
-    private static final String TAG = BRSQLiteHelper.class.getName();
+    private static final String TAG = BRSQLiteHelper.class.getName()+"_log";
     private static BRSQLiteHelper instance;
 
     private BRSQLiteHelper(Context context) {
@@ -363,12 +363,14 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+        Log.d(TAG, "oldVersion:"+oldVersion+" newVersion:"+newVersion);
+
         if(oldVersion == 16) {
             db.execSQL("DROP TABLE IF EXISTS " + ELA_TX_TABLE_NAME);
             db.execSQL(ELA_TX_DATABASE_CREATE);
         }
 
-        if (/*oldVersion < 13 && (newVersion >= 13)*/ newVersion==19) {
+        if (/*oldVersion < 13 && (newVersion >= 13)*/ newVersion>=19) {
             boolean migrationNeeded = !tableExists(MB_TABLE_NAME, db);
             onCreate(db); //create new db tables
 

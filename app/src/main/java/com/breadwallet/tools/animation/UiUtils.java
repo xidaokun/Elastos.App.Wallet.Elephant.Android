@@ -30,6 +30,7 @@ import com.breadwallet.R;
 import com.breadwallet.did.CallbackEntity;
 import com.breadwallet.did.DidDataSource;
 import com.breadwallet.presenter.activities.AddAppsActivity;
+import com.breadwallet.presenter.activities.AppAboutActivity;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.EsignHistoryActivity;
 import com.breadwallet.presenter.activities.ExploreWebActivity;
@@ -438,6 +439,12 @@ public class UiUtils {
         intent.putExtra("from", from);
         intent.putExtra("value", value);
         activity.startActivityForResult(intent, requestCode);
+    }
+
+    public static void startMiniAppAboutActivity(Context context, String appId){
+        Intent intent = new Intent(context, AppAboutActivity.class);
+        intent.putExtra("appId", appId);
+        context.startActivity(intent);
     }
 
     public static void returnDataNeedSign(Activity activity, String returnUrl, String Data, String Sign, String appId, String targe){

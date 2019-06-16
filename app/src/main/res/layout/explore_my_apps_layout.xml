@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
-    android:background="@color/primary_background"
-    android:paddingTop="5dp"
-    android:paddingBottom="5dp"
-    android:maxHeight="60dp">
+    android:layout_height="64dp"
+    android:minHeight="64dp"
+    android:background="@color/white">
 
     <com.breadwallet.presenter.customviews.RoundImageView
         android:id="@+id/explore_item_delete_tv"
@@ -21,6 +19,7 @@
         android:layout_height="40dp"
         android:layout_toRightOf="@+id/explore_item_delete_tv"
         android:layout_marginLeft="15dp"
+        android:layout_centerVertical="true"
         android:src="@mipmap/ic_launcher"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
@@ -29,6 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/explore_item_logo_tv"
         android:layout_marginLeft="16dp"
+        android:layout_marginTop="12dp"
         android:textSize="15sp"
         android:textColor="@color/black"/>
 
@@ -39,8 +39,8 @@
         android:layout_marginLeft="16dp"
         android:layout_toRightOf="@+id/explore_item_logo_tv"
         android:textSize="11sp"
-        android:layout_marginTop="5dp"
         android:layout_below="@+id/explore_item_title_tv"
+        android:layout_marginTop="8dp"
         android:textColor="@color/black_888888" />
 
     <com.breadwallet.presenter.customviews.BaseTextView

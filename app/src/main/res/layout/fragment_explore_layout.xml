@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primary_background"
+    android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.breadwallet.presenter.activities.settings.WebViewActivity">
 
@@ -95,5 +95,10 @@
         android:id="@+id/disclaim_layout"
         android:visibility="gone"
         layout="@layout/explore_dialog_layout"/>
+
+    <include
+        android:id="@+id/explore_about_layout"
+        android:visibility="gone"
+        layout="@layout/mini_app_about_layout"/>
 
 </android.support.constraint.ConstraintLayout>

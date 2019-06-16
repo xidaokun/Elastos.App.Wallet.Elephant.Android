@@ -88,7 +88,8 @@ public class ProfileDataSource implements BRDataSourceInterface{
             BRSQLiteHelper.ADD_APPS_DEVELOPER,
             BRSQLiteHelper.ADD_APPS_URL,
             BRSQLiteHelper.ADD_APPS_PATH,
-            BRSQLiteHelper.ADD_APPS_HASH
+            BRSQLiteHelper.ADD_APPS_HASH,
+            BRSQLiteHelper.ADD_APPS_INDEX
     };
 
     private MyAppItem cursorToInfo(Cursor cursor){
@@ -111,12 +112,33 @@ public class ProfileDataSource implements BRDataSourceInterface{
         return item;
     }
 
+    public MyAppItem getAppInfoById(String appId){
+        Cursor cursor = null;
+        MyAppItem result = null;
+        try {
+            database = openDatabase();
+            cursor = database.query(BRSQLiteHelper.ADD_APPS_TABLE_NAME,
+                    null, BRSQLiteHelper.ADD_APPS_APP_ID + " = ?", new String[]{appId}, null, null, null);
+
+            cursor.moveToFirst();
+            if (!cursor.isAfterLast()) {
+                result = cursorToInfo(cursor);
+            }
+
+            return result;
+        } finally {
+            if (cursor != null)
+                cursor.close();
+            closeDatabase();
+        }
+    }
+
     public void deleteAppItem(String appId){
         if(StringUtil.isNullOrEmpty(appId)) return;
         try {
             database = openDatabase();
-            database.beginTransaction();
-            long l = database.delete(BRSQLiteHelper.ADD_APPS_TABLE_NAME, "app_id=?", new String[]{appId});
+            long l = database.delete(BRSQLiteHelper.ADD_APPS_TABLE_NAME, BRSQLiteHelper.ADD_APPS_APP_ID+" = ?", new String[]{appId});
+            Log.d("test", "test");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -138,7 +160,7 @@ public class ProfileDataSource implements BRDataSourceInterface{
                 value.put(BRSQLiteHelper.ADD_APPS_APP_ID, item.appId);
                 value.put(BRSQLiteHelper.ADD_APPS_DID, item.did);
                 value.put(BRSQLiteHelper.ADD_APPS_PUBLICKEY, item.publicKey);
-                value.put(BRSQLiteHelper.ADD_APPS_ICON_XXHDPI, item.banner_en_xxhdpi);
+                value.put(BRSQLiteHelper.ADD_APPS_ICON_XXHDPI, item.icon_xxhdpi);
                 value.put(BRSQLiteHelper.ADD_APPS_SHORTDESC_EN, item.shortDesc_en);
                 value.put(BRSQLiteHelper.ADD_APPS_SHORTDESC_ZH_CN, item.shortDesc_zh_CN);
                 value.put(BRSQLiteHelper.ADD_APPS_LONGDESC_EN, item.longDesc_en);
@@ -153,7 +175,6 @@ public class ProfileDataSource implements BRDataSourceInterface{
             }
             database.setTransactionSuccessful();
         } catch (Exception e) {
-            closeDatabase();
             e.printStackTrace();
         } finally {
             database.endTransaction();
@@ -198,7 +219,7 @@ public class ProfileDataSource implements BRDataSourceInterface{
 
         try {
             database = openDatabase();
-            cursor = database.query(BRSQLiteHelper.ADD_APPS_TABLE_NAME, allColumns, null, null, null, null, "appIndex desc");
+            cursor = database.query(BRSQLiteHelper.ADD_APPS_TABLE_NAME, allColumns, null, null, null, null, "appIndex asc");
 
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -217,7 +238,7 @@ public class ProfileDataSource implements BRDataSourceInterface{
         return infos;
     }
 
-    public void upchain(final String data){
+    public void upchainSync(final String data){
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -231,6 +252,20 @@ public class ProfileDataSource implements BRDataSourceInterface{
                 }
             }
         });
+    }
+
+    public String upchain(String data){
+        try {
+            Log.i("ProfileFunction", "upchain data:"+data);
+            ProfileResponse result = urlPost(DID_URL +"api/1/blockagent/upchain/data", data);
+            Log.i("ProfileFunction", "result:"+result);
+            if(200 == result.status) return result.result;
+        } catch (IOException e) {
+            Log.i("ProfileFunction", "upchain exception");
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     static class Transaction {

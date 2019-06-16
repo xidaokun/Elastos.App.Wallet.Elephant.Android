@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.activities;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -7,11 +8,21 @@ import android.support.v7.widget.RecyclerView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
 import com.breadwallet.presenter.customviews.BaseTextView;
+import com.breadwallet.presenter.customviews.RoundImageView;
+import com.breadwallet.presenter.entities.AppAboutItem;
+import com.breadwallet.presenter.entities.MyAppItem;
 import com.breadwallet.tools.adapter.AppAboutAdapter;
+import com.breadwallet.tools.sqlite.ProfileDataSource;
+import com.breadwallet.tools.util.StringUtil;
+import com.breadwallet.tools.util.Utils;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AppAboutActivity extends BaseSettingsActivity {
 
-    private BaseTextView mLogo;
+    private RoundImageView mLogo;
     private BaseTextView mName;
     private BaseTextView mDesc;
     private BaseTextView mDeveloper;
@@ -36,21 +47,26 @@ public class AppAboutActivity extends BaseSettingsActivity {
     }
 
     private void initData(){
-//        String from = BRSharedPrefs.getExploreFrom(this);
-//        if(StringUtil.isNullOrEmpty(from)) return;
-//        if(from.equalsIgnoreCase("vote")){
-//            mDes1.setText(getString(R.string.explore_vote_about_desc1));
-//            mDes2.setText(getString(R.string.explore_vote_about_desc2));
-//        } else if(from.equalsIgnoreCase("redpacket")){
-//            mDes1.setText(getString(R.string.redpackage_hint1));
-//            mDes2.setText(getString(R.string.redpackage_hint2));
-//        } else if(from.equalsIgnoreCase("exchange")){
-//            mDes1.setText(getString(R.string.exchange_hint1));
-//            mDes2.setText(getString(R.string.exchange_hint2));
-//        } else {
-//            mDes1.setText("");
-//            mDes2.setText("");
-//        }
+        String appId = getIntent().getStringExtra("appId");
+        if(!StringUtil.isNullOrEmpty(appId)){
+            MyAppItem myAppItem = ProfileDataSource.getInstance(this).getAppInfoById(appId);
+            mName.setText(myAppItem.name);
+            mDesc.setText(myAppItem.shortDesc);
+            mDeveloper.setText(myAppItem.developer);
+            mDid.setText(myAppItem.did);
+            Bitmap bitmap = null;
+            if(!StringUtil.isNullOrEmpty(myAppItem.path)){
+                bitmap = Utils.getIconFromPath(new File(myAppItem.path+"/"+myAppItem.icon_xxhdpi));
+            }
+            mLogo.setImageBitmap(bitmap);
+
+            List<AppAboutItem> appAboutItems = new ArrayList<>();
+            AppAboutItem appAboutItem = new AppAboutItem();
+            appAboutItem.setTitle("App ID");
+            appAboutItem.setContent(myAppItem.appId);
+            mAdapter = new AppAboutAdapter(this, appAboutItems);
+            mRecycleView.setAdapter(mAdapter);
+        }
     }
 
     @Override

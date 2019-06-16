@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.hardware.fingerprint.FingerprintManager;
 import android.net.Uri;
@@ -25,6 +27,7 @@ import android.widget.Toast;
 
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 
+import java.io.File;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -310,6 +313,11 @@ public class Utils {
                 break;
             }
         }
+    }
+
+    public static Bitmap getIconFromPath(File filePath) {
+        if(null == filePath) return null;
+        return BitmapFactory.decodeFile(filePath.getAbsolutePath());
     }
 
 }
