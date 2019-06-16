@@ -34,7 +34,6 @@ import com.breadwallet.tools.animation.SimpleItemTouchHelperCallback;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.listeners.OnStartDragListener;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.ProfileDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -350,6 +349,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 mAboutView.setVisibility(View.GONE);
                 if(null != mAboutAppItem){
 //                    QRUtils.share("mini apps url:", getActivity(), mAboutAppItem.path);
+                    shareApps(getContext(), mAboutAppItem.name, mAboutAppItem.path);
                 }
             }
         });
@@ -372,6 +372,14 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         mAdapter.setOnDeleteClick(this);
         mAdapter.setOnMoveListener(this);
         mAdapter.setOnAboutClick(this);
+    }
+
+    public static void shareApps(Context context, String title, String text){
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT,text);
+        sendIntent.setType("text/plain");
+        context.startActivity(Intent.createChooser(sendIntent, title));
     }
 
     private void changeView(boolean isEdit) {

@@ -34,7 +34,7 @@
             android:layout_height="65dp"
             android:gravity="center"
             android:lines="1"
-            android:text="About Voting"
+            android:text="About"
             android:textColor="#222222"
             android:textSize="18sp" />
 
