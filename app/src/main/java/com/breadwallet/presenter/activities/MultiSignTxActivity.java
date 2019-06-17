@@ -198,7 +198,7 @@ public class MultiSignTxActivity extends BRActivity {
             memo.setText(getString(R.string.TransactionDetails_commentsHeader)
                     + ": " + tx.Memo.substring(index < 0 ? 0 : index + 4));
             memo.setVisibility(View.VISIBLE);
-        } else if (tx.Attributes.size() != 0) {
+        } else if (tx.Attributes != null && tx.Attributes.size() != 0) {
             for (ElaAttribute attr : tx.Attributes) {
                 if (attr.usage != 0x81) continue;
 
