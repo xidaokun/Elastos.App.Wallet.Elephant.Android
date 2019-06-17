@@ -158,7 +158,6 @@ public class MultiSignQrActivity extends BRActivity {
                 }
                 mHandler = new Handler();
                 mIndex = 0;
-                changeQrcode();
             } else {
                 mBitmap = QRUtils.generateQRBitmap(this, url);
                 mQRCodeIv.setImageBitmap(mBitmap);
