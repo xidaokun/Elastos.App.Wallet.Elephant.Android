@@ -438,7 +438,7 @@ public class UiUtils {
         md.update(data.getBytes());
         byte[] digest = md.digest();
         StringBuilder hexString = new StringBuilder();
-        for (byte b : digest) hexString.append(Integer.toHexString(0xFF & b));
+        for (byte b : digest) hexString.append(String.format("%02x", b));
 
         return hexString.toString();
     }
