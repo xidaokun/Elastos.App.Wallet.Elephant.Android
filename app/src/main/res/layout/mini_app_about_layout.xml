@@ -18,7 +18,7 @@
             android:layout_height="65dp"
             android:gravity="center"
             android:lines="1"
-            android:text="Share this App"
+            android:text="@string/explore_pop_share"
             android:textColor="#222222"
             android:textSize="18sp" />
 
@@ -34,7 +34,7 @@
             android:layout_height="65dp"
             android:gravity="center"
             android:lines="1"
-            android:text="About"
+            android:text="@string/explore_pop_about"
             android:textColor="#222222"
             android:textSize="18sp" />
 
@@ -50,7 +50,7 @@
             android:layout_height="65dp"
             android:gravity="center"
             android:lines="1"
-            android:text="Cancel"
+            android:text="@string/explore_pop_cancel"
             android:textColor="#222222"
             android:textSize="18sp" />
 

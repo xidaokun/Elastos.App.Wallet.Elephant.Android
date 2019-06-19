@@ -31,6 +31,7 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
     private OnDeleteClickListener mDeleteListener;
     private OnAboutClickListener mAboutListener;
     private OnTouchMoveListener mMoveListener;
+    private OnItemClickListener mItemClickListener;
 
     public ExploreAppsAdapter(Context context, List<MyAppItem> data){
         this.mContext = context;
@@ -47,6 +48,10 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
 
     public void setOnDeleteClick(OnDeleteClickListener listener ){
         this.mDeleteListener = listener;
+    }
+
+    public void setOnItemClick(OnItemClickListener listener) {
+        this.mItemClickListener = listener;
     }
 
     public void setOnAboutClick(OnAboutClickListener listener){
@@ -74,7 +79,7 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
         holder.mDeveloper.setText(item.developer);
         Bitmap bitmap = null;
         if(!StringUtil.isNullOrEmpty(item.path)){
-            bitmap = Utils.getIconFromPath(new File(item.path+"/"+item.icon_xxhdpi));
+            bitmap = Utils.getIconFromPath(new File(item.path+"/"+item.icon));
         }
         if(null != bitmap){
             holder.mLogo.setImageBitmap(bitmap);
@@ -106,6 +111,13 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
                 if(mDeleteListener != null) mDeleteListener.onDelete(item, position);
             }
         });
+
+        holder.mItemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mItemClickListener != null) mItemClickListener.onItemClick(item, position);
+            }
+        });
     }
 
     @Override
@@ -135,6 +147,7 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
         private RoundImageView mDelete;
         private BaseTextView mTouch;
         private BaseTextView mAbout;
+        private View mItemView;
 
         public MyAppsViewHolder(View itemView) {
             super(itemView);
@@ -145,6 +158,7 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
             mDelete = itemView.findViewById(R.id.explore_item_delete_tv);
             mTouch = itemView.findViewById(R.id.explore_item_touch_tv);
             mAbout = itemView.findViewById(R.id.explore_item_about_tv);
+            mItemView = itemView;
         }
 
         @Override
@@ -168,5 +182,9 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
 
     public interface OnAboutClickListener {
         void onAbout(MyAppItem item, int position);
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(MyAppItem item, int position);
     }
 }

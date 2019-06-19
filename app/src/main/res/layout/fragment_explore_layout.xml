@@ -73,7 +73,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="32dp"
-        android:text="My apps"
+        android:text="@string/explore_mini_app_title"
         android:textSize="15sp"
         android:textColor="#1f1f1f"
         app:layout_constraintTop_toBottomOf="@+id/title"

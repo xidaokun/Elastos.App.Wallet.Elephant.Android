@@ -1079,4 +1079,17 @@
     <string name="sign_sign_btn">Sign</string>
 
     <string name="node_list_title">Node list of these %1$d nodes:</string>
+
+    <string name="explore_mini_app_title">My Mini Programs</string>
+    <string name="explore_pop_edit">Edit</string>
+    <string name="explore_pop_add_by_url">Add by URL</string>
+    <string name="explore_pop_scan_to_add">Scan to Add</string>
+    <string name="explore_pop_remove">Remove</string>
+    <string name="explore_pop_share">Share</string>
+    <string name="explore_pop_about">About</string>
+    <string name="explore_pop_cancel">Cancel</string>
+    <string name="explore_delete_app_hint">Are you sure you want to remove this mini program?</string>
+
+    <string name="explore_about_developer">Developer:%1$s</string>
+    <string name="explore_about_did">ELA DID:%1$s</string>
 </resources>

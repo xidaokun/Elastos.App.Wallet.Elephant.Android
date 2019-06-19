@@ -3,6 +3,7 @@ package com.breadwallet.presenter.activities;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.breadwallet.R;
@@ -52,8 +53,8 @@ public class AppAboutActivity extends BaseSettingsActivity {
             MyAppItem myAppItem = ProfileDataSource.getInstance(this).getAppInfoById(appId);
             mName.setText(myAppItem.name);
             mDesc.setText(myAppItem.shortDesc);
-            mDeveloper.setText(myAppItem.developer);
-            mDid.setText(myAppItem.did);
+            mDeveloper.setText(String.format(getString(R.string.explore_about_developer), myAppItem.developer));
+            mDid.setText(String.format(getString(R.string.explore_about_did), myAppItem.did));
             Bitmap bitmap = null;
             if(!StringUtil.isNullOrEmpty(myAppItem.path)){
                 bitmap = Utils.getIconFromPath(new File(myAppItem.path+"/"+myAppItem.icon_xxhdpi));
@@ -64,7 +65,10 @@ public class AppAboutActivity extends BaseSettingsActivity {
             AppAboutItem appAboutItem = new AppAboutItem();
             appAboutItem.setTitle("App ID");
             appAboutItem.setContent(myAppItem.appId);
+            appAboutItems.add(appAboutItem);
+
             mAdapter = new AppAboutAdapter(this, appAboutItems);
+            mRecycleView.setLayoutManager(new LinearLayoutManager(this));
             mRecycleView.setAdapter(mAdapter);
         }
     }
