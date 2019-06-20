@@ -89,7 +89,7 @@ public class CryptoHelper {
         return null;
     }
 
-    public static String getMD5Checksum(String filename) {
+    public static String getShaChecksum(String filename) {
         try {
             byte[] b = createChecksum(filename);
             String result = "";

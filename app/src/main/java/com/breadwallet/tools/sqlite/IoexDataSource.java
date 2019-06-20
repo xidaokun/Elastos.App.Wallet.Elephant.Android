@@ -41,7 +41,7 @@ public class IoexDataSource implements BRDataSourceInterface {
 
     private static IoexDataSource mInstance;
 
-    private static final String IOEX_NODE = "http://54.92.80.92:20334";
+    private static final String IOEX_NODE = "https://api-wallet-ela.elastos.org";
 
     private final BRSQLiteHelper dbHelper;
 
@@ -69,10 +69,10 @@ public class IoexDataSource implements BRDataSourceInterface {
 
     @WorkerThread
     public String getBalance(String address){
-        if(address==null || address.isEmpty()) return null;
+        if(StringUtil.isNullOrEmpty(address)) return null;
         String balance = null;
         try {
-            String url = getUrl("api/1/balance/"+address);
+            String url = getUrl("api/1/ioex/balance/"+address);
             Log.i(TAG, "balance url:"+url);
             String result = urlGET(url);
             JSONObject object = new JSONObject(result);
@@ -133,10 +133,10 @@ public class IoexDataSource implements BRDataSourceInterface {
         return brElaTransaction;
     }
 
-    public synchronized String sendElaRawTx(final String transaction){
+    public synchronized String sendIoexRawTx(final String transaction){
         String result = null;
         try {
-            String url = getUrl("api/1/sendRawTx");
+            String url = getUrl("api/1/ioex/sendRawTx");
             Log.i(TAG, "send raw url:"+url);
             String rawTransaction = ElastosKeypairSign.generateRawTransaction(transaction, BRConstants.IOEX_ASSET_ID);
             String json = "{"+"\"data\"" + ":" + "\"" + rawTransaction + "\"" +"}";

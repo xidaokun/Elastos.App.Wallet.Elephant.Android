@@ -23,12 +23,13 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.LoadingDialog;
+import com.breadwallet.presenter.entities.MyAppItem;
 import com.breadwallet.presenter.entities.RegisterChainData;
 import com.breadwallet.presenter.entities.StringChainData;
-import com.breadwallet.presenter.entities.MyAppItem;
 import com.breadwallet.tools.adapter.ExploreAppsAdapter;
 import com.breadwallet.tools.animation.ItemTouchHelperAdapter;
 import com.breadwallet.tools.animation.SimpleItemTouchHelperCallback;
@@ -428,10 +429,11 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     private String mDoloadFileName;
 
     private void copyCapsuleToDownloadCache(Context context, String fileOutputPath, String capsuleName) {
-        if(StringUtil.isNullOrEmpty(fileOutputPath) || StringUtil.isNullOrEmpty(capsuleName)) return;
+        if (StringUtil.isNullOrEmpty(fileOutputPath) || StringUtil.isNullOrEmpty(capsuleName))
+            return;
         try {
             File capsuleFile = new File(fileOutputPath, capsuleName);
-            if(capsuleFile.exists()){
+            if (capsuleFile.exists()) {
                 capsuleFile.delete();
             }
             mDoloadFileName = capsuleName;
@@ -467,7 +469,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             if (StringUtil.isNullOrEmpty(mDoloadFileName)) return -1;
             //TODO
             File downloadFile = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile(), mDoloadFileName);
-            if(downloadFile.exists()){
+            if (downloadFile.exists()) {
                 downloadFile.delete();
             }
 
@@ -488,53 +490,78 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                try {
-                    File srcPath = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile(), mDoloadFileName).getAbsoluteFile();
-                    File outPath = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule/"+mDoloadFileName).getAbsoluteFile();
-                    if(srcPath==null || outPath==null || !srcPath.exists()) return;
-                    decompression(srcPath.getAbsolutePath(), outPath.getAbsolutePath());
-                    logFile("srcPath", getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile());
-                    logFile("outPath", new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule").getAbsoluteFile());
-                    srcPath.delete();
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            File srcPath = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile(), mDoloadFileName).getAbsoluteFile();
+                            File outPath = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule/" + mDoloadFileName).getAbsoluteFile();
+                            if (srcPath == null || outPath == null || !srcPath.exists()) return;
+                            decompression(srcPath.getAbsolutePath(), outPath.getAbsolutePath());
+//                            logFile("srcPath", getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile());
+//                            logFile("outPath", new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule").getAbsoluteFile());
 
-                    File appJsonPath = new File(outPath, "/app.json");
-                    String json = getJsonFromCapsule(appJsonPath);
-                    MyAppItem item = new Gson().fromJson(json, MyAppItem.class);
-                    item.path = new File(outPath, mDoloadFileName).getAbsolutePath();
+                            File appJsonPath = new File(outPath, "/app.json");
+                            String json = getJsonFromCapsule(appJsonPath);
+                            MyAppItem item = new Gson().fromJson(json, MyAppItem.class);
+                            item.path = new File(outPath, mDoloadFileName).getAbsolutePath();
 
-                    //TODO 验证合法性
-//                    File downloadFile = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile(), mDoloadFileName + ".zip");
-//                    String hash = CryptoHelper.getMD5Checksum(downloadFile.getAbsolutePath());
-//                    RegisterChainData appSetting = getAppSetting(item.name, item.platform, item.version);
-//                    if (StringUtil.isNullOrEmpty(hash) ||
-//                            null == appSetting ||
-//                            null == appSetting.value ||
-//                            StringUtil.isNullOrEmpty(appSetting.value.hash) ||
-//                            !appSetting.value.hash.equals(hash)) {
-//                        //TODO 有没有必要删除本地解压后的文件
-//                        deleteDownloadCapsule();
-//                        return;
-//                    }
+                            String hash = CryptoHelper.getShaChecksum(srcPath.getAbsolutePath());
+                            Log.d(TAG, "mDoloadFileName:"+mDoloadFileName+" hash:"+hash);
 
-                    if (item != null) {
-                        for (String appId : mAppIds) {
-                            if (item.appId.equals(appId)) return;
+                            RegisterChainData appSetting = ProfileDataSource.getInstance(getContext()).getMiniAppSetting(item.did);
+                            Log.d(TAG, "registerUrl:"+appSetting.url+" registerHash:"+appSetting.hash);
+
+                            if (StringUtil.isNullOrEmpty(hash) ||
+                                    null == appSetting ||
+                                    StringUtil.isNullOrEmpty(appSetting.hash) ||
+                                    !appSetting.hash.equals(hash)) {
+                                Toast.makeText(getContext(), "Illegal capsule ", Toast.LENGTH_SHORT).show();
+                                deleteFile(srcPath);
+                                deleteFile(outPath);
+                                return;
+                            }
+                            Log.d(TAG, "capsule legitimacy");
+
+                            if (item != null) {
+                                for (String appId : mAppIds) {
+                                    if (item.appId.equals(appId)) return;
+                                }
+                                mAppIds.add(item.appId);
+                                mItems.add(item);
+                                mHandler.sendEmptyMessage(UPDATE_APPS_MSG);
+
+                                upAppStatus(item.appId, "normal");
+                                upAppUrlData(item.appId, item.url);
+                                upAppIds(mAppIds);
+                            }
+                            deleteFile(srcPath);
+                            deleteFile(outPath);
+//
+//                            logFile("srcPath", getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile());
+//                            logFile("outPath", new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule").getAbsoluteFile());
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                        mAppIds.add(item.appId);
-                        mItems.add(item);
-                        mHandler.sendEmptyMessage(UPDATE_APPS_MSG);
-
-                        upAppStatus(item.appId, "normal");
-                        upAppUrlData(item.appId, item.url);
-                        upAppIds(mAppIds);
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                });
                 context.unregisterReceiver(this);
             }
         };
         getContext().registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+    private void deleteFile(File file) {
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                File f = files[i];
+                deleteFile(f);
+            }
+            file.delete();
+        } else if (file.exists()) {
+            file.delete();
+        }
     }
 
     private List<String> mRemoveAppId = new ArrayList<>();
@@ -581,8 +608,8 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
 
     private void upAppStatus(String miniAppId, String status) {
         if (StringUtil.isNullOrEmpty(mDidStr) || StringUtil.isNullOrEmpty(miniAppId)) return;
-//        String path = mDidStr + "/Apps/" + BRConstants.ELAPHANT_APP_ID + "/MiniPrograms/" + miniAppId + "/Status";
-        String path = mDidStr + "/Apps/" + miniAppId + "/Status";
+        String path =  mDidStr + "/Apps/" + BRConstants.ELAPHANT_APP_ID + "/MiniPrograms/" + miniAppId + "/Status";
+//        String path = mDidStr + "/Apps/" + miniAppId + "/Status";
         String data = getKeyVale(path, status);
         String info = mDid.signInfo(mSeed, data);
         ProfileDataSource.getInstance(getContext()).upchainSync(info);
@@ -596,17 +623,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         ProfileDataSource.getInstance(getContext()).upchainSync(info);
     }
 
-    private RegisterChainData getAppSetting(String appName, String platform, String version) {
-        if (StringUtil.isNullOrEmpty(appName)) return null;
-        String path = mDidStr + "/Dev/" + appName + "/Release/" + platform + "/" + version;
-        mDid.syncInfo();
-        String setting = mDid.getInfo(path);
-        if (!StringUtil.isNullOrEmpty(setting)) {
-            return new Gson().fromJson(setting, RegisterChainData.class);
-        }
-        return null;
-    }
-
     private StringChainData getMiniApps() {
         String path = mDidStr + "/Apps";
         mDid.syncInfo();
@@ -618,8 +634,9 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     }
 
     private StringChainData getAppStatus(String miniAppId) {
-//        String path = mDidStr + "/Apps/" + BRConstants.ELAPHANT_APP_ID + "/MiniPrograms/" + miniAppId + "/Status";
-        String path = mDidStr + "/Apps/" + miniAppId + "/Status";
+        String path = mDidStr + "/Apps/" + BRConstants.ELAPHANT_APP_ID + "/MiniPrograms/" + miniAppId + "/Status";
+//        String path = mDidStr + "/Apps/" + miniAppId + "/Status";
+//        String path = "iXiqJ7brdiH18vrHiTo9WiAHh692xgXi5y/Apps/8816ed501878a9f4404f5926c4fb2df56239424e41da9c449b4db35e9a8b99d5f976a0537858d709511b5b41cf11c0e88be8778008eb5f918a6aa712ac20c421/MiniPrograms/317DD1D2188C459EB24EAEBC81932F6ADB305FF66F073AB1DC767869EF2B1A04273A8A875";
         mDid.syncInfo();
         String value = mDid.getInfo(path);
         if (!StringUtil.isNullOrEmpty(value)) {

@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.presenter.entities.MyAppItem;
+import com.breadwallet.presenter.entities.RegisterChainData;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
@@ -16,6 +17,7 @@ import com.google.gson.Gson;
 import com.platform.APIClient;
 
 import org.apache.shiro.crypto.hash.SimpleHash;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -30,11 +32,11 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ProfileDataSource implements BRDataSourceInterface{
+public class ProfileDataSource implements BRDataSourceInterface {
 
     private Context mContext;
 
-//    final String DID_URL = "https://api-wallet-did-testnet.elastos.org/";
+    //    final String DID_URL = "https://api-wallet-did-testnet.elastos.org/";
     public static final String DID_URL = "https://api-wallet-did.elastos.org/";
 //    final String elaTestUrl = "https://api-wallet-ela-testnet.elastos.org/";
 
@@ -69,7 +71,7 @@ public class ProfileDataSource implements BRDataSourceInterface{
 
     }
 
-    static class ProfileResponse {
+    public static class ProfileResponse {
         public String result;
         public int status;
     }
@@ -92,7 +94,7 @@ public class ProfileDataSource implements BRDataSourceInterface{
             BRSQLiteHelper.ADD_APPS_INDEX
     };
 
-    private MyAppItem cursorToInfo(Cursor cursor){
+    private MyAppItem cursorToInfo(Cursor cursor) {
         MyAppItem item = new MyAppItem();
         item.name_en = cursor.getString(0);
         item.name_zh_CN = cursor.getString(1);
@@ -112,7 +114,7 @@ public class ProfileDataSource implements BRDataSourceInterface{
         return item;
     }
 
-    public MyAppItem getAppInfoById(String appId){
+    public MyAppItem getAppInfoById(String appId) {
         Cursor cursor = null;
         MyAppItem result = null;
         try {
@@ -133,11 +135,11 @@ public class ProfileDataSource implements BRDataSourceInterface{
         }
     }
 
-    public void deleteAppItem(String appId){
-        if(StringUtil.isNullOrEmpty(appId)) return;
+    public void deleteAppItem(String appId) {
+        if (StringUtil.isNullOrEmpty(appId)) return;
         try {
             database = openDatabase();
-            long l = database.delete(BRSQLiteHelper.ADD_APPS_TABLE_NAME, BRSQLiteHelper.ADD_APPS_APP_ID+" = ?", new String[]{appId});
+            long l = database.delete(BRSQLiteHelper.ADD_APPS_TABLE_NAME, BRSQLiteHelper.ADD_APPS_APP_ID + " = ?", new String[]{appId});
             Log.d("test", "test");
         } catch (Exception e) {
             e.printStackTrace();
@@ -146,14 +148,14 @@ public class ProfileDataSource implements BRDataSourceInterface{
         }
     }
 
-    public void updateMyAppItem(List<MyAppItem> entities){
-        if(entities==null || entities.size()<=0) return;
+    public void updateMyAppItem(List<MyAppItem> entities) {
+        if (entities == null || entities.size() <= 0) return;
         try {
             database = openDatabase();
             database.beginTransaction();
-            for(int i=0; i< entities.size(); i++){
+            for (int i = 0; i < entities.size(); i++) {
                 MyAppItem item = entities.get(i);
-                if(item == null) return;
+                if (item == null) return;
                 ContentValues value = new ContentValues();
                 value.put(BRSQLiteHelper.ADD_APPS_NAME_EN, item.name_en);
                 value.put(BRSQLiteHelper.ADD_APPS_NAME_ZH_CN, item.name_zh_CN);
@@ -238,14 +240,52 @@ public class ProfileDataSource implements BRDataSourceInterface{
         return infos;
     }
 
-    public void upchainSync(final String data){
+    public RegisterChainData getMiniAppSetting(String miniAppDid) {
+        try {
+//            String url = "https://api-wallet-did.elastos.org/api/1/didexplorer/did/iiJRtAn6wyHaMSDQPS9Kkft3iiNjH5tTmi/status/normal?detailed=true";
+            String url = "https://api-wallet-did.elastos.org/api/1/didexplorer/did/" + miniAppDid + "/status/normal";
+            String ret = urlGET(url);
+
+            if (!StringUtil.isNullOrEmpty(ret)) {
+                ProfileResponse profileResponse = new Gson().fromJson(ret, ProfileResponse.class);
+                if (profileResponse.status == 200) {
+                    String result = profileResponse.result;
+                    JSONArray jsonArray = new JSONArray(result);
+                    Log.d("test", "test");
+                    if (jsonArray.length() > 0) {
+                        JSONObject jsonObject = (JSONObject) jsonArray.get(0);
+                        String registerKey = jsonObject.getString("key");
+                        String registerValue = jsonObject.getString("value");
+
+                        JSONObject jsonObjectValue = new JSONObject(registerValue);
+                        String registerUrl = jsonObjectValue.getString("url");
+                        String registerHash = jsonObjectValue.getString("hash");
+
+                        RegisterChainData registerChainData = new RegisterChainData();
+                        registerChainData.key = registerKey;
+                        registerChainData.url = registerUrl;
+                        registerChainData.hash = registerHash;
+
+                        return registerChainData;
+                    }
+
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public void upchainSync(final String data) {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 try {
-                    Log.i("ProfileFunction", "upchain data:"+data);
-                    ProfileResponse result = urlPost(DID_URL +"api/1/blockagent/upchain/data", data);
-                    Log.i("ProfileFunction", "result:"+result);
+                    Log.i("ProfileFunction", "upchain data:" + data);
+                    ProfileResponse result = urlPost(DID_URL + "api/1/blockagent/upchain/data", data);
+                    Log.i("ProfileFunction", "result:" + result);
                 } catch (IOException e) {
                     Log.i("ProfileFunction", "upchain exception");
                     e.printStackTrace();
@@ -254,12 +294,12 @@ public class ProfileDataSource implements BRDataSourceInterface{
         });
     }
 
-    public String upchain(String data){
+    public String upchain(String data) {
         try {
-            Log.i("ProfileFunction", "upchain data:"+data);
-            ProfileResponse result = urlPost(DID_URL +"api/1/blockagent/upchain/data", data);
-            Log.i("ProfileFunction", "result:"+result);
-            if(200 == result.status) return result.result;
+            Log.i("ProfileFunction", "upchain data:" + data);
+            ProfileResponse result = urlPost(DID_URL + "api/1/blockagent/upchain/data", data);
+            Log.i("ProfileFunction", "result:" + result);
+            if (200 == result.status) return result.result;
         } catch (IOException e) {
             Log.i("ProfileFunction", "upchain exception");
             e.printStackTrace();
@@ -275,19 +315,19 @@ public class ProfileDataSource implements BRDataSourceInterface{
         public int type;
     }
 
-    public boolean isTxExit(String txid){
+    public boolean isTxExit(String txid) {
         Transaction transaction = getTransaction(txid);
-        boolean is = !(transaction==null || StringUtil.isNullOrEmpty(transaction.txid));
-        Log.i("ProfileFunction", "isTxExit:"+is);
+        boolean is = !(transaction == null || StringUtil.isNullOrEmpty(transaction.txid));
+        Log.i("ProfileFunction", "isTxExit:" + is);
         return is;
     }
 
-    public String getProfileValue(String did, String key){
-        String url = DID_URL + "/api/1/did/"+did+"/"+key;
+    public String getProfileValue(String did, String key) {
+        String url = DID_URL + "/api/1/did/" + did + "/" + key;
 
         try {
             String result = urlGET(url);
-            if(!StringUtil.isNullOrEmpty(result) && result.contains("200")) {
+            if (!StringUtil.isNullOrEmpty(result) && result.contains("200")) {
                 JSONObject jsonObject = new JSONObject(result);
                 result = jsonObject.getString("result");
                 return result;
@@ -300,13 +340,13 @@ public class ProfileDataSource implements BRDataSourceInterface{
 
     }
 
-    private Transaction getTransaction(String txid){
-        Log.i("ProfileFunction", "getTransaction:"+txid);
+    private Transaction getTransaction(String txid) {
+        Log.i("ProfileFunction", "getTransaction:" + txid);
         String url = DID_URL + "api/1/tx/" + txid;
         String result = null;
         try {
             result = urlGET(url);
-            if(!StringUtil.isNullOrEmpty(result) && result.contains("200")){
+            if (!StringUtil.isNullOrEmpty(result) && result.contains("200")) {
                 JSONObject jsonObject = new JSONObject(result);
                 result = jsonObject.getString("result");
                 return new Gson().fromJson(result, Transaction.class);
@@ -319,6 +359,7 @@ public class ProfileDataSource implements BRDataSourceInterface{
     }
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
     public ProfileResponse urlPost(String url, String json) throws IOException {
         String author = createHeaderAuthor();
         RequestBody body = RequestBody.create(JSON, json);
@@ -366,7 +407,8 @@ public class ProfileDataSource implements BRDataSourceInterface{
         public String time;
         public String auth;
     }
-    private String createHeaderAuthor(){
+
+    private String createHeaderAuthor() {
         String acc_id = "unCZRceA8o7dbny";
         String acc_secret = "qtvb4PlRVGLYYYQxyLIo3OgyKI7kUL";
 

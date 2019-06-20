@@ -32,8 +32,6 @@ import com.breadwallet.wallet.wallets.WalletManagerHelper;
 import com.breadwallet.wallet.wallets.ela.BRElaTransaction;
 import com.breadwallet.wallet.wallets.ela.data.HistoryTransactionEntity;
 import com.elastos.jni.Utility;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -147,7 +145,7 @@ public class WalletIoexManager extends BRCoreWalletManager implements BaseWallet
             if(tx == null) return new byte[1];
             BRElaTransaction raw = tx.getElaTx();
             if(raw == null) return new byte[1];
-            String rawTxTxid = IoexDataSource.getInstance(mContext).sendElaRawTx(raw.getTx());
+            String rawTxTxid = IoexDataSource.getInstance(mContext).sendIoexRawTx(raw.getTx());
 
             if(StringUtil.isNullOrEmpty(rawTxTxid)) return new byte[1];
             TxManager.getInstance().updateTxList(mContext);
