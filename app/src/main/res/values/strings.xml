@@ -1088,11 +1088,12 @@
     <string name="explore_pop_share">Share</string>
     <string name="explore_pop_about">About</string>
     <string name="explore_pop_cancel">Cancel</string>
+    <string name="explore_pop_done">Done</string>
     <string name="explore_delete_app_hint">Are you sure you want to remove this mini program?</string>
 
     <string name="explore_about_developer">Developer:%1$s</string>
     <string name="explore_about_did">ELA DID:%1$s</string>
-===
+
     <string name="multisign_deny">Deny</string>
     <string name="multisign_approve">Approve</string>
     <string name="multisign_approve_send">Approve and Send</string>

@@ -31,7 +31,7 @@
         android:layout_marginTop="15dp"
         android:layout_marginLeft="20dp"
         android:visibility="gone"
-        android:text="Cancel"/>
+        android:text="@string/explore_pop_cancel"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/explore_done_tv"
@@ -44,7 +44,7 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginRight="20dp"
         android:visibility="gone"
-        android:text="Done"/>
+        android:text="@string/explore_pop_done"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/explore_add_tv"
@@ -99,6 +99,6 @@
     <include
         android:id="@+id/explore_about_layout"
         android:visibility="gone"
-        layout="@layout/mini_app_about_layout"/>
+        layout="@layout/mini_app_about_layout" />
 
 </android.support.constraint.ConstraintLayout>

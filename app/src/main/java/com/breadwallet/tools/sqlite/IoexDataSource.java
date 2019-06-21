@@ -41,7 +41,7 @@ public class IoexDataSource implements BRDataSourceInterface {
 
     private static IoexDataSource mInstance;
 
-    private static final String IOEX_NODE = "https://api-wallet-ela.elastos.org";
+    private static final String IOEX_NODE = "api-wallet-ela.elastos.org";
 
     private final BRSQLiteHelper dbHelper;
 
@@ -64,7 +64,7 @@ public class IoexDataSource implements BRDataSourceInterface {
 
 
     public static String getUrl(String api){
-        return new StringBuilder("http://").append(IOEX_NODE).append("/").append(api).toString();
+        return new StringBuilder("https://").append(IOEX_NODE).append("/").append(api).toString();
     }
 
     @WorkerThread

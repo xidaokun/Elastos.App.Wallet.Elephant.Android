@@ -1079,6 +1079,7 @@
     <string name="explore_pop_share">分享</string>
     <string name="explore_pop_about">关于</string>
     <string name="explore_pop_cancel">取消</string>
+    <string name="explore_pop_done">完成</string>
     <string name="explore_delete_app_hint">你确定删除这个小程序吗?</string>
 
     <string name="explore_about_developer">开发者:%1$s</string>
