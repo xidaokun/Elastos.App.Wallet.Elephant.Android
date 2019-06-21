@@ -23,6 +23,7 @@ import com.breadwallet.tools.qrcode.QRCodeReaderView;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import com.platform.tools.BRBitId;
 
@@ -256,6 +257,9 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
             e.printStackTrace();
             handlingCode = false;
             return;
+        } catch (JsonParseException e) {
+            Log.i(TAG, "qr code text is not a json object");
+            mData = text;
         }
 
         runOnUiThread(new Runnable() {
