@@ -20,6 +20,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -36,6 +37,8 @@ import com.breadwallet.presenter.activities.EsignHistoryActivity;
 import com.breadwallet.presenter.activities.ExploreWebActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.LoginActivity;
+import com.breadwallet.presenter.activities.MultiSignCreateActivity;
+import com.breadwallet.presenter.activities.MultiSignTxActivity;
 import com.breadwallet.presenter.activities.VoteActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
@@ -66,6 +69,8 @@ import com.google.gson.Gson;
 
 import org.wallet.library.Constants;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import static android.content.Context.ACTIVITY_SERVICE;
@@ -193,6 +198,21 @@ public class UiUtils {
         txDetails.setTransaction(item);
         txDetails.show(app.getFragmentManager(), "txDetails");
 
+    }
+
+    public static void startMultiTxActivity(Context context, Uri uri) {
+        Intent intent = new Intent();
+        intent.setClass(context, MultiSignTxActivity.class);
+        intent.setData(uri);
+        context.startActivity(intent);
+    }
+
+    public static void startMultiCreateActivity(Context context, String url) {
+        Intent intent = new Intent();
+        intent.setClass(context, MultiSignCreateActivity.class);
+        Uri uri = Uri.parse(url);
+        intent.setData(uri);
+        context.startActivity(intent);
     }
 
     public static void startVoteActivity(Context context, String url){
@@ -512,6 +532,22 @@ public class UiUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static String getStringMd5(String data) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        md.update(data.getBytes());
+        byte[] digest = md.digest();
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : digest) hexString.append(String.format("%02x", b));
+
+        return hexString.toString();
+    }
+
+    public static void toast(Context context, int resId) {
+        Toast toast = Toast.makeText(context, resId, Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
     }
 
 }

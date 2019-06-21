@@ -13,7 +13,7 @@ licenses:
 before_install:
 - openssl aes-256-cbc -K $encrypted_c703387b800a_key -iv $encrypted_c703387b800a_iv
   -in elastos.jks.enc -out elastos.jks -d
-- echo "y" | sdkmanager "cmake;3.6.4111459"
+yes | sdkmanager "cmake;3.6.4111459" --licenses
 - chmod +x gradlew
 - "./gradlew dependencies || true"
 script:
@@ -41,8 +41,11 @@ deploy:
 notifications:
   email:
   - 15921908346@163.com
-  - lifayi@elastos.org
   - xuliting@elastos.org
+  - songshijun@elastos.org
+  - zuohuahua@elastos.org
+  - mengxiaokun@elastos.org
+  - xuxinlai@elastos.org
 before_cache:
 - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 cache:

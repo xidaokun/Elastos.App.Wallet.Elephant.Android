@@ -360,6 +360,39 @@
         <activity android:name=".presenter.activities.EsignHistoryActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".presenter.activities.MultiSignQrActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".presenter.activities.MultiSignTxActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:scheme="content"
+                    android:host="*"
+                    android:pathPattern="/.*\\.elasign.*"
+                    android:mimeType="*/*"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="elaphant"
+                    android:host="multitx"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".presenter.activities.MultiSignCreateActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="elaphant"
+                    android:host="multicreate"/>
+            </intent-filter>
+        </activity>
+
         <provider
             android:name=".presenter.provider.BuglyFileProvider"
             android:authorities="${applicationId}.fileProvider"
@@ -368,6 +401,16 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/bugly_path" />
+        </provider>
+
+        <provider
+            android:name=".presenter.provider.ImageFileProvider"
+            android:authorities="${applicationId}.imageprovider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/share_image_path" />
         </provider>
 
  <!--       <meta-data

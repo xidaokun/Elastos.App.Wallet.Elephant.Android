@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -34,8 +35,6 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.platform.HTTPServer;
 import com.platform.tools.BRBitId;
-
-import org.wallet.library.AuthorizeManager;
 
 /**
  * BreadWallet
@@ -268,6 +267,16 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                 if (resultCode == Activity.RESULT_OK) {
                     final String mUri = data.getStringExtra("result");
                     if(StringUtil.isNullOrEmpty(mUri)) return;
+
+                    Uri uri = Uri.parse(mUri);
+                    String scheme = uri.getScheme();
+                    String host = uri.getHost();
+                    if (scheme != null && scheme.equals("elaphant")
+                            && host != null && host.equals("multitx")) {
+                        UiUtils.startMultiTxActivity(this, uri);
+                        return;
+                    }
+
                     if(mUri.contains("redpacket")){
                         UiUtils.startWebviewActivity(this, "https://redpacket.elastos.org");
                     } else if(mUri.contains("identity")) {

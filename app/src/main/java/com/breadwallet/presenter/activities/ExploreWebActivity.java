@@ -2,7 +2,9 @@ package com.breadwallet.presenter.activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.net.http.SslError;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -24,11 +26,13 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.tools.animation.UiUtils;
+
 import com.breadwallet.tools.util.StringUtil;
 
 import org.wallet.library.AuthorizeManager;
 
 public class ExploreWebActivity extends BRActivity {
+    private final String TAG = ExploreWebActivity.class.getName();
 
     private WebView webView;
     private LoadingDialog mLoadingDialog;
@@ -108,6 +112,7 @@ public class ExploreWebActivity extends BRActivity {
     @Override
     public void onResume() {
         super.onResume();
+
         String url = getIntent().getStringExtra("explore_url");
         webView.loadUrl(url);
     }
@@ -211,7 +216,11 @@ public class ExploreWebActivity extends BRActivity {
             finish();
         } else if(url.contains("elaphant") && url.contains("eladposvote")) {
             UiUtils.startVoteActivity(ExploreWebActivity.this, url);
-        }else {
+        } else if (url.contains("elaphant") && url.contains("multicreate")) {
+            UiUtils.startMultiCreateActivity(this, url);
+        } else if (url.contains("elaphant") && url.contains("multitx")) {
+            UiUtils.startMultiTxActivity(this, Uri.parse(url));
+        } else {
             webView.loadUrl(url);
         }
     }
