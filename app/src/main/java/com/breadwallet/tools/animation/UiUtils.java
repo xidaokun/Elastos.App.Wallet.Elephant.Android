@@ -21,10 +21,13 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.OvershootInterpolator;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
@@ -46,6 +49,7 @@ import com.breadwallet.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.presenter.activities.did.DidAuthorizeActivity;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.sign.SignDetailActivity;
+import com.breadwallet.presenter.activities.sign.SignSuccessActivity;
 import com.breadwallet.presenter.activities.sign.SignaureActivity;
 import com.breadwallet.presenter.activities.sign.SignaureEditActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
@@ -216,49 +220,55 @@ public class UiUtils {
         context.startActivity(intent);
     }
 
-    public static void startVoteActivity(Context context, String url){
+    public static void startVoteActivity(Context context, String url) {
         Intent intent = new Intent(context, VoteActivity.class);
         intent.putExtra("vote_scheme_uri", url);
         context.startActivity(intent);
     }
 
-    public static void startWebviewActivity(Context context, String url){
+    public static void startWebviewActivity(Context context, String url) {
         Intent intent = new Intent(context, ExploreWebActivity.class);
         intent.putExtra("explore_url", url);
         context.startActivity(intent);
     }
 
-    public static void startWalletActivity(Context context, String url){
+    public static void startWalletActivity(Context context, String url) {
         Intent intent = new Intent(context, WalletActivity.class);
         intent.putExtra(Constants.INTENT_EXTRA_KEY.META_EXTRA, url);
         context.startActivity(intent);
     }
 
-    public static void startAuthorActivity(Context context, String url){
+    public static void startAuthorActivity(Context context, String url) {
         Intent intent = new Intent(context, DidAuthorizeActivity.class);
         intent.putExtra(Constants.INTENT_EXTRA_KEY.META_EXTRA, url);
         context.startActivity(intent);
     }
 
-    public static void startSignActivity(Context context, String url){
+    public static void startSignActivity(Context context, String url) {
         Intent intent = new Intent(context, SignaureActivity.class);
         intent.putExtra(Constants.INTENT_EXTRA_KEY.META_EXTRA, url);
         context.startActivity(intent);
     }
 
-    public static void startSignDetailActivity(Context context, String signed, String sign){
+    public static void startSignDetailActivity(Context context, String signed, String sign) {
         Intent intent = new Intent(context, SignDetailActivity.class);
         intent.putExtra("signed", signed);
         intent.putExtra("sign", sign);
         context.startActivity(intent);
     }
 
-    public static void startSignHistoryActivity(Context context){
+    public static void startSignSuccessActivity(Context context, String signed) {
+        Intent intent = new Intent(context, SignSuccessActivity.class);
+        intent.putExtra("signed", signed);
+        context.startActivity(intent);
+    }
+
+    public static void startSignHistoryActivity(Context context) {
         Intent intent = new Intent(context, EsignHistoryActivity.class);
         context.startActivity(intent);
     }
 
-    public static void openUrlByBrowser(Context context, String url){
+    public static void openUrlByBrowser(Context context, String url) {
         Uri uri = Uri.parse(url);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         context.startActivity(intent);
@@ -432,7 +442,7 @@ public class UiUtils {
         activity.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
     }
 
-    public static void startExploreActivity(Activity activity){
+    public static void startExploreActivity(Activity activity) {
         Intent intent = new Intent(activity, ExploreActivity.class);
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
@@ -456,35 +466,35 @@ public class UiUtils {
         return 0;
     }
 
-    public static void startAddAppsActivity(Activity activity, int requestCode){
+    public static void startAddAppsActivity(Activity activity, int requestCode) {
         Intent intent = new Intent(activity, AddAppsActivity.class);
         activity.startActivityForResult(intent, requestCode);
     }
 
-    public static void startSignEditActivity(Activity activity, String from, String value, int requestCode){
+    public static void startSignEditActivity(Activity activity, String from, String value, int requestCode) {
         Intent intent = new Intent(activity, SignaureEditActivity.class);
         intent.putExtra("from", from);
         intent.putExtra("value", value);
         activity.startActivityForResult(intent, requestCode);
     }
 
-    public static void startMiniAppAboutActivity(Context context, String appId){
+    public static void startMiniAppAboutActivity(Context context, String appId) {
         Intent intent = new Intent(context, AppAboutActivity.class);
         intent.putExtra("appId", appId);
         context.startActivity(intent);
     }
 
-    public static void returnDataNeedSign(Activity activity, String returnUrl, String Data, String Sign, String appId, String targe){
+    public static void returnDataNeedSign(Activity activity, String returnUrl, String Data, String Sign, String appId, String targe) {
         if (!StringUtil.isNullOrEmpty(returnUrl)) {
             String url;
             if (returnUrl.contains("?")) {
-                url = returnUrl + "&Data="+Uri.encode(Data)+"&Sign="+Uri.encode(Sign)+"&browser=elaphant";
+                url = returnUrl + "&Data=" + Uri.encode(Data) + "&Sign=" + Uri.encode(Sign) + "&browser=elaphant";
             } else {
-                url = returnUrl + "?Data="+Uri.encode(Data)+"&Sign="+Uri.encode(Sign)+"&browser=elaphant";
+                url = returnUrl + "?Data=" + Uri.encode(Data) + "&Sign=" + Uri.encode(Sign) + "&browser=elaphant";
             }
 
-            if(BRConstants.REA_PACKAGE_ID.equals(appId) || BRConstants.DPOS_VOTE_ID.equals(appId)
-                    || BRConstants.EXCHANGE_ID.equalsIgnoreCase(appId) || (!StringUtil.isNullOrEmpty(targe) && targe.equals("internal"))){
+            if (BRConstants.REA_PACKAGE_ID.equals(appId) || BRConstants.DPOS_VOTE_ID.equals(appId)
+                    || BRConstants.EXCHANGE_ID.equalsIgnoreCase(appId) || (!StringUtil.isNullOrEmpty(targe) && targe.equals("internal"))) {
                 UiUtils.startWebviewActivity(activity, url);
             } else {
                 UiUtils.openUrlByBrowser(activity, url);
@@ -492,12 +502,12 @@ public class UiUtils {
         }
     }
 
-    public static void callbackDataNeedSign(Activity activity, String backurl, CallbackEntity entity){
-        if(entity==null || StringUtil.isNullOrEmpty(backurl)) return;
+    public static void callbackDataNeedSign(Activity activity, String backurl, CallbackEntity entity) {
+        if (entity == null || StringUtil.isNullOrEmpty(backurl)) return;
         String params = new Gson().toJson(entity);
         String ret = DidDataSource.getInstance(activity).urlPost(backurl, params);
         if ((StringUtil.isNullOrEmpty(ret) || StringUtil.isNullOrEmpty(ret) || ret.contains("err code:"))) {
-            toast(activity,"callback return error");
+            toast(activity, "callback return error");
         }
     }
 
@@ -510,7 +520,7 @@ public class UiUtils {
         });
     }
 
-    public static void payReturnData(Context context, String txid){
+    public static void payReturnData(Context context, String txid) {
         payReturn(context, txid);
         payCallback(context, txid);
         WalletActivity.mCallbackUrl = null;
@@ -518,19 +528,19 @@ public class UiUtils {
         WalletActivity.mOrderId = null;
     }
 
-    private static void payReturn(Context context, String txid){
-        if(!StringUtil.isNullOrEmpty(WalletActivity.mReturnUrl)) { //call return url
-            if(WalletActivity.mReturnUrl.contains("?")){
-                UiUtils.startWebviewActivity(context, WalletActivity.mReturnUrl+"&TXID="+txid+"&OrderID"+WalletActivity.mOrderId);
+    private static void payReturn(Context context, String txid) {
+        if (!StringUtil.isNullOrEmpty(WalletActivity.mReturnUrl)) { //call return url
+            if (WalletActivity.mReturnUrl.contains("?")) {
+                UiUtils.startWebviewActivity(context, WalletActivity.mReturnUrl + "&TXID=" + txid + "&OrderID" + WalletActivity.mOrderId);
             } else {
-                UiUtils.startWebviewActivity(context, WalletActivity.mReturnUrl+"?TXID="+txid+"&OrderID"+WalletActivity.mOrderId);
+                UiUtils.startWebviewActivity(context, WalletActivity.mReturnUrl + "?TXID=" + txid + "&OrderID" + WalletActivity.mOrderId);
             }
         }
     }
 
-    private static void payCallback(Context context, String txid){
+    private static void payCallback(Context context, String txid) {
         try {
-            if(!StringUtil.isNullOrEmpty(WalletActivity.mCallbackUrl)) { //call back url
+            if (!StringUtil.isNullOrEmpty(WalletActivity.mCallbackUrl)) { //call back url
                 ElapayEntity elapayEntity = new ElapayEntity();
                 elapayEntity.OrderID = WalletActivity.mOrderId;
                 elapayEntity.TXID = txid;
@@ -554,6 +564,16 @@ public class UiUtils {
     public static void toast(Context context, int resId) {
         Toast toast = Toast.makeText(context, resId, Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+    }
+
+    public static void toastMessage(Activity activity, int layout) {
+        LayoutInflater inflater = activity.getLayoutInflater();
+        View view = inflater.inflate(layout, null);
+        Toast toast = new Toast(activity);
+        toast.setView(view);
+        toast.setGravity(Gravity.FILL, 0, 0);
+        toast.setDuration(Toast.LENGTH_SHORT);
         toast.show();
     }
 

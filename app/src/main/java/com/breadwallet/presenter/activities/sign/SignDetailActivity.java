@@ -91,9 +91,9 @@ public class SignDetailActivity extends BaseSettingsActivity {
     }
 
     private void copyText(String content) {
-        StringBuilder sb = new StringBuilder();
-        BRClipboardManager.putClipboard(this, sb.toString());
-        Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
+        if(!StringUtil.isNullOrEmpty(content)){
+            BRClipboardManager.putClipboard(this, content);
+        }
     }
 
 }

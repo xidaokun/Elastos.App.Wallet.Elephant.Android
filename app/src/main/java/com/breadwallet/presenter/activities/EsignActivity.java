@@ -93,7 +93,7 @@ public class EsignActivity extends BaseSettingsActivity {
            item.signedData = target;
            item.time = getAuthorTime(0);
            cacheData(item);
-           Toast.makeText(this, "签名完成", Toast.LENGTH_SHORT).show();
+           UiUtils.startSignSuccessActivity(this, item.signedData);
        } catch (Exception e) {
            e.printStackTrace();
        } finally {

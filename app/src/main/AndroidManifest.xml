@@ -357,6 +357,9 @@
         <activity android:name=".presenter.activities.EsignActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".presenter.activities.sign.SignSuccessActivity"
+            android:screenOrientation="portrait"/>
+
         <activity android:name=".presenter.activities.EsignHistoryActivity"
             android:screenOrientation="portrait"/>
 
