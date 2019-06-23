@@ -17,6 +17,7 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.fragments.FragmentExplore;
 import com.breadwallet.presenter.fragments.FragmentSetting;
 import com.breadwallet.presenter.fragments.FragmentWallet;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -64,6 +65,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                     return true;
                 case R.id.navigation_explore:
                     showFragment(mExploreFragment);
+//                    UiUtils.startExploreActivity(HomeActivity.this);
                     return true;
                 case R.id.navigation_notifications:
                     showFragment(mSettingFragment);

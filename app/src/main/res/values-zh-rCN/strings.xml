@@ -310,6 +310,8 @@
     <string name="MenuButton.scan">扫描QR</string>
     <!-- Menu button title -->
     <string name="MenuButton.security">安全中心</string>
+    <!-- E-sign title -->
+    <string name="MenuButton.e.sign">签名</string>
     <!-- Menu button title -->
     <string name="MenuButton.settings">设置</string>
     <!-- Menu button title -->
