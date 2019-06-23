@@ -53,7 +53,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             android:layout_marginLeft="25dp"
             android:textColor="@color/black"
-            android:text="@string/esign_content_title"/>
+            android:text="@string/esign_doc_to_sign"/>
 
         <com.breadwallet.presenter.customviews.BaseTextView
             android:layout_width="wrap_content"

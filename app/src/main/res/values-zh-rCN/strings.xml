@@ -1116,7 +1116,8 @@
     <string name="multisign_wallet_not_created">多签钱包还没创建成功，请稍后重试。</string>
     <string name="multisign_tx_pubkey_not_in_list">您的公钥不在批准列表里，请查看你的公钥或切换到正确的钱包。</string>
     <string name="esign_title">签名</string>
-    <string name="esign_content_title">签名内容</string>
+    <string name="esign_doc_to_sign">签名内容</string>
+    <string name="esign_doc_to_signed">已签名内容</string>
     <string name="esign_agreement">点击“签名”按钮，即代表您确认使用个人签名对此文档进行电子签名。</string>
     <string name="esign_detail_title">签名详情</string>
     <string name="esign_history_title">签名历史</string>

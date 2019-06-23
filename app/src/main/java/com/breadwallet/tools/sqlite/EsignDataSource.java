@@ -44,6 +44,7 @@ public class EsignDataSource implements BRDataSourceInterface {
             ContentValues value = new ContentValues();
             value.put(BRSQLiteHelper.ESIGN_SIGN_DATA, item.signData);
             value.put(BRSQLiteHelper.ESIGN_SIGNED_DATA, item.signedData);
+            value.put(BRSQLiteHelper.ESIGN_SIGN_TIME, item.time);
 
             long l = database.insertWithOnConflict(BRSQLiteHelper.ESIGN_HISTORY_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
             database.setTransactionSuccessful();
