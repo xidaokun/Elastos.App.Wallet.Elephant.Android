@@ -14,6 +14,7 @@ import com.breadwallet.presenter.customviews.BREdit;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.entities.SignHistoryItem;
 import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.EsignDataSource;
 import com.breadwallet.tools.util.StringUtil;
@@ -29,6 +30,7 @@ public class EsignActivity extends BaseSettingsActivity {
     private BRButton mSignBtn;
     private BREdit mSignEdt;
     private BaseTextView mHistoryBtn;
+    private BaseTextView mPasteBtn;
     private AppCompatCheckBox mCheckBox;
 
     @Override
@@ -53,7 +55,7 @@ public class EsignActivity extends BaseSettingsActivity {
         mSignEdt = findViewById(R.id.doc_to_sign_content);
         mCheckBox = findViewById(R.id.esign_check_box);
         mHistoryBtn = findViewById(R.id.esign_history);
-
+        mPasteBtn = findViewById(R.id.esign_paste_btn);
     }
 
     private boolean mIsSigning = false;
@@ -69,6 +71,16 @@ public class EsignActivity extends BaseSettingsActivity {
             @Override
             public void onClick(View v) {
                 UiUtils.startSignHistoryActivity(EsignActivity.this);
+            }
+        });
+
+        mPasteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String content = BRClipboardManager.getClipboard(EsignActivity.this);
+                if(!StringUtil.isNullOrEmpty(content)){
+                    mSignEdt.setText(content);
+                }
             }
         });
     }
