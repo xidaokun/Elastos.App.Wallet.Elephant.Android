@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.presenter.entities.MyAppItem;
 import com.breadwallet.presenter.entities.RegisterChainData;
@@ -97,7 +98,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     private View mAddScanView;
     private View mAboutView;
     private View mAboutShareView;
-    private View mAboutAboutView;
+    private BaseTextView mAboutAboutView;
     private View mAboutCancelView;
     private LoadingDialog mLoadingDialog;
     private static final int INIT_APPS_MSG = 0x01;
@@ -224,6 +225,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     public void onAbout(MyAppItem item, int position) {
         mAboutView.setVisibility(View.VISIBLE);
         mAboutAppItem = item;
+        mAboutAboutView.setText(String.format(getString(R.string.explore_pop_about), mAboutAppItem.name_en));
     }
 
     @Override

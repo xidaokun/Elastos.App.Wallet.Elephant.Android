@@ -30,6 +30,7 @@ public class AppAboutActivity extends BaseSettingsActivity {
     private BaseTextView mDid;
     private RecyclerView mRecycleView;
     private AppAboutAdapter mAdapter;
+    private BaseTextView mTitle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,6 +45,7 @@ public class AppAboutActivity extends BaseSettingsActivity {
         mDesc = findViewById(R.id.explore_about_desc);
         mDeveloper = findViewById(R.id.explore_about_developer);
         mDid = findViewById(R.id.explore_about_did);
+        mTitle = findViewById(R.id.title);
         mRecycleView = findViewById(R.id.exploer_about_rv);
     }
 
@@ -51,7 +53,8 @@ public class AppAboutActivity extends BaseSettingsActivity {
         String appId = getIntent().getStringExtra("appId");
         if(!StringUtil.isNullOrEmpty(appId)){
             MyAppItem myAppItem = ProfileDataSource.getInstance(this).getAppInfoById(appId);
-            mName.setText(myAppItem.name);
+            mTitle.setText(String.format(getString(R.string.explore_pop_about), myAppItem.name_en));
+            mName.setText(myAppItem.name_en);
             mDesc.setText(myAppItem.shortDesc);
             mDeveloper.setText(String.format(getString(R.string.explore_about_developer), myAppItem.developer));
             mDid.setText(String.format(getString(R.string.explore_about_did), myAppItem.did));
@@ -59,7 +62,11 @@ public class AppAboutActivity extends BaseSettingsActivity {
             if(!StringUtil.isNullOrEmpty(myAppItem.path)){
                 bitmap = Utils.getIconFromPath(new File(myAppItem.path+"/"+myAppItem.icon_xxhdpi));
             }
-            mLogo.setImageBitmap(bitmap);
+            if(null != bitmap){
+                mLogo.setImageBitmap(bitmap);
+            } else {
+                mLogo.setImageResource(R.drawable.unknow);
+            }
 
             List<AppAboutItem> appAboutItems = new ArrayList<>();
             AppAboutItem appAboutItem = new AppAboutItem();

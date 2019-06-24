@@ -1078,8 +1078,8 @@
     <string name="explore_pop_add_by_url">通过URL添加</string>
     <string name="explore_pop_scan_to_add">扫描添加</string>
     <string name="explore_pop_remove">删除</string>
-    <string name="explore_pop_share">分享</string>
-    <string name="explore_pop_about">关于</string>
+    <string name="explore_pop_share">分享应用</string>
+    <string name="explore_pop_about">关于%1$s</string>
     <string name="explore_pop_cancel">取消</string>
     <string name="explore_pop_done">完成</string>
     <string name="explore_delete_app_hint">你确定删除这个小程序吗?</string>
