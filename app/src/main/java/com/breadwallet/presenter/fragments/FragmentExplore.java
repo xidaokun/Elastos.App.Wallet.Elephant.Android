@@ -98,6 +98,9 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     private View mAddScanView;
     private View mAboutView;
     private View mAboutShareView;
+    private View mRemoveDialogView;
+    private View mCancelView;
+    private View mRemoveView;
     private BaseTextView mAboutAboutView;
     private View mAboutCancelView;
     private LoadingDialog mLoadingDialog;
@@ -161,6 +164,9 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         mAboutShareView = rootView.findViewById(R.id.share_tv);
         mAboutAboutView = rootView.findViewById(R.id.about_tv);
         mAboutCancelView = rootView.findViewById(R.id.cancel_tv);
+        mRemoveDialogView = rootView.findViewById(R.id.explore_remove_app_layout);
+        mCancelView = rootView.findViewById(R.id.remove_mini_cancel);
+        mRemoveView = rootView.findViewById(R.id.remove_mini_confirm);
         if (BRSharedPrefs.getDisclaimShow(getContext()))
             mDisclaimLayout.setVisibility(View.VISIBLE);
         mLoadingDialog = new LoadingDialog(getContext(), R.style.progressDialog);
@@ -300,6 +306,9 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             @Override
             public void onClick(View v) {
                 changeView(false);
+                mAdapter.isDelete(false);
+                mIsLongPressDragEnabled = false;
+                mAdapter.notifyDataSetChanged();
             }
         });
 
@@ -309,13 +318,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 changeView(false);
                 mAdapter.isDelete(false);
                 mIsLongPressDragEnabled = false;
-                if (mRemoveAppId.size() > 0) {
-                    for (String appId : mRemoveAppId) {
-                        ProfileDataSource.getInstance(getContext()).deleteAppItem(appId);
-                        upAppStatus(appId, "deleted");
-                    }
-                    mRemoveAppId.clear();
-                }
                 mHandler.sendEmptyMessage(UPDATE_APPS_MSG);
             }
         });
@@ -366,6 +368,32 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             @Override
             public void onClick(View v) {
                 mAboutView.setVisibility(View.GONE);
+            }
+        });
+
+        mCancelView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mRemoveDialogView.setVisibility(View.GONE);
+            }
+        });
+
+        mRemoveView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(-1 != mRemovePosition){
+                    mRemoveDialogView.setVisibility(View.GONE);
+                    if (mRemoveAppId.size() > 0) {
+                        for (String appId : mRemoveAppId) {
+                            ProfileDataSource.getInstance(getContext()).deleteAppItem(appId);
+                            upAppStatus(appId, "deleted");
+                        }
+                    }
+                    mItems.remove(mRemovePosition);
+                    mAdapter.notifyDataSetChanged();
+                    mRemoveAppId.clear();
+                    mRemovePosition = -1;
+                }
             }
         });
 
@@ -567,14 +595,15 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     }
 
     private List<String> mRemoveAppId = new ArrayList<>();
+    private int mRemovePosition = -1;
 
     @Override
     public void onDelete(MyAppItem item, int position) {
         String appId = item.appId;
         if (!StringUtil.isNullOrEmpty(appId)) {
+            mRemovePosition = position;
             mRemoveAppId.add(appId);
-            mItems.remove(position);
-            mAdapter.notifyDataSetChanged();
+            mRemoveDialogView.setVisibility(View.VISIBLE);
         }
     }
 

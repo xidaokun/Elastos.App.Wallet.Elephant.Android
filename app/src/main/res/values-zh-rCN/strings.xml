@@ -1126,4 +1126,5 @@
     <string name="esign_success_hint">签名成功</string>
     <string name="esign_success_copy">复制</string>
     <string name="esign_copy_to_clipboard">已复制到粘贴板</string>
+    <string name="esign_remove_nini_app_hint">确认删除该小应用吗?</string>
 </resources>
