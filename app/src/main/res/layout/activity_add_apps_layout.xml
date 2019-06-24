@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_marginStart="16dp"
-            android:text="Add by URL"
+            android:text="@string/explore_pop_add_by_url"
             android:textColor="@color/black_333333"
             android:textSize="20sp" />
 
