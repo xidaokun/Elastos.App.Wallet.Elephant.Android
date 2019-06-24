@@ -3,6 +3,7 @@ package com.breadwallet.presenter.activities.sign;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Toast;
 
@@ -47,6 +48,8 @@ public class SignDetailActivity extends BaseSettingsActivity {
         mSignedContent = findViewById(R.id.signed_content);
         mSignCopyBtn = findViewById(R.id.sign_copy);
         mSignContent = findViewById(R.id.sign_content);
+        mSignContent.setMovementMethod(ScrollingMovementMethod.getInstance());
+        mSignedContent.setMovementMethod(ScrollingMovementMethod.getInstance());
     }
 
     private void initListener() {

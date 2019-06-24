@@ -434,7 +434,12 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         String candidatesStr = BRSharedPrefs.getCandidate(mContext);
         Log.d("posvote", "autoVote:"+autoVote);
         if(autoVote && !StringUtil.isNullOrEmpty(candidatesStr)){
-            List candidates = new Gson().fromJson(candidatesStr, new TypeToken<List<String>>(){}.getType());
+            List<String> candidates = null;
+            if(candidatesStr.contains("[")){
+                candidates = new Gson().fromJson(candidatesStr, new TypeToken<List<String>>(){}.getType());
+            } else {
+                candidates = Utils.spliteByComma(candidatesStr);
+            }
             brElaTransaction = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno, candidates);
         } else {
             brElaTransaction = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno);

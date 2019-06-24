@@ -106,6 +106,7 @@
             app:layout_constraintTop_toBottomOf="@+id/sign_btn"
             android:layout_marginTop="10dp"
             android:button="@drawable/esign_check_selector"
+            android:textColor="@drawable/sign_check_selector"
             android:text="@string/esign_agreement"/>
         
     </android.support.constraint.ConstraintLayout>

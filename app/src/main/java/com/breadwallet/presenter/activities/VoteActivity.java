@@ -244,6 +244,7 @@ public class VoteActivity extends BaseSettingsActivity {
 
         mCandidatesStr = uriFactory.getCandidatePublicKeys();
         if(StringUtil.isNullOrEmpty(mCandidatesStr)) return;
+        mCandidatesStr = mCandidatesStr.trim();
         if(mCandidatesStr.contains("[")){
             mCandidates = new Gson().fromJson(mCandidatesStr, new TypeToken<List<String>>(){}.getType());
         } else {

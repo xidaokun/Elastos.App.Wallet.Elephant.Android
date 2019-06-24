@@ -53,6 +53,7 @@ public class EsignActivity extends BaseSettingsActivity {
         mSignEdt = findViewById(R.id.doc_to_sign_content);
         mCheckBox = findViewById(R.id.esign_check_box);
         mHistoryBtn = findViewById(R.id.esign_history);
+
     }
 
     private boolean mIsSigning = false;

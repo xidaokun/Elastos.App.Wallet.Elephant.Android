@@ -89,6 +89,8 @@
             android:textColor="@color/black"
             android:textSize="14sp"
             android:gravity="top"
+            android:lines="50"
+            android:scrollbars="vertical"
             app:layout_constraintTop_toBottomOf="@+id/signed_divide"/>
 
 
@@ -152,6 +154,8 @@
             android:textColor="@color/black"
             android:textSize="14sp"
             android:gravity="top"
+            android:lines="50"
+            android:scrollbars="vertical"
             app:layout_constraintTop_toBottomOf="@+id/sign_divide"/>
 
     </android.support.constraint.ConstraintLayout>

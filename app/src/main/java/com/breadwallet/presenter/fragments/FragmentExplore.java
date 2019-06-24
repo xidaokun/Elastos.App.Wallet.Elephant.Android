@@ -232,8 +232,8 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     public void onItemClick(MyAppItem item, int position) {
         String url = item.url;
         if (!StringUtil.isNullOrEmpty(url)) {
-//            UiUtils.startWebActivity(getActivity(), url);
-            UiUtils.openUrlByBrowser(getContext(), url);
+            UiUtils.startWebviewActivity(getActivity(), url);
+//            UiUtils.openUrlByBrowser(getContext(), url);
         }
     }
 
