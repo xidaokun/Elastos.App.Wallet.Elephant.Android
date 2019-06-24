@@ -106,4 +106,9 @@
         android:visibility="gone"
         layout="@layout/remove_mini_dialog_layout"/>
 
+    <include
+        android:id="@+id/explore_load_app_layout"
+        android:visibility="gone"
+        layout="@layout/load_mini_dialog_layout"/>
+
 </android.support.constraint.ConstraintLayout>

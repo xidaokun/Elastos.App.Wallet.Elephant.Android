@@ -18,11 +18,13 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
@@ -103,6 +105,10 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     private View mRemoveView;
     private BaseTextView mAboutAboutView;
     private View mAboutCancelView;
+    private View mLoadDialogView;
+    private TextView mLoadHintTv;
+    private View mLoadNoBtn;
+    private View mLoadYesBtn;
     private LoadingDialog mLoadingDialog;
     private static final int INIT_APPS_MSG = 0x01;
     private static final int UPDATE_APPS_MSG = 0x02;
@@ -167,6 +173,10 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         mRemoveDialogView = rootView.findViewById(R.id.explore_remove_app_layout);
         mCancelView = rootView.findViewById(R.id.remove_mini_cancel);
         mRemoveView = rootView.findViewById(R.id.remove_mini_confirm);
+        mLoadDialogView = rootView.findViewById(R.id.explore_load_app_layout);
+        mLoadHintTv = rootView.findViewById(R.id.load_hint_tv);
+        mLoadNoBtn = rootView.findViewById(R.id.load_mini_no);
+        mLoadYesBtn = rootView.findViewById(R.id.load_mini_yes);
         if (BRSharedPrefs.getDisclaimShow(getContext()))
             mDisclaimLayout.setVisibility(View.VISIBLE);
         mLoadingDialog = new LoadingDialog(getContext(), R.style.progressDialog);
@@ -234,12 +244,14 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         mAboutAboutView.setText(String.format(getString(R.string.explore_pop_about), mAboutAppItem.name_en));
     }
 
+    private String mLoadUrl = null;
     @Override
     public void onItemClick(MyAppItem item, int position) {
         String url = item.url;
         if (!StringUtil.isNullOrEmpty(url)) {
-            UiUtils.startWebviewActivity(getActivity(), url);
-//            UiUtils.openUrlByBrowser(getContext(), url);
+            mLoadDialogView.setVisibility(View.VISIBLE);
+            mLoadUrl = url;
+            mLoadHintTv.setText(Html.fromHtml(String.format(getString(R.string.esign_load_mini_app_hint), item.name_en)));
         }
     }
 
@@ -394,6 +406,22 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                     mRemoveAppId.clear();
                     mRemovePosition = -1;
                 }
+            }
+        });
+
+        mLoadNoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mLoadDialogView.setVisibility(View.GONE);
+            }
+        });
+
+        mLoadYesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mLoadDialogView.setVisibility(View.GONE);
+                UiUtils.startWebviewActivity(getActivity(), mLoadUrl);
+                mLoadUrl = null;
             }
         });
 
