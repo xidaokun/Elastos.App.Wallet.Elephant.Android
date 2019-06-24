@@ -13,12 +13,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -74,11 +76,13 @@ import com.google.gson.Gson;
 
 import org.wallet.library.Constants;
 
+import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import static android.content.Context.ACTIVITY_SERVICE;
+import static android.content.Context.CONTEXT_IGNORE_SECURITY;
 
 
 /**
@@ -575,6 +579,23 @@ public class UiUtils {
         toast.setGravity(Gravity.FILL, 0, 0);
         toast.setDuration(Toast.LENGTH_SHORT);
         toast.show();
+    }
+
+    public static void shareCapsule(Context context, File file) {
+        try {
+            Uri contentUri = FileProvider.getUriForFile(context, "com.elastos.wallet.capsuleProvider", file);
+            if (contentUri == null) return;
+
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            shareIntent.setDataAndType(contentUri, context.getContentResolver().getType(contentUri));
+
+            shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+            context.startActivity(Intent.createChooser(shareIntent, "Share"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

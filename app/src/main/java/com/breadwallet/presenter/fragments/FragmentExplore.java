@@ -58,6 +58,7 @@ import org.elastos.sdk.wallet.IdentityManager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -186,7 +187,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     public void initApps() {
         mAppIds.clear();
         mItems.clear();
-        mRemoveAppId.clear();
+        mRemoveApp.clear();
         List<MyAppItem> tmp = ProfileDataSource.getInstance(getContext()).getMyAppItems();
         if (tmp != null && tmp.size() > 0) { //database
             mItems.addAll(tmp);
@@ -362,8 +363,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             public void onClick(View v) {
                 mAboutView.setVisibility(View.GONE);
                 if (null != mAboutAppItem) {
-//                    QRUtils.share("mini apps url:", getActivity(), mAboutAppItem.path);
-                    shareApps(getContext(), mAboutAppItem.name, mAboutAppItem.path);
+                    UiUtils.shareCapsule(getContext(), new File(mAboutAppItem.path));
                 }
             }
         });
@@ -393,19 +393,17 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         mRemoveView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(-1 != mRemovePosition){
-                    mRemoveDialogView.setVisibility(View.GONE);
-                    if (mRemoveAppId.size() > 0) {
-                        for (String appId : mRemoveAppId) {
-                            ProfileDataSource.getInstance(getContext()).deleteAppItem(appId);
-                            upAppStatus(appId, "deleted");
-                        }
+                mRemoveDialogView.setVisibility(View.GONE);
+                if (mRemoveApp.size() > 0) {
+                    for (MyAppItem app : mRemoveApp) {
+                        ProfileDataSource.getInstance(getContext()).deleteAppItem(app.appId);
+                        upAppStatus(app.appId, "deleted");
+                        deleteFile(new File(app.path));
+                        mItems.remove(app);
                     }
-                    mItems.remove(mRemovePosition);
-                    mAdapter.notifyDataSetChanged();
-                    mRemoveAppId.clear();
-                    mRemovePosition = -1;
                 }
+                mAdapter.notifyDataSetChanged();
+                mRemoveApp.clear();
             }
         });
 
@@ -429,14 +427,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         mAdapter.setOnMoveListener(this);
         mAdapter.setOnAboutClick(this);
         mAdapter.setOnItemClick(this);
-    }
-
-    public static void shareApps(Context context, String title, String text) {
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, text);
-        sendIntent.setType("text/plain");
-        context.startActivity(Intent.createChooser(sendIntent, title));
     }
 
     private void changeView(boolean isEdit) {
@@ -489,14 +479,16 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     private void copyCapsuleToDownloadCache(Context context, String fileOutputPath, String capsuleName) {
         if (StringUtil.isNullOrEmpty(fileOutputPath) || StringUtil.isNullOrEmpty(capsuleName))
             return;
+
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
         try {
             File capsuleFile = new File(fileOutputPath, capsuleName);
             if (capsuleFile.exists()) {
                 capsuleFile.delete();
             }
             mDoloadFileName = capsuleName;
-            InputStream inputStream;
-            OutputStream outputStream = new FileOutputStream(capsuleFile);
+            outputStream = new FileOutputStream(capsuleFile);
             inputStream = context.getAssets().open("apps/" + capsuleName);
             byte[] buffer = new byte[1024];
             int length = inputStream.read(buffer);
@@ -504,9 +496,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 outputStream.write(buffer, 0, length);
                 length = inputStream.read(buffer);
             }
-            outputStream.flush();
-            inputStream.close();
-            outputStream.close();
 
             registerDownloadReceiver();
             Intent intent = new Intent();
@@ -514,6 +503,46 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             getContext().sendBroadcast(intent);
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                outputStream.flush();
+                inputStream.close();
+                outputStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void backupCapsule(File downloadFile, File fileOutputPath, String capsuleName) throws IOException {
+        if(null==downloadFile
+                || null==fileOutputPath
+                || StringUtil.isNullOrEmpty(capsuleName)) return;
+        if(!fileOutputPath.exists()) fileOutputPath.mkdirs();
+        File backupFile = new File(fileOutputPath, capsuleName);
+        if(backupFile.exists()) backupFile.delete();
+
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+        try {
+            inputStream = new FileInputStream(downloadFile);
+            outputStream = new FileOutputStream(backupFile);
+            byte[] buffer = new byte[1024];
+            int length = inputStream.read(buffer);
+            while (length > 0) {
+                outputStream.write(buffer, 0, length);
+                length = inputStream.read(buffer);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                outputStream.flush();
+                inputStream.close();
+                outputStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -552,19 +581,20 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                     @Override
                     public void run() {
                         try {
-                            File srcPath = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile(), mDoloadFileName).getAbsoluteFile();
-                            File outPath = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule/" + mDoloadFileName).getAbsoluteFile();
-                            if (srcPath == null || outPath == null || !srcPath.exists()) return;
-                            decompression(srcPath.getAbsolutePath(), outPath.getAbsolutePath());
+                            File downloadPath = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile(), mDoloadFileName);
+                            File outPath = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule/" + mDoloadFileName);
+                            File backupPath = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "cbackup/");
+                            decompression(downloadPath.getAbsolutePath(), outPath.getAbsolutePath());
+                            backupCapsule(downloadPath, backupPath, mDoloadFileName);
 //                            logFile("srcPath", getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile());
 //                            logFile("outPath", new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule").getAbsoluteFile());
 
                             File appJsonPath = new File(outPath, "/app.json");
                             String json = getJsonFromCapsule(appJsonPath);
                             MyAppItem item = new Gson().fromJson(json, MyAppItem.class);
-                            item.path = new File(outPath, mDoloadFileName).getAbsolutePath();
+                            item.path = new File(backupPath, mDoloadFileName).getAbsolutePath();
 
-                            String hash = CryptoHelper.getShaChecksum(srcPath.getAbsolutePath());
+                            String hash = CryptoHelper.getShaChecksum(downloadPath.getAbsolutePath());
                             Log.d(TAG, "mDoloadFileName:"+mDoloadFileName+" hash:"+hash);
 
                             RegisterChainData appSetting = ProfileDataSource.getInstance(getContext()).getMiniAppSetting(item.did);
@@ -575,8 +605,9 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                                     StringUtil.isNullOrEmpty(appSetting.hash) ||
                                     !appSetting.hash.equals(hash)) {
                                 Toast.makeText(getContext(), "Illegal capsule ", Toast.LENGTH_SHORT).show();
-                                deleteFile(srcPath);
+                                deleteFile(downloadPath);
                                 deleteFile(outPath);
+                                deleteFile(backupPath);
                                 return;
                             }
                             Log.d(TAG, "capsule legitimacy");
@@ -593,9 +624,8 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                                 upAppUrlData(item.appId, item.url);
                                 upAppIds(mAppIds);
                             }
-                            deleteFile(srcPath);
+                            deleteFile(downloadPath);
                             deleteFile(outPath);
-//
 //                            logFile("srcPath", getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile());
 //                            logFile("outPath", new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule").getAbsoluteFile());
                         } catch (Exception e) {
@@ -622,15 +652,13 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         }
     }
 
-    private List<String> mRemoveAppId = new ArrayList<>();
-    private int mRemovePosition = -1;
+    private List<MyAppItem> mRemoveApp = new ArrayList<>();
 
     @Override
     public void onDelete(MyAppItem item, int position) {
         String appId = item.appId;
         if (!StringUtil.isNullOrEmpty(appId)) {
-            mRemovePosition = position;
-            mRemoveAppId.add(appId);
+            mRemoveApp.add(item);
             mRemoveDialogView.setVisibility(View.VISIBLE);
         }
     }
