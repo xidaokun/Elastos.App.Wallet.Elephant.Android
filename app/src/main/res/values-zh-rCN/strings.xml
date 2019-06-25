@@ -1123,6 +1123,7 @@
     <string name="esign_history_title">签名历史</string>
     <string name="esign_sign_btn">签名</string>
     <string name="esign_paste_btn">粘贴</string>
+    <string name="esign_success_title">签名</string>
     <string name="esign_success_hint">签名成功</string>
     <string name="esign_success_copy">复制</string>
     <string name="esign_copy_to_clipboard">已复制到粘贴板</string>

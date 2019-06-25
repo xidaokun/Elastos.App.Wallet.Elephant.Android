@@ -1131,6 +1131,7 @@
     <string name="esign_history_title">Signature History</string>
     <string name="esign_sign_btn">Sign</string>
     <string name="esign_paste_btn">Paste</string>
+    <string name="esign_success_title">Signature</string>
     <string name="esign_success_hint">Signed successfully</string>
     <string name="esign_success_copy">Copy</string>
     <string name="esign_copy_to_clipboard">Copied to clipboard</string>

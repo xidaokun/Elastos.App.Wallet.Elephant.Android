@@ -348,6 +348,12 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 return true;
             }
         });
+        mAboutView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
         mPopLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {

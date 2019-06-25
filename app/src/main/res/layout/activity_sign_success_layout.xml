@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_marginStart="16dp"
-            android:text="Signature"
+            android:text="@string/esign_success_title"
             android:textColor="@color/black_333333"
             android:textSize="20sp" />
 
@@ -56,7 +56,7 @@
         app:layout_constraintTop_toBottomOf="@+id/sign_success_folder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Signed successfully"
+        android:text="@string/esign_success_hint"
         android:textColor="#222222" />
 
     <com.breadwallet.presenter.customviews.BaseTextView
@@ -94,7 +94,7 @@
         android:layout_marginEnd="@dimen/bread_margin"
         android:layout_marginBottom="32dp"
         android:padding="10dp"
-        android:text="Copy"
+        android:text="@string/esign_success_copy"
         android:textColor="#ff3365"
         android:textSize="18sp" />
 </android.support.constraint.ConstraintLayout>
