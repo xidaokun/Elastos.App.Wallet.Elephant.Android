@@ -398,7 +398,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public String getIso() {
-        return "ELA";//图标的选取，数量，价格都是根据这个iso来获取的
+        return "ELA";
     }
 
     @Override

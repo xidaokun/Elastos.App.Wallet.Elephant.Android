@@ -5,6 +5,7 @@ import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.breadwallet.R;
@@ -56,6 +57,7 @@ public class EsignActivity extends BaseSettingsActivity {
         mCheckBox = findViewById(R.id.esign_check_box);
         mHistoryBtn = findViewById(R.id.esign_history);
         mPasteBtn = findViewById(R.id.esign_paste_btn);
+        mSignBtn.setColor(getColor(R.color.esigin_btn_unable_color));
     }
 
     private boolean mIsSigning = false;
@@ -63,7 +65,9 @@ public class EsignActivity extends BaseSettingsActivity {
         mSignBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!mIsSigning) signData();
+                if(!mIsSigning) {
+                    signData();
+                }
             }
         });
 
@@ -83,11 +87,17 @@ public class EsignActivity extends BaseSettingsActivity {
                 }
             }
         });
+
+        mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mSignBtn.setColor(getColor(!isChecked?R.color.esigin_btn_unable_color:R.color.tx_send_color));
+            }
+        });
     }
 
    private void signData(){
         if(!mCheckBox.isChecked()){
-            Toast.makeText(this, "还未勾选", Toast.LENGTH_SHORT).show();
             return;
         }
        mIsSigning = true;

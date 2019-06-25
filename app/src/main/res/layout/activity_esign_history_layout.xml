@@ -25,7 +25,7 @@
             android:layout_height="60dp"
             android:layout_centerInParent="true"
             android:layout_marginStart="16dp"
-            android:text="Signature History"
+            android:text="@string/esign_history_title"
             android:gravity="center"
             android:textColor="@color/black_333333"
             android:textSize="20sp" />

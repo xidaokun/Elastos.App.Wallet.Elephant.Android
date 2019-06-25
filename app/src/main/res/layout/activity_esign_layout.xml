@@ -80,16 +80,15 @@
 
         <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/sign_btn"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="80dp"
             android:layout_marginBottom="100dp"
             android:layout_marginEnd="@dimen/bread_margin"
             android:layout_marginStart="@dimen/bread_margin"
-            android:padding="10dp"
             android:text="@string/esign_sign_btn"
             android:textSize="18sp"
             app:buttonType="6"
-            android:textColor="#ff3365"
+            android:textColor="@color/tx_send_color"
             app:isBreadButton="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"

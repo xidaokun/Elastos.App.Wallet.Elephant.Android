@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_marginStart="16dp"
-            android:text="Signature Detail"
+            android:text="@string/esign_detail_title"
             android:textColor="@color/black_333333"
             android:textSize="20sp" />
     </RelativeLayout>

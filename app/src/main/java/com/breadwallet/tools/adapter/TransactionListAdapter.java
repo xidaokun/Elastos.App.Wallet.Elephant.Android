@@ -283,7 +283,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         //if it's 0 we use the current time.
         long timeStamp = item.getTimeStamp() == 0 ? System.currentTimeMillis() : item.getTimeStamp() * DateUtils.SECOND_IN_MILLIS;
 
-        String shortDate = BRDateUtil.getShortDate(timeStamp);
+        String shortDate = BRDateUtil.getFullDate(timeStamp);
 
         convertView.transactionDate.setText(shortDate);
     }

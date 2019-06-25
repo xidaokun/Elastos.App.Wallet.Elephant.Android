@@ -554,13 +554,14 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
 
     public long downloadCapsule(String url) {
         Log.d(TAG, "capsule url:" + url);
+        showDialog();
         if (StringUtil.isNullOrEmpty(url)) return -1;
         DownloadManager.Request request;
         try {
             Uri uri = Uri.parse(url);
             mDoloadFileName = uri.getLastPathSegment();
             if (StringUtil.isNullOrEmpty(mDoloadFileName)) return -1;
-            //TODO
+
             File downloadFile = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile(), mDoloadFileName);
             if (downloadFile.exists()) {
                 downloadFile.delete();
@@ -636,6 +637,8 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
 //                            logFile("outPath", new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule").getAbsoluteFile());
                         } catch (Exception e) {
                             e.printStackTrace();
+                        } finally {
+                            dialogDismiss();
                         }
                     }
                 });
@@ -702,7 +705,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     private void upAppStatus(String miniAppId, String status) {
         if (StringUtil.isNullOrEmpty(mDidStr) || StringUtil.isNullOrEmpty(miniAppId)) return;
         String path =  mDidStr + "/Apps/" + BRConstants.ELAPHANT_APP_ID + "/MiniPrograms/" + miniAppId + "/Status";
-//        String path = mDidStr + "/Apps/" + miniAppId + "/Status";
         String data = getKeyVale(path, status);
         String info = mDid.signInfo(mSeed, data);
         ProfileDataSource.getInstance(getContext()).upchainSync(info);
@@ -718,6 +720,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
 
     private StringChainData getMiniApps() {
         String path = mDidStr + "/Apps";
+        if(null == mDid) return null;
         mDid.syncInfo();
         String appIds = mDid.getInfo(path);
         if (!StringUtil.isNullOrEmpty(appIds)) {
@@ -728,8 +731,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
 
     private StringChainData getAppStatus(String miniAppId) {
         String path = mDidStr + "/Apps/" + BRConstants.ELAPHANT_APP_ID + "/MiniPrograms/" + miniAppId + "/Status";
-//        String path = mDidStr + "/Apps/" + miniAppId + "/Status";
-//        String path = "iXiqJ7brdiH18vrHiTo9WiAHh692xgXi5y/Apps/8816ed501878a9f4404f5926c4fb2df56239424e41da9c449b4db35e9a8b99d5f976a0537858d709511b5b41cf11c0e88be8778008eb5f918a6aa712ac20c421/MiniPrograms/317DD1D2188C459EB24EAEBC81932F6ADB305FF66F073AB1DC767869EF2B1A04273A8A875";
+        if(mDid == null) return null;
         mDid.syncInfo();
         String value = mDid.getInfo(path);
         if (!StringUtil.isNullOrEmpty(value)) {
@@ -740,6 +742,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
 
     private StringChainData getAppsUrl(String miniAppId) {
         String path = mDidStr + "/Apps/" + miniAppId;
+        if(null == mDid) return null;
         mDid.syncInfo();
         String url = mDid.getInfo(path);
         if (!StringUtil.isNullOrEmpty(url)) {
@@ -809,11 +812,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private void deleteDownloadCapsule() {
-        File file = getZipFile();
-        if (null != file) file.delete();
     }
 
     private File getZipFile() {
