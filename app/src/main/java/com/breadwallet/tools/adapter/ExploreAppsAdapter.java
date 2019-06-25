@@ -115,7 +115,7 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
         holder.mItemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mItemClickListener != null) mItemClickListener.onItemClick(item, position);
+                if(mItemClickListener!=null && !mIsDelete) mItemClickListener.onItemClick(item, position);
             }
         });
     }

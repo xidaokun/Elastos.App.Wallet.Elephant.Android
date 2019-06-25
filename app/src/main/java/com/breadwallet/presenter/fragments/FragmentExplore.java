@@ -321,7 +321,13 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 changeView(false);
                 mAdapter.isDelete(false);
                 mIsLongPressDragEnabled = false;
-                mAdapter.notifyDataSetChanged();
+
+                List<MyAppItem> tmp = ProfileDataSource.getInstance(getContext()).getMyAppItems();
+                if(null!=tmp && mItems.size()>0){
+                    mItems.clear();
+                    mItems.addAll(tmp);
+                    mAdapter.notifyDataSetChanged();
+                }
             }
         });
 

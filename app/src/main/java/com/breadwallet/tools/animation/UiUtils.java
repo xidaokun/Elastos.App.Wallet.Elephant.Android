@@ -510,9 +510,6 @@ public class UiUtils {
         if (entity == null || StringUtil.isNullOrEmpty(backurl)) return;
         String params = new Gson().toJson(entity);
         String ret = DidDataSource.getInstance(activity).urlPost(backurl, params);
-        if ((StringUtil.isNullOrEmpty(ret) || StringUtil.isNullOrEmpty(ret) || ret.contains("err code:"))) {
-            toast(activity, "callback return error");
-        }
     }
 
     public static void toast(final Activity activity, final String message) {
