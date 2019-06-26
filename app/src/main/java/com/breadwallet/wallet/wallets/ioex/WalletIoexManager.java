@@ -310,6 +310,13 @@ public class WalletIoexManager extends BRCoreWalletManager implements BaseWallet
         }
     }
 
+    public void updateTxHistory() {
+        String address = getAddress();
+        if(StringUtil.isNullOrEmpty(address)) return;
+        IoexDataSource.getInstance(mContext).getHistory(address);
+        TxManager.getInstance().updateTxList(mContext);
+    }
+
     @Override
     public List<TxUiHolder> getTxUiHolders(Context app) {
         List<TxUiHolder> uiTxs = new ArrayList<>();

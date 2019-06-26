@@ -1,5 +1,6 @@
 package com.breadwallet.tools.sqlite;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -17,6 +18,8 @@ import com.breadwallet.wallet.wallets.ela.request.Outputs;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaTransactionRes;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaUTXOInputs;
 import com.breadwallet.wallet.wallets.ela.response.create.Meno;
+import com.breadwallet.wallet.wallets.ela.response.history.History;
+import com.breadwallet.wallet.wallets.ela.response.history.TxHistory;
 import com.breadwallet.wallet.wallets.ioex.WalletIoexManager;
 import com.google.gson.Gson;
 import com.platform.APIClient;
@@ -25,6 +28,7 @@ import org.elastos.sdk.keypair.ElastosKeypairSign;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -89,7 +93,7 @@ public class IoexDataSource implements BRDataSourceInterface {
         return balance;
     }
 
-
+    HistoryTransactionEntity historyTransactionEntity = new HistoryTransactionEntity();
     public synchronized BRElaTransaction createTx(final String inputAddress, final String outputsAddress, final long amount, String memo){
         if(StringUtil.isNullOrEmpty(inputAddress) || StringUtil.isNullOrEmpty(outputsAddress)) return null;
         BRElaTransaction brElaTransaction = null;
@@ -126,6 +130,21 @@ public class IoexDataSource implements BRDataSourceInterface {
             brElaTransaction.setTx(transactionJson);
             brElaTransaction.setTxId(inputs.get(0).txid);
 
+            historyTransactionEntity.txReversed = inputs.get(0).txid;
+            historyTransactionEntity.fromAddress = inputAddress;
+            historyTransactionEntity.toAddress = outputsAddress;
+            historyTransactionEntity.isReceived = false;
+            historyTransactionEntity.fee = new BigDecimal("4860").longValue();
+            historyTransactionEntity.blockHeight = 0;
+            historyTransactionEntity.hash = new byte[1];
+            historyTransactionEntity.txSize = 0;
+            historyTransactionEntity.amount = new BigDecimal(amount).longValue();
+            historyTransactionEntity.balanceAfterTx = 0;
+            historyTransactionEntity.timeStamp = System.currentTimeMillis()/1000;
+            historyTransactionEntity.isValid = true;
+            historyTransactionEntity.isVote = false;
+            historyTransactionEntity.memo = memo;
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -148,6 +167,8 @@ public class IoexDataSource implements BRDataSourceInterface {
 //                toast(result);
                 return null;
             }
+            historyTransactionEntity.txReversed = result;
+            cacheSingleTx(historyTransactionEntity);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -171,6 +192,111 @@ public class IoexDataSource implements BRDataSourceInterface {
             BRSQLiteHelper.IOEX_COLUMN_ISVALID,
             BRSQLiteHelper.IOEX_COLUMN_ISVOTE
     };
+
+    public void getHistory(String address){
+        if(StringUtil.isNullOrEmpty(address)) return;
+        try {
+            String url = getUrl("api/1/ioex/history/"+address /*+"?pageNum=1&pageSize=10"*/);
+            Log.i(TAG, "history url:"+url);
+            String result = urlGET(url);
+            JSONObject jsonObject = new JSONObject(result);
+            String json = jsonObject.getString("result");
+            TxHistory txHistory = new Gson().fromJson(json, TxHistory.class);
+
+            List<HistoryTransactionEntity> elaTransactionEntities = new ArrayList<>();
+            elaTransactionEntities.clear();
+            List<History> transactions = txHistory.History;
+            for(History history : transactions){
+                HistoryTransactionEntity historyTransactionEntity = new HistoryTransactionEntity();
+                historyTransactionEntity.txReversed = history.Txid;
+                historyTransactionEntity.isReceived = isReceived(history.Type);
+                historyTransactionEntity.fromAddress = isReceived(history.Type) ? history.Inputs.get(0) : history.Outputs.get(0);
+                historyTransactionEntity.toAddress = isReceived(history.Type) ? history.Inputs.get(0) : history.Outputs.get(0);
+                historyTransactionEntity.fee = new BigDecimal(history.Fee).longValue();
+                historyTransactionEntity.blockHeight = history.Height;
+                historyTransactionEntity.hash = history.Txid.getBytes();
+                historyTransactionEntity.txSize = 0;
+                historyTransactionEntity.amount = isReceived(history.Type) ? new BigDecimal(history.Value).longValue() : new BigDecimal(history.Value).subtract(new BigDecimal(history.Fee)).longValue();
+                historyTransactionEntity.balanceAfterTx = 0;
+                historyTransactionEntity.isValid = true;
+                historyTransactionEntity.isVote = !isReceived(history.Type);
+                historyTransactionEntity.timeStamp = new BigDecimal(history.CreateTime).longValue();
+                historyTransactionEntity.memo = getMeno(history.Memo);
+                elaTransactionEntities.add(historyTransactionEntity);
+            }
+            cacheMultTx(elaTransactionEntities);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void cacheSingleTx(HistoryTransactionEntity entity){
+        List<HistoryTransactionEntity> entities = new ArrayList<>();
+        entities.clear();
+        entities.add(entity);
+        cacheMultTx(entities);
+    }
+
+    public synchronized void cacheMultTx(List<HistoryTransactionEntity> ioexTransactionEntities){
+        if(ioexTransactionEntities == null) return;
+//        Cursor cursor = null;
+        try {
+            database = openDatabase();
+            database.beginTransaction();
+
+            for(HistoryTransactionEntity entity : ioexTransactionEntities){
+
+                ContentValues value = new ContentValues();
+                value.put(BRSQLiteHelper.IOEX_COLUMN_ISRECEIVED, entity.isReceived? 1:0);
+                value.put(BRSQLiteHelper.IOEX_COLUMN_TIMESTAMP, entity.timeStamp);
+                value.put(BRSQLiteHelper.IOEX_COLUMN_BLOCKHEIGHT, entity.blockHeight);
+                value.put(BRSQLiteHelper.IOEX_COLUMN_HASH, entity.hash);
+                value.put(BRSQLiteHelper.IOEX_COLUMN_TXREVERSED, entity.txReversed);
+                value.put(BRSQLiteHelper.IOEX_COLUMN_FEE, entity.fee);
+                value.put(BRSQLiteHelper.IOEX_COLUMN_TO, entity.toAddress);
+                value.put(BRSQLiteHelper.IOEX_COLUMN_FROM, entity.fromAddress);
+                value.put(BRSQLiteHelper.IOEX_COLUMN_BALANCEAFTERTX, entity.balanceAfterTx);
+                value.put(BRSQLiteHelper.IOEX_COLUMN_TXSIZE, entity.txSize);
+                value.put(BRSQLiteHelper.IOEX_COLUMN_AMOUNT, entity.amount);
+                value.put(BRSQLiteHelper.IOEX_COLUMN_MENO, entity.memo);
+                value.put(BRSQLiteHelper.IOEX_COLUMN_ISVALID, entity.isValid?1:0);
+                value.put(BRSQLiteHelper.IOEX_COLUMN_ISVOTE, entity.isVote?1:0);
+
+                long l = database.insertWithOnConflict(BRSQLiteHelper.IOEX_TX_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
+                Log.i(TAG, "l:"+l);
+            }
+            database.setTransactionSuccessful();
+        } catch (Exception e) {
+            closeDatabase();
+            e.printStackTrace();
+        } finally {
+//            cursor.close();
+            database.endTransaction();
+            closeDatabase();
+        }
+
+    }
+
+    //true is receive
+    private boolean isReceived(String type){
+        if(StringUtil.isNullOrEmpty(type)) return false;
+        if(type.equals("spend")) return false;
+        if(type.equals("income")) return true;
+
+        return true;
+    }
+
+    private String getMeno(String value){
+        if(value==null || !value.contains("msg") || !value.contains("type") || !value.contains(",")) return "";
+        if(value.contains("msg:")){
+            String[] msg = value.split("msg:");
+            if(msg!=null && msg.length==2){
+                return msg[1];
+            }
+        }
+        return "";
+    }
+
 
     public List<HistoryTransactionEntity> getHistoryTransactions(){
         List<HistoryTransactionEntity> currencies = new ArrayList<>();
@@ -216,7 +342,10 @@ public class IoexDataSource implements BRDataSourceInterface {
 
     @Override
     public SQLiteDatabase openDatabase() {
-        return null;
+        if (database == null || !database.isOpen())
+            database = dbHelper.getWritableDatabase();
+        dbHelper.setWriteAheadLoggingEnabled(BRConstants.WRITE_AHEAD_LOGGING);
+        return database;
     }
 
     @Override

@@ -186,7 +186,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
      * IOEC transaction table
      */
 
-    public static final String IOEX_TX_TABLE_NAME = "elaTransactionTable";
+    public static final String IOEX_TX_TABLE_NAME = "ioexTransactionTable";
     public static final String IOEX_COLUMN_ID = "_id";
     public static final String IOEX_COLUMN_ISRECEIVED ="isReceived";//0 false,1 true
     public static final String IOEX_COLUMN_TIMESTAMP ="timeStamp";

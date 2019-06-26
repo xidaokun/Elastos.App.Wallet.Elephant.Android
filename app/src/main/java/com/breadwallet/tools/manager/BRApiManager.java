@@ -18,6 +18,7 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
+import com.breadwallet.wallet.wallets.ioex.WalletIoexManager;
 import com.platform.APIClient;
 
 import org.json.JSONArray;
@@ -185,6 +186,14 @@ public class BRApiManager {
                     }
                 });
             }
+//            if(w.getIso().equalsIgnoreCase("IOEX")){
+//                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        WalletIoexManager.getInstance(context).updateTxHistory();
+//                    }
+//                });
+//            }
             if(w.getIso().equalsIgnoreCase("ELA")){
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override

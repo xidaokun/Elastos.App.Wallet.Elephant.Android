@@ -54,6 +54,7 @@ import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
+import com.breadwallet.wallet.wallets.ioex.WalletIoexManager;
 import com.platform.HTTPServer;
 
 import org.wallet.library.AuthorizeManager;
@@ -237,6 +238,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 WalletsMaster.getInstance(app).refreshBalances(app);
                 WalletsMaster.getInstance(app).getCurrentWallet(app).refreshAddress(app);
                 WalletElaManager.getInstance(app).updateTxHistory();
+                WalletIoexManager.getInstance(app).updateTxHistory();
                 ElaDataSource.getInstance(app).getProducerByTxid();
             }
         });
