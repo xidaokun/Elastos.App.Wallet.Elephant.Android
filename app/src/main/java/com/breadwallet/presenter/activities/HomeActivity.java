@@ -10,7 +10,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
@@ -44,7 +46,7 @@ import java.util.List;
  * Home activity that will show a list of a user's wallets
  */
 
-public class HomeActivity extends BRActivity implements InternetManager.ConnectionReceiverListener {
+public class HomeActivity extends BRActivity implements InternetManager.ConnectionReceiverListener, FragmentExplore.AboutShowListener {
 
     private static final String TAG = HomeActivity.class.getSimpleName() + "_test";
     private FragmentWallet mWalletFragment;
@@ -88,6 +90,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mExploreFragment = FragmentExplore.newInstance("Explore");
         mSettingFragment = FragmentSetting.newInstance("Setting");
 
+        mExploreFragment.setAboutShowListener(this);
+
         mCurrentFragment = mWalletFragment;
 //        clearFragment();
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
@@ -95,6 +99,26 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
         didIsOnchain();
         mHomeActivity = this;
+    }
+
+    @Override
+    public void show() {
+        navigation.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hide() {
+        navigation.setVisibility(View.GONE);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode==KeyEvent.KEYCODE_BACK && (navigation.getVisibility()!=View.VISIBLE)) {
+            mExploreFragment.hideAboutView();
+            navigation.setVisibility(View.VISIBLE);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     class KeyValue {

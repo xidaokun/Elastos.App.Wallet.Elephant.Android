@@ -111,6 +111,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     private View mLoadNoBtn;
     private View mLoadYesBtn;
     private LoadingDialog mLoadingDialog;
+    private AboutShowListener mAboutShowListener;
     private static final int INIT_APPS_MSG = 0x01;
     private static final int UPDATE_APPS_MSG = 0x02;
     private static final int UNREGISTER_RECEIVER = 0x03;
@@ -256,6 +257,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     @Override
     public void onAbout(MyAppItem item, int position) {
         mAboutView.setVisibility(View.VISIBLE);
+        if(null != mAboutShowListener) mAboutShowListener.hide();
         mAboutAppItem = item;
         mAboutAboutView.setText(String.format(getString(R.string.explore_pop_about), mAboutAppItem.name_en));
     }
@@ -389,6 +391,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             @Override
             public void onClick(View v) {
                 mAboutView.setVisibility(View.GONE);
+                if(null != mAboutShowListener) mAboutShowListener.show();
                 if (null != mAboutAppItem) {
                     UiUtils.shareCapsule(getContext(), new File(mAboutAppItem.path));
                 }
@@ -399,6 +402,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             @Override
             public void onClick(View v) {
                 mAboutView.setVisibility(View.GONE);
+                if(null != mAboutShowListener) mAboutShowListener.show();
                 UiUtils.startMiniAppAboutActivity(getContext(), mAboutAppItem.appId);
             }
         });
@@ -407,6 +411,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             @Override
             public void onClick(View v) {
                 mAboutView.setVisibility(View.GONE);
+                if(null != mAboutShowListener) mAboutShowListener.show();
             }
         });
 
@@ -892,5 +897,19 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void hideAboutView(){
+        mAboutView.setVisibility(View.GONE);
+    }
+
+    public void setAboutShowListener(AboutShowListener listener){
+        this.mAboutShowListener = listener;
+    }
+
+    public interface AboutShowListener {
+        void show();
+
+        void hide();
     }
 }
