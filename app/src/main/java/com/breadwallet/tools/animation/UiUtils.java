@@ -579,20 +579,16 @@ public class UiUtils {
     }
 
     public static void shareCapsule(Context context, File file) {
-        try {
-            Uri contentUri = FileProvider.getUriForFile(context, "com.elastos.wallet.capsuleProvider", file);
-            if (contentUri == null) return;
+        Uri contentUri = FileProvider.getUriForFile(context, "com.elastos.wallet.capsuleProvider", file);
+        if (contentUri == null) return;
 
-            Intent shareIntent = new Intent();
-            shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            shareIntent.setDataAndType(contentUri, context.getContentResolver().getType(contentUri));
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        shareIntent.setDataAndType(contentUri, /*context.getContentResolver().getType(contentUri)*/"text/plain");
 
-            shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
-            context.startActivity(Intent.createChooser(shareIntent, "Share"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+        context.startActivity(Intent.createChooser(shareIntent, "Share"));
     }
 
 }
