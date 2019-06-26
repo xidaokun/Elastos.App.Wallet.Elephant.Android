@@ -219,7 +219,7 @@ public class IoexDataSource implements BRDataSourceInterface {
                 historyTransactionEntity.amount = isReceived(history.Type) ? new BigDecimal(history.Value).longValue() : new BigDecimal(history.Value).subtract(new BigDecimal(history.Fee)).longValue();
                 historyTransactionEntity.balanceAfterTx = 0;
                 historyTransactionEntity.isValid = true;
-                historyTransactionEntity.isVote = !isReceived(history.Type);
+                historyTransactionEntity.isVote = false;
                 historyTransactionEntity.timeStamp = new BigDecimal(history.CreateTime).longValue();
                 historyTransactionEntity.memo = getMeno(history.Memo);
                 elaTransactionEntities.add(historyTransactionEntity);
