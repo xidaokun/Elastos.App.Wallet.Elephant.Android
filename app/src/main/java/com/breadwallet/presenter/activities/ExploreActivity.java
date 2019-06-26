@@ -417,8 +417,8 @@ public class ExploreActivity extends BRActivity implements OnStartDragListener, 
                             String hash = CryptoHelper.getShaChecksum(srcPath.getAbsolutePath());
                             Log.d(TAG, "mDoloadFileName:"+mDoloadFileName+" hash:"+hash);
 
-                            RegisterChainData appSetting = ProfileDataSource.getInstance(ExploreActivity.this).getMiniAppSetting(item.did);
-                            Log.d(TAG, "registerUrl:"+appSetting.url+" registerHash:"+appSetting.hash);
+                            String key = "Dev/"+item.name+"/Release/"+item.platform+"/"+item.version;
+                            RegisterChainData appSetting = ProfileDataSource.getInstance(ExploreActivity.this).getMiniAppSetting(item.did, key);
 
                             if (StringUtil.isNullOrEmpty(hash) ||
                                     null == appSetting ||

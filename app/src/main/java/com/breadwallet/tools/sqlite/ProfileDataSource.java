@@ -240,10 +240,11 @@ public class ProfileDataSource implements BRDataSourceInterface {
         return infos;
     }
 
-    public RegisterChainData getMiniAppSetting(String miniAppDid) {
+    public RegisterChainData getMiniAppSetting(String miniAppDid, String key) {
         try {
 //            String url = "https://api-wallet-did.elastos.org/api/1/didexplorer/did/iiJRtAn6wyHaMSDQPS9Kkft3iiNjH5tTmi/status/normal?detailed=true";
-            String url = "https://api-wallet-did.elastos.org/api/1/didexplorer/did/" + miniAppDid + "/status/normal";
+//            String url = "https://api-wallet-did.elastos.org/api/1/didexplorer/did/iiJRtAn6wyHaMSDQPS9Kkft3iiNjH5tTmi/property_history?key=Dev/dopsvote.h5.app/Release/Web/1.0.0";
+            String url = "https://api-wallet-did.elastos.org/api/1/didexplorer/did/"+miniAppDid+"/property_history?key="+key;
             String ret = urlGET(url);
 
             if (!StringUtil.isNullOrEmpty(ret)) {

@@ -152,7 +152,12 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         return rootView;
     }
 
-    private List<String> mAppIds = new ArrayList<>();
+    public static class UserAppInfo {
+        public String appId;
+        public String url;
+    }
+
+    private List<UserAppInfo> mUserAppInfos = new ArrayList<>();
 
     private void initView(View rootView) {
         mDisclaimLayout = rootView.findViewById(R.id.disclaim_layout);
@@ -185,17 +190,21 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     }
 
     public void initApps() {
-        mAppIds.clear();
+        mUserAppInfos.clear();
         mItems.clear();
         mRemoveApp.clear();
         List<MyAppItem> tmp = ProfileDataSource.getInstance(getContext()).getMyAppItems();
         if (tmp != null && tmp.size() > 0) { //database
             mItems.addAll(tmp);
             for (MyAppItem item : tmp) {
-                mAppIds.add(item.appId);
+                UserAppInfo userAppInfo = new UserAppInfo();
+                userAppInfo.appId = item.appId;
+                userAppInfo.url = mDoloadUrl;
+                mUserAppInfos.add(userAppInfo);
             }
             mAdapter.notifyDataSetChanged();
         }
+        //TODO reset chain data
         resetAppsFromNet();
     }
 
@@ -205,20 +214,26 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         if (null == redPackageStatus ||
                 StringUtil.isNullOrEmpty(redPackageStatus.value) ||
                 redPackageStatus.value.equals("normal")) {
-            copyCapsuleToDownloadCache(getContext(), downloadFile, "redpacket.capsule");
+            mDoloadFileName = "redpacket.capsule";
+            mDoloadUrl = "https://redpacket.elastos.org/redpacket.capsule";
+            copyCapsuleToDownloadCache(getContext(), downloadFile, mDoloadFileName);
         }
-        StringChainData exchangeStatus = getAppStatus(BRConstants.DPOS_VOTE_ID);
-        if (null == exchangeStatus ||
-                StringUtil.isNullOrEmpty(exchangeStatus.value) ||
-                exchangeStatus.value.equals("normal")) {
-            copyCapsuleToDownloadCache(getContext(), downloadFile, "vote.capsule");
-        }
-        StringChainData dposVoteStatus = getAppStatus(BRConstants.EXCHANGE_ID);
+        StringChainData dposVoteStatus = getAppStatus(BRConstants.DPOS_VOTE_ID);
         if (null == dposVoteStatus ||
                 StringUtil.isNullOrEmpty(dposVoteStatus.value) ||
                 dposVoteStatus.value.equals("normal")) {
-            copyCapsuleToDownloadCache(getContext(), downloadFile, "swft.capsule");
+            mDoloadFileName = "vote.capsule";
+            mDoloadUrl = "http://elaphant.net/vote.capsule";
+            copyCapsuleToDownloadCache(getContext(), downloadFile, mDoloadFileName);
         }
+//        StringChainData swftStatus = getAppStatus(BRConstants.EXCHANGE_ID);
+//        if (null == swftStatus ||
+//                StringUtil.isNullOrEmpty(swftStatus.value) ||
+//                swftStatus.value.equals("normal")) {
+//            mDoloadFileName = "swft.capsule";
+//            mDoloadUrl = "http://swft.elabank.net/swft.capsule";
+//            copyCapsuleToDownloadCache(getContext(), downloadFile, mDoloadFileName);
+//        }
     }
 
     private List<MyAppItem> mItems = new ArrayList<>();
@@ -461,32 +476,33 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 getInterApps();
 
                 //third app
-                StringChainData miniApps = getMiniApps();
-                if (null == miniApps || StringUtil.isNullOrEmpty(miniApps.value)) return;
-                List<String> appIds = new Gson().fromJson(miniApps.value, new TypeToken<List<String>>() {
-                }.getType());
-                if (null == appIds) return;
-                for (String appId : appIds) {
-                    if (StringUtil.isNullOrEmpty(appId)) break;
-                    if (appId.equals(BRConstants.REA_PACKAGE_ID) ||
-                            appId.equals(BRConstants.DPOS_VOTE_ID) ||
-                            appId.equals(BRConstants.EXCHANGE_ID)) break;
-                    StringChainData appStatus = getAppStatus(appId);
-                    if (null == appStatus ||
-                            StringUtil.isNullOrEmpty(appStatus.value) ||
-                            appStatus.value.equals("normal")) {
-                        StringChainData appUrlEntity = getAppsUrl(appId);
-                        if (null == appUrlEntity || StringUtil.isNullOrEmpty(appUrlEntity.value))
-                            return;
-                        downloadCapsule(appUrlEntity.value);
-                    }
-                }
+//                UserAppInfo userAppInfo = getUserAppInfo();
+//                if (null == userAppInfo) return;
+//                List<String> appIds = new Gson().fromJson(miniApps.value, new TypeToken<List<String>>() {
+//                }.getType());
+//                if (null == appIds) return;
+//                for (String appId : appIds) {
+//                    if (StringUtil.isNullOrEmpty(appId)) break;
+//                    if (appId.equals(BRConstants.REA_PACKAGE_ID) ||
+//                            appId.equals(BRConstants.DPOS_VOTE_ID) ||
+//                            appId.equals(BRConstants.EXCHANGE_ID)) break;
+//                    StringChainData appStatus = getAppStatus(appId);
+//                    if (null == appStatus ||
+//                            StringUtil.isNullOrEmpty(appStatus.value) ||
+//                            appStatus.value.equals("normal")) {
+//                        getUserAppInfo();
+//                        if (null == appUrlEntity || StringUtil.isNullOrEmpty(appUrlEntity.value))
+//                            return;
+//                        downloadCapsule(appUrlEntity.value);
+//                    }
+//                }
             }
         });
     }
 
     private DownloadManager manager;
     private String mDoloadFileName;
+    private String mDoloadUrl;
 
     private void copyCapsuleToDownloadCache(Context context, String fileOutputPath, String capsuleName) {
         if (StringUtil.isNullOrEmpty(fileOutputPath) || StringUtil.isNullOrEmpty(capsuleName))
@@ -499,7 +515,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             if (capsuleFile.exists()) {
                 capsuleFile.delete();
             }
-            mDoloadFileName = capsuleName;
             outputStream = new FileOutputStream(capsuleFile);
             inputStream = context.getAssets().open("apps/" + capsuleName);
             byte[] buffer = new byte[1024];
@@ -566,6 +581,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         try {
             Uri uri = Uri.parse(url);
             mDoloadFileName = uri.getLastPathSegment();
+            mDoloadUrl = url;
             if (StringUtil.isNullOrEmpty(mDoloadFileName)) return -1;
 
             File downloadFile = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile(), mDoloadFileName);
@@ -610,14 +626,15 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                             String hash = CryptoHelper.getShaChecksum(downloadPath.getAbsolutePath());
                             Log.d(TAG, "mDoloadFileName:"+mDoloadFileName+" hash:"+hash);
 
-                            RegisterChainData appSetting = ProfileDataSource.getInstance(getContext()).getMiniAppSetting(item.did);
-                            Log.d(TAG, "registerUrl:"+appSetting.url+" registerHash:"+appSetting.hash);
+//                            String key = "key=Dev/dopsvote.h5.app/Release/Web/1.0.0";
+                            String key = "Dev/"+item.name+"/Release/"+item.platform+"/"+item.version;
+                            RegisterChainData appSetting = ProfileDataSource.getInstance(getContext()).getMiniAppSetting(item.did, key);
 
                             if (StringUtil.isNullOrEmpty(hash) ||
                                     null == appSetting ||
                                     StringUtil.isNullOrEmpty(appSetting.hash) ||
                                     !appSetting.hash.equals(hash)) {
-                                Toast.makeText(getContext(), "Illegal capsule ", Toast.LENGTH_SHORT).show();
+                                messageToast("illegal file");
                                 deleteFile(downloadPath);
                                 deleteFile(outPath);
                                 deleteFile(backupPath);
@@ -625,17 +642,19 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                             }
                             Log.d(TAG, "capsule legitimacy");
 
+                            UserAppInfo userAppInfo = null;
                             if (item != null) {
-                                for (String appId : mAppIds) {
-                                    if (item.appId.equals(appId)) return;
+                                for (UserAppInfo appInfo : mUserAppInfos) {
+                                    if(StringUtil.isNullOrEmpty(appInfo.appId)) return;
+                                    if (item.appId.equals(appInfo.appId)) return;
+                                    userAppInfo = appInfo;
                                 }
-                                mAppIds.add(item.appId);
+                                mUserAppInfos.add(userAppInfo);
                                 mItems.add(item);
                                 mHandler.sendEmptyMessage(UPDATE_APPS_MSG);
 
                                 upAppStatus(item.appId, "normal");
-                                upAppUrlData(item.appId, item.url);
-                                upAppIds(mAppIds);
+//                                upUserAppInfo(mUserAppInfos);
                             }
                             deleteFile(downloadPath);
                             deleteFile(outPath);
@@ -700,23 +719,15 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         }.getType());
     }
 
-    private void upAppUrlData(final String miniAppId, final String value) {
-        if (StringUtil.isNullOrEmpty(miniAppId) || StringUtil.isNullOrEmpty(value)) return;
-        String path = mDidStr + "/Apps/" + miniAppId;
-        String data = getKeyVale(path, value);
-        String info = mDid.signInfo(mSeed, data);
-        ProfileDataSource.getInstance(getContext()).upchainSync(info);
-    }
-
     private void upAppStatus(String miniAppId, String status) {
         if (StringUtil.isNullOrEmpty(mDidStr) || StringUtil.isNullOrEmpty(miniAppId)) return;
-        String path =  mDidStr + "/Apps/" + BRConstants.ELAPHANT_APP_ID + "/MiniPrograms/" + miniAppId + "/Status";
+        String path =  "/Apps/" + BRConstants.ELAPHANT_APP_ID + "/MiniPrograms/" + miniAppId + "/Status";
         String data = getKeyVale(path, status);
         String info = mDid.signInfo(mSeed, data);
         ProfileDataSource.getInstance(getContext()).upchainSync(info);
     }
 
-    private void upAppIds(List<String> appIds) {
+    private void upUserAppInfo(List<UserAppInfo> appIds) {
         String ids = new Gson().toJson(appIds);
         String path = mDidStr + "/Apps";
         String data = getKeyVale(path, ids);
@@ -724,35 +735,24 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         ProfileDataSource.getInstance(getContext()).upchainSync(info);
     }
 
-    private StringChainData getMiniApps() {
+    private UserAppInfo getUserAppInfo() {
         String path = mDidStr + "/Apps";
         if(null == mDid) return null;
         mDid.syncInfo();
         String appIds = mDid.getInfo(path);
         if (!StringUtil.isNullOrEmpty(appIds)) {
-            return new Gson().fromJson(appIds, StringChainData.class);
+            return new Gson().fromJson(appIds, UserAppInfo.class);
         }
         return null;
     }
 
     private StringChainData getAppStatus(String miniAppId) {
-        String path = mDidStr + "/Apps/" + BRConstants.ELAPHANT_APP_ID + "/MiniPrograms/" + miniAppId + "/Status";
+        String path = "/Apps/" + BRConstants.ELAPHANT_APP_ID + "/MiniPrograms/" + miniAppId + "/Status";
         if(mDid == null) return null;
         mDid.syncInfo();
         String value = mDid.getInfo(path);
         if (!StringUtil.isNullOrEmpty(value)) {
             return new Gson().fromJson(value, StringChainData.class);
-        }
-        return null;
-    }
-
-    private StringChainData getAppsUrl(String miniAppId) {
-        String path = mDidStr + "/Apps/" + miniAppId;
-        if(null == mDid) return null;
-        mDid.syncInfo();
-        String url = mDid.getInfo(path);
-        if (!StringUtil.isNullOrEmpty(url)) {
-            return new Gson().fromJson(url, StringChainData.class);
         }
         return null;
     }
@@ -820,26 +820,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         }
     }
 
-    private File getZipFile() {
-        try {
-            File downloadFile = getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile();
-            if (downloadFile.exists()) {
-                File[] files = downloadFile.listFiles();
-                if (files == null || files.length == 0) return null;
-                for (File file : files) {
-                    String name = file.getName();
-                    if (!StringUtil.isNullOrEmpty(name) && name.contains(".capsule")) {
-                        return file;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
     private void logFile(String flag, File path) {
         Log.d(TAG, "<-----------------------------" + path.getAbsolutePath() + " start------------------------------>");
         File[] files = path.listFiles();
@@ -901,6 +881,15 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             @Override
             public void run() {
                 mLoadingDialog.dismiss();
+            }
+        });
+    }
+
+    private void messageToast(final String message){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
             }
         });
     }
