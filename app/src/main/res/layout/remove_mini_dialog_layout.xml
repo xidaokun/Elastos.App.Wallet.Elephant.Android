@@ -63,7 +63,7 @@
             android:layout_marginTop="15dp"
             android:layout_marginRight="36dp"
             android:tag="beta_confirm_button"
-            android:text="@string/TokenList.remove"
+            android:text="@string/mini_app_dialog_remove"
             android:textColor="#ff3365"
             android:textSize="16sp"
             android:textStyle="bold"

@@ -1131,4 +1131,5 @@
     <string name="esign_load_no">否</string>
     <string name="esign_load_yes">是</string>
     <string name="esign_load_mini_app_hint">您确定要加载<Data><![CDATA[<font color="#ff3365">%1$s</font>]]></Data> 小应用吗？</string>
+    <string name="mini_app_dialog_remove">删除</string>
 </resources>

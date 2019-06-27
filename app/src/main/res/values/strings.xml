@@ -1139,5 +1139,6 @@
     <string name="esign_load_no">No</string>
     <string name="esign_load_yes">Yes</string>
     <string name="esign_load_mini_app_hint">Are you sure you want to load <Data><![CDATA[<font color="#ff3365">%1$s</font>]]></Data> mini program?</string>
+    <string name="mini_app_dialog_remove">Remove</string>
 
 </resources>

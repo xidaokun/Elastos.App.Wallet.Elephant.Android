@@ -365,7 +365,7 @@ public class ElaDataSource implements BRDataSourceInterface {
     }
 
     public List<String> mVoteTxid = new ArrayList<>();
-    public void getHistory(String address){
+    public void getHistory(String pk, String address){
         if(StringUtil.isNullOrEmpty(address)) return;
         mVoteTxid.clear();
         try {
@@ -394,7 +394,7 @@ public class ElaDataSource implements BRDataSourceInterface {
                 historyTransactionEntity.isValid = true;
                 historyTransactionEntity.isVote = !isReceived(history.Type) && isVote(history.TxType);
                 historyTransactionEntity.timeStamp = new BigDecimal(history.CreateTime).longValue();
-                historyTransactionEntity.memo = getMeno(history.Memo);
+                historyTransactionEntity.memo = getMeno(pk, history.Memo);
                 elaTransactionEntities.add(historyTransactionEntity);
                 if(historyTransactionEntity.isVote) mVoteTxid.add(history.Txid);
             }
@@ -404,12 +404,17 @@ public class ElaDataSource implements BRDataSourceInterface {
         }
     }
 
-    private String getMeno(String value){
+    private String getMeno(String pk, String value){
         if(value==null || !value.contains("msg") || !value.contains("type") || !value.contains(",")) return "";
         if(value.contains("msg:")){
-            String[] msg = value.split("msg:");
-            if(msg!=null && msg.length==2){
-                return msg[1];
+            String[] memo = value.split("msg:");
+            if(memo!=null && memo.length==2){
+                String type = memo[0];
+                String msg = memo[1];
+                if(!StringUtil.isNullOrEmpty(type) && !StringUtil.isNullOrEmpty(msg) && type.equals("ciphertext")){
+                    return ElastosKeypairCrypto.eciesDecrypt(pk, msg);
+                }
+                return (null==msg)?"":msg;
             }
         }
         return "";
@@ -460,13 +465,16 @@ public class ElaDataSource implements BRDataSourceInterface {
             String tranactions = jsonObject.getString("result");
             ElaTransactionRes res = new Gson().fromJson(tranactions, ElaTransactionRes.class);
             if(!StringUtil.isNullOrEmpty(memo)) {
+                String memoStr = null;
                 String outPutPublickey = getPublicKeyByAddress(outputsAddress);
-                String meno = new Meno("text", memo).toString();
-                if(StringUtil.isNullOrEmpty(outPutPublickey)) {
-                    res.Transactions.get(0).Memo = memo;
+                if(!StringUtil.isNullOrEmpty(outPutPublickey)) {
+                    memo = ElastosKeypairCrypto.eciesEncrypt(outPutPublickey, memo);
+                    memoStr = new Meno("ciphertext", memo).toString();
                 } else {
-                    ElastosKeypairCrypto.eciesEncrypt(outPutPublickey, meno);
+                    memoStr = new Meno("text", memo).toString();
                 }
+
+                res.Transactions.get(0).Memo = memoStr;
             }
 
             List<ElaUTXOInputs> inputs = res.Transactions.get(0).UTXOInputs;

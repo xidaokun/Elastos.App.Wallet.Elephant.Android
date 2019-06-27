@@ -11,6 +11,8 @@ import android.support.constraint.ConstraintSet;
 import android.support.transition.AutoTransition;
 import android.support.transition.TransitionManager;
 import android.support.v4.app.FragmentActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -341,6 +343,37 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                     set.connect(mCurrencyCode.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, px4);
                     set.connect(mCurrencyCode.getId(), ConstraintSet.BOTTOM, -1, ConstraintSet.TOP, -1);
                     set.applyTo(mAmountLayout);
+                }
+            }
+        });
+
+        mAmountEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                try {
+                    BigDecimal totalAmount = new BigDecimal(mAmountEdit.getText().toString()).multiply(new BigDecimal(100000000)).add(new BigDecimal(4860));
+                    BigDecimal balance = BRSharedPrefs.getCachedBalance(getContext(), "ELA").multiply(new BigDecimal(100000000));
+                    String candidatesStr = BRSharedPrefs.getCandidate(getContext());
+                    String iso = BRSharedPrefs.getCurrentWalletIso(getContext());
+                    if(StringUtil.isNullOrEmpty(iso)
+                            || !iso.equalsIgnoreCase("ELA")
+                            || balance.longValue()<1
+                            || StringUtil.isNullOrEmpty(candidatesStr)
+                            || totalAmount.compareTo(balance)>0){
+                        mAutoVoteCb.setVisibility(View.GONE);
+                        hideVoteView();
+                        return;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });

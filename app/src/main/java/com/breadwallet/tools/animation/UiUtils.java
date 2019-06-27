@@ -578,17 +578,22 @@ public class UiUtils {
         toast.show();
     }
 
-    public static void shareCapsule(Context context, File file) {
-        Uri contentUri = FileProvider.getUriForFile(context, "com.elastos.wallet.capsuleProvider", file);
-        if (contentUri == null) return;
+    public static void shareCapsule(Context context, String url) {
+//        Uri contentUri = FileProvider.getUriForFile(context, "com.elastos.wallet.capsuleProvider", file);
+//        if (contentUri == null) return;
+//        Intent shareIntent = new Intent();
+//        shareIntent.setAction(Intent.ACTION_SEND);
+//        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//        shareIntent.setDataAndType(contentUri, /*context.getContentResolver().getType(contentUri)*/"text/plain");
+//
+//        shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+//        context.startActivity(Intent.createChooser(shareIntent, "Share"));
 
-        Intent shareIntent = new Intent();
-        shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        shareIntent.setDataAndType(contentUri, /*context.getContentResolver().getType(contentUri)*/"text/plain");
-
-        shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
-        context.startActivity(Intent.createChooser(shareIntent, "Share"));
+        if(StringUtil.isNullOrEmpty(url)) return;
+        Intent textIntent = new Intent(Intent.ACTION_SEND);
+        textIntent.setType("text/plain");
+        textIntent.putExtra(Intent.EXTRA_TEXT, url);
+        context.startActivity(Intent.createChooser(textIntent, "Share"));
     }
 
 }
