@@ -137,7 +137,7 @@ public class ExploreActivity extends BRActivity implements OnStartDragListener, 
 
     private void initView(){
         mDisclaimLayout = findViewById(R.id.disclaim_layout);
-        mPopLayout = findViewById(R.id.explore_pop_layout);
+        mPopLayout = findViewById(R.id.explore_menu_pop_layout);
         mOkBtn = findViewById(R.id.disclaim_ok_btn);
         mDoneBtn = findViewById(R.id.explore_done_tv);
         mCancelBtn = findViewById(R.id.explore_cancel_tv);

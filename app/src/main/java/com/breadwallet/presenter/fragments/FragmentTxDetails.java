@@ -393,7 +393,7 @@ public class FragmentTxDetails extends DialogFragment {
             String memo;
             mTxMetaData = KVStoreManager.getInstance().getTxMetaData(app, mTransaction.getTxHash());
 
-            if(walletManager.getIso().equalsIgnoreCase("ELA")){
+            if(walletManager.getIso().equalsIgnoreCase("ELA") || walletManager.getIso().equalsIgnoreCase("IOEX")){
                 mMemoText.setText(mTransaction.memo);
             } else if (mTxMetaData != null) {
                 if (mTxMetaData.comment != null) {

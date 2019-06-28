@@ -492,9 +492,9 @@ public class UiUtils {
         if (!StringUtil.isNullOrEmpty(returnUrl)) {
             String url;
             if (returnUrl.contains("?")) {
-                url = returnUrl + "&Data=" + Uri.encode(Data) + "&Sign=" + Uri.encode(Sign) + "&browser=elaphant";
+                url = returnUrl + "&Data=" + Uri.encode(Data) + "&Sign=" + Uri.encode(Sign) /*+ "&browser=elaphant"*/;
             } else {
-                url = returnUrl + "?Data=" + Uri.encode(Data) + "&Sign=" + Uri.encode(Sign) + "&browser=elaphant";
+                url = returnUrl + "?Data=" + Uri.encode(Data) + "&Sign=" + Uri.encode(Sign) /*+ "&browser=elaphant"*/;
             }
 
             if (BRConstants.REA_PACKAGE_ID.equals(appId) || BRConstants.DPOS_VOTE_ID.equals(appId)

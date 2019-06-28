@@ -87,7 +87,7 @@
         android:layout_marginTop="18dp"/>
 
     <include
-        android:id="@+id/explore_pop_layout"
+        android:id="@+id/explore_menu_pop_layout"
         android:visibility="gone"
         layout="@layout/explore_pop_layout"/>
 

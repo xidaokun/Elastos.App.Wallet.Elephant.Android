@@ -32,7 +32,7 @@ public class EsignActivity extends BaseSettingsActivity {
     private BREdit mSignEdt;
     private BaseTextView mHistoryBtn;
     private BaseTextView mPasteBtn;
-    private AppCompatCheckBox mCheckBox;
+    private BaseTextView mCheckBox;
 
     @Override
     public int getLayoutId() {
@@ -58,15 +58,23 @@ public class EsignActivity extends BaseSettingsActivity {
         mHistoryBtn = findViewById(R.id.esign_history);
         mPasteBtn = findViewById(R.id.esign_paste_btn);
         mSignBtn.setColor(getColor(R.color.esigin_btn_unable_color));
+        boolean isEmpty = StringUtil.isNullOrEmpty(mSignEdt.getText().toString());
+        mSignBtn.setColor(getColor(isEmpty ? R.color.esigin_btn_unable_color : R.color.tx_send_color));
     }
 
     private boolean mIsSigning = false;
+
     private void initListener() {
         mSignBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!mIsSigning) {
-                    signData();
+                boolean isEmpty = StringUtil.isNullOrEmpty(mSignEdt.getText().toString());
+                if (!mIsSigning) {
+                    if (!isEmpty) {
+                        signData();
+                    } else {
+                        Toast.makeText(EsignActivity.this, getString(R.string.esign_please_contnet_empty_hint), Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -82,51 +90,51 @@ public class EsignActivity extends BaseSettingsActivity {
             @Override
             public void onClick(View v) {
                 String content = BRClipboardManager.getClipboard(EsignActivity.this);
-                if(!StringUtil.isNullOrEmpty(content)){
+                if (!StringUtil.isNullOrEmpty(content)) {
                     mSignEdt.setText(content);
                 }
             }
         });
 
-        mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mSignBtn.setColor(getColor(!isChecked?R.color.esigin_btn_unable_color:R.color.tx_send_color));
-            }
-        });
+//        mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                mSignBtn.setColor(getColor(!isChecked?R.color.esigin_btn_unable_color:R.color.tx_send_color));
+//            }
+//        });
     }
 
-   private void signData(){
-        if(!mCheckBox.isChecked()){
-            return;
+    private void signData() {
+//        if(!mCheckBox.isChecked()){
+//            return;
+//        }
+        mIsSigning = true;
+        try {
+            String mn = getMn();
+            String pk = Utility.getInstance(this).getSinglePrivateKey(mn);
+            String source = mSignEdt.getText().toString();
+            if (StringUtil.isNullOrEmpty(mn)
+                    || StringUtil.isNullOrEmpty(pk)
+                    || StringUtil.isNullOrEmpty(source)) {
+                return;
+            }
+            String target = AuthorizeManager.sign(this, pk, mn);
+            SignHistoryItem item = new SignHistoryItem();
+            item.signData = source;
+            item.signedData = target;
+            item.time = getAuthorTime(0);
+            cacheData(item);
+            UiUtils.startSignSuccessActivity(this, item.signedData);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            mIsSigning = false;
         }
-       mIsSigning = true;
-       try {
-           String mn = getMn();
-           String pk = Utility.getInstance(this).getSinglePrivateKey(mn);
-           String source = mSignEdt.getText().toString();
-           if(StringUtil.isNullOrEmpty(mn)
-                   || StringUtil.isNullOrEmpty(pk)
-                   || StringUtil.isNullOrEmpty(source)){
-               return;
-           }
-           String target = AuthorizeManager.sign(this, pk, mn);
-           SignHistoryItem item = new SignHistoryItem();
-           item.signData = source;
-           item.signedData = target;
-           item.time = getAuthorTime(0);
-           cacheData(item);
-           UiUtils.startSignSuccessActivity(this, item.signedData);
-       } catch (Exception e) {
-           e.printStackTrace();
-       } finally {
-           mIsSigning = false;
-       }
-   }
+    }
 
-   private void cacheData(SignHistoryItem item){
-       EsignDataSource.getInstance(this).putSignData(item);
-   }
+    private void cacheData(SignHistoryItem item) {
+        EsignDataSource.getInstance(this).putSignData(item);
+    }
 
     private long getAuthorTime(int day) {
         Date date = new Date();

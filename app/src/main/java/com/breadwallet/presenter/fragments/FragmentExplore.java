@@ -88,7 +88,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     private RecyclerView mMyAppsRv;
     private ExploreAppsAdapter mAdapter;
     private View mDisclaimLayout;
-    private View mPopLayout;
+    private View mMenuPopLayout;
     private ItemTouchHelper mItemTouchHelper;
     private View mDoneBtn;
     private View mCancelBtn;
@@ -99,14 +99,15 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     private View mAddPopView;
     private View mAddUrlView;
     private View mAddScanView;
-    private View mAboutView;
+    private View mAboutPopLayout;
     private View mAboutShareView;
-    private View mRemoveDialogView;
+    private View mRemoveAppLayout;
     private View mCancelView;
     private View mRemoveView;
+    private View mLoadAppView;
     private BaseTextView mAboutAboutView;
     private View mAboutCancelView;
-    private View mLoadDialogView;
+    private View mLoadAppLayout;
     private TextView mLoadHintTv;
     private View mLoadNoBtn;
     private View mLoadYesBtn;
@@ -162,7 +163,11 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
 
     private void initView(View rootView) {
         mDisclaimLayout = rootView.findViewById(R.id.disclaim_layout);
-        mPopLayout = rootView.findViewById(R.id.explore_pop_layout);
+        mRemoveAppLayout = rootView.findViewById(R.id.explore_remove_app_layout);
+        mLoadAppLayout = rootView.findViewById(R.id.explore_load_app_layout);
+        mMenuPopLayout = rootView.findViewById(R.id.explore_menu_pop_layout);
+        mAboutPopLayout = rootView.findViewById(R.id.explore_about_layout);
+
         mOkBtn = rootView.findViewById(R.id.disclaim_ok_btn);
         mDoneBtn = rootView.findViewById(R.id.explore_done_tv);
         mCancelBtn = rootView.findViewById(R.id.explore_cancel_tv);
@@ -173,14 +178,11 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         mAddPopView = rootView.findViewById(R.id.explore_add_pop);
         mAddUrlView = rootView.findViewById(R.id.explore_url_pop);
         mAddScanView = rootView.findViewById(R.id.explore_scan_pop);
-        mAboutView = rootView.findViewById(R.id.explore_about_layout);
         mAboutShareView = rootView.findViewById(R.id.share_tv);
         mAboutAboutView = rootView.findViewById(R.id.about_tv);
         mAboutCancelView = rootView.findViewById(R.id.cancel_tv);
-        mRemoveDialogView = rootView.findViewById(R.id.explore_remove_app_layout);
         mCancelView = rootView.findViewById(R.id.remove_mini_cancel);
         mRemoveView = rootView.findViewById(R.id.remove_mini_confirm);
-        mLoadDialogView = rootView.findViewById(R.id.explore_load_app_layout);
         mLoadHintTv = rootView.findViewById(R.id.load_hint_tv);
         mLoadNoBtn = rootView.findViewById(R.id.load_mini_no);
         mLoadYesBtn = rootView.findViewById(R.id.load_mini_yes);
@@ -261,7 +263,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
 
     @Override
     public void onAbout(MyAppItem item, int position) {
-        mAboutView.setVisibility(View.VISIBLE);
+        mAboutPopLayout.setVisibility(View.VISIBLE);
         if (null != mAboutShowListener) mAboutShowListener.hide();
         mAboutAppItem = item;
         mAboutAboutView.setText(String.format(getString(R.string.explore_pop_about), mAboutAppItem.name_en));
@@ -273,7 +275,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     public void onItemClick(MyAppItem item, int position) {
         String url = item.url;
         if (!StringUtil.isNullOrEmpty(url)) {
-            mLoadDialogView.setVisibility(View.VISIBLE);
+            mLoadAppLayout.setVisibility(View.VISIBLE);
             mLoadUrl = url;
             mLoadHintTv.setText(Html.fromHtml(String.format(getString(R.string.esign_load_mini_app_hint), item.name_en)));
         }
@@ -295,7 +297,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         mAddBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPopLayout.setVisibility(mAddPopView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+                mMenuPopLayout.setVisibility(mAddPopView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
                 mAddPopView.setVisibility(mAddPopView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
                 mEditPopView.setVisibility(View.GONE);
             }
@@ -304,7 +306,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         mEditBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPopLayout.setVisibility(mEditPopView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+                mMenuPopLayout.setVisibility(mEditPopView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
                 mEditPopView.setVisibility(mEditPopView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
                 mAddPopView.setVisibility(View.GONE);
             }
@@ -314,7 +316,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             @Override
             public void onClick(View v) {
                 mEditPopView.setVisibility(View.GONE);
-                mPopLayout.setVisibility(View.GONE);
+                mMenuPopLayout.setVisibility(View.GONE);
                 changeView(true);
                 mAdapter.isDelete(true);
                 mIsLongPressDragEnabled = true;
@@ -325,7 +327,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         mAddUrlView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPopLayout.setVisibility(View.GONE);
+                mMenuPopLayout.setVisibility(View.GONE);
                 UiUtils.startAddAppsActivity(getActivity(), BRConstants.ADD_APP_URL_REQUEST);
             }
         });
@@ -333,7 +335,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         mAddScanView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPopLayout.setVisibility(View.GONE);
+                mMenuPopLayout.setVisibility(View.GONE);
                 UiUtils.openScanner(getActivity(), BRConstants.ADD_APP_URL_REQUEST);
             }
         });
@@ -371,32 +373,46 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 BRSharedPrefs.setDisclaimshow(getContext(), false);
             }
         });
+
         mDisclaimLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 return true;
             }
         });
-        mAboutView.setOnTouchListener(new View.OnTouchListener() {
+        mLoadAppLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 return true;
             }
         });
-        mPopLayout.setOnTouchListener(new View.OnTouchListener() {
+        mRemoveAppLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                mPopLayout.setVisibility(View.GONE);
+                return true;
+            }
+        });
+        mAboutPopLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
+        mMenuPopLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                mMenuPopLayout.setVisibility(View.GONE);
                 mAddPopView.setVisibility(View.GONE);
                 mEditPopView.setVisibility(View.GONE);
                 return true;
             }
         });
 
+
         mAboutShareView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAboutView.setVisibility(View.GONE);
+                mAboutPopLayout.setVisibility(View.GONE);
                 if (null != mAboutShowListener) mAboutShowListener.show();
                 if (null != mAboutAppItem) {
                     UiUtils.shareCapsule(getContext(), mAboutAppItem.path);
@@ -407,7 +423,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         mAboutAboutView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAboutView.setVisibility(View.GONE);
+                mAboutPopLayout.setVisibility(View.GONE);
                 if (null != mAboutShowListener) mAboutShowListener.show();
                 UiUtils.startMiniAppAboutActivity(getContext(), mAboutAppItem.appId);
             }
@@ -416,7 +432,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         mAboutCancelView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAboutView.setVisibility(View.GONE);
+                mAboutPopLayout.setVisibility(View.GONE);
                 if (null != mAboutShowListener) mAboutShowListener.show();
             }
         });
@@ -424,14 +440,14 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         mCancelView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mRemoveDialogView.setVisibility(View.GONE);
+                mRemoveAppLayout.setVisibility(View.GONE);
             }
         });
 
         mRemoveView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mRemoveDialogView.setVisibility(View.GONE);
+                mRemoveAppLayout.setVisibility(View.GONE);
                 if (mRemoveApp.size() > 0) {
                     for (MyAppItem app : mRemoveApp) {
                         ProfileDataSource.getInstance(getContext()).deleteAppItem(app.appId);
@@ -449,14 +465,14 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         mLoadNoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mLoadDialogView.setVisibility(View.GONE);
+                mLoadAppLayout.setVisibility(View.GONE);
             }
         });
 
         mLoadYesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mLoadDialogView.setVisibility(View.GONE);
+                mLoadAppLayout.setVisibility(View.GONE);
                 UiUtils.startWebviewActivity(getActivity(), mLoadUrl);
                 mLoadUrl = null;
             }
@@ -738,7 +754,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         String appId = item.appId;
         if (!StringUtil.isNullOrEmpty(appId)) {
             mRemoveApp.add(item);
-            mRemoveDialogView.setVisibility(View.VISIBLE);
+            mRemoveAppLayout.setVisibility(View.VISIBLE);
         }
     }
 
@@ -940,7 +956,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     }
 
     public void hideAboutView() {
-        mAboutView.setVisibility(View.GONE);
+        mAboutPopLayout.setVisibility(View.GONE);
     }
 
     public void setAboutShowListener(AboutShowListener listener) {
