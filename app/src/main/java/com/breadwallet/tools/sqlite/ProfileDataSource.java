@@ -82,7 +82,7 @@ public class ProfileDataSource implements BRDataSourceInterface {
             BRSQLiteHelper.ADD_APPS_APP_ID,
             BRSQLiteHelper.ADD_APPS_DID,
             BRSQLiteHelper.ADD_APPS_PUBLICKEY,
-            BRSQLiteHelper.ADD_APPS_ICON_XXHDPI,
+            BRSQLiteHelper.ADD_APPS_ICON,
             BRSQLiteHelper.ADD_APPS_SHORTDESC_EN,
             BRSQLiteHelper.ADD_APPS_SHORTDESC_ZH_CN,
             BRSQLiteHelper.ADD_APPS_LONGDESC_EN,
@@ -101,7 +101,7 @@ public class ProfileDataSource implements BRDataSourceInterface {
         item.appId = cursor.getString(2);
         item.did = cursor.getString(3);
         item.publicKey = cursor.getString(4);
-        item.icon_xxhdpi = cursor.getString(5);
+        item.icon = cursor.getString(5);
         item.shortDesc_en = cursor.getString(6);
         item.shortDesc_zh_CN = cursor.getString(7);
         item.longDesc_en = cursor.getString(8);
@@ -162,7 +162,7 @@ public class ProfileDataSource implements BRDataSourceInterface {
                 value.put(BRSQLiteHelper.ADD_APPS_APP_ID, item.appId);
                 value.put(BRSQLiteHelper.ADD_APPS_DID, item.did);
                 value.put(BRSQLiteHelper.ADD_APPS_PUBLICKEY, item.publicKey);
-                value.put(BRSQLiteHelper.ADD_APPS_ICON_XXHDPI, item.icon_xxhdpi);
+                value.put(BRSQLiteHelper.ADD_APPS_ICON, item.icon);
                 value.put(BRSQLiteHelper.ADD_APPS_SHORTDESC_EN, item.shortDesc_en);
                 value.put(BRSQLiteHelper.ADD_APPS_SHORTDESC_ZH_CN, item.shortDesc_zh_CN);
                 value.put(BRSQLiteHelper.ADD_APPS_LONGDESC_EN, item.longDesc_en);

@@ -317,7 +317,13 @@ public class Utils {
 
     public static Bitmap getIconFromPath(File filePath) {
         if(null == filePath) return null;
-        return BitmapFactory.decodeFile(filePath.getAbsolutePath());
+        Bitmap bitmap = null;
+        try {
+            bitmap = BitmapFactory.decodeFile(filePath.getAbsolutePath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bitmap;
     }
 
 }

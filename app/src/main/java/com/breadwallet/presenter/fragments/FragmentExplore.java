@@ -64,6 +64,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -277,7 +278,14 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         if (!StringUtil.isNullOrEmpty(url)) {
             mLoadAppLayout.setVisibility(View.VISIBLE);
             mLoadUrl = url;
-            mLoadHintTv.setText(Html.fromHtml(String.format(getString(R.string.esign_load_mini_app_hint), item.name_en)));
+
+            String languageCode = Locale.getDefault().getLanguage();
+            if(!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")){
+                mLoadHintTv.setText(Html.fromHtml(String.format(getString(R.string.esign_load_mini_app_hint), item.name_zh_CN)));
+            } else {
+                mLoadHintTv.setText(Html.fromHtml(String.format(getString(R.string.esign_load_mini_app_hint), item.name_en)));
+            }
+
         }
     }
 
@@ -635,7 +643,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
 
     public long downloadCapsule(String url) {
         Log.d(TAG, "capsule url:" + url);
-        showDialog();
         if (StringUtil.isNullOrEmpty(url)) return -1;
         DownloadManager.Request request;
         try {
@@ -649,6 +656,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 downloadFile.delete();
             }
 
+            showDialog();
             request = new DownloadManager.Request(uri);
             request.setDestinationInExternalFilesDir(getContext(), Environment.DIRECTORY_DOWNLOADS, mDoloadFileName);
             manager = (DownloadManager) getContext().getApplicationContext().getSystemService(Context.DOWNLOAD_SERVICE);
@@ -682,6 +690,9 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                             String json = getJsonFromCapsule(appJsonPath);
                             MyAppItem item = new Gson().fromJson(json, MyAppItem.class);
                             item.path = /*new File(backupPath, mDoloadFileName).getAbsolutePath()*/mDoloadUrl;
+                            if(item != null){
+                                item.icon = new File(outPath, item.icon).getAbsolutePath();
+                            }
 
                             String hash = CryptoHelper.getShaChecksum(downloadPath.getAbsolutePath());
                             Log.d(TAG, "mDoloadFileName:" + mDoloadFileName + " hash:" + hash);
@@ -718,7 +729,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
 //                                upUserAppInfo(mAppIds);
                             }
                             deleteFile(downloadPath);
-                            deleteFile(outPath);
 //                            logFile("srcPath", getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile());
 //                            logFile("outPath", new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule").getAbsoluteFile());
                         } catch (Exception e) {

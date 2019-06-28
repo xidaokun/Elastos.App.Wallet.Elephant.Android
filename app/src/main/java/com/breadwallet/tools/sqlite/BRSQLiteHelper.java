@@ -61,7 +61,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String ADD_APPS_APP_ID = "app_id";
     public static final String ADD_APPS_DID = "did";
     public static final String ADD_APPS_PUBLICKEY = "publicKey";
-    public static final String ADD_APPS_ICON_XXHDPI = "icon_xxhdpi";
+    public static final String ADD_APPS_ICON = "icon";
     public static final String ADD_APPS_SHORTDESC_EN = "shortDesc_en";
     public static final String ADD_APPS_SHORTDESC_ZH_CN = "shortDesc_zh_CN";
     public static final String ADD_APPS_LONGDESC_EN = "longDesc_en";
@@ -77,7 +77,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             ADD_APPS_APP_ID + " text primary key , " +
             ADD_APPS_DID + " integer, " +
             ADD_APPS_PUBLICKEY + " text, " +
-            ADD_APPS_ICON_XXHDPI + " text, " +
+            ADD_APPS_ICON + " text, " +
             ADD_APPS_SHORTDESC_EN + " text, " +
             ADD_APPS_SHORTDESC_ZH_CN + " text, " +
             ADD_APPS_LONGDESC_EN + " text, " +

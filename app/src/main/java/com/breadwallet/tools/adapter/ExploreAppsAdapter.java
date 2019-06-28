@@ -78,8 +78,8 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
 
         holder.mDeveloper.setText(item.developer);
         Bitmap bitmap = null;
-        if(!StringUtil.isNullOrEmpty(item.path)){
-            bitmap = Utils.getIconFromPath(new File(item.path+"/"+item.icon));
+        if(!StringUtil.isNullOrEmpty(item.icon)){
+            bitmap = Utils.getIconFromPath(new File(item.icon));
         }
         if(null != bitmap){
             holder.mLogo.setImageBitmap(bitmap);
