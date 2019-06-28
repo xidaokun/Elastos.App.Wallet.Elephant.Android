@@ -365,7 +365,62 @@ public class ElaDataSource implements BRDataSourceInterface {
     }
 
     public List<String> mVoteTxid = new ArrayList<>();
-    public void getHistory(String pk, String address){
+//    public void getHistory(String pk, String address){
+//        if(StringUtil.isNullOrEmpty(address)) return;
+//        mVoteTxid.clear();
+//        try {
+//            String url = getUrl("api/1/history/"+address /*+"?pageNum=1&pageSize=10"*/);
+//            Log.i(TAG, "history url:"+url);
+//            String result = urlGET(url);
+//            JSONObject jsonObject = new JSONObject(result);
+//            String json = jsonObject.getString("result");
+//            TxHistory txHistory = new Gson().fromJson(json, TxHistory.class);
+//
+//            List<HistoryTransactionEntity> elaTransactionEntities = new ArrayList<>();
+//            elaTransactionEntities.clear();
+//            List<History> transactions = txHistory.History;
+//            for(History history : transactions){
+//                HistoryTransactionEntity historyTransactionEntity = new HistoryTransactionEntity();
+//                historyTransactionEntity.txReversed = history.Txid;
+//                historyTransactionEntity.isReceived = isReceived(history.Type);
+//                historyTransactionEntity.fromAddress = isReceived(history.Type) ? history.Inputs.get(0) : history.Outputs.get(0);
+//                historyTransactionEntity.toAddress = isReceived(history.Type) ? history.Inputs.get(0) : history.Outputs.get(0);
+//                historyTransactionEntity.fee = new BigDecimal(history.Fee).longValue();
+//                historyTransactionEntity.blockHeight = history.Height;
+//                historyTransactionEntity.hash = history.Txid.getBytes();
+//                historyTransactionEntity.txSize = 0;
+//                historyTransactionEntity.amount = isReceived(history.Type) ? new BigDecimal(history.Value).longValue() : new BigDecimal(history.Value).subtract(new BigDecimal(history.Fee)).longValue();
+//                historyTransactionEntity.balanceAfterTx = 0;
+//                historyTransactionEntity.isValid = true;
+//                historyTransactionEntity.isVote = !isReceived(history.Type) && isVote(history.TxType);
+//                historyTransactionEntity.timeStamp = new BigDecimal(history.CreateTime).longValue();
+//                historyTransactionEntity.memo = getMeno(pk, history.Memo);
+//                elaTransactionEntities.add(historyTransactionEntity);
+//                if(historyTransactionEntity.isVote) mVoteTxid.add(history.Txid);
+//            }
+//            cacheMultTx(elaTransactionEntities);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+
+//    private String getMeno(String pk, String value){
+//        if(value==null || !value.contains("msg") || !value.contains("type") || !value.contains(",")) return "";
+//        if(value.contains("msg:")){
+//            String[] memo = value.split("msg:");
+//            if(memo!=null && memo.length==2){
+//                String type = memo[0];
+//                String msg = memo[1];
+//                if(!StringUtil.isNullOrEmpty(type) && !StringUtil.isNullOrEmpty(msg) && type.equals("ciphertext")){
+//                    return ElastosKeypairCrypto.eciesDecrypt(pk, msg);
+//                }
+//                return (null==msg)?"":msg;
+//            }
+//        }
+//        return "";
+//    }
+
+    public void getHistory(String address){
         if(StringUtil.isNullOrEmpty(address)) return;
         mVoteTxid.clear();
         try {
@@ -394,7 +449,7 @@ public class ElaDataSource implements BRDataSourceInterface {
                 historyTransactionEntity.isValid = true;
                 historyTransactionEntity.isVote = !isReceived(history.Type) && isVote(history.TxType);
                 historyTransactionEntity.timeStamp = new BigDecimal(history.CreateTime).longValue();
-                historyTransactionEntity.memo = getMeno(pk, history.Memo);
+                historyTransactionEntity.memo = getMeno(history.Memo);
                 elaTransactionEntities.add(historyTransactionEntity);
                 if(historyTransactionEntity.isVote) mVoteTxid.add(history.Txid);
             }
@@ -404,17 +459,12 @@ public class ElaDataSource implements BRDataSourceInterface {
         }
     }
 
-    private String getMeno(String pk, String value){
+    private String getMeno(String value){
         if(value==null || !value.contains("msg") || !value.contains("type") || !value.contains(",")) return "";
         if(value.contains("msg:")){
-            String[] memo = value.split("msg:");
-            if(memo!=null && memo.length==2){
-                String type = memo[0];
-                String msg = memo[1];
-                if(!StringUtil.isNullOrEmpty(type) && !StringUtil.isNullOrEmpty(msg) && type.equals("ciphertext")){
-                    return ElastosKeypairCrypto.eciesDecrypt(pk, msg);
-                }
-                return (null==msg)?"":msg;
+            String[] msg = value.split("msg:");
+            if(msg!=null && msg.length==2){
+                return msg[1];
             }
         }
         return "";

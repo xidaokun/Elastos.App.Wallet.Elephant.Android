@@ -743,4 +743,16 @@ public class BRSharedPrefs {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getString(key, null);
     }
+
+    public static void putClickAppId(Context context, String appId){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("clickAppId", appId);
+        editor.apply();
+    }
+
+    public static String getClickAppId(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("clickAppId", null);
+    }
 }

@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.fragments;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -112,11 +113,14 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     private TextView mLoadHintTv;
     private View mLoadNoBtn;
     private View mLoadYesBtn;
+    private Activity mParent;
     private LoadingDialog mLoadingDialog;
     private AboutShowListener mAboutShowListener;
     private static final int INIT_APPS_MSG = 0x01;
     private static final int UPDATE_APPS_MSG = 0x02;
-    private static final int UNREGISTER_RECEIVER = 0x03;
+    private static final int SHOW_LOADING = 0x03;
+    private static final int DISMISS_LOADING = 0x04;
+    private static final int TOAST_MESSAGE = 0x05;
 
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
@@ -134,14 +138,26 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                     ProfileDataSource.getInstance(getContext()).updateMyAppItem(mItems);
                     mAdapter.notifyDataSetChanged();
                     break;
-                case UNREGISTER_RECEIVER:
-
+                case SHOW_LOADING:
+                    if (!mLoadingDialog.isShowing()) {
+                        mLoadingDialog.show();
+                    }
+                    break;
+                case DISMISS_LOADING:
+                    if (mLoadingDialog.isShowing()) {
+                        mLoadingDialog.dismiss();
+                    }
+                    break;
+                case TOAST_MESSAGE:
+                    String message = (String) msg.obj;
+                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                     break;
                 default:
                     break;
             }
         }
     };
+
 
     @Nullable
     @Override
@@ -216,25 +232,32 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     }
 
     private void getInterApps() {
-        showDialog();
-        String downloadFile = getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
-        StringChainData redPackageStatus = getAppStatus(BRConstants.REA_PACKAGE_ID);
-        if (null == redPackageStatus ||
-                StringUtil.isNullOrEmpty(redPackageStatus.value) ||
-                redPackageStatus.value.equals("normal")) {
-            mDoloadFileName = "redpacket.capsule";
-            mDoloadUrl = "https://redpacket.elastos.org/redpacket.capsule";
-            copyCapsuleToDownloadCache(getContext(), downloadFile, mDoloadFileName);
+        try {
+            showDialog();
+            String downloadFile = getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+            StringChainData redPackageStatus = getAppStatus(BRConstants.REA_PACKAGE_ID);
+            if (null == redPackageStatus ||
+                    StringUtil.isNullOrEmpty(redPackageStatus.value) ||
+                    redPackageStatus.value.equals("normal")) {
+                mDoloadFileName = "redpacket.capsule";
+                mDoloadUrl = "https://redpacket.elastos.org/redpacket.capsule";
+                copyCapsuleToDownloadCache(getContext(), downloadFile, mDoloadFileName);
+            }
+            showDialog();
+            StringChainData dposVoteStatus = getAppStatus(BRConstants.DPOS_VOTE_ID);
+            if (null == dposVoteStatus ||
+                    StringUtil.isNullOrEmpty(dposVoteStatus.value) ||
+                    dposVoteStatus.value.equals("normal")) {
+                mDoloadFileName = "vote.capsule";
+                mDoloadUrl = "http://elaphant.net/vote.capsule";
+                copyCapsuleToDownloadCache(getContext(), downloadFile, mDoloadFileName);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            dialogDismiss();
         }
-        showDialog();
-        StringChainData dposVoteStatus = getAppStatus(BRConstants.DPOS_VOTE_ID);
-        if (null == dposVoteStatus ||
-                StringUtil.isNullOrEmpty(dposVoteStatus.value) ||
-                dposVoteStatus.value.equals("normal")) {
-            mDoloadFileName = "vote.capsule";
-            mDoloadUrl = "http://elaphant.net/vote.capsule";
-            copyCapsuleToDownloadCache(getContext(), downloadFile, mDoloadFileName);
-        }
+
 //        StringChainData swftStatus = getAppStatus(BRConstants.EXCHANGE_ID);
 //        if (null == swftStatus ||
 //                StringUtil.isNullOrEmpty(swftStatus.value) ||
@@ -280,12 +303,13 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             mLoadUrl = url;
 
             String languageCode = Locale.getDefault().getLanguage();
-            if(!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")){
+            if (!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")) {
                 mLoadHintTv.setText(Html.fromHtml(String.format(getString(R.string.esign_load_mini_app_hint), item.name_zh_CN)));
             } else {
                 mLoadHintTv.setText(Html.fromHtml(String.format(getString(R.string.esign_load_mini_app_hint), item.name_en)));
             }
 
+            BRSharedPrefs.putClickAppId(getContext(), item.appId);
         }
     }
 
@@ -690,7 +714,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                             String json = getJsonFromCapsule(appJsonPath);
                             MyAppItem item = new Gson().fromJson(json, MyAppItem.class);
                             item.path = /*new File(backupPath, mDoloadFileName).getAbsolutePath()*/mDoloadUrl;
-                            if(item != null){
+                            if (item != null) {
                                 item.icon = new File(outPath, item.icon).getAbsolutePath();
                             }
 
@@ -798,6 +822,17 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         ProfileDataSource.getInstance(getContext()).upchainSync(info);
     }
 
+    private StringChainData getAppStatus(String miniAppId) {
+        String path = "/Apps/" + BRConstants.ELAPHANT_APP_ID + "/MiniPrograms/" + miniAppId + "/Status";
+        if (mDid == null) return null;
+        mDid.syncInfo();
+        String value = mDid.getInfo(path);
+        if (!StringUtil.isNullOrEmpty(value)) {
+            return new Gson().fromJson(value, StringChainData.class);
+        }
+        return null;
+    }
+
     private void upUserAppInfo(List<UserAppInfo> appIds) {
         String ids = new Gson().toJson(appIds);
         String path = mDidStr + "/Apps";
@@ -813,17 +848,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         String appIds = mDid.getInfo(path);
         if (!StringUtil.isNullOrEmpty(appIds)) {
             return new Gson().fromJson(appIds, UserAppInfo.class);
-        }
-        return null;
-    }
-
-    private StringChainData getAppStatus(String miniAppId) {
-        String path = "/Apps/" + BRConstants.ELAPHANT_APP_ID + "/MiniPrograms/" + miniAppId + "/Status";
-        if (mDid == null) return null;
-        mDid.syncInfo();
-        String value = mDid.getInfo(path);
-        if (!StringUtil.isNullOrEmpty(value)) {
-            return new Gson().fromJson(value, StringChainData.class);
         }
         return null;
     }
@@ -937,32 +961,19 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     }
 
     private void showDialog() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (!mLoadingDialog.isShowing()) {
-                    mLoadingDialog.show();
-                }
-            }
-        });
+        mHandler.sendEmptyMessage(SHOW_LOADING);
     }
 
     private void dialogDismiss() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mLoadingDialog.dismiss();
-            }
-        });
+        mHandler.sendEmptyMessage(DISMISS_LOADING);
     }
 
     private void messageToast(final String message) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-            }
-        });
+        if(StringUtil.isNullOrEmpty(message)) return;
+        Message msg = new Message();
+        msg.what = TOAST_MESSAGE;
+        msg.obj = message;
+        mHandler.sendMessage(msg);
     }
 
     public void hideAboutView() {

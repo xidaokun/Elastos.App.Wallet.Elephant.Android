@@ -497,8 +497,9 @@ public class UiUtils {
                 url = returnUrl + "?Data=" + Uri.encode(Data) + "&Sign=" + Uri.encode(Sign) /*+ "&browser=elaphant"*/;
             }
 
-            if (BRConstants.REA_PACKAGE_ID.equals(appId) || BRConstants.DPOS_VOTE_ID.equals(appId)
-                    || BRConstants.EXCHANGE_ID.equalsIgnoreCase(appId) || (!StringUtil.isNullOrEmpty(targe) && targe.equals("internal"))) {
+            String clickAppId = BRSharedPrefs.getClickAppId(activity);
+            if (!StringUtil.isNullOrEmpty(clickAppId) && appId.equals(clickAppId)
+                /*|| (!StringUtil.isNullOrEmpty(targe) && targe.equals("internal"))*/) {
                 UiUtils.startWebviewActivity(activity, url);
             } else {
                 UiUtils.openUrlByBrowser(activity, url);

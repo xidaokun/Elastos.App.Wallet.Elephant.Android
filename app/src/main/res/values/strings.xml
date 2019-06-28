@@ -1127,7 +1127,7 @@
     <string name="esign_doc_to_sign">Doc to be signed</string>
     <string name="esign_doc_to_signed">Signed</string>
     <string name="esign_agreement">By click Sign, you acknowledge that you are e-signing this doc using your personal signature.</string>
-    <string name="esign_detail_title">Signature Detail</string>
+    <string name="esign_detail_title">My Signature Detail</string>
     <string name="esign_history_title">Signature History</string>
     <string name="esign_sign_btn">Sign</string>
     <string name="esign_paste_btn">Paste</string>

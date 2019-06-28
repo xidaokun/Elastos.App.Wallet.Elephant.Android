@@ -186,14 +186,14 @@ public class BRApiManager {
                     }
                 });
             }
-//            if(w.getIso().equalsIgnoreCase("IOEX")){
-//                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        WalletIoexManager.getInstance(context).updateTxHistory();
-//                    }
-//                });
-//            }
+            if(w.getIso().equalsIgnoreCase("IOEX")){
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        WalletIoexManager.getInstance(context).updateTxHistory();
+                    }
+                });
+            }
             if(w.getIso().equalsIgnoreCase("ELA")){
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override

@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.activities;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -249,6 +250,10 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             mWalletFragment.onConnectionChanged(isConnected);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+//        super.onSaveInstanceState(outState);
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

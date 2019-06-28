@@ -185,7 +185,8 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     public void updateTxHistory() {
         String address = getAddress();
         if(StringUtil.isNullOrEmpty(address)) return;
-        ElaDataSource.getInstance(mContext).getHistory(getPrivateKey(), address);
+//        ElaDataSource.getInstance(mContext).getHistory(getPrivateKey(), address);
+        ElaDataSource.getInstance(mContext).getHistory(address);
         TxManager.getInstance().updateTxList(mContext);
     }
 

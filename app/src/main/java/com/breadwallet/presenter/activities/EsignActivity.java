@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatCheckBox;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Toast;
@@ -19,6 +21,7 @@ import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.EsignDataSource;
 import com.breadwallet.tools.util.StringUtil;
+import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.elastos.jni.Utility;
 
 import org.wallet.library.AuthorizeManager;
@@ -65,6 +68,25 @@ public class EsignActivity extends BaseSettingsActivity {
     private boolean mIsSigning = false;
 
     private void initListener() {
+        mSignEdt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String tmp = mSignEdt.getText().toString();
+                boolean isEmpty = StringUtil.isNullOrEmpty(tmp);
+                mSignBtn.setColor(getColor(isEmpty?R.color.esigin_btn_unable_color:R.color.tx_send_color));
+            }
+        });
+
         mSignBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -112,13 +134,14 @@ public class EsignActivity extends BaseSettingsActivity {
         try {
             String mn = getMn();
             String pk = Utility.getInstance(this).getSinglePrivateKey(mn);
+            String pulickey = WalletElaManager.getInstance(this).getPublicKey();
             String source = mSignEdt.getText().toString();
             if (StringUtil.isNullOrEmpty(mn)
                     || StringUtil.isNullOrEmpty(pk)
                     || StringUtil.isNullOrEmpty(source)) {
                 return;
             }
-            String target = AuthorizeManager.sign(this, pk, mn);
+            String target = AuthorizeManager.sign(this, pk, source);
             SignHistoryItem item = new SignHistoryItem();
             item.signData = source;
             item.signedData = target;
