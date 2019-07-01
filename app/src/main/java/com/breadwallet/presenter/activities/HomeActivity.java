@@ -251,11 +251,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(data == null) return;
         if(requestCode == BRConstants.ADD_APP_URL_REQUEST){

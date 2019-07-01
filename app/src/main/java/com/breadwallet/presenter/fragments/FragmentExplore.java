@@ -220,15 +220,17 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 mAppIds.add(item.appId);
             }
             mAdapter.notifyDataSetChanged();
-        }
-
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                getInterApps();
+        } else {
+            boolean has = BRSharedPrefs.hasReset(getContext());
+            if(has) return;
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    getInterApps();
 //        resetAppsFromNet();
-            }
-        });
+                }
+            });
+        }
     }
 
     private void getInterApps() {
@@ -256,6 +258,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             e.printStackTrace();
         } finally {
             dialogDismiss();
+            BRSharedPrefs.setHasReset(getContext(), true);
         }
 
 //        StringChainData swftStatus = getAppStatus(BRConstants.EXCHANGE_ID);
@@ -961,7 +964,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     }
 
     private void showDialog() {
-        mHandler.sendEmptyMessage(SHOW_LOADING);
+        mHandler.sendEmptyMessageDelayed(SHOW_LOADING, 50);
     }
 
     private void dialogDismiss() {

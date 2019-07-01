@@ -81,7 +81,8 @@ public class AuthorInfoItem {
 
             } else if(BCH_ADDRESS.equals(cname)){
                 BaseWalletManager bch = WalletsMaster.getInstance(context).getWalletByIso(context, "BCH");
-                return new String[]{bch.getAddress()};
+                String stringifyAddress = bch.getReceiveAddress(context).stringify();
+                return new String[]{bch.decorateAddress(stringifyAddress)};
 
             } else if(PHONE_NUMBER.equals(cname)){
                 String area = BRSharedPrefs.getArea(context);

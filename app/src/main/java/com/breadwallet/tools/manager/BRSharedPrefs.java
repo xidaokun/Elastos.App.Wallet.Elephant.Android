@@ -755,4 +755,19 @@ public class BRSharedPrefs {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getString("clickAppId", null);
     }
+
+    //
+
+    public static void setHasReset(Context context, boolean is){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("hashReset", is);
+        editor.apply();
+    }
+
+    public static boolean hasReset(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean("hashReset", false);
+    }
+
 }

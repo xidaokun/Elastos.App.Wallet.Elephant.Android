@@ -134,7 +134,6 @@ public class EsignActivity extends BaseSettingsActivity {
         try {
             String mn = getMn();
             String pk = Utility.getInstance(this).getSinglePrivateKey(mn);
-            String pulickey = WalletElaManager.getInstance(this).getPublicKey();
             String source = mSignEdt.getText().toString();
             if (StringUtil.isNullOrEmpty(mn)
                     || StringUtil.isNullOrEmpty(pk)
