@@ -424,7 +424,7 @@ public class ElaDataSource implements BRDataSourceInterface {
         if(StringUtil.isNullOrEmpty(address)) return;
         mVoteTxid.clear();
         try {
-            String url = getUrl("api/1/history/"+address +"?pageNum=1&pageSize=50");
+            String url = getUrl("api/1/history/"+address /*+"?pageNum=1&pageSize=50"*/);
             Log.i(TAG, "history url:"+url);
             String result = urlGET(url);
             JSONObject jsonObject = new JSONObject(result);

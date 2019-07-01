@@ -1092,7 +1092,6 @@
     <string name="explore_delete_app_hint">Are you sure you want to remove this mini program?</string>
 
     <string name="explore_about_developer">Developer:%1$s</string>
-    <string name="explore_about_did">Develop DID:%1$s</string>
 
     <string name="multisign_deny">Deny</string>
     <string name="multisign_approve">Approve</string>

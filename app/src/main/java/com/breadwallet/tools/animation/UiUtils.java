@@ -13,14 +13,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -28,8 +25,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.OvershootInterpolator;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
@@ -76,13 +71,11 @@ import com.google.gson.Gson;
 
 import org.wallet.library.Constants;
 
-import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import static android.content.Context.ACTIVITY_SERVICE;
-import static android.content.Context.CONTEXT_IGNORE_SECURITY;
 
 
 /**
@@ -233,6 +226,13 @@ public class UiUtils {
     public static void startWebviewActivity(Context context, String url) {
         Intent intent = new Intent(context, ExploreWebActivity.class);
         intent.putExtra("explore_url", url);
+        context.startActivity(intent);
+    }
+
+    public static void startWebviewActivity(Context context, String url, String appId) {
+        Intent intent = new Intent(context, ExploreWebActivity.class);
+        intent.putExtra("explore_url", url);
+        intent.putExtra("app_id", appId);
         context.startActivity(intent);
     }
 
@@ -497,7 +497,7 @@ public class UiUtils {
                 url = returnUrl + "?Data=" + Uri.encode(Data) + "&Sign=" + Uri.encode(Sign) /*+ "&browser=elaphant"*/;
             }
 
-            String clickAppId = BRSharedPrefs.getClickAppId(activity);
+            String clickAppId = BRSharedPrefs.getAddedAppId(activity);
             if (!StringUtil.isNullOrEmpty(clickAppId) && appId.equals(clickAppId)
                 /*|| (!StringUtil.isNullOrEmpty(targe) && targe.equals("internal"))*/) {
                 UiUtils.startWebviewActivity(activity, url);

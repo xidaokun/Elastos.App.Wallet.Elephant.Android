@@ -105,15 +105,21 @@ public class ExploreWebActivity extends BRActivity {
                 Intent intent = new Intent(ExploreWebActivity.this, AppAboutActivity.class);
                 startActivity(intent);
                 mMenuLayout.setVisibility(View.GONE);
+
+                if(!StringUtil.isNullOrEmpty(mAppId)){
+                    UiUtils.startMiniAppAboutActivity(ExploreWebActivity.this, mAppId);
+                }
             }
         });
     }
 
+    private String mAppId;
     @Override
     public void onResume() {
         super.onResume();
 
         String url = getIntent().getStringExtra("explore_url");
+        mAppId = getIntent().getStringExtra("app_id");
         webView.loadUrl(url);
     }
 

@@ -1085,7 +1085,6 @@
     <string name="explore_delete_app_hint">你确定删除这个小程序吗?</string>
 
     <string name="explore_about_developer">开发者:%1$s</string>
-    <string name="explore_about_did">ELA DID:%1$s</string>
     <string name="multisign_deny">拒绝</string>
     <string name="multisign_approve">批准</string>
     <string name="multisign_approve_send">批准并付款</string>

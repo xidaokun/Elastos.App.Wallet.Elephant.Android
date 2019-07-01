@@ -308,6 +308,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     }
 
     private String mLoadUrl = null;
+    private String mLoadAppId = null;
 
     @Override
     public void onItemClick(MyAppItem item, int position) {
@@ -315,6 +316,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         if (!StringUtil.isNullOrEmpty(url)) {
             mLoadAppLayout.setVisibility(View.VISIBLE);
             mLoadUrl = url;
+            mLoadAppId = item.appId;
 
             String languageCode = Locale.getDefault().getLanguage();
             if (!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")) {
@@ -323,7 +325,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 mLoadHintTv.setText(Html.fromHtml(String.format(getString(R.string.esign_load_mini_app_hint), item.name_en)));
             }
 
-            BRSharedPrefs.putClickAppId(getContext(), item.appId);
+            BRSharedPrefs.putAddedAppId(getContext(), item.appId);
         }
     }
 
@@ -519,8 +521,16 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             @Override
             public void onClick(View v) {
                 mLoadAppLayout.setVisibility(View.GONE);
-                UiUtils.startWebviewActivity(getActivity(), mLoadUrl);
+                if(!StringUtil.isNullOrEmpty(mLoadUrl)){
+                    if (mLoadUrl.contains("?")) {
+                        mLoadUrl = mLoadUrl+ "&browser=elaphant";
+                    } else {
+                        mLoadUrl = mLoadUrl+ "?browser=elaphant";
+                    }
+                    UiUtils.startWebviewActivity(getActivity(), mLoadUrl, mLoadAppId);
+                }
                 mLoadUrl = null;
+                mLoadAppId = null;
             }
         });
 

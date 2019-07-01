@@ -64,7 +64,7 @@ public class AppAboutActivity extends BaseSettingsActivity {
                 mName.setText(myAppItem.name_en);
                 mDesc.setText(myAppItem.shortDesc_en);
             }
-            mDid.setText(String.format(getString(R.string.explore_about_did), myAppItem.did));
+            mDid.setText(String.format(getString(R.string.explore_about_developer), myAppItem.did));
             Bitmap bitmap = null;
             if(!StringUtil.isNullOrEmpty(myAppItem.icon)){
                 bitmap = Utils.getIconFromPath(new File(myAppItem.icon));
