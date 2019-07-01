@@ -1133,4 +1133,13 @@
     <string name="esign_load_mini_app_hint">您确定要加载<Data><![CDATA[<font color="#ff3365">%1$s</font>]]></Data> 小应用吗？</string>
     <string name="mini_app_dialog_remove">删除</string>
     <string name="esign_please_contnet_empty_hint">请输入加密内容。</string>
+
+    <string name="mini_app_app_id">小程序ID</string>
+    <string name="mini_app_website">网站</string>
+    <string name="mini_app_name">名称</string>
+    <string name="mini_app_publickey">公钥</string>
+    <string name="mini_app_category">分类</string>
+    <string name="mini_app_platform">平台</string>
+    <string name="mini_app_version">版本</string>
+    <string name="mini_app_shortdesc">概述</string>
 </resources>

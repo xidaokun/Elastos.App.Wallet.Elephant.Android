@@ -70,12 +70,15 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String ADD_APPS_URL = "url";
     public static final String ADD_APPS_PATH = "path";
     public static final String ADD_APPS_HASH = "hash";
+    public static final String ADD_APPS_CATEGORY = "category";
+    public static final String ADD_APPS_PLATFORM = "platform";
+    public static final String ADD_APPS_VERSION = "version";
     public static final String ADD_APPS_INDEX = "appIndex";
     private static final String ADD_APPS_DATABASE_CREATE = "create table if not exists " + ADD_APPS_TABLE_NAME + " (" +
             ADD_APPS_NAME_EN + " text, " +
             ADD_APPS_NAME_ZH_CN + " text, " +
             ADD_APPS_APP_ID + " text primary key , " +
-            ADD_APPS_DID + " integer, " +
+            ADD_APPS_DID + " text, " +
             ADD_APPS_PUBLICKEY + " text, " +
             ADD_APPS_ICON + " text, " +
             ADD_APPS_SHORTDESC_EN + " text, " +
@@ -86,6 +89,9 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             ADD_APPS_URL + " text, " +
             ADD_APPS_PATH + " text, " +
             ADD_APPS_HASH + " text, " +
+            ADD_APPS_CATEGORY + " text, " +
+            ADD_APPS_PLATFORM + " text, " +
+            ADD_APPS_VERSION + " text, " +
             ADD_APPS_INDEX +" integer);";
 
 

@@ -135,6 +135,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
 //                    mAdapter.notifyDataSetChanged();
                     break;
                 case UPDATE_APPS_MSG:
+                    Log.d(TAG, "handler UPDATE_APPS_MSG items size:"+mItems.size());
                     ProfileDataSource.getInstance(getContext()).updateMyAppItem(mItems);
                     mAdapter.notifyDataSetChanged();
                     break;
@@ -167,7 +168,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         initAdapter();
         initListener();
         initDid();
-        initApps();
         return rootView;
     }
 
@@ -215,6 +215,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         mRemoveApp.clear();
         List<MyAppItem> tmp = ProfileDataSource.getInstance(getContext()).getMyAppItems();
         if (tmp != null && tmp.size() > 0) { //database
+            Log.d(TAG, "MyAppItems size:"+tmp.size());
             mItems.addAll(tmp);
             for (MyAppItem item : tmp) {
                 mAppIds.add(item.appId);
@@ -223,6 +224,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         } else {
             boolean has = BRSharedPrefs.hasReset(getContext());
             if(has) return;
+            Log.d(TAG, "MyAppItems size:0");
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
@@ -233,6 +235,13 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
+        initApps();
+    }
+
     private void getInterApps() {
         try {
             showDialog();
@@ -241,6 +250,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             if (null == redPackageStatus ||
                     StringUtil.isNullOrEmpty(redPackageStatus.value) ||
                     redPackageStatus.value.equals("normal")) {
+                Log.d(TAG, "copy redpackage");
                 mDoloadFileName = "redpacket.capsule";
                 mDoloadUrl = "https://redpacket.elastos.org/redpacket.capsule";
                 copyCapsuleToDownloadCache(getContext(), downloadFile, mDoloadFileName);
@@ -250,6 +260,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             if (null == dposVoteStatus ||
                     StringUtil.isNullOrEmpty(dposVoteStatus.value) ||
                     dposVoteStatus.value.equals("normal")) {
+                Log.d(TAG, "copy dposvote");
                 mDoloadFileName = "vote.capsule";
                 mDoloadUrl = "http://elaphant.net/vote.capsule";
                 copyCapsuleToDownloadCache(getContext(), downloadFile, mDoloadFileName);

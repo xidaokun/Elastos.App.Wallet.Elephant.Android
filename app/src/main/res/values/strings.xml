@@ -1070,7 +1070,7 @@
     
     <string name="sign_signature_request_title">Signature Request</string>
     <string name="sign_request_information">Request information:</string>
-    <string name="sign_developer_did">Developer DID</string>
+    <string name="sign_developer_did">Develop DID:</string>
     <string name="sign_timestamp">Timestamp</string>
     <string name="sign_purpose">Purpose</string>
     <string name="sign_content">Content</string>
@@ -1092,7 +1092,7 @@
     <string name="explore_delete_app_hint">Are you sure you want to remove this mini program?</string>
 
     <string name="explore_about_developer">Developer:%1$s</string>
-    <string name="explore_about_did">ELA DID:%1$s</string>
+    <string name="explore_about_did">Develop DID:%1$s</string>
 
     <string name="multisign_deny">Deny</string>
     <string name="multisign_approve">Approve</string>
@@ -1141,4 +1141,13 @@
     <string name="esign_load_mini_app_hint">Are you sure you want to load <Data><![CDATA[<font color="#ff3365">%1$s</font>]]></Data> mini program?</string>
     <string name="mini_app_dialog_remove">Remove</string>
     <string name="esign_please_contnet_empty_hint">Please enter the encrypted content.</string>
+
+    <string name="mini_app_app_id">App ID</string>
+    <string name="mini_app_website">Website</string>
+    <string name="mini_app_name">Name</string>
+    <string name="mini_app_publickey">PublicKey</string>
+    <string name="mini_app_category">Category</string>
+    <string name="mini_app_platform">Platform</string>
+    <string name="mini_app_version">Version</string>
+    <string name="mini_app_shortdesc">ShortDesc</string>
 </resources>

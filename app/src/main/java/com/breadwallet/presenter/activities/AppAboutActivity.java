@@ -28,7 +28,7 @@ public class AppAboutActivity extends BaseSettingsActivity {
     private RoundImageView mLogo;
     private BaseTextView mName;
     private BaseTextView mDesc;
-    private BaseTextView mDeveloper;
+//    private BaseTextView mDeveloper;
     private BaseTextView mDid;
     private RecyclerView mRecycleView;
     private AppAboutAdapter mAdapter;
@@ -45,7 +45,7 @@ public class AppAboutActivity extends BaseSettingsActivity {
         mLogo = findViewById(R.id.explore_about_logo);
         mName = findViewById(R.id.explore_about_name);
         mDesc = findViewById(R.id.explore_about_desc);
-        mDeveloper = findViewById(R.id.explore_about_developer);
+//        mDeveloper = findViewById(R.id.explore_about_developer);
         mDid = findViewById(R.id.explore_about_did);
         mTitle = findViewById(R.id.title);
         mRecycleView = findViewById(R.id.exploer_about_rv);
@@ -58,12 +58,12 @@ public class AppAboutActivity extends BaseSettingsActivity {
             mTitle.setText(String.format(getString(R.string.explore_pop_about), myAppItem.name_en));
             String languageCode = Locale.getDefault().getLanguage();
             if(!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")){
-                mName.setText(Html.fromHtml(String.format(getString(R.string.esign_load_mini_app_hint), myAppItem.name_zh_CN)));
+                mName.setText(myAppItem.name_zh_CN);
+                mDesc.setText(myAppItem.shortDesc_zh_CN);
             } else {
-                mName.setText(Html.fromHtml(String.format(getString(R.string.esign_load_mini_app_hint), myAppItem.name_en)));
+                mName.setText(myAppItem.name_en);
+                mDesc.setText(myAppItem.shortDesc_en);
             }
-            mDesc.setText(myAppItem.shortDesc);
-            mDeveloper.setText(String.format(getString(R.string.explore_about_developer), myAppItem.developer));
             mDid.setText(String.format(getString(R.string.explore_about_did), myAppItem.did));
             Bitmap bitmap = null;
             if(!StringUtil.isNullOrEmpty(myAppItem.icon)){
@@ -76,10 +76,53 @@ public class AppAboutActivity extends BaseSettingsActivity {
             }
 
             List<AppAboutItem> appAboutItems = new ArrayList<>();
-            AppAboutItem appAboutItem = new AppAboutItem();
-            appAboutItem.setTitle("App ID");
-            appAboutItem.setContent(myAppItem.appId);
-            appAboutItems.add(appAboutItem);
+            AppAboutItem appIdItem = new AppAboutItem();
+            appIdItem.setTitle(getString(R.string.mini_app_app_id));
+            appIdItem.setContent(myAppItem.appId);
+            appAboutItems.add(appIdItem);
+
+            AppAboutItem websiteItem = new AppAboutItem();
+            websiteItem.setTitle(getString(R.string.mini_app_website));
+            websiteItem.setContent(myAppItem.url);
+            appAboutItems.add(websiteItem);
+
+            AppAboutItem nameItem = new AppAboutItem();
+            nameItem.setTitle(getString(R.string.mini_app_name));
+            if(!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")){
+                nameItem.setContent(myAppItem.name_zh_CN);
+            } else {
+                nameItem.setContent(myAppItem.name_en);
+            }
+            appAboutItems.add(nameItem);
+
+            AppAboutItem publickeyItem = new AppAboutItem();
+            publickeyItem.setTitle(getString(R.string.mini_app_publickey));
+            publickeyItem.setContent(myAppItem.publicKey);
+            appAboutItems.add(publickeyItem);
+
+            AppAboutItem categoryItem = new AppAboutItem();
+            categoryItem.setTitle(getString(R.string.mini_app_category));
+            categoryItem.setContent(myAppItem.category);
+            appAboutItems.add(categoryItem);
+
+            AppAboutItem platformItem = new AppAboutItem();
+            platformItem.setTitle(getString(R.string.mini_app_platform));
+            platformItem.setContent(myAppItem.platform);
+            appAboutItems.add(platformItem);
+
+            AppAboutItem versionItem = new AppAboutItem();
+            versionItem.setTitle(getString(R.string.mini_app_version));
+            versionItem.setContent(myAppItem.version);
+            appAboutItems.add(versionItem);
+
+            AppAboutItem shortdescItem = new AppAboutItem();
+            shortdescItem.setTitle(getString(R.string.mini_app_shortdesc));
+            if(!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")){
+                shortdescItem.setContent(myAppItem.shortDesc_zh_CN);
+            } else {
+                shortdescItem.setContent(myAppItem.shortDesc_en);
+            }
+            appAboutItems.add(shortdescItem);
 
             mAdapter = new AppAboutAdapter(this, appAboutItems);
             mRecycleView.setLayoutManager(new LinearLayoutManager(this));

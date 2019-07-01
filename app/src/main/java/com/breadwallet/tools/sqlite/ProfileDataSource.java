@@ -91,6 +91,9 @@ public class ProfileDataSource implements BRDataSourceInterface {
             BRSQLiteHelper.ADD_APPS_URL,
             BRSQLiteHelper.ADD_APPS_PATH,
             BRSQLiteHelper.ADD_APPS_HASH,
+            BRSQLiteHelper.ADD_APPS_CATEGORY,
+            BRSQLiteHelper.ADD_APPS_PLATFORM,
+            BRSQLiteHelper.ADD_APPS_VERSION,
             BRSQLiteHelper.ADD_APPS_INDEX
     };
 
@@ -110,6 +113,9 @@ public class ProfileDataSource implements BRDataSourceInterface {
         item.url = cursor.getString(11);
         item.path = cursor.getString(12);
         item.hash = cursor.getString(13);
+        item.category = cursor.getString(14);
+        item.platform = cursor.getString(15);
+        item.version = cursor.getString(16);
 
         return item;
     }
@@ -171,6 +177,9 @@ public class ProfileDataSource implements BRDataSourceInterface {
                 value.put(BRSQLiteHelper.ADD_APPS_URL, item.url);
                 value.put(BRSQLiteHelper.ADD_APPS_PATH, item.path);
                 value.put(BRSQLiteHelper.ADD_APPS_HASH, item.hash);
+                value.put(BRSQLiteHelper.ADD_APPS_CATEGORY, item.category);
+                value.put(BRSQLiteHelper.ADD_APPS_PLATFORM, item.platform);
+                value.put(BRSQLiteHelper.ADD_APPS_VERSION, item.version);
                 value.put(BRSQLiteHelper.ADD_APPS_INDEX, i);
 
                 long l = database.insertWithOnConflict(BRSQLiteHelper.ADD_APPS_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
