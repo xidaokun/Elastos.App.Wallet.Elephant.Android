@@ -514,18 +514,19 @@ public class ElaDataSource implements BRDataSourceInterface {
             JSONObject jsonObject = new JSONObject(result);
             String tranactions = jsonObject.getString("result");
             ElaTransactionRes res = new Gson().fromJson(tranactions, ElaTransactionRes.class);
-            if(!StringUtil.isNullOrEmpty(memo)) {
-                String memoStr = null;
-                String outPutPublickey = getPublicKeyByAddress(outputsAddress);
-                if(!StringUtil.isNullOrEmpty(outPutPublickey)) {
-                    memo = ElastosKeypairCrypto.eciesEncrypt(outPutPublickey, memo);
-                    memoStr = new Meno("ciphertext", memo).toString();
-                } else {
-                    memoStr = new Meno("text", memo).toString();
-                }
-
-                res.Transactions.get(0).Memo = memoStr;
-            }
+            if(!StringUtil.isNullOrEmpty(memo)) res.Transactions.get(0).Memo = new Meno("text", memo).toString();
+//            if(!StringUtil.isNullOrEmpty(memo)) {
+//                String memoStr = null;
+//                String outPutPublickey = getPublicKeyByAddress(outputsAddress);
+//                if(!StringUtil.isNullOrEmpty(outPutPublickey)) {
+//                    memo = ElastosKeypairCrypto.eciesEncrypt(outPutPublickey, memo);
+//                    memoStr = new Meno("ciphertext", memo).toString();
+//                } else {
+//                    memoStr = new Meno("text", memo).toString();
+//                }
+//
+//                res.Transactions.get(0).Memo = memoStr;
+//            }
 
             List<ElaUTXOInputs> inputs = res.Transactions.get(0).UTXOInputs;
             for(int i=0; i<inputs.size(); i++){
