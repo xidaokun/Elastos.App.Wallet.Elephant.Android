@@ -358,23 +358,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
             @Override
             public void afterTextChanged(Editable s) {
-                try {
-                    BigDecimal totalAmount = new BigDecimal(mAmountEdit.getText().toString()).multiply(new BigDecimal(100000000)).add(new BigDecimal(4860));
-                    BigDecimal balance = BRSharedPrefs.getCachedBalance(getContext(), "ELA").multiply(new BigDecimal(100000000));
-                    String candidatesStr = BRSharedPrefs.getCandidate(getContext());
-                    String iso = BRSharedPrefs.getCurrentWalletIso(getContext());
-                    if(StringUtil.isNullOrEmpty(iso)
-                            || !iso.equalsIgnoreCase("ELA")
-                            || balance.longValue()<1
-                            || StringUtil.isNullOrEmpty(candidatesStr)
-                            || totalAmount.compareTo(balance)>0){
-                        mAutoVoteCb.setVisibility(View.GONE);
-                        hideVoteView();
-                        return;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                hideVoteCheckView();
             }
         });
 
@@ -735,6 +719,29 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
     }
 
+    private void hideVoteCheckView(){
+        if(StringUtil.isNullOrEmpty(mAmountEdit.getText().toString())){
+            mAutoVoteCb.setVisibility(View.GONE);
+            hideVoteView();
+            return;
+        }
+        BigDecimal totalAmount = new BigDecimal(mAmountEdit.getText().toString()).multiply(new BigDecimal(100000000)).add(new BigDecimal(4860));
+        BigDecimal balance = BRSharedPrefs.getCachedBalance(getContext(), "ELA").multiply(new BigDecimal(100000000));
+        String candidatesStr = BRSharedPrefs.getCandidate(getContext());
+        String iso = BRSharedPrefs.getCurrentWalletIso(getContext());
+        if(!StringUtil.isNullOrEmpty(iso) &&
+                iso.equalsIgnoreCase("ELA") &&
+                balance.compareTo(new BigDecimal(100000000))>0 &&
+                totalAmount.compareTo(balance)<0 &&
+                !StringUtil.isNullOrEmpty(candidatesStr)){
+            mAutoVoteCb.setVisibility(View.VISIBLE);
+            hideVoteView();
+        } else {
+            mAutoVoteCb.setVisibility(View.GONE);
+            hideVoteView();
+        }
+    }
+
     private void copyText() {
         StringBuilder sb = new StringBuilder();
         if(mProducers==null || mProducers.size()<=0) return;
@@ -1005,6 +1012,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             }
         }
         mAmountEdit.setText(newAmount.toString());
+        hideVoteCheckView();
     }
 
     private void setButton(boolean isRegular) {
@@ -1065,6 +1073,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             }
             if(!Utils.isNullOrEmpty(mViewModel.getAmount())){
                 mAmountEdit.setText(mViewModel.getAmount());
+                hideVoteCheckView();
             }
         }
     }
