@@ -497,8 +497,8 @@ public class UiUtils {
                 url = returnUrl + "?Data=" + Uri.encode(Data) + "&Sign=" + Uri.encode(Sign) /*+ "&browser=elaphant"*/;
             }
 
-            String clickAppId = BRSharedPrefs.getAddedAppId(activity);
-            if (!StringUtil.isNullOrEmpty(clickAppId) && appId.equals(clickAppId)
+            String addAppIds = BRSharedPrefs.getAddedAppId(activity);
+            if (!StringUtil.isNullOrEmpty(addAppIds) && addAppIds.contains(appId)
                 /*|| (!StringUtil.isNullOrEmpty(targe) && targe.equals("internal"))*/) {
                 UiUtils.startWebviewActivity(activity, url);
             } else {

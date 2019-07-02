@@ -213,12 +213,14 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         mAppIds.clear();
         mItems.clear();
         mRemoveApp.clear();
+        BRSharedPrefs.putAddedAppId(getContext(), new Gson().toJson(mAppIds));
         List<MyAppItem> tmp = ProfileDataSource.getInstance(getContext()).getMyAppItems();
         if (tmp != null && tmp.size() > 0) { //database
             Log.d(TAG, "MyAppItems size:"+tmp.size());
             mItems.addAll(tmp);
             for (MyAppItem item : tmp) {
                 mAppIds.add(item.appId);
+                BRSharedPrefs.putAddedAppId(getContext(), new Gson().toJson(mAppIds));
             }
             mAdapter.notifyDataSetChanged();
         } else {
@@ -334,8 +336,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             } else {
                 mLoadHintTv.setText(Html.fromHtml(String.format(getString(R.string.esign_load_mini_app_hint), item.name_en)));
             }
-
-            BRSharedPrefs.putAddedAppId(getContext(), item.appId);
         }
     }
 
@@ -513,6 +513,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                         deleteFile(new File(app.path));
                         mItems.remove(app);
                         mAppIds.remove(app.appId);
+                        BRSharedPrefs.putAddedAppId(getContext(), new Gson().toJson(mAppIds));
                     }
                 }
                 mAdapter.notifyDataSetChanged();
@@ -782,6 +783,8 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                                 mAppIds.add(item.appId);
                                 mItems.add(item);
                                 mHandler.sendEmptyMessage(UPDATE_APPS_MSG);
+
+                                BRSharedPrefs.putAddedAppId(getContext(), new Gson().toJson(mAppIds));
 
                                 upAppStatus(item.appId, "normal");
 //                                upUserAppInfo(mAppIds);
