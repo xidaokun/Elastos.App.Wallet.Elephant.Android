@@ -90,10 +90,12 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
         //TODO daokun.xi
         if(mIsDelete){
             holder.mAbout.setVisibility(View.GONE);
+            holder.mAboutTv.setVisibility(View.GONE);
             holder.mDelete.setVisibility(View.VISIBLE);
             holder.mTouch.setVisibility(View.VISIBLE);
         } else {
             holder.mAbout.setVisibility(View.VISIBLE);
+            holder.mAboutTv.setVisibility(View.VISIBLE);
             holder.mDelete.setVisibility(View.GONE);
             holder.mTouch.setVisibility(View.GONE);
         }
@@ -146,6 +148,7 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
         private BaseTextView mDeveloper;
         private RoundImageView mDelete;
         private BaseTextView mTouch;
+        private BaseTextView mAboutTv;
         private View mAbout;
         private View mItemView;
 
@@ -158,6 +161,7 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
             mDelete = itemView.findViewById(R.id.explore_item_delete_tv);
             mTouch = itemView.findViewById(R.id.explore_item_touch_tv);
             mAbout = itemView.findViewById(R.id.explore_item_about_shadow);
+            mAboutTv = itemView.findViewById(R.id.explore_item_about_tv);
             mItemView = itemView;
         }
 
