@@ -102,10 +102,9 @@ public class ExploreWebActivity extends BRActivity {
         mAboutTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ExploreWebActivity.this, AppAboutActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(ExploreWebActivity.this, AppAboutActivity.class);
+//                startActivity(intent);
                 mMenuLayout.setVisibility(View.GONE);
-
                 if(!StringUtil.isNullOrEmpty(mAppId)){
                     UiUtils.startMiniAppAboutActivity(ExploreWebActivity.this, mAppId);
                 }

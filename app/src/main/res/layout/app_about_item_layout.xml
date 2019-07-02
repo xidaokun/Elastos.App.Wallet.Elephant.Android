@@ -21,15 +21,12 @@
         android:id="@+id/app_about_item_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:lines="1"
+        android:singleLine="true"
         android:textSize="12sp"
         android:textColor="@color/black_888888"
-        android:layout_toLeftOf="@+id/app_about_item_share"
-        android:layout_centerVertical="true"
         android:gravity="right"
-        android:layout_toRightOf="@+id/app_about_item_title"
-        android:layout_alignParentRight="true"
-        android:layout_marginLeft="20dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="110dp"
         android:layout_marginRight="20dp"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
