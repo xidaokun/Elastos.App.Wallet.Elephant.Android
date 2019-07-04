@@ -329,12 +329,12 @@ public class CryptoUriParser {
         if(wm==null || StringUtil.isNullOrEmpty(addr)) return null;
         String iso = wm.getIso();
         Uri.Builder builder = new Uri.Builder();
-//        String walletScheme = wm.getScheme();
+        String walletScheme = wm.getScheme();
         String cleanAddress = addr;
         if (addr.contains(":")) {
             cleanAddress = addr.split(":")[1];
         }
-//        builder = builder.scheme(walletScheme);
+        builder = builder.scheme(walletScheme);
         if (!Utils.isNullOrEmpty(cleanAddress)) {
             builder = builder.appendPath(cleanAddress);
         }
