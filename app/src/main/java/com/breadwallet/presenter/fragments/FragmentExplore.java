@@ -739,6 +739,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
 
     private void unregisterDownloadListener(){
         FileDownloader.unregisterDownloadStatusListener(mOnFileDownloadStatusListener);
+        mOnFileDownloadStatusListener = null;
     }
 
     public void downloadCapsule(String url){
@@ -746,6 +747,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         if (StringUtil.isNullOrEmpty(url)) return;
         Uri uri = Uri.parse(url);
         mDoloadFileName = uri.getLastPathSegment();
+        mDoloadUrl = url;
         if (StringUtil.isNullOrEmpty(mDoloadFileName)) return;
         FileDownloader.start(url);
         registerDownloadListener();
