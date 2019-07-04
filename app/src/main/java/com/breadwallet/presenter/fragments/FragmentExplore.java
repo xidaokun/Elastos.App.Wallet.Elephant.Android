@@ -3,9 +3,7 @@ package com.breadwallet.presenter.fragments;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.security.keystore.UserNotAuthenticatedException;
@@ -51,12 +49,6 @@ import org.elastos.sdk.wallet.Did;
 import org.elastos.sdk.wallet.DidManager;
 import org.elastos.sdk.wallet.Identity;
 import org.elastos.sdk.wallet.IdentityManager;
-import org.wlf.filedownloader.DownloadFileInfo;
-import org.wlf.filedownloader.FileDownloadConfiguration;
-import org.wlf.filedownloader.FileDownloader;
-import org.wlf.filedownloader.listener.OnDeleteDownloadFileListener;
-import org.wlf.filedownloader.listener.OnFileDownloadStatusListener;
-import org.wlf.filedownloader.listener.simple.OnSimpleFileDownloadStatusListener;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -64,9 +56,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -132,6 +121,8 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     private static final int SHOW_LOADING = 0x03;
     private static final int DISMISS_LOADING = 0x04;
     private static final int TOAST_MESSAGE = 0x05;
+    private static final int DOWNLOAD_FAILED = 0x06;
+    private static final int REMOVE_MINI_APP = 0x07;
 
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
@@ -164,6 +155,20 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                     String message = (String) msg.obj;
                     Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                     break;
+                case DOWNLOAD_FAILED:
+                    Toast.makeText(getContext(), "download failed", Toast.LENGTH_SHORT).show();
+                    if (mLoadingDialog.isShowing()) {
+                        mLoadingDialog.dismiss();
+                    }
+                    break;
+                case REMOVE_MINI_APP:
+                    for (MyAppItem app : mRemoveApp) {
+                        ProfileDataSource.getInstance(getContext()).deleteAppItem(app.appId);
+                        upAppStatus(app.appId, "deleted");
+                        deleteFile(new File(app.path));
+                    }
+                    BRSharedPrefs.putAddedAppId(getContext(), new Gson().toJson(mAppIds));
+                    break;
                 default:
                     break;
             }
@@ -180,6 +185,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         initListener();
         initDid();
         initDownloader();
+        initApps();
         return rootView;
     }
 
@@ -226,7 +232,13 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         mItems.clear();
         mRemoveApp.clear();
 
-//        getInterApps();
+//        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                BRSharedPrefs.setHasReset(getContext(), true);
+//                getInterApps();
+//            }
+//        });
 
         BRSharedPrefs.putAddedAppId(getContext(), new Gson().toJson(mAppIds));
         List<MyAppItem> tmp = ProfileDataSource.getInstance(getContext()).getMyAppItems();
@@ -238,7 +250,15 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 BRSharedPrefs.putAddedAppId(getContext(), new Gson().toJson(mAppIds));
             }
             mAdapter.notifyDataSetChanged();
-        } else {
+        }
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                getInterApps();
+                BRSharedPrefs.setHasReset(getContext(), true);
+            }
+        });
+        /*else {
             boolean has = BRSharedPrefs.hasReset(getContext());
             if (has) return;
             Log.d(TAG, "MyAppItems size:0");
@@ -249,19 +269,13 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                     getInterApps();
                 }
             });
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume");
-        initApps();
+        }*/
     }
 
     private synchronized void getInterApps() {
         try {
-            showDialog();
+            boolean has = BRSharedPrefs.hasReset(getContext());
+            if (!has) showDialog();
             StringChainData redPackageStatus = getAppStatus(BRConstants.REA_PACKAGE_ID);
             if (null == redPackageStatus ||
                     StringUtil.isNullOrEmpty(redPackageStatus.value) ||
@@ -269,10 +283,10 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 Log.d(TAG, "copy redpackage");
                 mDoloadFileName = "redpacket.capsule";
                 mDoloadUrl = "https://redpacket.elastos.org/redpacket.capsule";
-                copyCapsuleToDownloadCache(getContext(), mDownloadDir, mDoloadFileName);
+                copyCapsuleToDownloadCache(getContext(), mDownloadDir.getAbsolutePath(), mDoloadFileName);
                 refreshApps();
             }
-            showDialog();
+            if (!has) showDialog();
             StringChainData dposVoteStatus = getAppStatus(BRConstants.DPOS_VOTE_ID);
             if (null == dposVoteStatus ||
                     StringUtil.isNullOrEmpty(dposVoteStatus.value) ||
@@ -280,10 +294,10 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 Log.d(TAG, "copy dposvote");
                 mDoloadFileName = "vote.capsule";
                 mDoloadUrl = "http://elaphant.net/vote.capsule";
-                copyCapsuleToDownloadCache(getContext(), mDownloadDir, mDoloadFileName);
+                copyCapsuleToDownloadCache(getContext(), mDownloadDir.getAbsolutePath(), mDoloadFileName);
                 refreshApps();
             }
-            showDialog();
+            if (!has) showDialog();
             StringChainData elaNewsStatus = getAppStatus(BRConstants.ELA_NEWS_ID);
             if (null == elaNewsStatus ||
                     StringUtil.isNullOrEmpty(elaNewsStatus.value) ||
@@ -291,7 +305,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 Log.d(TAG, "copy elaNews");
                 mDoloadFileName = "ELANews01.capsule";
                 mDoloadUrl = "https://elanews.net/ELANews01.capsule";
-                copyCapsuleToDownloadCache(getContext(), mDownloadDir, mDoloadFileName);
+                copyCapsuleToDownloadCache(getContext(), mDownloadDir.getAbsolutePath(), mDoloadFileName);
                 refreshApps();
             }
         } catch (Exception e) {
@@ -437,6 +451,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 mAdapter.isDelete(false);
                 mIsLongPressDragEnabled = false;
                 mHandler.sendEmptyMessage(UPDATE_APPS_MSG);
+                mHandler.sendEmptyMessage(REMOVE_MINI_APP);
             }
         });
 
@@ -524,16 +539,11 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 mRemoveAppLayout.setVisibility(View.GONE);
                 if (mRemoveApp.size() > 0) {
                     for (MyAppItem app : mRemoveApp) {
-                        ProfileDataSource.getInstance(getContext()).deleteAppItem(app.appId);
-                        upAppStatus(app.appId, "deleted");
-                        deleteFile(new File(app.path));
                         mItems.remove(app);
                         mAppIds.remove(app.appId);
-                        BRSharedPrefs.putAddedAppId(getContext(), new Gson().toJson(mAppIds));
+                        mAdapter.notifyDataSetChanged();
                     }
                 }
-                mAdapter.notifyDataSetChanged();
-                mRemoveApp.clear();
             }
         });
 
@@ -589,6 +599,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         InputStream inputStream = null;
         OutputStream outputStream = null;
         try {
+            if (!new File(fileOutputPath).exists()) new File(fileOutputPath).mkdirs();
             File capsuleFile = new File(fileOutputPath, capsuleName);
             if (capsuleFile.exists()) {
                 capsuleFile.delete();
@@ -677,11 +688,13 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         }
     }
 
-    private String mDownloadDir = null;
+    private File mDownloadDir = null;
 
     private void initDownloader() {
         try {
-            mDownloadDir = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule_download").getAbsolutePath();
+            mDownloadDir = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule_download");
+            if (!mDownloadDir.exists()) mDownloadDir.mkdirs();
+
 //            FileDownloadConfiguration.Builder builder = new FileDownloadConfiguration.Builder(getContext());
 //            builder.configFileDownloadDir(mDownloadDir);
 //            builder.configDownloadTaskSize(3);
@@ -695,27 +708,15 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         }
     }
 
-//    public void downloadCapsule(String url) {
-//        Log.d(TAG, "capsule url:" + url);
-//        if (StringUtil.isNullOrEmpty(url)) return;
-//        Uri uri = Uri.parse(url);
-//        mDoloadFileName = uri.getLastPathSegment();
-//        mDoloadUrl = url;
-//        if (StringUtil.isNullOrEmpty(mDoloadFileName)) return;
-//        FileDownloader.start(url);
-//        registerDownloadListener();
-//        showDialog();
-//    }
-
     public void downloadCapsule(final String url) {
-        if(StringUtil.isNullOrEmpty(url)) return;
-        showDialog();
+        if (StringUtil.isNullOrEmpty(url)) return;
+        mHandler.sendEmptyMessage(SHOW_LOADING);
         OkHttpClient okHttpClient = new OkHttpClient();
         Request request = new Request.Builder().url(url).build();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                mHandler.sendEmptyMessage(DOWNLOAD_FAILED);
             }
 
             @Override
@@ -765,7 +766,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                                     fos.close();
                             } catch (IOException e) {
                             }
-                            dialogDismiss();
+                            mHandler.sendEmptyMessage(DISMISS_LOADING);
                         }
                     }
                 });
@@ -796,8 +797,8 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             Log.d(TAG, "mDoloadFileName:" + mDoloadFileName + " hash:" + hash);
 
 //                            String key = "key=Dev/dopsvote.h5.app/Release/Web/1.0.0";
-            String key = "Dev/" + item.name + "/Release/" + item.platform + "/" + item.version;
-            RegisterChainData appSetting = ProfileDataSource.getInstance(getContext()).getMiniAppSetting(item.did, key);
+//            String key = "Dev/" + item.name + "/Release/" + item.platform + "/" + item.version;
+//            RegisterChainData appSetting = ProfileDataSource.getInstance(getContext()).getMiniAppSetting(item.did, key);
 
 //            if (StringUtil.isNullOrEmpty(hash) ||
 //                    null == appSetting ||
@@ -806,8 +807,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
 //                messageToast("illegal file");
 //                deleteFile(downloadPath);
 //                deleteFile(outPath);
-//                deleteDownloadCapsule(mDoloadUrl);
-////                                deleteFile(backupPath);
+////              deleteFile(backupPath);
 //                return;
 //            }
             Log.d(TAG, "capsule legitimacy");
