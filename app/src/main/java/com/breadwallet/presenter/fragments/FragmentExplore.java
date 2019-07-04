@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.security.keystore.UserNotAuthenticatedException;
@@ -53,6 +54,7 @@ import org.elastos.sdk.wallet.IdentityManager;
 import org.wlf.filedownloader.DownloadFileInfo;
 import org.wlf.filedownloader.FileDownloadConfiguration;
 import org.wlf.filedownloader.FileDownloader;
+import org.wlf.filedownloader.listener.OnDeleteDownloadFileListener;
 import org.wlf.filedownloader.listener.OnFileDownloadStatusListener;
 import org.wlf.filedownloader.listener.simple.OnSimpleFileDownloadStatusListener;
 
@@ -62,6 +64,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -135,7 +140,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
 //                    mAdapter.notifyDataSetChanged();
                     break;
                 case UPDATE_APPS_MSG:
-                    Log.d(TAG, "handler UPDATE_APPS_MSG items size:"+mItems.size());
+                    Log.d(TAG, "handler UPDATE_APPS_MSG items size:" + mItems.size());
                     ProfileDataSource.getInstance(getContext()).updateMyAppItem(mItems);
                     mAdapter.notifyDataSetChanged();
                     break;
@@ -220,7 +225,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         BRSharedPrefs.putAddedAppId(getContext(), new Gson().toJson(mAppIds));
         List<MyAppItem> tmp = ProfileDataSource.getInstance(getContext()).getMyAppItems();
         if (tmp != null && tmp.size() > 0) { //database
-            Log.d(TAG, "MyAppItems size:"+tmp.size());
+            Log.d(TAG, "MyAppItems size:" + tmp.size());
             mItems.addAll(tmp);
             for (MyAppItem item : tmp) {
                 mAppIds.add(item.appId);
@@ -229,7 +234,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             mAdapter.notifyDataSetChanged();
         } else {
             boolean has = BRSharedPrefs.hasReset(getContext());
-            if(has) return;
+            if (has) return;
             Log.d(TAG, "MyAppItems size:0");
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
@@ -537,11 +542,11 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             @Override
             public void onClick(View v) {
                 mLoadAppLayout.setVisibility(View.GONE);
-                if(!StringUtil.isNullOrEmpty(mLoadUrl)){
+                if (!StringUtil.isNullOrEmpty(mLoadUrl)) {
                     if (mLoadUrl.contains("?")) {
-                        mLoadUrl = mLoadUrl+ "&browser=elaphant";
+                        mLoadUrl = mLoadUrl + "&browser=elaphant";
                     } else {
-                        mLoadUrl = mLoadUrl+ "?browser=elaphant";
+                        mLoadUrl = mLoadUrl + "?browser=elaphant";
                     }
                     UiUtils.startWebviewActivity(getActivity(), mLoadUrl, mLoadAppId);
                 }
@@ -667,7 +672,8 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     }
 
     private String mDownloadDir = null;
-    private void initDownloader(){
+
+    private void initDownloader() {
         try {
             mDownloadDir = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule_download").getAbsolutePath();
             FileDownloadConfiguration.Builder builder = new FileDownloadConfiguration.Builder(getContext());
@@ -683,78 +689,163 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         }
     }
 
-    private OnFileDownloadStatusListener mOnFileDownloadStatusListener = new OnSimpleFileDownloadStatusListener() {
-        @Override
-        public void onFileDownloadStatusRetrying(DownloadFileInfo downloadFileInfo, int retryTimes) {
-            super.onFileDownloadStatusRetrying(downloadFileInfo, retryTimes);
-        }
+    private OnFileDownloadStatusListener mOnFileDownloadStatusListener = null;
 
-        @Override
-        public void onFileDownloadStatusWaiting(DownloadFileInfo downloadFileInfo) {
-            super.onFileDownloadStatusWaiting(downloadFileInfo);
-        }
-
-        @Override
-        public void onFileDownloadStatusPreparing(DownloadFileInfo downloadFileInfo) {
-            super.onFileDownloadStatusPreparing(downloadFileInfo);
-        }
-
-        @Override
-        public void onFileDownloadStatusPrepared(DownloadFileInfo downloadFileInfo) {
-            super.onFileDownloadStatusPrepared(downloadFileInfo);
-        }
-
-        @Override
-        public void onFileDownloadStatusDownloading(DownloadFileInfo downloadFileInfo, float downloadSpeed, long remainingTime) {
-            super.onFileDownloadStatusDownloading(downloadFileInfo, downloadSpeed, remainingTime);
-        }
-
-        @Override
-        public void onFileDownloadStatusPaused(DownloadFileInfo downloadFileInfo) {
-            super.onFileDownloadStatusPaused(downloadFileInfo);
-        }
-
-        @Override
-        public void onFileDownloadStatusCompleted(DownloadFileInfo downloadFileInfo) {
-            super.onFileDownloadStatusCompleted(downloadFileInfo);
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+    private void registerDownloadListener() {
+        if (null == mOnFileDownloadStatusListener) {
+            mOnFileDownloadStatusListener = new OnSimpleFileDownloadStatusListener() {
                 @Override
-                public void run() {
-                    refreshApps();
+                public void onFileDownloadStatusRetrying(DownloadFileInfo downloadFileInfo, int retryTimes) {
+                    super.onFileDownloadStatusRetrying(downloadFileInfo, retryTimes);
+                }
+
+                @Override
+                public void onFileDownloadStatusWaiting(DownloadFileInfo downloadFileInfo) {
+                    super.onFileDownloadStatusWaiting(downloadFileInfo);
+                }
+
+                @Override
+                public void onFileDownloadStatusPreparing(DownloadFileInfo downloadFileInfo) {
+                    super.onFileDownloadStatusPreparing(downloadFileInfo);
+                }
+
+                @Override
+                public void onFileDownloadStatusPrepared(DownloadFileInfo downloadFileInfo) {
+                    super.onFileDownloadStatusPrepared(downloadFileInfo);
+                }
+
+                @Override
+                public void onFileDownloadStatusDownloading(DownloadFileInfo downloadFileInfo, float downloadSpeed, long remainingTime) {
+                    super.onFileDownloadStatusDownloading(downloadFileInfo, downloadSpeed, remainingTime);
+                }
+
+                @Override
+                public void onFileDownloadStatusPaused(DownloadFileInfo downloadFileInfo) {
+                    super.onFileDownloadStatusPaused(downloadFileInfo);
+                }
+
+                @Override
+                public void onFileDownloadStatusCompleted(final DownloadFileInfo downloadFileInfo) {
+                    super.onFileDownloadStatusCompleted(downloadFileInfo);
+                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            refreshApps();
+                            deleteDownloadCapsule(downloadFileInfo.getUrl());
+                            dialogDismiss();
+                        }
+                    });
+                }
+
+                @Override
+                public void onFileDownloadStatusFailed(String url, DownloadFileInfo downloadFileInfo, FileDownloadStatusFailReason failReason) {
+                    super.onFileDownloadStatusFailed(url, downloadFileInfo, failReason);
                     dialogDismiss();
                 }
-            });
+            };
+            FileDownloader.registerDownloadStatusListener(mOnFileDownloadStatusListener);
         }
-
-        @Override
-        public void onFileDownloadStatusFailed(String url, DownloadFileInfo downloadFileInfo, FileDownloadStatusFailReason failReason) {
-            super.onFileDownloadStatusFailed(url, downloadFileInfo, failReason);
-            dialogDismiss();
-        }
-    };
-
-    private void registerDownloadListener(){
-        FileDownloader.registerDownloadStatusListener(mOnFileDownloadStatusListener);
     }
 
-    private void unregisterDownloadListener(){
+    private void deleteDownloadCapsule(String url){
+        if(StringUtil.isNullOrEmpty(url)) return;
+        FileDownloader.delete(url, true, new OnDeleteDownloadFileListener() {
+            @Override
+            public void onDeleteDownloadFilePrepared(DownloadFileInfo downloadFileNeedDelete) {
+                Log.d("test", "test");
+            }
+
+            @Override
+            public void onDeleteDownloadFileSuccess(DownloadFileInfo downloadFileDeleted) {
+                Log.d("test", "test");
+            }
+
+            @Override
+            public void onDeleteDownloadFileFailed(DownloadFileInfo downloadFileInfo, DeleteDownloadFileFailReason failReason) {
+                Log.d("test", "test");
+            }
+        });
+    }
+
+    private void unregisterDownloadListener() {
         FileDownloader.unregisterDownloadStatusListener(mOnFileDownloadStatusListener);
         mOnFileDownloadStatusListener = null;
     }
 
-    public void downloadCapsule(String url){
-        Log.d(TAG, "capsule url:" + url);
-        if (StringUtil.isNullOrEmpty(url)) return;
-        Uri uri = Uri.parse(url);
-        mDoloadFileName = uri.getLastPathSegment();
-        mDoloadUrl = url;
-        if (StringUtil.isNullOrEmpty(mDoloadFileName)) return;
-        FileDownloader.start(url);
-        registerDownloadListener();
+//    public void downloadCapsule(String url) {
+//        Log.d(TAG, "capsule url:" + url);
+//        if (StringUtil.isNullOrEmpty(url)) return;
+//        Uri uri = Uri.parse(url);
+//        mDoloadFileName = uri.getLastPathSegment();
+//        mDoloadUrl = url;
+//        if (StringUtil.isNullOrEmpty(mDoloadFileName)) return;
+//        FileDownloader.start(url);
+//        registerDownloadListener();
+//        showDialog();
+//    }
+
+    public void downloadCapsule(final String url){
+        if(StringUtil.isNullOrEmpty(url)) return;
         showDialog();
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                try{
+//            String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+
+                    final long startTime = System.currentTimeMillis();
+                    Log.i("DOWNLOAD","startTime="+startTime);
+                    String filename=url.substring(url.lastIndexOf("/") + 1);
+                    mDoloadFileName = filename;
+                    mDoloadUrl = url;
+                    URL myURL = new URL(url);
+                    URLConnection conn = myURL.openConnection();
+                    conn.connect();
+                    InputStream is = conn.getInputStream();
+                    int fileSize = conn.getContentLength();//根据响应获取文件大小
+                    if (fileSize <= 0) throw new RuntimeException("无法获知文件大小 ");
+                    if (is == null) throw new RuntimeException("stream is null");
+                    File file1 = new File(mDownloadDir);
+                    if(!file1.exists()){
+                        file1.mkdirs();
+                    }
+                    File outputFile = new File(mDownloadDir+"/"+filename);
+                    if(outputFile.exists()){
+                        outputFile.delete();
+                    }
+                    //把数据存入路径+文件名
+                    FileOutputStream fos = new FileOutputStream(outputFile.getAbsoluteFile());
+                    byte buf[] = new byte[1024];
+                    int downLoadFileSize = 0;
+                    do{
+                        //循环读取
+                        int numread = is.read(buf);
+                        if (numread == -1)
+                        {
+                            break;
+                        }
+                        fos.write(buf, 0, numread);
+                        downLoadFileSize += numread;
+                        //更新进度条
+                    } while (true);
+
+                    logFile("downloadPath", new File(mDownloadDir));
+                    refreshApps();
+
+                    Log.i("DOWNLOAD","download success");
+                    Log.i("DOWNLOAD","totalTime="+ (System.currentTimeMillis() - startTime));
+
+                    is.close();
+                } catch (Exception ex) {
+                    Log.e("DOWNLOAD", "error: " + ex.getMessage(), ex);
+                } finally {
+                    dialogDismiss();
+                }
+            }
+        });
     }
 
-    private void refreshApps(){
+    private void refreshApps() {
         try {
             File downloadPath = new File(mDownloadDir, mDoloadFileName);
             File outPath = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule/" + mDoloadFileName);
@@ -763,11 +854,11 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
 //            logFile(mDoloadFileName, outPath);
 
             File appJsonPath = findAppJsonPath(outPath);
-            Log.d(TAG, "appJsonPath:"+appJsonPath);
-            if(appJsonPath == null) return;
+            Log.d(TAG, "appJsonPath:" + appJsonPath);
+            if (appJsonPath == null) return;
             String json = getJsonFromCapsule(appJsonPath);
             MyAppItem item = new Gson().fromJson(json, MyAppItem.class);
-            if(item == null) return;
+            if (item == null) return;
 
             item.path = /*new File(backupPath, mDoloadFileName).getAbsolutePath()*/mDoloadUrl;
             item.icon = new File(outPath, item.icon).getAbsolutePath();
@@ -786,6 +877,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 messageToast("illegal file");
                 deleteFile(downloadPath);
                 deleteFile(outPath);
+                deleteDownloadCapsule(mDoloadUrl);
 //                                deleteFile(backupPath);
                 return;
             }
@@ -804,7 +896,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 mHandler.sendEmptyMessage(UPDATE_APPS_MSG);
 
                 BRSharedPrefs.putAddedAppId(getContext(), new Gson().toJson(mAppIds));
-
                 upAppStatus(item.appId, "normal");
 //                                upUserAppInfo(mAppIds);
             }
@@ -957,17 +1048,17 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         unZipFolder(srcPath, outPath);
     }
 
-    private File findAppJsonPath(File path){
-        if(null == path) return null;
+    private File findAppJsonPath(File path) {
+        if (null == path) return null;
         File[] files = path.listFiles();
         for (File file : files) {
-            if(file.isDirectory()){
+            if (file.isDirectory()) {
                 findAppJsonPath(file);
-                Log.d(TAG," findAppJsonPath directory name:" + file.getName());
+                Log.d(TAG, " findAppJsonPath directory name:" + file.getName());
             } else {
                 String name = file.getName();
-                if(name.equals("app.json")){
-                    Log.d(TAG," findAppJsonPath file name:" + file.getAbsolutePath());
+                if (name.equals("app.json")) {
+                    Log.d(TAG, " findAppJsonPath file name:" + file.getAbsolutePath());
                     return file;
                 }
             }
@@ -981,7 +1072,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         File[] files = path.listFiles();
         if (files == null) return;
         for (File file : files) {
-            if(file.isDirectory()) {
+            if (file.isDirectory()) {
                 logFile(file.getName(), file);
                 Log.d(TAG, flag + " fileName:" + file.getAbsolutePath());
             } else {
@@ -1037,7 +1128,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     }
 
     private void messageToast(final String message) {
-        if(StringUtil.isNullOrEmpty(message)) return;
+        if (StringUtil.isNullOrEmpty(message)) return;
         Message msg = new Message();
         msg.what = TOAST_MESSAGE;
         msg.obj = message;
