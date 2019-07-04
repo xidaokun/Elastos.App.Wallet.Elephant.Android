@@ -330,6 +330,8 @@
     <string name="NodeSelector.connected">Connected</string>
     <!-- Node is connecting label -->
     <string name="NodeSelector.connecting">Connecting</string>
+    <!-- Node is connect error label -->
+    <string name="NodeSelector.connect.error">Connect Error</string>
     <!-- Enter node ip address view body -->
     <string name="NodeSelector.enterBody">Enter Node address</string>
     <!-- Enter Node ip address view title -->

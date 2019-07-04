@@ -2,14 +2,9 @@ package com.breadwallet.presenter.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.DownloadManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.security.keystore.UserNotAuthenticatedException;
@@ -55,6 +50,11 @@ import org.elastos.sdk.wallet.Did;
 import org.elastos.sdk.wallet.DidManager;
 import org.elastos.sdk.wallet.Identity;
 import org.elastos.sdk.wallet.IdentityManager;
+import org.wlf.filedownloader.DownloadFileInfo;
+import org.wlf.filedownloader.FileDownloadConfiguration;
+import org.wlf.filedownloader.FileDownloader;
+import org.wlf.filedownloader.listener.OnFileDownloadStatusListener;
+import org.wlf.filedownloader.listener.simple.OnSimpleFileDownloadStatusListener;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -168,6 +168,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         initAdapter();
         initListener();
         initDid();
+        initDownloader();
         return rootView;
     }
 
@@ -213,6 +214,9 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         mAppIds.clear();
         mItems.clear();
         mRemoveApp.clear();
+
+//        getInterApps();
+
         BRSharedPrefs.putAddedAppId(getContext(), new Gson().toJson(mAppIds));
         List<MyAppItem> tmp = ProfileDataSource.getInstance(getContext()).getMyAppItems();
         if (tmp != null && tmp.size() > 0) { //database
@@ -230,8 +234,8 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
+                    BRSharedPrefs.setHasReset(getContext(), true);
                     getInterApps();
-//        resetAppsFromNet();
                 }
             });
         }
@@ -244,10 +248,9 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         initApps();
     }
 
-    private void getInterApps() {
+    private synchronized void getInterApps() {
         try {
             showDialog();
-            String downloadFile = getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
             StringChainData redPackageStatus = getAppStatus(BRConstants.REA_PACKAGE_ID);
             if (null == redPackageStatus ||
                     StringUtil.isNullOrEmpty(redPackageStatus.value) ||
@@ -255,7 +258,8 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 Log.d(TAG, "copy redpackage");
                 mDoloadFileName = "redpacket.capsule";
                 mDoloadUrl = "https://redpacket.elastos.org/redpacket.capsule";
-                copyCapsuleToDownloadCache(getContext(), downloadFile, mDoloadFileName);
+                copyCapsuleToDownloadCache(getContext(), mDownloadDir, mDoloadFileName);
+                refreshApps();
             }
             showDialog();
             StringChainData dposVoteStatus = getAppStatus(BRConstants.DPOS_VOTE_ID);
@@ -265,7 +269,8 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 Log.d(TAG, "copy dposvote");
                 mDoloadFileName = "vote.capsule";
                 mDoloadUrl = "http://elaphant.net/vote.capsule";
-                copyCapsuleToDownloadCache(getContext(), downloadFile, mDoloadFileName);
+                copyCapsuleToDownloadCache(getContext(), mDownloadDir, mDoloadFileName);
+                refreshApps();
             }
             showDialog();
             StringChainData elaNewsStatus = getAppStatus(BRConstants.ELA_NEWS_ID);
@@ -275,13 +280,13 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 Log.d(TAG, "copy elaNews");
                 mDoloadFileName = "ELANews01.capsule";
                 mDoloadUrl = "https://elanews.net/ELANews01.capsule";
-                copyCapsuleToDownloadCache(getContext(), downloadFile, mDoloadFileName);
+                copyCapsuleToDownloadCache(getContext(), mDownloadDir, mDoloadFileName);
+                refreshApps();
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             dialogDismiss();
-            BRSharedPrefs.setHasReset(getContext(), true);
         }
 
 //        StringChainData swftStatus = getAppStatus(BRConstants.EXCHANGE_ID);
@@ -563,36 +568,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         mItemTouchHelper.startDrag(viewHolder);
     }
 
-    private void resetAppsFromNet() {
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                //third app
-//                UserAppInfo userAppInfo = getUserAppInfo();
-//                if (null == userAppInfo) return;
-//                List<String> appIds = new Gson().fromJson(miniApps.value, new TypeToken<List<String>>() {
-//                }.getType());
-//                if (null == appIds) return;
-//                for (String appId : appIds) {
-//                    if (StringUtil.isNullOrEmpty(appId)) break;
-//                    if (appId.equals(BRConstants.REA_PACKAGE_ID) ||
-//                            appId.equals(BRConstants.DPOS_VOTE_ID) ||
-//                            appId.equals(BRConstants.EXCHANGE_ID)) break;
-//                    StringChainData appStatus = getAppStatus(appId);
-//                    if (null == appStatus ||
-//                            StringUtil.isNullOrEmpty(appStatus.value) ||
-//                            appStatus.value.equals("normal")) {
-//                        getUserAppInfo();
-//                        if (null == appUrlEntity || StringUtil.isNullOrEmpty(appUrlEntity.value))
-//                            return;
-//                        downloadCapsule(appUrlEntity.value);
-//                    }
-//                }
-            }
-        });
-    }
-
-    private DownloadManager manager;
     private String mDoloadFileName;
     private String mDoloadUrl;
 
@@ -615,11 +590,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 outputStream.write(buffer, 0, length);
                 length = inputStream.read(buffer);
             }
-
-            registerDownloadReceiver();
-            Intent intent = new Intent();
-            intent.setAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
-            getContext().sendBroadcast(intent);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -651,10 +621,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 length = inputStream.read(buffer);
             }
 
-            registerDownloadReceiver();
-            Intent intent = new Intent();
-            intent.setAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
-            getContext().sendBroadcast(intent);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -700,109 +666,150 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         }
     }
 
-    public long downloadCapsule(String url) {
-        Log.d(TAG, "capsule url:" + url);
-        if (StringUtil.isNullOrEmpty(url)) return -1;
-        DownloadManager.Request request;
+    private String mDownloadDir = null;
+    private void initDownloader(){
         try {
-            Uri uri = Uri.parse(url);
-            mDoloadFileName = uri.getLastPathSegment();
-            mDoloadUrl = url;
-            if (StringUtil.isNullOrEmpty(mDoloadFileName)) return -1;
-
-            File downloadFile = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile(), mDoloadFileName);
-            if (downloadFile.exists()) {
-                downloadFile.delete();
-            }
-
-            showDialog();
-            request = new DownloadManager.Request(uri);
-            request.setDestinationInExternalFilesDir(getContext(), Environment.DIRECTORY_DOWNLOADS, mDoloadFileName);
-            manager = (DownloadManager) getContext().getApplicationContext().getSystemService(Context.DOWNLOAD_SERVICE);
-            long downloadId = manager.enqueue(request);
-            registerDownloadReceiver();
-            return downloadId;
+            mDownloadDir = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule_download").getAbsolutePath();
+            FileDownloadConfiguration.Builder builder = new FileDownloadConfiguration.Builder(getContext());
+            builder.configFileDownloadDir(mDownloadDir);
+            builder.configDownloadTaskSize(3);
+            builder.configRetryDownloadTimes(3);
+            builder.configDebugMode(false);
+            builder.configConnectTimeout(25000);
+            FileDownloadConfiguration configuration = builder.build();
+            FileDownloader.init(configuration);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return -1;
     }
 
-    private void registerDownloadReceiver() {
-        IntentFilter intentFilter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
-        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            File downloadPath = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile(), mDoloadFileName);
-                            File outPath = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule/" + mDoloadFileName);
-//                            File backupPath = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "cbackup/");
-                            decompression(downloadPath.getAbsolutePath(), outPath.getAbsolutePath());
-//                            backupCapsule(downloadPath, backupPath, mDoloadFileName);
-//                            logFile("srcPath", getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile());
-//                            logFile("outPath", new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule").getAbsoluteFile());
+    private OnFileDownloadStatusListener mOnFileDownloadStatusListener = new OnSimpleFileDownloadStatusListener() {
+        @Override
+        public void onFileDownloadStatusRetrying(DownloadFileInfo downloadFileInfo, int retryTimes) {
+            super.onFileDownloadStatusRetrying(downloadFileInfo, retryTimes);
+        }
 
-                            File appJsonPath = new File(outPath, "/app.json");
-                            String json = getJsonFromCapsule(appJsonPath);
-                            MyAppItem item = new Gson().fromJson(json, MyAppItem.class);
-                            item.path = /*new File(backupPath, mDoloadFileName).getAbsolutePath()*/mDoloadUrl;
-                            if (item != null) {
-                                item.icon = new File(outPath, item.icon).getAbsolutePath();
-                            }
+        @Override
+        public void onFileDownloadStatusWaiting(DownloadFileInfo downloadFileInfo) {
+            super.onFileDownloadStatusWaiting(downloadFileInfo);
+        }
 
-                            String hash = CryptoHelper.getShaChecksum(downloadPath.getAbsolutePath());
-                            Log.d(TAG, "mDoloadFileName:" + mDoloadFileName + " hash:" + hash);
+        @Override
+        public void onFileDownloadStatusPreparing(DownloadFileInfo downloadFileInfo) {
+            super.onFileDownloadStatusPreparing(downloadFileInfo);
+        }
+
+        @Override
+        public void onFileDownloadStatusPrepared(DownloadFileInfo downloadFileInfo) {
+            super.onFileDownloadStatusPrepared(downloadFileInfo);
+        }
+
+        @Override
+        public void onFileDownloadStatusDownloading(DownloadFileInfo downloadFileInfo, float downloadSpeed, long remainingTime) {
+            super.onFileDownloadStatusDownloading(downloadFileInfo, downloadSpeed, remainingTime);
+        }
+
+        @Override
+        public void onFileDownloadStatusPaused(DownloadFileInfo downloadFileInfo) {
+            super.onFileDownloadStatusPaused(downloadFileInfo);
+        }
+
+        @Override
+        public void onFileDownloadStatusCompleted(DownloadFileInfo downloadFileInfo) {
+            super.onFileDownloadStatusCompleted(downloadFileInfo);
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    refreshApps();
+                    dialogDismiss();
+                }
+            });
+        }
+
+        @Override
+        public void onFileDownloadStatusFailed(String url, DownloadFileInfo downloadFileInfo, FileDownloadStatusFailReason failReason) {
+            super.onFileDownloadStatusFailed(url, downloadFileInfo, failReason);
+            dialogDismiss();
+        }
+    };
+
+    private void registerDownloadListener(){
+        FileDownloader.registerDownloadStatusListener(mOnFileDownloadStatusListener);
+    }
+
+    private void unregisterDownloadListener(){
+        FileDownloader.unregisterDownloadStatusListener(mOnFileDownloadStatusListener);
+    }
+
+    public void downloadCapsule(String url){
+        Log.d(TAG, "capsule url:" + url);
+        if (StringUtil.isNullOrEmpty(url)) return;
+        Uri uri = Uri.parse(url);
+        mDoloadFileName = uri.getLastPathSegment();
+        if (StringUtil.isNullOrEmpty(mDoloadFileName)) return;
+        FileDownloader.start(url);
+        registerDownloadListener();
+        showDialog();
+    }
+
+    private void refreshApps(){
+        try {
+            File downloadPath = new File(mDownloadDir, mDoloadFileName);
+            File outPath = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule/" + mDoloadFileName);
+            decompression(downloadPath.getAbsolutePath(), outPath.getAbsolutePath());
+
+//            logFile(mDoloadFileName, outPath);
+
+            File appJsonPath = findAppJsonPath(outPath);
+            Log.d(TAG, "appJsonPath:"+appJsonPath);
+            if(appJsonPath == null) return;
+            String json = getJsonFromCapsule(appJsonPath);
+            MyAppItem item = new Gson().fromJson(json, MyAppItem.class);
+            if(item == null) return;
+
+            item.path = /*new File(backupPath, mDoloadFileName).getAbsolutePath()*/mDoloadUrl;
+            item.icon = new File(outPath, item.icon).getAbsolutePath();
+
+            String hash = CryptoHelper.getShaChecksum(downloadPath.getAbsolutePath());
+            Log.d(TAG, "mDoloadFileName:" + mDoloadFileName + " hash:" + hash);
 
 //                            String key = "key=Dev/dopsvote.h5.app/Release/Web/1.0.0";
-                            String key = "Dev/" + item.name + "/Release/" + item.platform + "/" + item.version;
-                            RegisterChainData appSetting = ProfileDataSource.getInstance(getContext()).getMiniAppSetting(item.did, key);
+            String key = "Dev/" + item.name + "/Release/" + item.platform + "/" + item.version;
+            RegisterChainData appSetting = ProfileDataSource.getInstance(getContext()).getMiniAppSetting(item.did, key);
 
-                            if (StringUtil.isNullOrEmpty(hash) ||
-                                    null == appSetting ||
-                                    StringUtil.isNullOrEmpty(appSetting.hash) ||
-                                    !appSetting.hash.equals(hash)) {
-                                messageToast("illegal file");
-                                deleteFile(downloadPath);
-                                deleteFile(outPath);
+            if (StringUtil.isNullOrEmpty(hash) ||
+                    null == appSetting ||
+                    StringUtil.isNullOrEmpty(appSetting.hash) ||
+                    !appSetting.hash.equals(hash)) {
+                messageToast("illegal file");
+                deleteFile(downloadPath);
+                deleteFile(outPath);
 //                                deleteFile(backupPath);
-                                return;
-                            }
-                            Log.d(TAG, "capsule legitimacy");
-
-                            if (item != null) {
-                                for (String appId : mAppIds) {
-                                    if (item.appId.equals(appId)) {
-                                        deleteFile(downloadPath);
-                                        deleteFile(outPath);
-                                        return;
-                                    }
-                                }
-                                mAppIds.add(item.appId);
-                                mItems.add(item);
-                                mHandler.sendEmptyMessage(UPDATE_APPS_MSG);
-
-                                BRSharedPrefs.putAddedAppId(getContext(), new Gson().toJson(mAppIds));
-
-                                upAppStatus(item.appId, "normal");
-//                                upUserAppInfo(mAppIds);
-                            }
-                            deleteFile(downloadPath);
-//                            logFile("srcPath", getContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsoluteFile());
-//                            logFile("outPath", new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule").getAbsoluteFile());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        } finally {
-                            dialogDismiss();
-                        }
-                    }
-                });
-                context.unregisterReceiver(this);
+                return;
             }
-        };
-        getContext().registerReceiver(broadcastReceiver, intentFilter);
+            Log.d(TAG, "capsule legitimacy");
+
+            if (item != null) {
+                for (String appId : mAppIds) {
+                    if (item.appId.equals(appId)) {
+                        deleteFile(downloadPath);
+                        deleteFile(outPath);
+                        return;
+                    }
+                }
+                mAppIds.add(item.appId);
+                mItems.add(item);
+                mHandler.sendEmptyMessage(UPDATE_APPS_MSG);
+
+                BRSharedPrefs.putAddedAppId(getContext(), new Gson().toJson(mAppIds));
+
+                upAppStatus(item.appId, "normal");
+//                                upUserAppInfo(mAppIds);
+            }
+            deleteFile(downloadPath);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void deleteFile(File file) {
@@ -944,12 +951,27 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         return sb.toString();
     }
 
-    private void decompression(String srcPath, String outPath) {
-        try {
-            unZipFolder(srcPath, outPath);
-        } catch (Exception e) {
-            e.printStackTrace();
+    private void decompression(String srcPath, String outPath) throws Exception {
+        unZipFolder(srcPath, outPath);
+    }
+
+    private File findAppJsonPath(File path){
+        if(null == path) return null;
+        File[] files = path.listFiles();
+        for (File file : files) {
+            if(file.isDirectory()){
+                findAppJsonPath(file);
+                Log.d(TAG," findAppJsonPath directory name:" + file.getName());
+            } else {
+                String name = file.getName();
+                if(name.equals("app.json")){
+                    Log.d(TAG," findAppJsonPath file name:" + file.getAbsolutePath());
+                    return file;
+                }
+            }
         }
+
+        return null;
     }
 
     private void logFile(String flag, File path) {
@@ -957,23 +979,24 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         File[] files = path.listFiles();
         if (files == null) return;
         for (File file : files) {
-            String name = file.getName();
-            Log.d(TAG, flag + " fileName:" + name);
+            if(file.isDirectory()) {
+                logFile(file.getName(), file);
+                Log.d(TAG, flag + " fileName:" + file.getAbsolutePath());
+            } else {
+                String name = file.getName();
+                Log.d(TAG, flag + " fileName:" + file.getAbsolutePath());
+            }
         }
         Log.d(TAG, "<-----------------------------" + path.getAbsolutePath() + " end------------------------------>");
         Log.d(TAG, "\n\n");
     }
 
     public static void unZipFolder(String zipFileString, String outPathString) throws Exception {
-        boolean isFirstName = true;
         ZipInputStream inZip = new ZipInputStream(new FileInputStream(zipFileString));
         ZipEntry zipEntry;
         String szName = "";
         while ((zipEntry = inZip.getNextEntry()) != null) {
             szName = zipEntry.getName();
-            if (isFirstName) {
-                isFirstName = false;
-            }
             if (zipEntry.isDirectory()) {
                 szName = szName.substring(0, szName.length() - 1);
                 File folder = new File(outPathString + File.separator + szName);
@@ -995,6 +1018,12 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             }
         }
         inZip.close();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterDownloadListener();
     }
 
     private void showDialog() {

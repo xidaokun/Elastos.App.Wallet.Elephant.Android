@@ -247,6 +247,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         String iso = BRSharedPrefs.getCurrentWalletIso(getContext());
         if(StringUtil.isNullOrEmpty(iso) || !iso.equalsIgnoreCase("ELA") ||
                 balance.longValue()<1 || StringUtil.isNullOrEmpty(candidatesStr)){
+            BRSharedPrefs.setAutoVote(getContext(), false);
             mAutoVoteCb.setVisibility(View.GONE);
             hideVoteView();
             return;
@@ -721,6 +722,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
     private void hideVoteCheckView(){
         if(StringUtil.isNullOrEmpty(mAmountEdit.getText().toString())){
+            BRSharedPrefs.setAutoVote(getContext(), false);
             mAutoVoteCb.setVisibility(View.GONE);
             hideVoteView();
             return;
@@ -737,6 +739,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             mAutoVoteCb.setVisibility(View.VISIBLE);
             hideVoteView();
         } else {
+            BRSharedPrefs.setAutoVote(getContext(), false);
             mAutoVoteCb.setVisibility(View.GONE);
             hideVoteView();
         }

@@ -328,6 +328,8 @@
     <string name="NodeSelector.connected">已连接</string>
     <!-- Node is connecting label -->
     <string name="NodeSelector.connecting">正在连接</string>
+    <!-- Node is connect error label -->
+    <string name="NodeSelector.connect.error">连接失败</string>
     <!-- Enter node ip address view body -->
     <string name="NodeSelector.enterBody">输入节点地址</string>
     <!-- Enter Node ip address view title -->
@@ -1040,6 +1042,7 @@
     <string name="redpackage_title">红包</string>
     <string name="vote_title">投票</string>
     <string name="vote_nodes_count">你正在向%1$d个节点投票(最多36个)</string>
+    <string name="vote_balance">%1$s ELA</string>
     <string name="vote_hint">投票只需要很少的手续费:0.0000486 ELA</string>
     <string name="vote_hint2">投票结束后，您可以随时使用ELA，但您的投票将被取消。</string>
     <string name="pin_author_vote">授权投票</string>

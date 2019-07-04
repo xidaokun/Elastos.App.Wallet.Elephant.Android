@@ -500,7 +500,7 @@ public class UiUtils {
             String addAppIds = BRSharedPrefs.getAddedAppId(activity);
             if (!StringUtil.isNullOrEmpty(addAppIds) && addAppIds.contains(appId)
                 /*|| (!StringUtil.isNullOrEmpty(targe) && targe.equals("internal"))*/) {
-                UiUtils.startWebviewActivity(activity, url);
+                UiUtils.startWebviewActivity(activity, url, appId);
             } else {
                 UiUtils.openUrlByBrowser(activity, url);
             }

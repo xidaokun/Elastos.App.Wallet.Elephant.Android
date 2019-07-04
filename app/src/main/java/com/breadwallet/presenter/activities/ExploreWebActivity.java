@@ -42,13 +42,20 @@ public class ExploreWebActivity extends BRActivity {
     private BaseTextView mAboutTv;
     private BaseTextView mCancelTv;
 
+    private String mAppId;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expolre_web_layout);
 
+        String url = getIntent().getStringExtra("explore_url");
+        mAppId = getIntent().getStringExtra("app_id");
+
         initView();
         initListener();
+
+        webView.loadUrl(url);
     }
 
     private void initView(){
@@ -110,16 +117,6 @@ public class ExploreWebActivity extends BRActivity {
                 }
             }
         });
-    }
-
-    private String mAppId;
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        String url = getIntent().getStringExtra("explore_url");
-        mAppId = getIntent().getStringExtra("app_id");
-        webView.loadUrl(url);
     }
 
     private void webviewSetting() {
