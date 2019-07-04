@@ -727,13 +727,21 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             hideVoteView();
             return;
         }
+
+        String iso = BRSharedPrefs.getCurrentWalletIso(getContext());
+        if(StringUtil.isNullOrEmpty(iso) ||
+                !iso.equalsIgnoreCase("ELA")){
+            BRSharedPrefs.setAutoVote(getContext(), false);
+            mAutoVoteCb.setVisibility(View.GONE);
+            hideVoteView();
+            return;
+        }
+
+
         BigDecimal totalAmount = new BigDecimal(mAmountEdit.getText().toString()).multiply(new BigDecimal(100000000)).add(new BigDecimal(4860));
         BigDecimal balance = BRSharedPrefs.getCachedBalance(getContext(), "ELA").multiply(new BigDecimal(100000000));
         String candidatesStr = BRSharedPrefs.getCandidate(getContext());
-        String iso = BRSharedPrefs.getCurrentWalletIso(getContext());
-        if(!StringUtil.isNullOrEmpty(iso) &&
-                iso.equalsIgnoreCase("ELA") &&
-                balance.compareTo(new BigDecimal(100000000))>0 &&
+        if(balance.compareTo(new BigDecimal(100000000))>0 &&
                 totalAmount.compareTo(balance)<0 &&
                 !StringUtil.isNullOrEmpty(candidatesStr)){
             mAutoVoteCb.setVisibility(View.VISIBLE);
