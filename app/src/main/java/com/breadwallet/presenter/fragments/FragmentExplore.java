@@ -74,6 +74,12 @@ import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 public class FragmentExplore extends Fragment implements OnStartDragListener, ExploreAppsAdapter.OnDeleteClickListener,
         ExploreAppsAdapter.OnTouchMoveListener,
         ExploreAppsAdapter.OnAboutClickListener,
@@ -676,100 +682,17 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     private void initDownloader() {
         try {
             mDownloadDir = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule_download").getAbsolutePath();
-            FileDownloadConfiguration.Builder builder = new FileDownloadConfiguration.Builder(getContext());
-            builder.configFileDownloadDir(mDownloadDir);
-            builder.configDownloadTaskSize(3);
-            builder.configRetryDownloadTimes(3);
-            builder.configDebugMode(false);
-            builder.configConnectTimeout(25000);
-            FileDownloadConfiguration configuration = builder.build();
-            FileDownloader.init(configuration);
+//            FileDownloadConfiguration.Builder builder = new FileDownloadConfiguration.Builder(getContext());
+//            builder.configFileDownloadDir(mDownloadDir);
+//            builder.configDownloadTaskSize(3);
+//            builder.configRetryDownloadTimes(3);
+//            builder.configDebugMode(false);
+//            builder.configConnectTimeout(25000);
+//            FileDownloadConfiguration configuration = builder.build();
+//            FileDownloader.init(configuration);
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private OnFileDownloadStatusListener mOnFileDownloadStatusListener = null;
-
-    private void registerDownloadListener() {
-        if (null == mOnFileDownloadStatusListener) {
-            mOnFileDownloadStatusListener = new OnSimpleFileDownloadStatusListener() {
-                @Override
-                public void onFileDownloadStatusRetrying(DownloadFileInfo downloadFileInfo, int retryTimes) {
-                    super.onFileDownloadStatusRetrying(downloadFileInfo, retryTimes);
-                }
-
-                @Override
-                public void onFileDownloadStatusWaiting(DownloadFileInfo downloadFileInfo) {
-                    super.onFileDownloadStatusWaiting(downloadFileInfo);
-                }
-
-                @Override
-                public void onFileDownloadStatusPreparing(DownloadFileInfo downloadFileInfo) {
-                    super.onFileDownloadStatusPreparing(downloadFileInfo);
-                }
-
-                @Override
-                public void onFileDownloadStatusPrepared(DownloadFileInfo downloadFileInfo) {
-                    super.onFileDownloadStatusPrepared(downloadFileInfo);
-                }
-
-                @Override
-                public void onFileDownloadStatusDownloading(DownloadFileInfo downloadFileInfo, float downloadSpeed, long remainingTime) {
-                    super.onFileDownloadStatusDownloading(downloadFileInfo, downloadSpeed, remainingTime);
-                }
-
-                @Override
-                public void onFileDownloadStatusPaused(DownloadFileInfo downloadFileInfo) {
-                    super.onFileDownloadStatusPaused(downloadFileInfo);
-                }
-
-                @Override
-                public void onFileDownloadStatusCompleted(final DownloadFileInfo downloadFileInfo) {
-                    super.onFileDownloadStatusCompleted(downloadFileInfo);
-                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            refreshApps();
-                            deleteDownloadCapsule(downloadFileInfo.getUrl());
-                            dialogDismiss();
-                        }
-                    });
-                }
-
-                @Override
-                public void onFileDownloadStatusFailed(String url, DownloadFileInfo downloadFileInfo, FileDownloadStatusFailReason failReason) {
-                    super.onFileDownloadStatusFailed(url, downloadFileInfo, failReason);
-                    dialogDismiss();
-                }
-            };
-            FileDownloader.registerDownloadStatusListener(mOnFileDownloadStatusListener);
-        }
-    }
-
-    private void deleteDownloadCapsule(String url){
-        if(StringUtil.isNullOrEmpty(url)) return;
-        FileDownloader.delete(url, true, new OnDeleteDownloadFileListener() {
-            @Override
-            public void onDeleteDownloadFilePrepared(DownloadFileInfo downloadFileNeedDelete) {
-                Log.d("test", "test");
-            }
-
-            @Override
-            public void onDeleteDownloadFileSuccess(DownloadFileInfo downloadFileDeleted) {
-                Log.d("test", "test");
-            }
-
-            @Override
-            public void onDeleteDownloadFileFailed(DownloadFileInfo downloadFileInfo, DeleteDownloadFileFailReason failReason) {
-                Log.d("test", "test");
-            }
-        });
-    }
-
-    private void unregisterDownloadListener() {
-        FileDownloader.unregisterDownloadStatusListener(mOnFileDownloadStatusListener);
-        mOnFileDownloadStatusListener = null;
     }
 
 //    public void downloadCapsule(String url) {
@@ -784,66 +707,72 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
 //        showDialog();
 //    }
 
-    public void downloadCapsule(final String url){
+    public void downloadCapsule(final String url) {
         if(StringUtil.isNullOrEmpty(url)) return;
         showDialog();
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+        OkHttpClient okHttpClient = new OkHttpClient();
+        Request request = new Request.Builder().url(url).build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
-            public void run() {
-                try{
-//            String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+            public void onFailure(Call call, IOException e) {
 
-                    final long startTime = System.currentTimeMillis();
-                    Log.i("DOWNLOAD","startTime="+startTime);
-                    String filename=url.substring(url.lastIndexOf("/") + 1);
-                    mDoloadFileName = filename;
-                    mDoloadUrl = url;
-                    URL myURL = new URL(url);
-                    URLConnection conn = myURL.openConnection();
-                    conn.connect();
-                    InputStream is = conn.getInputStream();
-                    int fileSize = conn.getContentLength();//根据响应获取文件大小
-                    if (fileSize <= 0) throw new RuntimeException("无法获知文件大小 ");
-                    if (is == null) throw new RuntimeException("stream is null");
-                    File file1 = new File(mDownloadDir);
-                    if(!file1.exists()){
-                        file1.mkdirs();
-                    }
-                    File outputFile = new File(mDownloadDir+"/"+filename);
-                    if(outputFile.exists()){
-                        outputFile.delete();
-                    }
-                    //把数据存入路径+文件名
-                    FileOutputStream fos = new FileOutputStream(outputFile.getAbsoluteFile());
-                    byte buf[] = new byte[1024];
-                    int downLoadFileSize = 0;
-                    do{
-                        //循环读取
-                        int numread = is.read(buf);
-                        if (numread == -1)
-                        {
-                            break;
+            }
+
+            @Override
+            public void onResponse(Call call, final Response response) {
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        InputStream is = null;
+                        byte[] buf = new byte[2048];
+                        int len = 0;
+                        FileOutputStream fos = null;
+
+                        try {
+
+                            mDoloadFileName = url.substring(url.lastIndexOf("/") + 1).trim();
+                            mDoloadUrl = url;
+
+                            is = response.body().byteStream();
+                            long total = response.body().contentLength();
+                            File file = new File(mDownloadDir, mDoloadFileName);
+                            if (file.exists()) {
+                                file.delete();
+                            }
+                            fos = new FileOutputStream(file);
+                            long sum = 0;
+                            while ((len = is.read(buf)) != -1) {
+                                fos.write(buf, 0, len);
+                                sum += len;
+                                int progress = (int) (sum * 1.0f / total * 100);
+                                // 下载中
+//                        listener.onDownloading(progress);
+                            }
+                            fos.flush();
+                            Log.i("DOWNLOAD", "download success");
+                            refreshApps();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Log.i("DOWNLOAD", "download failed");
+                        } finally {
+                            try {
+                                if (is != null)
+                                    is.close();
+                            } catch (IOException e) {
+                            }
+                            try {
+                                if (fos != null)
+                                    fos.close();
+                            } catch (IOException e) {
+                            }
+                            dialogDismiss();
                         }
-                        fos.write(buf, 0, numread);
-                        downLoadFileSize += numread;
-                        //更新进度条
-                    } while (true);
-
-                    logFile("downloadPath", new File(mDownloadDir));
-                    refreshApps();
-
-                    Log.i("DOWNLOAD","download success");
-                    Log.i("DOWNLOAD","totalTime="+ (System.currentTimeMillis() - startTime));
-
-                    is.close();
-                } catch (Exception ex) {
-                    Log.e("DOWNLOAD", "error: " + ex.getMessage(), ex);
-                } finally {
-                    dialogDismiss();
-                }
+                    }
+                });
             }
         });
     }
+
 
     private void refreshApps() {
         try {
@@ -870,17 +799,17 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             String key = "Dev/" + item.name + "/Release/" + item.platform + "/" + item.version;
             RegisterChainData appSetting = ProfileDataSource.getInstance(getContext()).getMiniAppSetting(item.did, key);
 
-            if (StringUtil.isNullOrEmpty(hash) ||
-                    null == appSetting ||
-                    StringUtil.isNullOrEmpty(appSetting.hash) ||
-                    !appSetting.hash.equals(hash)) {
-                messageToast("illegal file");
-                deleteFile(downloadPath);
-                deleteFile(outPath);
-                deleteDownloadCapsule(mDoloadUrl);
-//                                deleteFile(backupPath);
-                return;
-            }
+//            if (StringUtil.isNullOrEmpty(hash) ||
+//                    null == appSetting ||
+//                    StringUtil.isNullOrEmpty(appSetting.hash) ||
+//                    !appSetting.hash.equals(hash)) {
+//                messageToast("illegal file");
+//                deleteFile(downloadPath);
+//                deleteFile(outPath);
+//                deleteDownloadCapsule(mDoloadUrl);
+////                                deleteFile(backupPath);
+//                return;
+//            }
             Log.d(TAG, "capsule legitimacy");
 
             if (item != null) {
@@ -1111,12 +1040,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             }
         }
         inZip.close();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        unregisterDownloadListener();
     }
 
     private void showDialog() {
