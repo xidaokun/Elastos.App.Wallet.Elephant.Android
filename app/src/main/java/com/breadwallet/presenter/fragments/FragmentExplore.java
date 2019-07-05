@@ -696,7 +696,10 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
 
     public void downloadCapsule(final String url) {
         Log.d("capsule_download", "url:"+url);
-        if (StringUtil.isNullOrEmpty(url)) return;
+        if (StringUtil.isNullOrEmpty(url)) {
+            Toast.makeText(getContext(), getString(R.string.mini_app_invalid_url), Toast.LENGTH_SHORT).show();
+            return;
+        }
         mHandler.sendEmptyMessage(SHOW_LOADING);
         OkHttpClient okHttpClient = new OkHttpClient();
         Request request = new Request.Builder().url(url).build();

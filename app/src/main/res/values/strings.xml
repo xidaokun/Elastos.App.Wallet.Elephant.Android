@@ -1151,4 +1151,6 @@
     <string name="mini_app_platform">Platform</string>
     <string name="mini_app_version">Version</string>
     <string name="mini_app_shortdesc">ShortDesc</string>
+
+    <string name="mini_app_invalid_url">Invalid url</string>
 </resources>

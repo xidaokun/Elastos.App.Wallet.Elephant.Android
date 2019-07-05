@@ -1144,4 +1144,6 @@
     <string name="mini_app_platform">平台</string>
     <string name="mini_app_version">版本</string>
     <string name="mini_app_shortdesc">概述</string>
+
+    <string name="mini_app_invalid_url">无效url</string>
 </resources>
