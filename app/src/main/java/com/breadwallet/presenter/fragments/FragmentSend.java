@@ -1183,7 +1183,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                 set.applyTo(mAmountLayout);
             }
         }
-        if(!Utils.isNullOrEmpty(code)){
+        if(!Utils.isNullOrEmpty(code) && null!=mCurrencyCodeButton){
             mCurrencyCodeButton.setText(mFromElapay? wm.getIso():code.toUpperCase());
         }
         if (!Utils.isNullOrEmpty(address)) {
