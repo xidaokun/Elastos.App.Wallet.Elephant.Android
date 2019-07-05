@@ -134,7 +134,7 @@ public class IoexDataSource implements BRDataSourceInterface {
             historyTransactionEntity.fromAddress = inputAddress;
             historyTransactionEntity.toAddress = outputsAddress;
             historyTransactionEntity.isReceived = false;
-            historyTransactionEntity.fee = new BigDecimal("4860").longValue();
+            historyTransactionEntity.fee = new BigDecimal("100").longValue();
             historyTransactionEntity.blockHeight = 0;
             historyTransactionEntity.hash = new byte[1];
             historyTransactionEntity.txSize = 0;

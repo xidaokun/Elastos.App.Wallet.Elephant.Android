@@ -26,7 +26,6 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.presenter.entities.MyAppItem;
-import com.breadwallet.presenter.entities.RegisterChainData;
 import com.breadwallet.presenter.entities.StringChainData;
 import com.breadwallet.tools.adapter.ExploreAppsAdapter;
 import com.breadwallet.tools.animation.ItemTouchHelperAdapter;
@@ -250,32 +249,19 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 BRSharedPrefs.putAddedAppId(getContext(), new Gson().toJson(mAppIds));
             }
             mAdapter.notifyDataSetChanged();
-        }
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                getInterApps();
-                BRSharedPrefs.setHasReset(getContext(), true);
-            }
-        });
-        /*else {
-            boolean has = BRSharedPrefs.hasReset(getContext());
-            if (has) return;
-            Log.d(TAG, "MyAppItems size:0");
+        } else {
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    BRSharedPrefs.setHasReset(getContext(), true);
                     getInterApps();
                 }
             });
-        }*/
+        }
     }
 
     private synchronized void getInterApps() {
         try {
-            boolean has = BRSharedPrefs.hasReset(getContext());
-            if (!has) showDialog();
+            showDialog();
             StringChainData redPackageStatus = getAppStatus(BRConstants.REA_PACKAGE_ID);
             if (null == redPackageStatus ||
                     StringUtil.isNullOrEmpty(redPackageStatus.value) ||
@@ -286,7 +272,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 copyCapsuleToDownloadCache(getContext(), mDownloadDir.getAbsolutePath(), mDoloadFileName);
                 refreshApps();
             }
-            if (!has) showDialog();
+            showDialog();
             StringChainData dposVoteStatus = getAppStatus(BRConstants.DPOS_VOTE_ID);
             if (null == dposVoteStatus ||
                     StringUtil.isNullOrEmpty(dposVoteStatus.value) ||
@@ -297,7 +283,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 copyCapsuleToDownloadCache(getContext(), mDownloadDir.getAbsolutePath(), mDoloadFileName);
                 refreshApps();
             }
-            if (!has) showDialog();
+            showDialog();
             StringChainData elaNewsStatus = getAppStatus(BRConstants.ELA_NEWS_ID);
             if (null == elaNewsStatus ||
                     StringUtil.isNullOrEmpty(elaNewsStatus.value) ||
@@ -709,6 +695,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     }
 
     public void downloadCapsule(final String url) {
+        Log.d("capsule_download", "url:"+url);
         if (StringUtil.isNullOrEmpty(url)) return;
         mHandler.sendEmptyMessage(SHOW_LOADING);
         OkHttpClient okHttpClient = new OkHttpClient();
@@ -716,11 +703,13 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                Log.d("capsule_download", "download failed");
                 mHandler.sendEmptyMessage(DOWNLOAD_FAILED);
             }
 
             @Override
             public void onResponse(Call call, final Response response) {
+                Log.d("capsule_download", "download onResponse");
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {
@@ -737,9 +726,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                             is = response.body().byteStream();
                             long total = response.body().contentLength();
                             File file = new File(mDownloadDir, mDoloadFileName);
-                            if (file.exists()) {
-                                file.delete();
-                            }
                             fos = new FileOutputStream(file);
                             long sum = 0;
                             while ((len = is.read(buf)) != -1) {
@@ -750,11 +736,11 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
 //                        listener.onDownloading(progress);
                             }
                             fos.flush();
-                            Log.i("DOWNLOAD", "download success");
+                            Log.d("capsule_download", "download success");
                             refreshApps();
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Log.i("DOWNLOAD", "download failed");
+                            Log.d("capsule_download", "download failed");
                         } finally {
                             try {
                                 if (is != null)
@@ -778,20 +764,25 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     private void refreshApps() {
         try {
             File downloadPath = new File(mDownloadDir, mDoloadFileName);
+            boolean log1 = downloadPath.exists();
+            Log.d("capsule_download", "log1:"+log1);
             File outPath = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule/" + mDoloadFileName);
+            boolean log2 = outPath.exists();
+            Log.d("capsule_download", "log2:"+log2);
             decompression(downloadPath.getAbsolutePath(), outPath.getAbsolutePath());
 
 //            logFile(mDoloadFileName, outPath);
 
-            File appJsonPath = findAppJsonPath(outPath);
-            Log.d(TAG, "appJsonPath:" + appJsonPath);
-            if (appJsonPath == null) return;
-            String json = getJsonFromCapsule(appJsonPath);
+            List<String> ret = new ArrayList();
+            findAppJsonPath(outPath, ret);
+            if (ret.size()<=0) return;
+            Log.d("capsule_download", "parse capsule success");
+            String json = getJsonFromCapsule(new File(ret.get(0), "app.json"));
             MyAppItem item = new Gson().fromJson(json, MyAppItem.class);
             if (item == null) return;
 
             item.path = /*new File(backupPath, mDoloadFileName).getAbsolutePath()*/mDoloadUrl;
-            item.icon = new File(outPath, item.icon).getAbsolutePath();
+            item.icon = new File(ret.get(0), item.icon).getAbsolutePath();
 
             String hash = CryptoHelper.getShaChecksum(downloadPath.getAbsolutePath());
             Log.d(TAG, "mDoloadFileName:" + mDoloadFileName + " hash:" + hash);
@@ -823,6 +814,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 mAppIds.add(item.appId);
                 mItems.add(item);
                 mHandler.sendEmptyMessage(UPDATE_APPS_MSG);
+                Log.d("capsule_download", "UPDATE_APPS_MSG");
 
                 BRSharedPrefs.putAddedAppId(getContext(), new Gson().toJson(mAppIds));
                 upAppStatus(item.appId, "normal");
@@ -977,23 +969,22 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         unZipFolder(srcPath, outPath);
     }
 
-    private File findAppJsonPath(File path) {
-        if (null == path) return null;
+    private void findAppJsonPath(File path, List<String> ret) {
+        if (null == path) return;
         File[] files = path.listFiles();
         for (File file : files) {
             if (file.isDirectory()) {
-                findAppJsonPath(file);
+                findAppJsonPath(file, ret);
                 Log.d(TAG, " findAppJsonPath directory name:" + file.getName());
             } else {
                 String name = file.getName();
                 if (name.equals("app.json")) {
                     Log.d(TAG, " findAppJsonPath file name:" + file.getAbsolutePath());
-                    return file;
+                    ret.add(file.getParent());
+                    return;
                 }
             }
         }
-
-        return null;
     }
 
     private void logFile(String flag, File path) {

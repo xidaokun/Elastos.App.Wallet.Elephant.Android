@@ -237,7 +237,7 @@ public class WalletIoexManager extends BRCoreWalletManager implements BaseWallet
         return new CryptoTransaction[0];
     }
 
-    private static final BigDecimal ELA_FEE = new BigDecimal(4860).divide(ONE_IOEX_TO_SATOSHI, 8, BRConstants.ROUNDING_MODE);
+    private static final BigDecimal ELA_FEE = new BigDecimal(100).divide(ONE_IOEX_TO_SATOSHI, 8, BRConstants.ROUNDING_MODE);
 
     @Override
     public BigDecimal getTxFee(CryptoTransaction tx) {
