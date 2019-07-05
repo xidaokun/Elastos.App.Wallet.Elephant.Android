@@ -806,8 +806,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             if (item != null) {
                 for (String appId : mAppIds) {
                     if (item.appId.equals(appId)) {
-                        deleteFile(downloadPath);
-                        deleteFile(outPath);
                         return;
                     }
                 }
