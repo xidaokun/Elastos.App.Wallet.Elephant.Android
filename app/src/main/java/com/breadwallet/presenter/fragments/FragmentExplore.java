@@ -55,6 +55,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -700,6 +704,17 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             Toast.makeText(getContext(), getString(R.string.mini_app_invalid_url), Toast.LENGTH_SHORT).show();
             return;
         }
+
+        URL urlObj = null;
+        try {
+            urlObj = new URL(url);
+            URI uriObj = new URI(urlObj.getProtocol(), urlObj.getHost(), urlObj.getPath(), urlObj.getQuery(), null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), getString(R.string.mini_app_invalid_url), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         mHandler.sendEmptyMessage(SHOW_LOADING);
         OkHttpClient okHttpClient = new OkHttpClient();
         Request request = new Request.Builder().url(url).build();

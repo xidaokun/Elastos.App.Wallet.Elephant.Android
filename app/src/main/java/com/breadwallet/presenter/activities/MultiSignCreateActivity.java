@@ -61,7 +61,9 @@ public class MultiSignCreateActivity extends BRActivity {
     }
 
     private boolean initData() {
-        String myPublicKey = WalletElaManager.getInstance(this).getPublicKey();
+        String mn = getMn();
+        String myPublicKey = Utility.getInstance(this).getSinglePublicKey(mn);
+//        String myPublicKey = WalletElaManager.getInstance(this).getPublicKey();
         // if public key is null, finish and return.
         // The app will show authentication screen
         if (myPublicKey == null) {
