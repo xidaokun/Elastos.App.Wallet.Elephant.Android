@@ -204,7 +204,7 @@
                 android:background="@color/blue"
                 android:contentInsetStart="0dp"
                 android:contentInsetLeft="0dp"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:breadText="@string/Alert.noInternet"
                 app:contentInsetLeft="0dp"
                 app:contentInsetStart="0dp" />

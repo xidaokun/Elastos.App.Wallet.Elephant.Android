@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Looper;
 import android.support.annotation.WorkerThread;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -19,6 +20,7 @@ import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 
 import java.util.List;
 
@@ -54,6 +56,8 @@ public class TxManager {
     private RecyclerView txList;
     public TransactionListAdapter adapter;
     private RecyclerItemClickListener mItemListener;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private boolean mIsLoading = false;
 
 
     public static TxManager getInstance() {
@@ -63,12 +67,12 @@ public class TxManager {
 
     public void init(final WalletActivity app) {
         txList = app.findViewById(R.id.tx_list);
+        mSwipeRefreshLayout = app.findViewById(R.id.recycler_layout);
         txList.setLayoutManager(new CustomLinearLayoutManager(app));
         mItemListener = new RecyclerItemClickListener(app,
                 txList, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position, float x, float y) {
-
                 if (position == -1) return;
                 TxUiHolder item = adapter.getItems().get(position);
                 UiUtils.showTransactionDetails(app, item, position);
@@ -81,9 +85,46 @@ public class TxManager {
         });
         txList.addOnItemTouchListener(mItemListener);
         if (adapter == null)
-            adapter = new TransactionListAdapter(app, null);
+            adapter = new TransactionListAdapter(app, txList, null);
         if (txList.getAdapter() == null)
             txList.setAdapter(adapter);
+        adapter.setLoadState(TransactionListAdapter.LOADING);
+        adapter.setLoadMoreListener(new TransactionListAdapter.LoadMoreListener() {
+            @Override
+            public void loadMore() {
+                adapter.setLoadState(TransactionListAdapter.LOADING);
+                BRSharedPrefs.putHistoryRange(app, -1);
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(!mIsLoading) {
+                            Log.d("loadData", "updateTxHistory");
+                            WalletElaManager.getInstance(app).updateTxHistory();
+                        }
+                        mIsLoading = true;
+                    }
+                });
+            }
+        });
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                int currentPageNumber =  BRSharedPrefs.getHistoryPageNumber(app);
+                if(currentPageNumber > 1){
+                    BRSharedPrefs.putHistoryRange(app, 1);
+                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(!mIsLoading) {
+                                Log.d("loadData", "updateTxHistory");
+                                WalletElaManager.getInstance(app).updateTxHistory();
+                            }
+                            mIsLoading = true;
+                        }
+                    });
+                }
+            }
+        });
         adapter.clearData();
         adapter.notifyDataSetChanged();
     }
@@ -115,7 +156,10 @@ public class TxManager {
                 @Override
                 public void run() {
                     adapter.setItems(items);
+                    adapter.setLoadState(TransactionListAdapter.LOAD_COMPLETE);
                     adapter.notifyDataSetChanged();
+                    mIsLoading = false;
+                    mSwipeRefreshLayout.setRefreshing(false);
                 }
             });
         }

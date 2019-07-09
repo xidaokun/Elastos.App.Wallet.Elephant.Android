@@ -770,4 +770,40 @@ public class BRSharedPrefs {
         return prefs.getBoolean("hashReset", false);
     }
 
+    public static void putHistoryPageNumber(Context context, int pageNumber){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("pageNumber", pageNumber);
+        editor.apply();
+    }
+
+    public static int getHistoryPageNumber(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getInt("pageNumber", 1);
+    }
+
+    public static void putHistoryRange(Context context, int range){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("range", range);
+        editor.apply();
+    }
+
+    public static int getHistoryRange(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getInt("range", 1);
+    }
+
+    public static void putTotalPageNumber(Context context, int range){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("totalPageNumber", range);
+        editor.apply();
+    }
+
+    public static int getTotalPageNumber(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getInt("totalPageNumber", 0);
+    }
+
 }

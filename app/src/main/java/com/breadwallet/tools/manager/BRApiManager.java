@@ -201,12 +201,12 @@ public class BRApiManager {
                         w.refreshCachedBalance(context);
                     }
                 });
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        WalletElaManager.getInstance(context).updateTxHistory();
-                    }
-                });
+//                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        WalletElaManager.getInstance(context).updateTxHistory();
+//                    }
+//                });
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {

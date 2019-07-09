@@ -1,9 +1,9 @@
 package com.breadwallet.tools.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -73,11 +72,19 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private List<TxUiHolder> backUpFeed;
     private List<TxUiHolder> itemFeed;
     private Map<Integer, TxMetaData> mMetaDatas;
+    private int mLastVisibleItemPosition;
 
-    private final int TX_TYPE = 0;
+    private final int TYPE_ITEM = 0;
+    private final int TYPE_FOOTER = 1;
+
+    public static final int LOADING = 1;
+    public static final int LOAD_COMPLETE = 2;
+    public static final int LOAD_FINISH = 3;
+    private int mLoadState = LOADING;
+
     private boolean mIsUpdatingData;
 
-    public TransactionListAdapter(Context context, List<TxUiHolder> items) {
+    public TransactionListAdapter(Context context, RecyclerView recyclerView, List<TxUiHolder> items) {
         this.mTxResourceId = R.layout.tx_item;
         this.mContext = context;
         backUpFeed = items;
@@ -85,6 +92,35 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         mMetaDatas = new HashMap<>();
         items = new ArrayList<>();
         init(items);
+        if(null != recyclerView){
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                private boolean canLoadMore = false;
+                @Override
+                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                    super.onScrollStateChanged(recyclerView, newState);
+                    if(newState == RecyclerView.SCROLL_STATE_IDLE){
+                        LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                        int lastItemPosition = manager.findLastCompletelyVisibleItemPosition();
+                        int itemCount = manager.getItemCount();
+                        if(lastItemPosition==(itemCount-1) && canLoadMore){
+                            if(mLoadMoreListener != null) mLoadMoreListener.loadMore();
+                        }
+                    }
+                }
+
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    BaseWalletManager walletManager = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
+                    String iso = walletManager.getIso();
+                    if(!StringUtil.isNullOrEmpty(iso) && !iso.equalsIgnoreCase("ELA")) {
+                        canLoadMore = false;
+                    } else {
+                        canLoadMore = dy > 0;
+                    }
+                }
+            });
+        }
     }
 
     public void setItems(List<TxUiHolder> items) {
@@ -106,9 +142,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     }
 
-    public void clearData(){
-        if(null != itemFeed) itemFeed.clear();
-        if(null != backUpFeed) backUpFeed.clear();
+    public void clearData() {
+        if (null != itemFeed) itemFeed.clear();
+        if (null != backUpFeed) backUpFeed.clear();
     }
 
     public void updateData() {
@@ -153,28 +189,73 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+
+        if (viewType == TYPE_FOOTER) {
+            return new FooterViewHolder(inflater.inflate(R.layout.swipe_refresh_layout, parent, false));
+        }
         // inflate the layout
-        LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
         return new TxHolder(inflater.inflate(mTxResourceId, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if (holder.getItemViewType() == TX_TYPE) {
+//        if (holder.getItemViewType() == TYPE_ITEM) {
+//            holder.setIsRecyclable(false);
+//            setTexts((TxHolder) holder, position);
+//        }
+
+        if (holder instanceof TxHolder) {
             holder.setIsRecyclable(false);
             setTexts((TxHolder) holder, position);
+        } else if (holder instanceof FooterViewHolder) {
+            FooterViewHolder footViewHolder = (FooterViewHolder) holder;
+            switch (mLoadState) {
+                case LOADING:
+                    footViewHolder.mProgress.setVisibility(View.VISIBLE);
+                    footViewHolder.mHint.setText("Loading");
+                    break;
+                case LOAD_COMPLETE:
+                    footViewHolder.mProgress.setVisibility(View.INVISIBLE);
+                    footViewHolder.mHint.setText("Load Complete");
+                    break;
+                case LOAD_FINISH:
+                    footViewHolder.mProgress.setVisibility(View.INVISIBLE);
+                    footViewHolder.mHint.setText("Load Finished");
+                    break;
+                default:
+                    break;
+
+            }
         }
 
     }
 
+    public void setLoadState(int loadState){
+        this.mLoadState = loadState;
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemViewType(int position) {
-        return TX_TYPE;
+        BaseWalletManager wm = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
+        if (wm == null) return TYPE_ITEM;
+        String iso = wm.getIso();
+        if (!StringUtil.isNullOrEmpty(iso) && iso.equalsIgnoreCase("ELA")) {
+            if (position + 1 == getItemCount()) {
+                return TYPE_FOOTER;
+            }
+        }
+
+        return TYPE_ITEM;
     }
 
     @Override
     public int getItemCount() {
-        return itemFeed.size();
+        BaseWalletManager wm = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
+        if (wm == null) itemFeed.size();
+        String iso = wm.getIso();
+        return (!StringUtil.isNullOrEmpty(iso) && iso.equalsIgnoreCase("ELA")) ? itemFeed.size() + 1 : itemFeed.size();
     }
 
     private void setTexts(final TxHolder convertView, int position) {
@@ -189,8 +270,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             }
         }
 
-        if(wm.getIso().equalsIgnoreCase("ELA")){
-            commentString = item.memo==null ? "": item.memo;
+        if (wm.getIso().equalsIgnoreCase("ELA")) {
+            commentString = item.memo == null ? "" : item.memo;
         }
 
         boolean received = item.isReceived();
@@ -220,7 +301,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         String formattedAmount = CurrencyUtils.getFormattedAmount(mContext, preferredIso, amount, wm.getUiConfiguration().getMaxDecimalPlacesForUi());
         convertView.transactionAmount.setText(formattedAmount);
 
-        convertView.transactionVoteFlag.setVisibility(item.isVote()?View.VISIBLE:View.GONE);
+        convertView.transactionVoteFlag.setVisibility(item.isVote() ? View.VISIBLE : View.GONE);
 
         int blockHeight = item.getBlockHeight();
         int lastBlockHeight = BRSharedPrefs.getLastBlockHeight(mContext, wm.getIso());
@@ -251,10 +332,10 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         //正在通过 接收
         String receivingVia = mContext.getResources().getString(R.string.TransactionDetails_receivingVia);
 
-        if(item.isReceived()){
+        if (item.isReceived()) {
             convertView.transactionIcon.setBackgroundResource(R.drawable.ellipse_receive);
             String from = item.getFrom();
-            convertView.transactionDetail.setText(StringUtil.isNullOrEmpty(from) ? item.getTo():from);
+            convertView.transactionDetail.setText(StringUtil.isNullOrEmpty(from) ? item.getTo() : from);
         } else {
             convertView.transactionIcon.setBackgroundResource(R.drawable.ellipse_send);
             convertView.transactionDetail.setText(item.getTo());
@@ -267,8 +348,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             convertView.transactionStatus.setText(!received ? sendingTo : receivingVia);
             convertView.transactionStatus.setTextColor(mContext.getColor(!received ? R.color.total_assets_usd_color : R.color.transaction_amount_received_color));
         }
-        if(wm.getIso().equalsIgnoreCase("ELA") || wm.getIso().equalsIgnoreCase("IOEX")) {
-            if(level == 0) {
+        if (wm.getIso().equalsIgnoreCase("ELA") || wm.getIso().equalsIgnoreCase("IOEX")) {
+            if (level == 0) {
                 convertView.transactionStatus.setText(!received ? sentTo : receivedVia);
                 convertView.transactionStatus.setTextColor(mContext.getColor(!received ? R.color.tx_send_color : R.color.transaction_amount_received_color));
             } else {
@@ -391,6 +472,17 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         notifyDataSetChanged();
     }
 
+    private class FooterViewHolder extends RecyclerView.ViewHolder {
+        private View mProgress;
+        private BaseTextView mHint;
+
+        public FooterViewHolder(View itemView) {
+            super(itemView);
+            mProgress = itemView.findViewById(R.id.loading_progress);
+            mHint = itemView.findViewById(R.id.load_state_tv);
+        }
+    }
+
     private class TxHolder extends RecyclerView.ViewHolder {
         public ConstraintLayout constraintLayout;
         public TextView amount;
@@ -421,6 +513,16 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             transactionIcon = view.findViewById(R.id.tx_status_icon);
             transactionVoteFlag = view.findViewById(R.id.vote_flag);
         }
+    }
+
+    private LoadMoreListener mLoadMoreListener = null;
+
+    public void setLoadMoreListener(LoadMoreListener listener) {
+        this.mLoadMoreListener = listener;
+    }
+
+    public interface LoadMoreListener {
+        void loadMore();
     }
 
 }

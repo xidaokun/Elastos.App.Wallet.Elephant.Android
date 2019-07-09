@@ -140,7 +140,8 @@ public class ElaDataSource implements BRDataSourceInterface {
             BRSQLiteHelper.ELA_COLUMN_AMOUNT,
             BRSQLiteHelper.ELA_COLUMN_MENO,
             BRSQLiteHelper.ELA_COLUMN_ISVALID,
-            BRSQLiteHelper.ELA_COLUMN_ISVOTE
+            BRSQLiteHelper.ELA_COLUMN_ISVOTE,
+            BRSQLiteHelper.ELA_COLUMN_PAGENUMBER
     };
 
     public void deleteElaTable(){
@@ -198,6 +199,7 @@ public class ElaDataSource implements BRDataSourceInterface {
                 value.put(BRSQLiteHelper.ELA_COLUMN_MENO, entity.memo);
                 value.put(BRSQLiteHelper.ELA_COLUMN_ISVALID, entity.isValid?1:0);
                 value.put(BRSQLiteHelper.ELA_COLUMN_ISVOTE, entity.isVote?1:0);
+                value.put(BRSQLiteHelper.ELA_COLUMN_PAGENUMBER, entity.pageNumber);
 
                 long l = database.insertWithOnConflict(BRSQLiteHelper.ELA_TX_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
                 Log.i(TAG, "l:"+l);
@@ -257,9 +259,12 @@ public class ElaDataSource implements BRDataSourceInterface {
         List<HistoryTransactionEntity> currencies = new ArrayList<>();
         Cursor cursor = null;
 
+        int pageNumber = BRSharedPrefs.getHistoryPageNumber(mContext);
+        int lastPageNumber = pageNumber-1;
+
         try {
             database = openDatabase();
-            cursor = database.query(BRSQLiteHelper.ELA_TX_TABLE_NAME, allColumns, null, null, null, null, "timeStamp desc");
+            cursor = database.query(BRSQLiteHelper.ELA_TX_TABLE_NAME, allColumns, BRSQLiteHelper.ELA_COLUMN_PAGENUMBER+" = ? OR " + BRSQLiteHelper.ELA_COLUMN_PAGENUMBER + " = ? ", new String[]{Integer.toString(lastPageNumber), Integer.toString(pageNumber)}, null, null, "timeStamp desc");
 
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -292,7 +297,8 @@ public class ElaDataSource implements BRDataSourceInterface {
                 cursor.getLong(10),
                 cursor.getString(11),
                 cursor.getInt(12)==1,
-                cursor.getInt(13)==1);
+                cursor.getInt(13)==1,
+                cursor.getInt(14));
     }
 
     private void toast(final String message){
@@ -424,7 +430,11 @@ public class ElaDataSource implements BRDataSourceInterface {
         if(StringUtil.isNullOrEmpty(address)) return;
         mVoteTxid.clear();
         try {
-            String url = getUrl("api/1/history/"+address +"?pageNum=1&pageSize=50");
+            int currentPageNumber = BRSharedPrefs.getHistoryPageNumber(mContext);
+            int range = BRSharedPrefs.getHistoryRange(mContext);
+            int pageNumber = currentPageNumber+range;
+            Log.d("loadData", "currentPageNumber:"+currentPageNumber+" range:"+range+" pageNumber:"+pageNumber);
+            String url = getUrl("api/1/history/"+address +"?pageNum="+pageNumber+"&pageSize=10");
             Log.i(TAG, "history url:"+url);
             String result = urlGET(url);
             JSONObject jsonObject = new JSONObject(result);
@@ -448,11 +458,17 @@ public class ElaDataSource implements BRDataSourceInterface {
                 historyTransactionEntity.balanceAfterTx = 0;
                 historyTransactionEntity.isValid = true;
                 historyTransactionEntity.isVote = !isReceived(history.Type) && isVote(history.TxType);
+                historyTransactionEntity.pageNumber = pageNumber;
                 historyTransactionEntity.timeStamp = new BigDecimal(history.CreateTime).longValue();
                 historyTransactionEntity.memo = getMeno(history.Memo);
                 elaTransactionEntities.add(historyTransactionEntity);
                 if(historyTransactionEntity.isVote) mVoteTxid.add(history.Txid);
             }
+            if(elaTransactionEntities.size() <= 0) {
+                BRSharedPrefs.putHistoryPageNumber(mContext, currentPageNumber);
+                return;
+            }
+            BRSharedPrefs.putHistoryPageNumber(mContext, pageNumber);
             cacheMultTx(elaTransactionEntities);
         } catch (Exception e) {
             e.printStackTrace();

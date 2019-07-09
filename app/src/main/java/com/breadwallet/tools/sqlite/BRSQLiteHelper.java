@@ -246,6 +246,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String ELA_COLUMN_MENO ="meno";
     public static final String ELA_COLUMN_ISVALID ="isValid";
     public static final String ELA_COLUMN_ISVOTE ="isVote";
+    public static final String ELA_COLUMN_PAGENUMBER = "pageNumber";
 
     private static final String ELA_TX_DATABASE_CREATE = "create table if not exists " + ELA_TX_TABLE_NAME + " (" +
             ELA_COLUMN_ID + " integer, " +
@@ -262,7 +263,8 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             ELA_COLUMN_AMOUNT + " real, " +
             ELA_COLUMN_MENO + " text, " +
             ELA_COLUMN_ISVALID + " interger, " +
-            ELA_COLUMN_ISVOTE +" integer);";
+            ELA_COLUMN_ISVOTE + " interger, " +
+            ELA_COLUMN_PAGENUMBER +" integer);";
 
     /**
      * MerkleBlock table
