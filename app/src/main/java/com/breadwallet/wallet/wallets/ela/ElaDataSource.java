@@ -36,7 +36,6 @@ import com.breadwallet.wallet.wallets.ela.response.history.TxHistory;
 import com.google.gson.Gson;
 import com.platform.APIClient;
 
-import org.elastos.sdk.keypair.ElastosKeypairCrypto;
 import org.elastos.sdk.keypair.ElastosKeypairSign;
 import org.json.JSONObject;
 
@@ -81,6 +80,8 @@ public class ElaDataSource implements BRDataSourceInterface {
     private static final String TAG = ElaDataSource.class.getSimpleName();
 
     public static final String ELA_NODE_KEY = "elaNodeKey";
+
+    private static final int ONE_PAGE_SIZE = 10;
 //    https://api-wallet-ela.elastos.org
 //    https://api-wallet-did.elastos.org
 //    hw-ela-api-test.elastos.org
@@ -259,12 +260,13 @@ public class ElaDataSource implements BRDataSourceInterface {
         List<HistoryTransactionEntity> currencies = new ArrayList<>();
         Cursor cursor = null;
 
-        int pageNumber = BRSharedPrefs.getHistoryPageNumber(mContext);
+        int pageNumber = BRSharedPrefs.getCurrentHistoryPageNumber(mContext);
         int lastPageNumber = pageNumber-1;
 
         try {
             database = openDatabase();
-            cursor = database.query(BRSQLiteHelper.ELA_TX_TABLE_NAME, allColumns, BRSQLiteHelper.ELA_COLUMN_PAGENUMBER+" = ? OR " + BRSQLiteHelper.ELA_COLUMN_PAGENUMBER + " = ? ", new String[]{Integer.toString(lastPageNumber), Integer.toString(pageNumber)}, null, null, "timeStamp desc");
+            cursor = database.query(BRSQLiteHelper.ELA_TX_TABLE_NAME, allColumns, BRSQLiteHelper.ELA_COLUMN_PAGENUMBER + " = ? ", new String[]{Integer.toString(pageNumber)}, null, null, "timeStamp desc");
+//            cursor = database.query(BRSQLiteHelper.ELA_TX_TABLE_NAME, allColumns, BRSQLiteHelper.ELA_COLUMN_PAGENUMBER+" = ? OR " + BRSQLiteHelper.ELA_COLUMN_PAGENUMBER + " = ? ", new String[]{Integer.toString(lastPageNumber), Integer.toString(pageNumber)}, null, null, "timeStamp desc");
 
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -430,16 +432,24 @@ public class ElaDataSource implements BRDataSourceInterface {
         if(StringUtil.isNullOrEmpty(address)) return;
         mVoteTxid.clear();
         try {
-            int currentPageNumber = BRSharedPrefs.getHistoryPageNumber(mContext);
+            int currentPageNumber = BRSharedPrefs.getCurrentHistoryPageNumber(mContext);
             int range = BRSharedPrefs.getHistoryRange(mContext);
             int pageNumber = currentPageNumber+range;
             Log.d("loadData", "currentPageNumber:"+currentPageNumber+" range:"+range+" pageNumber:"+pageNumber);
-            String url = getUrl("api/1/history/"+address +"?pageNum="+pageNumber+"&pageSize=10");
+            String url = getUrl("api/1/history/"+address +"?pageNum="+pageNumber+"&pageSize="+ONE_PAGE_SIZE);
             Log.i(TAG, "history url:"+url);
             String result = urlGET(url);
             JSONObject jsonObject = new JSONObject(result);
             String json = jsonObject.getString("result");
             TxHistory txHistory = new Gson().fromJson(json, TxHistory.class);
+
+            BRSharedPrefs.putTotalPageNumber(mContext, txHistory.TotalNum/ONE_PAGE_SIZE+1);
+            if(currentPageNumber >= 999999){
+                Log.d("loadData", "currentPageNumber:"+currentPageNumber);
+                BRSharedPrefs.putCurrentHistoryPageNumber(mContext, txHistory.TotalNum/ONE_PAGE_SIZE+1);
+                getHistory(address);
+                return;
+            }
 
             List<HistoryTransactionEntity> elaTransactionEntities = new ArrayList<>();
             elaTransactionEntities.clear();
@@ -465,10 +475,10 @@ public class ElaDataSource implements BRDataSourceInterface {
                 if(historyTransactionEntity.isVote) mVoteTxid.add(history.Txid);
             }
             if(elaTransactionEntities.size() <= 0) {
-                BRSharedPrefs.putHistoryPageNumber(mContext, currentPageNumber);
+                BRSharedPrefs.putCurrentHistoryPageNumber(mContext, currentPageNumber);
                 return;
             }
-            BRSharedPrefs.putHistoryPageNumber(mContext, pageNumber);
+            BRSharedPrefs.putCurrentHistoryPageNumber(mContext, pageNumber);
             cacheMultTx(elaTransactionEntities);
         } catch (Exception e) {
             e.printStackTrace();

@@ -102,7 +102,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                         LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
                         int lastItemPosition = manager.findLastCompletelyVisibleItemPosition();
                         int itemCount = manager.getItemCount();
-                        if(lastItemPosition==(itemCount-1) && canLoadMore){
+                        if(lastItemPosition==(itemCount-1)){
                             if(mLoadMoreListener != null) mLoadMoreListener.loadMore();
                         }
                     }

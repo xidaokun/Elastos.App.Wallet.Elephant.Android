@@ -93,12 +93,14 @@ public class TxManager {
             @Override
             public void loadMore() {
                 adapter.setLoadState(TransactionListAdapter.LOADING);
+                int currentPageNumber =  BRSharedPrefs.getCurrentHistoryPageNumber(app);
+                if(currentPageNumber <= 0) return;
                 BRSharedPrefs.putHistoryRange(app, -1);
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {
                         if(!mIsLoading) {
-                            Log.d("loadData", "updateTxHistory");
+                            Log.d("loadData", "loadMore updateTxHistory");
                             WalletElaManager.getInstance(app).updateTxHistory();
                         }
                         mIsLoading = true;
@@ -109,14 +111,15 @@ public class TxManager {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                int currentPageNumber =  BRSharedPrefs.getHistoryPageNumber(app);
-                if(currentPageNumber > 1){
-                    BRSharedPrefs.putHistoryRange(app, 1);
+                int currentPageNumber =  BRSharedPrefs.getCurrentHistoryPageNumber(app);
+                int totalPage = BRSharedPrefs.getTotalPageNumber(app);
+                if(currentPageNumber > 0){
+                    BRSharedPrefs.putHistoryRange(app, (currentPageNumber>=totalPage)?0:1);
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
                             if(!mIsLoading) {
-                                Log.d("loadData", "updateTxHistory");
+                                Log.d("loadData", "refresh updateTxHistory");
                                 WalletElaManager.getInstance(app).updateTxHistory();
                             }
                             mIsLoading = true;
