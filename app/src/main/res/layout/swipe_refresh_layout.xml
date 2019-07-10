@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="20dp"
         android:layout_centerVertical="true"
-        android:text="loading"
+        android:text="@string/history_loading_hint"
         android:textColor="@color/black_333333"
         android:layout_centerInParent="true"/>
 

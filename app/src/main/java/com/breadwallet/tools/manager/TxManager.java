@@ -76,6 +76,7 @@ public class TxManager {
                 if (position == -1) return;
                 List<TxUiHolder> items = adapter.getItems();
                 if(position >= items.size()){
+                    loadMoreData(app);
                     return;
                 }
                 TxUiHolder item = items.get(position);
@@ -96,45 +97,43 @@ public class TxManager {
         adapter.setLoadMoreListener(new TransactionListAdapter.LoadMoreListener() {
             @Override
             public void loadMore() {
-                adapter.setLoadState(TransactionListAdapter.LOADING);
-                int currentPageNumber =  BRSharedPrefs.getCurrentHistoryPageNumber(app);
-                if(currentPageNumber <= 0) return;
-                BRSharedPrefs.putHistoryRange(app, -1);
+                loadMoreData(app);
+            }
+        });
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                BRSharedPrefs.putCurrentHistoryPageNumber(app, 1);
+                BRSharedPrefs.putHistoryRange(app, 0);
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {
                         if(!mIsLoading) {
-                            Log.d("loadData", "loadMore updateTxHistory");
-                            WalletElaManager.getInstance(app).updateTxHistory();
+                            Log.d("loadData", "refresh updateTxHistory");
+                            WalletElaManager.getInstance(app).refreshTxhistory();
                         }
                         mIsLoading = true;
                     }
                 });
             }
         });
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                int currentPageNumber =  BRSharedPrefs.getCurrentHistoryPageNumber(app);
-                int totalPage = BRSharedPrefs.getTotalPageNumber(app);
-                updateTxList(app);
-                if(currentPageNumber > 0){
-                    BRSharedPrefs.putHistoryRange(app, (currentPageNumber>=totalPage)?0:1);
-                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            if(!mIsLoading) {
-                                Log.d("loadData", "refresh updateTxHistory");
-                                WalletElaManager.getInstance(app).updateTxHistory();
-                            }
-                            mIsLoading = true;
-                        }
-                    });
-                }
-            }
-        });
         adapter.clearData();
         adapter.notifyDataSetChanged();
+    }
+
+    private void loadMoreData(final WalletActivity app){
+        adapter.setLoadState(TransactionListAdapter.LOADING);
+        BRSharedPrefs.putHistoryRange(app, 1);
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                if(!mIsLoading) {
+                    Log.d("loadData", "loadMore updateTxHistory");
+                    WalletElaManager.getInstance(app).updateTxHistory();
+                }
+                mIsLoading = true;
+            }
+        });
     }
 
     private TxManager() {
@@ -164,7 +163,13 @@ public class TxManager {
                 @Override
                 public void run() {
                     adapter.setItems(items);
-                    adapter.setLoadState(TransactionListAdapter.LOAD_COMPLETE);
+                    int totalNum = BRSharedPrefs.getTotalPageNumber(app);
+                    int currentPageNum = BRSharedPrefs.getCurrentHistoryPageNumber(app);
+                    if(currentPageNum * 10 >= totalNum) {
+                        adapter.setLoadState(TransactionListAdapter.LOAD_NO_MORE);
+                    } else {
+                        adapter.setLoadState(TransactionListAdapter.LOAD_COMPLETE);
+                    }
                     adapter.notifyDataSetChanged();
                     mIsLoading = false;
                     mSwipeRefreshLayout.setRefreshing(false);

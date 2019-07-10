@@ -1153,4 +1153,10 @@
     <string name="mini_app_shortdesc">ShortDesc</string>
 
     <string name="mini_app_invalid_url">Invalid url</string>
+
+    <string name="history_loading_hint">Loading</string>
+    <string name="history_load_no_data">No more data</string>
+    <string name="history_pull_refresh_hint">Tap or pull up to load more</string>
+
+    <string name="net_has_disconnect">Network disconnected</string>
 </resources>

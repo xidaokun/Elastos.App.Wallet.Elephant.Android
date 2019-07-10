@@ -1146,4 +1146,10 @@
     <string name="mini_app_shortdesc">概述</string>
 
     <string name="mini_app_invalid_url">无效url</string>
+
+    <string name="history_loading_hint">正在加载更多的数据...</string>
+    <string name="history_load_no_data">已经全部加载完毕</string>
+    <string name="history_pull_refresh_hint">点击或上拉加载更多</string>
+
+    <string name="net_has_disconnect">网络已断开</string>
 </resources>

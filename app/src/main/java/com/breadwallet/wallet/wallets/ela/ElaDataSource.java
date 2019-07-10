@@ -266,10 +266,11 @@ public class ElaDataSource implements BRDataSourceInterface {
 
         try {
             database = openDatabase();
+            cursor = database.query(BRSQLiteHelper.ELA_TX_TABLE_NAME, allColumns, null, null, null, null, "timeStamp desc");
 //            cursor = database.query(BRSQLiteHelper.ELA_TX_TABLE_NAME, allColumns, BRSQLiteHelper.ELA_COLUMN_PAGENUMBER + " = ? ", new String[]{Integer.toString(pageNumber)}, null, null, "timeStamp desc");
-            cursor = database.query(BRSQLiteHelper.ELA_TX_TABLE_NAME, allColumns,
-                    BRSQLiteHelper.ELA_COLUMN_PAGENUMBER+" = ? OR " + BRSQLiteHelper.ELA_COLUMN_PAGENUMBER+" = ? OR " + BRSQLiteHelper.ELA_COLUMN_PAGENUMBER + " = ? ",
-                    new String[]{Integer.toString(lastPageNumber), Integer.toString(nextPageNumber), Integer.toString(pageNumber)}, null, null, "timeStamp desc");
+//            cursor = database.query(BRSQLiteHelper.ELA_TX_TABLE_NAME, allColumns,
+//                    BRSQLiteHelper.ELA_COLUMN_PAGENUMBER+" = ? OR " + BRSQLiteHelper.ELA_COLUMN_PAGENUMBER+" = ? OR " + BRSQLiteHelper.ELA_COLUMN_PAGENUMBER + " = ? ",
+//                    new String[]{Integer.toString(lastPageNumber), Integer.toString(nextPageNumber), Integer.toString(pageNumber)}, null, null, "timeStamp desc");
 
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -376,60 +377,47 @@ public class ElaDataSource implements BRDataSourceInterface {
     }
 
     public List<String> mVoteTxid = new ArrayList<>();
-//    public void getHistory(String pk, String address){
-//        if(StringUtil.isNullOrEmpty(address)) return;
-//        mVoteTxid.clear();
-//        try {
-//            String url = getUrl("api/1/history/"+address /*+"?pageNum=1&pageSize=10"*/);
-//            Log.i(TAG, "history url:"+url);
-//            String result = urlGET(url);
-//            JSONObject jsonObject = new JSONObject(result);
-//            String json = jsonObject.getString("result");
-//            TxHistory txHistory = new Gson().fromJson(json, TxHistory.class);
-//
-//            List<HistoryTransactionEntity> elaTransactionEntities = new ArrayList<>();
-//            elaTransactionEntities.clear();
-//            List<History> transactions = txHistory.History;
-//            for(History history : transactions){
-//                HistoryTransactionEntity historyTransactionEntity = new HistoryTransactionEntity();
-//                historyTransactionEntity.txReversed = history.Txid;
-//                historyTransactionEntity.isReceived = isReceived(history.Type);
-//                historyTransactionEntity.fromAddress = isReceived(history.Type) ? history.Inputs.get(0) : history.Outputs.get(0);
-//                historyTransactionEntity.toAddress = isReceived(history.Type) ? history.Inputs.get(0) : history.Outputs.get(0);
-//                historyTransactionEntity.fee = new BigDecimal(history.Fee).longValue();
-//                historyTransactionEntity.blockHeight = history.Height;
-//                historyTransactionEntity.hash = history.Txid.getBytes();
-//                historyTransactionEntity.txSize = 0;
-//                historyTransactionEntity.amount = isReceived(history.Type) ? new BigDecimal(history.Value).longValue() : new BigDecimal(history.Value).subtract(new BigDecimal(history.Fee)).longValue();
-//                historyTransactionEntity.balanceAfterTx = 0;
-//                historyTransactionEntity.isValid = true;
-//                historyTransactionEntity.isVote = !isReceived(history.Type) && isVote(history.TxType);
-//                historyTransactionEntity.timeStamp = new BigDecimal(history.CreateTime).longValue();
-//                historyTransactionEntity.memo = getMeno(pk, history.Memo);
-//                elaTransactionEntities.add(historyTransactionEntity);
-//                if(historyTransactionEntity.isVote) mVoteTxid.add(history.Txid);
-//            }
-//            cacheMultTx(elaTransactionEntities);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+    public void refreshHistory(String address){
+        if(StringUtil.isNullOrEmpty(address)) return;
+        mVoteTxid.clear();
+        try {
+            String url = getUrl("api/1/history/"+address +"?pageNum=1&pageSize="+ONE_PAGE_SIZE+"&order=desc");
+            Log.i(TAG, "history url:"+url);
+            String result = urlGET(url);
+            JSONObject jsonObject = new JSONObject(result);
+            String json = jsonObject.getString("result");
+            TxHistory txHistory = new Gson().fromJson(json, TxHistory.class);
+            BRSharedPrefs.putTotalPageNumber(mContext, txHistory.TotalNum);
 
-//    private String getMeno(String pk, String value){
-//        if(value==null || !value.contains("msg") || !value.contains("type") || !value.contains(",")) return "";
-//        if(value.contains("msg:")){
-//            String[] memo = value.split("msg:");
-//            if(memo!=null && memo.length==2){
-//                String type = memo[0];
-//                String msg = memo[1];
-//                if(!StringUtil.isNullOrEmpty(type) && !StringUtil.isNullOrEmpty(msg) && type.equals("ciphertext")){
-//                    return ElastosKeypairCrypto.eciesDecrypt(pk, msg);
-//                }
-//                return (null==msg)?"":msg;
-//            }
-//        }
-//        return "";
-//    }
+            List<HistoryTransactionEntity> elaTransactionEntities = new ArrayList<>();
+            elaTransactionEntities.clear();
+            List<History> transactions = txHistory.History;
+            for(History history : transactions){
+                HistoryTransactionEntity historyTransactionEntity = new HistoryTransactionEntity();
+                historyTransactionEntity.txReversed = history.Txid;
+                historyTransactionEntity.isReceived = isReceived(history.Type);
+                historyTransactionEntity.fromAddress = isReceived(history.Type) ? history.Inputs.get(0) : history.Outputs.get(0);
+                historyTransactionEntity.toAddress = isReceived(history.Type) ? history.Inputs.get(0) : history.Outputs.get(0);
+                historyTransactionEntity.fee = new BigDecimal(history.Fee).longValue();
+                historyTransactionEntity.blockHeight = history.Height;
+                historyTransactionEntity.hash = history.Txid.getBytes();
+                historyTransactionEntity.txSize = 0;
+                historyTransactionEntity.amount = isReceived(history.Type) ? new BigDecimal(history.Value).longValue() : new BigDecimal(history.Value).subtract(new BigDecimal(history.Fee)).longValue();
+                historyTransactionEntity.balanceAfterTx = 0;
+                historyTransactionEntity.isValid = true;
+                historyTransactionEntity.isVote = !isReceived(history.Type) && isVote(history.TxType);
+                historyTransactionEntity.pageNumber = 1;
+                historyTransactionEntity.timeStamp = new BigDecimal(history.CreateTime).longValue();
+                historyTransactionEntity.memo = getMeno(history.Memo);
+                elaTransactionEntities.add(historyTransactionEntity);
+                if(historyTransactionEntity.isVote) mVoteTxid.add(history.Txid);
+            }
+            if(elaTransactionEntities.size() <= 0) return;
+            cacheMultTx(elaTransactionEntities);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public void getHistory(String address){
         if(StringUtil.isNullOrEmpty(address)) return;
@@ -439,20 +427,21 @@ public class ElaDataSource implements BRDataSourceInterface {
             int range = BRSharedPrefs.getHistoryRange(mContext);
             int pageNumber = currentPageNumber+range;
             Log.d("loadData", "currentPageNumber:"+currentPageNumber+" range:"+range+" pageNumber:"+pageNumber);
-            String url = getUrl("api/1/history/"+address +"?pageNum="+pageNumber+"&pageSize="+ONE_PAGE_SIZE);
+            String url = getUrl("api/1/history/"+address +"?pageNum="+pageNumber+"&pageSize="+ONE_PAGE_SIZE+"&order=desc");
             Log.i(TAG, "history url:"+url);
             String result = urlGET(url);
             JSONObject jsonObject = new JSONObject(result);
             String json = jsonObject.getString("result");
             TxHistory txHistory = new Gson().fromJson(json, TxHistory.class);
+            BRSharedPrefs.putTotalPageNumber(mContext, txHistory.TotalNum);
 
-            BRSharedPrefs.putTotalPageNumber(mContext, txHistory.TotalNum/ONE_PAGE_SIZE+1);
-            if(currentPageNumber >= 999999){
-                Log.d("loadData", "currentPageNumber:"+currentPageNumber);
-                BRSharedPrefs.putCurrentHistoryPageNumber(mContext, txHistory.TotalNum/ONE_PAGE_SIZE+1);
-                getHistory(address);
-                return;
-            }
+//            BRSharedPrefs.putTotalPageNumber(mContext, txHistory.TotalNum/ONE_PAGE_SIZE+1);
+//            if(currentPageNumber >= 999999){
+//                Log.d("loadData", "currentPageNumber:"+currentPageNumber);
+//                BRSharedPrefs.putCurrentHistoryPageNumber(mContext, txHistory.TotalNum/ONE_PAGE_SIZE+1);
+//                getHistory(address);
+//                return;
+//            }
 
             List<HistoryTransactionEntity> elaTransactionEntities = new ArrayList<>();
             elaTransactionEntities.clear();
@@ -479,9 +468,11 @@ public class ElaDataSource implements BRDataSourceInterface {
             }
             if(elaTransactionEntities.size() <= 0) {
                 BRSharedPrefs.putCurrentHistoryPageNumber(mContext, currentPageNumber);
+                BRSharedPrefs.putHistoryRange(mContext, 0);
                 return;
             }
             BRSharedPrefs.putCurrentHistoryPageNumber(mContext, pageNumber);
+            BRSharedPrefs.putHistoryRange(mContext, 0);
             cacheMultTx(elaTransactionEntities);
         } catch (Exception e) {
             e.printStackTrace();

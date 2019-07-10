@@ -779,7 +779,7 @@ public class BRSharedPrefs {
 
     public static int getCurrentHistoryPageNumber(Context context){
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getInt("pageNumber", 1000000);
+        return prefs.getInt("pageNumber", 1);
     }
 
     public static void putHistoryRange(Context context, int range){
@@ -794,10 +794,10 @@ public class BRSharedPrefs {
         return prefs.getInt("range", 0);
     }
 
-    public static void putTotalPageNumber(Context context, int range){
+    public static void putTotalPageNumber(Context context, int number){
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt("totalPageNumber", range);
+        editor.putInt("totalPageNumber", number);
         editor.apply();
     }
 

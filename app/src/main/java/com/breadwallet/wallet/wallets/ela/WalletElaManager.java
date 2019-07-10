@@ -190,6 +190,13 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         TxManager.getInstance().updateTxList(mContext);
     }
 
+    public void refreshTxhistory(){
+        String address = getAddress();
+        if(StringUtil.isNullOrEmpty(address)) return;
+        ElaDataSource.getInstance(mContext).refreshHistory(address);
+        TxManager.getInstance().updateTxList(mContext);
+    }
+
     @Override
     public void addBalanceChangedListener(OnBalanceChangedListener list) {
         mWalletManagerHelper.addBalanceChangedListener(list);

@@ -79,7 +79,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     public static final int LOADING = 1;
     public static final int LOAD_COMPLETE = 2;
-    public static final int LOAD_FINISH = 3;
+    public static final int LOAD_NO_MORE = 3;
     private int mLoadState = LOADING;
 
     private boolean mIsUpdatingData;
@@ -102,7 +102,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                         LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
                         int lastItemPosition = manager.findLastCompletelyVisibleItemPosition();
                         int itemCount = manager.getItemCount();
-                        if(lastItemPosition==(itemCount-1)){
+                        if(lastItemPosition==(itemCount-1) && canLoadMore){
                             if(mLoadMoreListener != null) mLoadMoreListener.loadMore();
                         }
                     }
@@ -116,7 +116,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     if(!StringUtil.isNullOrEmpty(iso) && !iso.equalsIgnoreCase("ELA")) {
                         canLoadMore = false;
                     } else {
-                        canLoadMore = dy > 0;
+                        canLoadMore = dy > 5;
                     }
                 }
             });
@@ -213,15 +213,15 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             switch (mLoadState) {
                 case LOADING:
                     footViewHolder.mProgress.setVisibility(View.VISIBLE);
-                    footViewHolder.mHint.setText("Loading");
+                    footViewHolder.mHint.setText(mContext.getString(R.string.history_loading_hint));
                     break;
                 case LOAD_COMPLETE:
                     footViewHolder.mProgress.setVisibility(View.INVISIBLE);
-                    footViewHolder.mHint.setText("Load Complete");
+                    footViewHolder.mHint.setText(mContext.getString(R.string.history_pull_refresh_hint));
                     break;
-                case LOAD_FINISH:
+                case LOAD_NO_MORE:
                     footViewHolder.mProgress.setVisibility(View.INVISIBLE);
-                    footViewHolder.mHint.setText("Load Finished");
+                    footViewHolder.mHint.setText(mContext.getString(R.string.history_load_no_data));
                     break;
                 default:
                     break;
