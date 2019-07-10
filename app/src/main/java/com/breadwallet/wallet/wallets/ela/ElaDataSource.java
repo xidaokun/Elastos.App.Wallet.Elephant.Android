@@ -261,12 +261,15 @@ public class ElaDataSource implements BRDataSourceInterface {
         Cursor cursor = null;
 
         int pageNumber = BRSharedPrefs.getCurrentHistoryPageNumber(mContext);
-        int lastPageNumber = pageNumber-1;
+        int lastPageNumber = pageNumber - 1;
+        int nextPageNumber = pageNumber + 1;
 
         try {
             database = openDatabase();
-            cursor = database.query(BRSQLiteHelper.ELA_TX_TABLE_NAME, allColumns, BRSQLiteHelper.ELA_COLUMN_PAGENUMBER + " = ? ", new String[]{Integer.toString(pageNumber)}, null, null, "timeStamp desc");
-//            cursor = database.query(BRSQLiteHelper.ELA_TX_TABLE_NAME, allColumns, BRSQLiteHelper.ELA_COLUMN_PAGENUMBER+" = ? OR " + BRSQLiteHelper.ELA_COLUMN_PAGENUMBER + " = ? ", new String[]{Integer.toString(lastPageNumber), Integer.toString(pageNumber)}, null, null, "timeStamp desc");
+//            cursor = database.query(BRSQLiteHelper.ELA_TX_TABLE_NAME, allColumns, BRSQLiteHelper.ELA_COLUMN_PAGENUMBER + " = ? ", new String[]{Integer.toString(pageNumber)}, null, null, "timeStamp desc");
+            cursor = database.query(BRSQLiteHelper.ELA_TX_TABLE_NAME, allColumns,
+                    BRSQLiteHelper.ELA_COLUMN_PAGENUMBER+" = ? OR " + BRSQLiteHelper.ELA_COLUMN_PAGENUMBER + " = ? ",
+                    new String[]{Integer.toString(nextPageNumber), Integer.toString(pageNumber)}, null, null, "timeStamp desc");
 
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
