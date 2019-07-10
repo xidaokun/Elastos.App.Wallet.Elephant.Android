@@ -205,7 +205,7 @@ public class MultiSignTxActivity extends BRActivity {
         mBalanceText = mListView.findViewById(R.id.multisign_tx_balance);
 
         double ela =  (double) tx.Outputs.get(0).amount / 100000000L;
-        DecimalFormat df = new DecimalFormat("#.########");
+        DecimalFormat df = new DecimalFormat(",###.########");
         String amountStr = df.format(ela) + " ELA";
         amount.setText(amountStr);
 

@@ -203,9 +203,9 @@ public class ElaNodeActivity extends BRActivity {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         String oldNode = BRSharedPrefs.getElaNode(ElaNodeActivity.this, ElaDataSource.ELA_NODE_KEY);
-                        String input = inputEdit.getText().toString();
-                        mCurrentNode.setText(input);
+                        String input = inputEdit.getText().toString().trim();
                         if(!StringUtil.isNullOrEmpty(input) && !input.equals(oldNode)) {
+                            mCurrentNode.setText(input);
                             testConnect(input);
                         }
 //                        testConnect(input);
