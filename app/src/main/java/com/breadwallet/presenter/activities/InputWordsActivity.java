@@ -65,6 +65,7 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
 
     private boolean mReenter = false;
     private String mWalletName;
+
     private TypedValue mTypedValue = new TypedValue();
 
     @Override

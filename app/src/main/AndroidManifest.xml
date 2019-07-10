@@ -397,6 +397,7 @@
                     android:host="multicreate"/>
             </intent-filter>
         </activity>
+
         <activity android:name=".presenter.activities.PhraseListActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".presenter.activities.WalletNameActivity"

@@ -82,6 +82,7 @@ public class PhraseListActivity extends BRActivity implements PhraseAdapter.Wall
                 e.printStackTrace();
             }
         }
+
         List<Boolean> backupList = getBackupList(list);
         mAdapter = new PhraseAdapter(this, list,backupList, this);
 
