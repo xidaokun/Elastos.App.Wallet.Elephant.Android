@@ -494,7 +494,7 @@
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">若您丢失或升级您的手机，访问您的比特币的唯一方法。</string>
     <!-- Paper Key button title -->
-    <string name="SecurityCenter.paperKeyTitle">备份助记词</string>
+    <string name="SecurityCenter.paperKeyTitle">助记词列表</string>
     <!-- PIN button description -->
     <string name="SecurityCenter.pinDescription">保护您的 Elephant 免遭未授权用户盗用。</string>
     <!-- PIN button title -->
@@ -1152,4 +1152,7 @@
     <string name="history_pull_refresh_hint">点击或上拉加载更多</string>
 
     <string name="net_has_disconnect">网络已断开</string>
+
+
+    <string name="multiwallet_phrase_list">助记词列表</string>
 </resources>

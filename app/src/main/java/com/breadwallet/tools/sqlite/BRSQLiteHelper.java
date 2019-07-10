@@ -52,7 +52,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
         return instance;
     }
 
-    public static final String DATABASE_NAME = "breadwallet.db";
+    public static String DATABASE_NAME = "breadwallet.db";
     private static final int DATABASE_VERSION = 19;
 
     public static final String ADD_APPS_TABLE_NAME = "addAppTable";

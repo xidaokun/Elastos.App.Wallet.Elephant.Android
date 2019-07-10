@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -61,6 +62,7 @@ import com.breadwallet.presenter.fragments.FragmentSupport;
 import com.breadwallet.presenter.fragments.FragmentTxDetails;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
@@ -596,4 +598,23 @@ public class UiUtils {
         context.startActivity(Intent.createChooser(textIntent, "Share"));
     }
 
+    public static void restartApp(Activity activity) {
+        PackageManager packageManager = activity.getPackageManager();
+        Intent intent = packageManager.getLaunchIntentForPackage(activity.getPackageName());
+        assert intent != null;
+        ComponentName componentName = intent.getComponent();
+        Intent mainIntent = Intent.makeRestartActivityTask(componentName);
+        activity.startActivity(mainIntent);
+        Runtime.getRuntime().exit(0);
+    }
+
+    public static void switchPhrase(Activity context, String phrase, boolean restart) {
+        PostAuth.getInstance().setCachedPaperKey(phrase);
+
+        //Disallow BTC and BCH sending.
+        BRSharedPrefs.putAllowSpend(context, BaseBitcoinWalletManager.BITCASH_SYMBOL, false);
+        BRSharedPrefs.putAllowSpend(context, BaseBitcoinWalletManager.BITCOIN_SYMBOL, false);
+
+        PostAuth.getInstance().onRecoverWalletAuth(context, false, restart);
+    }
 }

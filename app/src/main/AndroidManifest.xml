@@ -397,6 +397,7 @@
                     android:host="multicreate"/>
             </intent-filter>
         </activity>
+        <activity android:name=".presenter.activities.PhraseListActivity" />
 
         <provider
             android:name=".presenter.provider.BuglyFileProvider"

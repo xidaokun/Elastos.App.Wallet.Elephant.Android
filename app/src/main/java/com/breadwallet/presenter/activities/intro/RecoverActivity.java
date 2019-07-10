@@ -25,12 +25,14 @@ public class RecoverActivity extends BRActivity {
         setContentView(R.layout.activity_intro_recover);
 
         nextButton = findViewById(R.id.send_button);
+        final boolean reenter = getIntent().getBooleanExtra(IntroActivity.INTRO_REENTER, false);
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) return;
                 Intent intent = new Intent(RecoverActivity.this, InputWordsActivity.class);
+                intent.putExtra(IntroActivity.INTRO_REENTER, reenter);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
