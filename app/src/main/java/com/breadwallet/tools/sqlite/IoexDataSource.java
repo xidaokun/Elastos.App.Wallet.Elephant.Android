@@ -337,8 +337,7 @@ public class IoexDataSource implements BRDataSourceInterface {
                 cursor.getLong(10),
                 cursor.getString(11),
                 cursor.getInt(12)==1,
-                cursor.getInt(13)==1,
-                cursor.getInt(14));
+                cursor.getInt(13)==1);
     }
 
     @Override

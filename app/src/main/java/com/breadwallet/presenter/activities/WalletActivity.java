@@ -497,19 +497,19 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     @Override
     public void onConnectionChanged(boolean isConnected) {
         Log.d(TAG, "onConnectionChanged: isConnected: " + isConnected);
-        Toast.makeText(this, getString(R.string.net_has_disconnect), Toast.LENGTH_SHORT).show();
-//        if (isConnected) {
-//            if (mBarFlipper != null && mBarFlipper.getDisplayedChild() == 2) {
-//                mBarFlipper.setDisplayedChild(0);
-//            }
-//            SyncService.startService(this.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, mCurrentWalletIso);
-//
-//        } else {
-//            if (mBarFlipper != null) {
-//                mBarFlipper.setDisplayedChild(2);
-//            }
-//
-//        }
+//        Toast.makeText(this, getString(R.string.net_has_disconnect), Toast.LENGTH_SHORT).show();
+        if (isConnected) {
+            if (mBarFlipper != null && mBarFlipper.getDisplayedChild() == 2) {
+                mBarFlipper.setDisplayedChild(0);
+            }
+            SyncService.startService(this.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, mCurrentWalletIso);
+
+        } else {
+            if (mBarFlipper != null) {
+                mBarFlipper.setDisplayedChild(2);
+            }
+
+        }
     }
 
     @Override

@@ -253,19 +253,19 @@ public class FragmentWallet extends Fragment implements RatesDataSource.OnDataCh
 
     public void onConnectionChanged(boolean isConnected) {
         Log.d(TAG, "onConnectionChanged: isConnected: " + isConnected);
-//        if (isConnected) {
-//            if (mNotificationBar != null) {
-//                mNotificationBar.setVisibility(View.INVISIBLE);
-//            }
-//
-//            if (mAdapter != null) {
-//                mAdapter.startObserving();
-//            }
-//        } else {
-//            if (mNotificationBar != null) {
-//                mNotificationBar.setVisibility(View.VISIBLE);
-//            }
-//        }
+        if (isConnected) {
+            if (mNotificationBar != null) {
+                mNotificationBar.setVisibility(View.INVISIBLE);
+            }
+
+            if (mAdapter != null) {
+                mAdapter.startObserving();
+            }
+        } else {
+            if (mNotificationBar != null) {
+                mNotificationBar.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     @Override

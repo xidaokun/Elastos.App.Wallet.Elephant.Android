@@ -51,6 +51,25 @@ public class HistoryTransactionEntity implements Serializable {
 
     public HistoryTransactionEntity(boolean isReceived, long timeStamp, int blockHeight, byte[] hash,
                                     String txReversed, long fee, String toAddress, String fromAddress, long balanceAfterTx,
+                                    int txSize, long amount, String meno, boolean isValid, boolean isVote){
+        this.isReceived = isReceived;
+        this.timeStamp = timeStamp;
+        this.blockHeight = blockHeight;
+        this.hash = hash;
+        this.txReversed = txReversed;
+        this.fee = fee;
+        this.toAddress = toAddress;
+        this.fromAddress = fromAddress;
+        this.balanceAfterTx = balanceAfterTx;
+        this.txSize = txSize;
+        this.amount = amount;
+        this.memo = meno;
+        this.isValid = isValid;
+        this.isVote = isVote;
+    }
+
+    public HistoryTransactionEntity(boolean isReceived, long timeStamp, int blockHeight, byte[] hash,
+                                    String txReversed, long fee, String toAddress, String fromAddress, long balanceAfterTx,
                                     int txSize, long amount, String meno, boolean isValid, boolean isVote, int pageNumber){
         this.isReceived = isReceived;
         this.timeStamp = timeStamp;
