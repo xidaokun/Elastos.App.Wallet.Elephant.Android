@@ -117,6 +117,7 @@ public class TxManager {
             public void onRefresh() {
                 int currentPageNumber =  BRSharedPrefs.getCurrentHistoryPageNumber(app);
                 int totalPage = BRSharedPrefs.getTotalPageNumber(app);
+                updateTxList(app);
                 if(currentPageNumber > 0){
                     BRSharedPrefs.putHistoryRange(app, (currentPageNumber>=totalPage)?0:1);
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {

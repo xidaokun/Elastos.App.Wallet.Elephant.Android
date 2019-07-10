@@ -268,8 +268,8 @@ public class ElaDataSource implements BRDataSourceInterface {
             database = openDatabase();
 //            cursor = database.query(BRSQLiteHelper.ELA_TX_TABLE_NAME, allColumns, BRSQLiteHelper.ELA_COLUMN_PAGENUMBER + " = ? ", new String[]{Integer.toString(pageNumber)}, null, null, "timeStamp desc");
             cursor = database.query(BRSQLiteHelper.ELA_TX_TABLE_NAME, allColumns,
-                    BRSQLiteHelper.ELA_COLUMN_PAGENUMBER+" = ? OR " + BRSQLiteHelper.ELA_COLUMN_PAGENUMBER + " = ? ",
-                    new String[]{Integer.toString(nextPageNumber), Integer.toString(pageNumber)}, null, null, "timeStamp desc");
+                    BRSQLiteHelper.ELA_COLUMN_PAGENUMBER+" = ? OR " + BRSQLiteHelper.ELA_COLUMN_PAGENUMBER+" = ? OR " + BRSQLiteHelper.ELA_COLUMN_PAGENUMBER + " = ? ",
+                    new String[]{Integer.toString(lastPageNumber), Integer.toString(nextPageNumber), Integer.toString(pageNumber)}, null, null, "timeStamp desc");
 
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
