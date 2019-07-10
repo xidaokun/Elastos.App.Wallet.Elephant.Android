@@ -74,7 +74,11 @@ public class TxManager {
             @Override
             public void onItemClick(View view, int position, float x, float y) {
                 if (position == -1) return;
-                TxUiHolder item = adapter.getItems().get(position);
+                List<TxUiHolder> items = adapter.getItems();
+                if(position >= items.size()){
+                    return;
+                }
+                TxUiHolder item = items.get(position);
                 UiUtils.showTransactionDetails(app, item, position);
             }
 
