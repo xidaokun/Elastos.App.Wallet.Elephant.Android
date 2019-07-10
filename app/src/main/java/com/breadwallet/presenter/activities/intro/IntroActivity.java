@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -53,6 +54,10 @@ public class IntroActivity extends BRActivity {
     private Button mNewWalletButton;
     private Button mRecoverWalletButton;
 
+    public static final String INTRO_REENTER = "intro.reenter";
+
+    private boolean mReenter = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +65,7 @@ public class IntroActivity extends BRActivity {
         mNewWalletButton = findViewById(R.id.button_new_wallet);
         mRecoverWalletButton = findViewById(R.id.button_recover_wallet);
         TextView subtitle = findViewById(R.id.intro_subtitle);
+
 
 //        String aa = android.os.Build.CPU_ABI;
 //        if(!"armeabi-v7a".equals(android.os.Build.CPU_ABI)){
@@ -102,6 +108,9 @@ public class IntroActivity extends BRActivity {
             WalletsMaster.getInstance(this).wipeWalletButKeystore(this);
         }
 
+        mReenter = getIntent().getBooleanExtra(INTRO_REENTER, false);
+        if (mReenter) return;
+
         PostAuth.getInstance().onCanaryCheck(IntroActivity.this, false);
 
 //        checkPermisson();
@@ -135,6 +144,15 @@ public class IntroActivity extends BRActivity {
                 if (!UiUtils.isClickAllowed()) {
                     return;
                 }
+
+                if (mReenter) {
+                    String pin = BRKeyStore.getPinCode(IntroActivity.this);
+                    if (!pin.isEmpty()) {
+                        PostAuth.getInstance().onCreateWalletAuth(IntroActivity.this, false, true);
+                        return;
+                    }
+                }
+
                 Intent intent = new Intent(IntroActivity.this, InputPinActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
@@ -149,6 +167,7 @@ public class IntroActivity extends BRActivity {
                     return;
                 }
                 Intent intent = new Intent(IntroActivity.this, RecoverActivity.class);
+                intent.putExtra(INTRO_REENTER, mReenter);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }

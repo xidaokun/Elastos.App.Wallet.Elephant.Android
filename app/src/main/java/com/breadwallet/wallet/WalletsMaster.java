@@ -21,6 +21,8 @@ import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.security.PhraseInfo;
+import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Bip39Reader;
@@ -39,6 +41,7 @@ import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
@@ -247,6 +250,28 @@ public class WalletsMaster {
         byte[] pubKey = new BRCoreMasterPubKey(paperKeyBytes, true).serialize();
         BRKeyStore.putMasterPublicKey(pubKey, ctx);
 
+        // add to phrase list
+        try {
+            String hash = UiUtils.getStringMd5(new String(paperKeyBytes));
+            BRSQLiteHelper.DATABASE_NAME = hash + ".db";
+            Log.d(TAG, "new set sqlite file name " + BRSQLiteHelper.DATABASE_NAME);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        PhraseInfo phraseInfo = new PhraseInfo();
+        phraseInfo.phrase = paperKeyBytes;
+        phraseInfo.authKey = authKey;
+        phraseInfo.pubKey = pubKey;
+        phraseInfo.creationTime = walletCreationTime;
+        phraseInfo.alias = "";
+        try {
+            BRKeyStore.addPhraseInfo(ctx, phraseInfo);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+            return false;
+        }
+
         return true;
 
     }
@@ -273,7 +298,6 @@ public class WalletsMaster {
     }
 
     public boolean wipeKeyStore(Context context) {
-        Log.d(TAG, "wipeKeyStore");
         return BRKeyStore.resetWalletKeyStore(context);
     }
 

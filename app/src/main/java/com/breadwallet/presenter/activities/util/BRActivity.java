@@ -200,7 +200,7 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            PostAuth.getInstance().onRecoverWalletAuth(BRActivity.this, true);
+                            PostAuth.getInstance().onRecoverWalletAuth(BRActivity.this, true, false);
                         }
                     });
                 } else {
@@ -237,7 +237,7 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            PostAuth.getInstance().onCreateWalletAuth(BRActivity.this, true);
+                            PostAuth.getInstance().onCreateWalletAuth(BRActivity.this, true, false);
                         }
                     });
 
@@ -253,7 +253,7 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                     boolean isPinAccepted = data.getBooleanExtra(InputPinActivity.EXTRA_PIN_ACCEPTED, false);
                     if (isPinAccepted) {
                         if (Utils.isNullOrEmpty(BRKeyStore.getMasterPublicKey(this))) {
-                            PostAuth.getInstance().onCreateWalletAuth(this, false);
+                            PostAuth.getInstance().onCreateWalletAuth(this, false, false);
                         } else {
                             UiUtils.startBreadActivity(this, false);
                         }

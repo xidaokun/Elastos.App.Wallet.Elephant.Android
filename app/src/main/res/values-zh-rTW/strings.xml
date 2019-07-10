@@ -489,7 +489,7 @@
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">您的手機遺失或升級時，存取您的比特幣唯一的方式。</string>
     <!-- Paper Key button title -->
-    <string name="SecurityCenter.paperKeyTitle">備份助記詞</string>
+    <string name="SecurityCenter.paperKeyTitle">助記詞列表</string>
     <!-- PIN button description -->
     <string name="SecurityCenter.pinDescription">保護您的 Elephant，防範未經授權的使用者。</string>
     <!-- PIN button title -->

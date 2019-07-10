@@ -9,6 +9,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.EsignActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.ManageWalletsActivity;
+import com.breadwallet.presenter.activities.PhraseListActivity;
 import com.breadwallet.presenter.activities.did.DidAuthListActivity;
 import com.breadwallet.presenter.activities.did.ProfileEditActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
@@ -235,20 +236,21 @@ public final class SettingsUtil {
         items.add(new BRSettingsItem(activity.getString(R.string.SecurityCenter_paperKeyTitle), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(activity, WriteDownActivity.class);
+//                Intent intent = new Intent(activity, WriteDownActivity.class);
+                Intent intent = new Intent(activity, PhraseListActivity.class);
                 intent.putExtra(WriteDownActivity.EXTRA_VIEW_REASON, WriteDownActivity.ViewReason.SETTINGS.getValue());
                 activity.startActivity(intent);
                 activity.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
             }
         }, false, 0));
-        items.add(new BRSettingsItem(activity.getString(R.string.Settings_wipe), "", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(activity, UnlinkActivity.class);
-                activity.startActivity(intent);
-                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            }
-        }, false, 0));
+//        items.add(new BRSettingsItem(activity.getString(R.string.Settings_wipe), "", new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(activity, UnlinkActivity.class);
+//                activity.startActivity(intent);
+//                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+//            }
+//        }, false, 0));
         return items;
     }
 
