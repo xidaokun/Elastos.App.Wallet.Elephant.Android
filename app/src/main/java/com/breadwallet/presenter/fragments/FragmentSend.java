@@ -721,36 +721,42 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     }
 
     private void hideVoteCheckView(){
-        if(StringUtil.isNullOrEmpty(mAmountEdit.getText().toString())){
-            BRSharedPrefs.setAutoVote(getContext(), false);
-            mAutoVoteCb.setVisibility(View.GONE);
-            hideVoteView();
-            return;
+        try {
+            if(StringUtil.isNullOrEmpty(mAmountEdit.getText().toString())){
+                BRSharedPrefs.setAutoVote(getContext(), false);
+                mAutoVoteCb.setVisibility(View.GONE);
+                hideVoteView();
+                return;
+            }
+
+            String iso = BRSharedPrefs.getCurrentWalletIso(getContext());
+            if(StringUtil.isNullOrEmpty(iso) ||
+                    !iso.equalsIgnoreCase("ELA")){
+                BRSharedPrefs.setAutoVote(getContext(), false);
+                mAutoVoteCb.setVisibility(View.GONE);
+                hideVoteView();
+                return;
+            }
+
+            String amountStr = mAmountEdit.getText().toString();
+            BigDecimal rawAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) || amountStr.equalsIgnoreCase(".") ? "0" : amountStr);
+            BigDecimal totalAmount = rawAmount.multiply(new BigDecimal(100000000)).add(new BigDecimal(4860));
+            BigDecimal balance = BRSharedPrefs.getCachedBalance(getContext(), "ELA").multiply(new BigDecimal(100000000));
+            String candidatesStr = BRSharedPrefs.getCandidate(getContext());
+            if(balance.compareTo(new BigDecimal(100000000))>0 &&
+                    totalAmount.compareTo(balance)<0 &&
+                    !StringUtil.isNullOrEmpty(candidatesStr)){
+                mAutoVoteCb.setVisibility(View.VISIBLE);
+                hideVoteView();
+            } else {
+                BRSharedPrefs.setAutoVote(getContext(), false);
+                mAutoVoteCb.setVisibility(View.GONE);
+                hideVoteView();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        String iso = BRSharedPrefs.getCurrentWalletIso(getContext());
-        if(StringUtil.isNullOrEmpty(iso) ||
-                !iso.equalsIgnoreCase("ELA")){
-            BRSharedPrefs.setAutoVote(getContext(), false);
-            mAutoVoteCb.setVisibility(View.GONE);
-            hideVoteView();
-            return;
-        }
-
-
-        BigDecimal totalAmount = new BigDecimal(mAmountEdit.getText().toString()).multiply(new BigDecimal(100000000)).add(new BigDecimal(4860));
-        BigDecimal balance = BRSharedPrefs.getCachedBalance(getContext(), "ELA").multiply(new BigDecimal(100000000));
-        String candidatesStr = BRSharedPrefs.getCandidate(getContext());
-        if(balance.compareTo(new BigDecimal(100000000))>0 &&
-                totalAmount.compareTo(balance)<0 &&
-                !StringUtil.isNullOrEmpty(candidatesStr)){
-            mAutoVoteCb.setVisibility(View.VISIBLE);
-            hideVoteView();
-        } else {
-            BRSharedPrefs.setAutoVote(getContext(), false);
-            mAutoVoteCb.setVisibility(View.GONE);
-            hideVoteView();
-        }
     }
 
     private void copyText() {
