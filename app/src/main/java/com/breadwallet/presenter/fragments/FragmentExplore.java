@@ -1,7 +1,6 @@
 package com.breadwallet.presenter.fragments;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -55,9 +54,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -107,16 +104,11 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     private View mAboutPopLayout;
     private View mAboutShareView;
     private View mRemoveAppLayout;
+    private TextView mRemoveHint;
     private View mCancelView;
     private View mRemoveView;
-    private View mLoadAppView;
     private BaseTextView mAboutAboutView;
     private View mAboutCancelView;
-    private View mLoadAppLayout;
-    private TextView mLoadHintTv;
-    private View mLoadNoBtn;
-    private View mLoadYesBtn;
-    private Activity mParent;
     private LoadingDialog mLoadingDialog;
     private AboutShowListener mAboutShowListener;
     private static final int INIT_APPS_MSG = 0x01;
@@ -202,10 +194,10 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     private void initView(View rootView) {
         mDisclaimLayout = rootView.findViewById(R.id.disclaim_layout);
         mRemoveAppLayout = rootView.findViewById(R.id.explore_remove_app_layout);
-        mLoadAppLayout = rootView.findViewById(R.id.explore_load_app_layout);
         mMenuPopLayout = rootView.findViewById(R.id.explore_menu_pop_layout);
         mAboutPopLayout = rootView.findViewById(R.id.explore_about_layout);
 
+        mRemoveHint = rootView.findViewById(R.id.remove_hint_tv);
         mOkBtn = rootView.findViewById(R.id.disclaim_ok_btn);
         mDoneBtn = rootView.findViewById(R.id.explore_done_tv);
         mCancelBtn = rootView.findViewById(R.id.explore_cancel_tv);
@@ -221,9 +213,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         mAboutCancelView = rootView.findViewById(R.id.cancel_tv);
         mCancelView = rootView.findViewById(R.id.remove_mini_cancel);
         mRemoveView = rootView.findViewById(R.id.remove_mini_confirm);
-        mLoadHintTv = rootView.findViewById(R.id.load_hint_tv);
-        mLoadNoBtn = rootView.findViewById(R.id.load_mini_no);
-        mLoadYesBtn = rootView.findViewById(R.id.load_mini_yes);
         if (BRSharedPrefs.getDisclaimShow(getContext()))
             mDisclaimLayout.setVisibility(View.VISIBLE);
         mLoadingDialog = new LoadingDialog(getContext(), R.style.progressDialog);
@@ -339,23 +328,23 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         mAboutAboutView.setText(String.format(getString(R.string.explore_pop_about), mAboutAppItem.name_en));
     }
 
-    private String mLoadUrl = null;
-    private String mLoadAppId = null;
-
     @Override
     public void onItemClick(MyAppItem item, int position) {
         String url = item.url;
         if (!StringUtil.isNullOrEmpty(url)) {
-            mLoadAppLayout.setVisibility(View.VISIBLE);
-            mLoadUrl = url;
-            mLoadAppId = item.appId;
-
-            String languageCode = Locale.getDefault().getLanguage();
-            if (!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")) {
-                mLoadHintTv.setText(Html.fromHtml(String.format(getString(R.string.esign_load_mini_app_hint), item.name_zh_CN)));
+            if (url.contains("?")) {
+                url = url + "&browser=elaphant";
             } else {
-                mLoadHintTv.setText(Html.fromHtml(String.format(getString(R.string.esign_load_mini_app_hint), item.name_en)));
+                url = url + "?browser=elaphant";
             }
+            UiUtils.startWebviewActivity(getActivity(), url, item.appId);
+//
+//            String languageCode = Locale.getDefault().getLanguage();
+//            if (!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")) {
+//                mLoadHintTv.setText(Html.fromHtml(String.format(getString(R.string.esign_load_mini_app_hint), item.name_zh_CN)));
+//            } else {
+//                mLoadHintTv.setText(Html.fromHtml(String.format(getString(R.string.esign_load_mini_app_hint), item.name_en)));
+//            }
         }
     }
 
@@ -459,12 +448,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 return true;
             }
         });
-        mLoadAppLayout.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
-            }
-        });
         mRemoveAppLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -534,30 +517,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                         mAdapter.notifyDataSetChanged();
                     }
                 }
-            }
-        });
-
-        mLoadNoBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mLoadAppLayout.setVisibility(View.GONE);
-            }
-        });
-
-        mLoadYesBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mLoadAppLayout.setVisibility(View.GONE);
-                if (!StringUtil.isNullOrEmpty(mLoadUrl)) {
-                    if (mLoadUrl.contains("?")) {
-                        mLoadUrl = mLoadUrl + "&browser=elaphant";
-                    } else {
-                        mLoadUrl = mLoadUrl + "?browser=elaphant";
-                    }
-                    UiUtils.startWebviewActivity(getActivity(), mLoadUrl, mLoadAppId);
-                }
-                mLoadUrl = null;
-                mLoadAppId = null;
             }
         });
 
@@ -864,6 +823,12 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         if (!StringUtil.isNullOrEmpty(appId)) {
             mRemoveApp.add(item);
             mRemoveAppLayout.setVisibility(View.VISIBLE);
+            String languageCode = Locale.getDefault().getLanguage();
+            if (!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")) {
+                mRemoveHint.setText(Html.fromHtml(String.format(getString(R.string.esign_remove_nini_app_hint), item.name_zh_CN)));
+            } else {
+                mRemoveHint.setText(Html.fromHtml(String.format(getString(R.string.esign_remove_nini_app_hint), item.name_en)));
+            }
         }
     }
 

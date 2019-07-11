@@ -45,7 +45,7 @@ public class IoexDataSource implements BRDataSourceInterface {
 
     private static IoexDataSource mInstance;
 
-    private static final String IOEX_NODE = "api-wallet-ela.elastos.org";
+    private static final String IOEX_NODE = "node1.elaphant.app";
 
     private final BRSQLiteHelper dbHelper;
 

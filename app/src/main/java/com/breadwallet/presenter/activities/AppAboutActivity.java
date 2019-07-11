@@ -55,6 +55,9 @@ public class AppAboutActivity extends BaseSettingsActivity {
         String appId = getIntent().getStringExtra("appId");
         if(!StringUtil.isNullOrEmpty(appId)){
             MyAppItem myAppItem = ProfileDataSource.getInstance(this).getAppInfoById(appId);
+            if(myAppItem == null){
+                return;
+            }
             mTitle.setText(String.format(getString(R.string.explore_pop_about), myAppItem.name_en));
             String languageCode = Locale.getDefault().getLanguage();
             if(!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")){
