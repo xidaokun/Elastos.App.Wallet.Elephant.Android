@@ -1136,7 +1136,7 @@
     <string name="esign_success_hint">Signed successfully</string>
     <string name="esign_success_copy">Copy</string>
     <string name="esign_copy_to_clipboard">Copied to clipboard</string>
-    <string name="esign_remove_nini_app_hint">Are you sure you want to remove this <Data><![CDATA[<font color="#ff3365">%1$s</font>]]></Data> Mini Programs?</string>
+    <string name="esign_remove_nini_app_hint">Are you sure you want to remove <Data><![CDATA[<font color="#ff3365">%1$s</font>]]></Data>?</string>
     <string name="esign_load_no">No</string>
     <string name="esign_load_yes">Yes</string>
     <string name="esign_load_mini_app_hint">Are you sure you want to load <Data><![CDATA[<font color="#ff3365">%1$s</font>]]></Data> mini program?</string>

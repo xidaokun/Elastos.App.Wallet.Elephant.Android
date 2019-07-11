@@ -117,7 +117,7 @@ public class ElaNodeActivity extends BRActivity {
                 try {
                      ret = urlGET(url);
                      //{"result":312513,"status":200}
-                     if(!StringUtil.isNullOrEmpty(ret) && ret.contains("\"status\":200")) {
+                     if(!StringUtil.isNullOrEmpty(ret) && ret.equalsIgnoreCase("success")) {
                          runOnUiThread(new Runnable() {
                              @Override
                              public void run() {
@@ -248,9 +248,9 @@ public class ElaNodeActivity extends BRActivity {
         Response response = APIClient.testNodeClient.newCall(request).execute();
 
         if (response.isSuccessful()) {
-            return response.body().string();
+            return "success";
         } else {
-            throw new IOException("Unexpected code " + response);
+            return "failed";
         }
     }
 }

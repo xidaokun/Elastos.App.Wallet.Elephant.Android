@@ -30,6 +30,7 @@ import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.WalletManagerHelper;
 import com.breadwallet.wallet.wallets.ela.BRElaTransaction;
+import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.breadwallet.wallet.wallets.ela.data.HistoryTransactionEntity;
 import com.elastos.jni.Utility;
 
@@ -440,6 +441,7 @@ public class WalletIoexManager extends BRCoreWalletManager implements BaseWallet
     @Override
     public void wipeData(Context app) {
         BRSharedPrefs.putCachedBalance(app, getIso(),  new BigDecimal(0));
+        IoexDataSource.getInstance(app).deleteAllTransactions();
         mPrivateKey = null;
         mAddress = null;
         mInstance = null;

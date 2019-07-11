@@ -353,6 +353,14 @@ public class IoexDataSource implements BRDataSourceInterface {
 
     }
 
+    public void deleteAllTransactions() {
+        try {
+            database = openDatabase();
+            database.delete(BRSQLiteHelper.IOEX_TX_TABLE_NAME, null, null);
+        } finally {
+            closeDatabase();
+        }
+    }
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     public String urlPost(String url, String json) throws IOException {
