@@ -116,7 +116,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     if(!StringUtil.isNullOrEmpty(iso) && !iso.equalsIgnoreCase("ELA")) {
                         canLoadMore = false;
                     } else {
-                        canLoadMore = dy > 5;
+                        canLoadMore = dy > 0;
                     }
                 }
             });

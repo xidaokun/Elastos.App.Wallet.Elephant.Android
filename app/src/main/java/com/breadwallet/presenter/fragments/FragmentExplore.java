@@ -783,8 +783,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             if (item != null) {
                 for (MyAppItem myAppItem : mItems) {
                     if (item.appId.equals(myAppItem.appId)) {
-                        mAppIds.remove(item.appId);
-                        mItems.remove(myAppItem);
+                        return;
                     }
                 }
                 mAppIds.add(item.appId);

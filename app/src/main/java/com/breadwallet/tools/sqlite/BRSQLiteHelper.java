@@ -349,12 +349,13 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
         Log.e(TAG, "onCreate: " + CURRENCY_DATABASE_CREATE);
         database.execSQL(ADD_APPS_DATABASE_CREATE);
         database.execSQL(ESIGN_HISTORY_DATABASE_CREATE);
+        database.execSQL(IOEX_TX_DATABASE_CREATE);
+
         database.execSQL(HISTORY_PRODUCER_DATABASE_CREATE);
         database.execSQL(ELA_PRODUCER_DATABASE_CREATE);
         database.execSQL(SIGN_DATABASE_CREATE);
         database.execSQL(DID_AUTHOR_DATABASE_CREATE);
         database.execSQL(ELA_TX_DATABASE_CREATE);
-        database.execSQL(IOEX_TX_DATABASE_CREATE);
         database.execSQL(MB_DATABASE_CREATE);
         database.execSQL(TX_DATABASE_CREATE);
         database.execSQL(PEER_DATABASE_CREATE);
@@ -372,6 +373,13 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
         Log.d(TAG, "oldVersion:"+oldVersion+" newVersion:"+newVersion);
+
+        if(newVersion == 19){
+            db.execSQL("DROP TABLE IF EXISTS " + ELA_TX_TABLE_NAME);
+            db.execSQL(ELA_TX_DATABASE_CREATE);
+            db.execSQL(ADD_APPS_DATABASE_CREATE);
+            db.execSQL(IOEX_TX_DATABASE_CREATE);
+        }
 
         if(oldVersion == 16) {
             db.execSQL("DROP TABLE IF EXISTS " + ELA_TX_TABLE_NAME);
