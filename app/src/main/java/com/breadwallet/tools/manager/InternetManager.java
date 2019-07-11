@@ -82,23 +82,40 @@ public class InternetManager extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, final Intent intent) {
         boolean connected = false;
-        if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
-            NetworkInfo networkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
-            if (networkInfo != null && networkInfo.getDetailedState() == NetworkInfo.DetailedState.CONNECTED) {
-                connected = true;
-//                WalletsMaster.getInstance(context).getCurrentWallet(context).getPeerManager().connect();
-                Log.e(TAG, "onReceive: core connecting");
-            } else if (networkInfo != null && networkInfo.getDetailedState() == NetworkInfo.DetailedState.DISCONNECTED) {
 
+        if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
+            ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+            NetworkInfo mobNetInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+            NetworkInfo wifiNetInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+            if (!mobNetInfo.isConnected() && !wifiNetInfo.isConnected()) {
                 connected = false;
+            } else {
+                connected = true;
             }
 
             BREventManager.getInstance().pushEvent(connected ? "reachability.isReachble" : "reachability.isNotReachable");
             for (ConnectionReceiverListener listener : mConnectionReceiverListeners) {
                 listener.onConnectionChanged(connected);
             }
-            Log.e(TAG, "onReceive: " + connected);
+            Log.d(TAG, "onReceive: " + connected);
         }
+
+//        if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
+//            NetworkInfo networkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
+//            if (networkInfo != null && networkInfo.getDetailedState() == NetworkInfo.DetailedState.CONNECTED) {
+//                connected = true;
+////                WalletsMaster.getInstance(context).getCurrentWallet(context).getPeerManager().connect();
+//                Log.e(TAG, "onReceive: core connecting");
+//            } else if (networkInfo != null && networkInfo.getDetailedState() == NetworkInfo.DetailedState.DISCONNECTED) {
+//
+//                connected = false;
+//            }
+//
+//
+//        }
     }
 
     public boolean isConnected(Context app) {

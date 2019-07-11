@@ -312,6 +312,8 @@
     <string name="MenuButton.scan">Scan QR Code</string>
     <!-- Menu button title -->
     <string name="MenuButton.security">Security Settings</string>
+    <!-- E-sign title -->
+    <string name="MenuButton.e.sign">e-Sign</string>
     <!-- Menu button title -->
     <string name="MenuButton.settings">Settings</string>
     <!-- Menu button title -->
@@ -328,6 +330,8 @@
     <string name="NodeSelector.connected">Connected</string>
     <!-- Node is connecting label -->
     <string name="NodeSelector.connecting">Connecting</string>
+    <!-- Node is connect error label -->
+    <string name="NodeSelector.connect.error">Connect Error</string>
     <!-- Enter node ip address view body -->
     <string name="NodeSelector.enterBody">Enter Node address</string>
     <!-- Enter Node ip address view title -->
@@ -1068,7 +1072,7 @@
     
     <string name="sign_signature_request_title">Signature Request</string>
     <string name="sign_request_information">Request information:</string>
-    <string name="sign_developer_did">Developer DID</string>
+    <string name="sign_developer_did">Develop DID:</string>
     <string name="sign_timestamp">Timestamp</string>
     <string name="sign_purpose">Purpose</string>
     <string name="sign_content">Content</string>
@@ -1078,13 +1082,26 @@
 
     <string name="node_list_title">Node list of these %1$d nodes:</string>
 
-    <string name="multisign_deny">Deny</string>
+    <string name="explore_mini_app_title">My Mini Programs</string>
+    <string name="explore_pop_edit">Edit</string>
+    <string name="explore_pop_add_by_url">Add by URL</string>
+    <string name="explore_pop_scan_to_add">Scan to Add</string>
+    <string name="explore_pop_remove">Remove</string>
+    <string name="explore_pop_share">Share this App</string>
+    <string name="explore_pop_about">About %1$s</string>
+    <string name="explore_pop_cancel">Cancel</string>
+    <string name="explore_pop_done">Done</string>
+    <string name="explore_delete_app_hint">Are you sure you want to remove this mini program?</string>
+
+    <string name="explore_about_developer">Developer DID:%1$s</string>
+
+    <string name="multisign_deny">Decline</string>
     <string name="multisign_approve">Approve</string>
     <string name="multisign_approve_send">Approve and Send</string>
     <string name="multisign_spend">From :</string>
     <string name="multisign_accept">To :</string>
-    <string name="multisign_signed_title">%1$d out of %2$d keys are required to approve this expense.</string>
-    <string name="multisign_toolbar_title">Approval Request</string>
+    <string name="multisign_signed_title">%1$d out of %2$d keys are required to approve this spend.</string>
+    <string name="multisign_toolbar_title">Request Approval</string>
     <string name="multisign_spend_desc">is being spent in the  shared wallet</string>
     <string name="multisign_balance">Balance:</string>
     <string name="multisign_approved">You have approved the request successfully.</string>
@@ -1093,7 +1110,7 @@
     <string name="multisign_share_or">--- or ---</string>
     <string name="multisign_share_json">Share file.json</string>
     <string name="multisign_approved_title">Approved</string>
-    <string name="multisign_send_succeeded">The ELAs have been sent.</string>
+    <string name="multisign_send_succeeded">ELA has been sent.</string>
     <string name="multisign_wallet_creation">Shared Wallet Creation</string>
     <string name="multisign_create">Create</string>
     <string name="multisign_create_desc">A shared wallet is being created.</string>
@@ -1107,4 +1124,39 @@
     <string name="multisign_create_pubkey_not_in_list">Failed to create the wallet, since your public key is not in the approval list.</string>
     <string name="multisign_wallet_not_created">The multi-signature wallet is not created successfully yet, please try again later.</string>
     <string name="multisign_tx_pubkey_not_in_list">Your public key is not in the approval list, please check your public key or switch to the correct wallet.</string>
+    <string name="esign_title">e-Sign</string>
+    <string name="esign_doc_to_sign">Document to be signed</string>
+    <string name="esign_doc_to_signed">Signed</string>
+    <string name="esign_agreement">By clicking sign, you acknowledge that you are e-signing this document using your personal signature.</string>
+    <string name="esign_detail_title">My Signature Detail</string>
+    <string name="esign_history_title">Signature History</string>
+    <string name="esign_sign_btn">Sign</string>
+    <string name="esign_paste_btn">Paste</string>
+    <string name="esign_success_title">Signature</string>
+    <string name="esign_success_hint">Signed successfully</string>
+    <string name="esign_success_copy">Copy</string>
+    <string name="esign_copy_to_clipboard">Copied to clipboard</string>
+    <string name="esign_remove_nini_app_hint">Are you sure you want to remove <Data><![CDATA[<font color="#ff3365">%1$s</font>]]></Data>?</string>
+    <string name="esign_load_no">No</string>
+    <string name="esign_load_yes">Yes</string>
+    <string name="esign_load_mini_app_hint">Are you sure you want to load <Data><![CDATA[<font color="#ff3365">%1$s</font>]]></Data> mini program?</string>
+    <string name="mini_app_dialog_remove">Remove</string>
+    <string name="esign_please_contnet_empty_hint">Please enter the encrypted content.</string>
+
+    <string name="mini_app_app_id">App ID</string>
+    <string name="mini_app_website">Website</string>
+    <string name="mini_app_name">Name</string>
+    <string name="mini_app_publickey">PublicKey</string>
+    <string name="mini_app_category">Category</string>
+    <string name="mini_app_platform">Platform</string>
+    <string name="mini_app_version">Version</string>
+    <string name="mini_app_shortdesc">ShortDesc</string>
+
+    <string name="mini_app_invalid_url">Invalid url</string>
+
+    <string name="history_loading_hint">Loading</string>
+    <string name="history_load_no_data">No more data</string>
+    <string name="history_pull_refresh_hint">Tap or pull up to load more</string>
+
+    <string name="net_has_disconnect">Network disconnected</string>
 </resources>

@@ -9,6 +9,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
 import com.breadwallet.presenter.customviews.BREdit;
 import com.breadwallet.presenter.customviews.BaseTextView;
+import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.util.StringUtil;
 
 public class AddAppsActivity extends BaseSettingsActivity {
@@ -57,7 +58,10 @@ public class AddAppsActivity extends BaseSettingsActivity {
         mClean.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mUrl.setText("");
+                String content = BRClipboardManager.getClipboard(AddAppsActivity.this);
+                if(!StringUtil.isNullOrEmpty(content)){
+                    mUrl.setText(content);
+                }
             }
         });
     }

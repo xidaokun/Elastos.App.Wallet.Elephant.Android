@@ -31,4 +31,6 @@ public class MyAppItem {
     public String developer;
     public long size;
     public String hash;
+    public String path;
+    public String downloadUrl;
 }

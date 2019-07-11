@@ -40,7 +40,7 @@ import java.util.List;
  */
 
 public class BRSQLiteHelper extends SQLiteOpenHelper {
-    private static final String TAG = BRSQLiteHelper.class.getName();
+    private static final String TAG = BRSQLiteHelper.class.getName()+"_log";
     private static BRSQLiteHelper instance;
 
     private BRSQLiteHelper(Context context) {
@@ -53,7 +53,58 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     }
 
     public static final String DATABASE_NAME = "breadwallet.db";
-    private static final int DATABASE_VERSION = 18;
+    private static final int DATABASE_VERSION = 19;
+
+    public static final String ADD_APPS_TABLE_NAME = "addAppTable";
+    public static final String ADD_APPS_NAME_EN = "name_en";
+    public static final String ADD_APPS_NAME_ZH_CN = "name_zh_cn";
+    public static final String ADD_APPS_APP_ID = "app_id";
+    public static final String ADD_APPS_DID = "did";
+    public static final String ADD_APPS_PUBLICKEY = "publicKey";
+    public static final String ADD_APPS_ICON = "icon";
+    public static final String ADD_APPS_SHORTDESC_EN = "shortDesc_en";
+    public static final String ADD_APPS_SHORTDESC_ZH_CN = "shortDesc_zh_CN";
+    public static final String ADD_APPS_LONGDESC_EN = "longDesc_en";
+    public static final String ADD_APPS_LONGDESC_ZH_CN = "longDesc_zh_CN";
+    public static final String ADD_APPS_DEVELOPER = "developer";
+    public static final String ADD_APPS_URL = "url";
+    public static final String ADD_APPS_PATH = "path";
+    public static final String ADD_APPS_HASH = "hash";
+    public static final String ADD_APPS_CATEGORY = "category";
+    public static final String ADD_APPS_PLATFORM = "platform";
+    public static final String ADD_APPS_VERSION = "version";
+    public static final String ADD_APPS_INDEX = "appIndex";
+    private static final String ADD_APPS_DATABASE_CREATE = "create table if not exists " + ADD_APPS_TABLE_NAME + " (" +
+            ADD_APPS_NAME_EN + " text, " +
+            ADD_APPS_NAME_ZH_CN + " text, " +
+            ADD_APPS_APP_ID + " text primary key , " +
+            ADD_APPS_DID + " text, " +
+            ADD_APPS_PUBLICKEY + " text, " +
+            ADD_APPS_ICON + " text, " +
+            ADD_APPS_SHORTDESC_EN + " text, " +
+            ADD_APPS_SHORTDESC_ZH_CN + " text, " +
+            ADD_APPS_LONGDESC_EN + " text, " +
+            ADD_APPS_LONGDESC_ZH_CN + " text, " +
+            ADD_APPS_DEVELOPER + " text, " +
+            ADD_APPS_URL + " text, " +
+            ADD_APPS_PATH + " text, " +
+            ADD_APPS_HASH + " text, " +
+            ADD_APPS_CATEGORY + " text, " +
+            ADD_APPS_PLATFORM + " text, " +
+            ADD_APPS_VERSION + " text, " +
+            ADD_APPS_INDEX +" integer);";
+
+
+    public static final String ESIGN_HISTORY_TABLE_NAME = "historyEsignTable";
+    public static final String ESIGN_COLUMN_ID = "esignId";
+    public static final String ESIGN_SIGN_TIME = "timeStamp";
+    public static final String ESIGN_SIGN_DATA = "esignSignData";
+    public static final String ESIGN_SIGNED_DATA = "esignSignedData";
+    private static final String ESIGN_HISTORY_DATABASE_CREATE = "create table if not exists " + ESIGN_HISTORY_TABLE_NAME + " (" +
+            ESIGN_COLUMN_ID + " integer primary key autoincrement, " +
+            ESIGN_SIGN_TIME + " integer, " +
+            ESIGN_SIGN_DATA + " text, " +
+            ESIGN_SIGNED_DATA + " text);";
 
     /**
      * History Producer table
@@ -138,6 +189,44 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             PEODUCER_VOTES +" text);";
 
     /**
+     * IOEC transaction table
+     */
+
+    public static final String IOEX_TX_TABLE_NAME = "ioexTransactionTable";
+    public static final String IOEX_COLUMN_ID = "_id";
+    public static final String IOEX_COLUMN_ISRECEIVED ="isReceived";//0 false,1 true
+    public static final String IOEX_COLUMN_TIMESTAMP ="timeStamp";
+    public static final String IOEX_COLUMN_BLOCKHEIGHT ="blockHeight";
+    public static final String IOEX_COLUMN_HASH ="hash";
+    public static final String IOEX_COLUMN_TXREVERSED ="txReversed";
+    public static final String IOEX_COLUMN_FEE ="fee";
+    public static final String IOEX_COLUMN_TO ="toAddress";
+    public static final String IOEX_COLUMN_FROM ="fromAddress";
+    public static final String IOEX_COLUMN_BALANCEAFTERTX ="balanceAfterTx";
+    public static final String IOEX_COLUMN_TXSIZE ="txSize";
+    public static final String IOEX_COLUMN_AMOUNT ="amount";
+    public static final String IOEX_COLUMN_MENO ="meno";
+    public static final String IOEX_COLUMN_ISVALID ="isValid";
+    public static final String IOEX_COLUMN_ISVOTE ="isVote";
+
+    private static final String IOEX_TX_DATABASE_CREATE = "create table if not exists " + IOEX_TX_TABLE_NAME + " (" +
+            IOEX_COLUMN_ID + " integer, " +
+            IOEX_COLUMN_ISRECEIVED + " integer, " +
+            IOEX_COLUMN_TIMESTAMP + " integer DEFAULT '0' , " +
+            IOEX_COLUMN_BLOCKHEIGHT + " interger, " +
+            IOEX_COLUMN_HASH + " blob, " +
+            IOEX_COLUMN_TXREVERSED+ " text primary key , " +
+            IOEX_COLUMN_FEE + " real, " +
+            IOEX_COLUMN_TO + " text, " +
+            IOEX_COLUMN_FROM + " text, " +
+            IOEX_COLUMN_BALANCEAFTERTX + " integer, " +
+            IOEX_COLUMN_TXSIZE + " integer, " +
+            IOEX_COLUMN_AMOUNT + " real, " +
+            IOEX_COLUMN_MENO + " text, " +
+            IOEX_COLUMN_ISVALID + " interger, " +
+            IOEX_COLUMN_ISVOTE +" integer);";
+
+    /**
      * ELA transaction table
      */
 
@@ -157,6 +246,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String ELA_COLUMN_MENO ="meno";
     public static final String ELA_COLUMN_ISVALID ="isValid";
     public static final String ELA_COLUMN_ISVOTE ="isVote";
+    public static final String ELA_COLUMN_PAGENUMBER = "pageNumber";
 
     private static final String ELA_TX_DATABASE_CREATE = "create table if not exists " + ELA_TX_TABLE_NAME + " (" +
             ELA_COLUMN_ID + " integer, " +
@@ -173,7 +263,8 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             ELA_COLUMN_AMOUNT + " real, " +
             ELA_COLUMN_MENO + " text, " +
             ELA_COLUMN_ISVALID + " interger, " +
-            ELA_COLUMN_ISVOTE +" integer);";
+            ELA_COLUMN_ISVOTE + " interger, " +
+            ELA_COLUMN_PAGENUMBER +" integer);";
 
     /**
      * MerkleBlock table
@@ -256,6 +347,10 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
         Log.e(TAG, "onCreate: " + TX_DATABASE_CREATE);
         Log.e(TAG, "onCreate: " + PEER_DATABASE_CREATE);
         Log.e(TAG, "onCreate: " + CURRENCY_DATABASE_CREATE);
+        database.execSQL(ADD_APPS_DATABASE_CREATE);
+        database.execSQL(ESIGN_HISTORY_DATABASE_CREATE);
+        database.execSQL(IOEX_TX_DATABASE_CREATE);
+
         database.execSQL(HISTORY_PRODUCER_DATABASE_CREATE);
         database.execSQL(ELA_PRODUCER_DATABASE_CREATE);
         database.execSQL(SIGN_DATABASE_CREATE);
@@ -277,12 +372,21 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+        Log.d(TAG, "oldVersion:"+oldVersion+" newVersion:"+newVersion);
+
+        if(newVersion == 19){
+            db.execSQL("DROP TABLE IF EXISTS " + ELA_TX_TABLE_NAME);
+            db.execSQL(ELA_TX_DATABASE_CREATE);
+            db.execSQL(ADD_APPS_DATABASE_CREATE);
+            db.execSQL(IOEX_TX_DATABASE_CREATE);
+        }
+
         if(oldVersion == 16) {
             db.execSQL("DROP TABLE IF EXISTS " + ELA_TX_TABLE_NAME);
             db.execSQL(ELA_TX_DATABASE_CREATE);
         }
 
-        if (/*oldVersion < 13 && (newVersion >= 13)*/ newVersion==16) {
+        if (/*oldVersion < 13 && (newVersion >= 13)*/ newVersion>=19) {
             boolean migrationNeeded = !tableExists(MB_TABLE_NAME, db);
             onCreate(db); //create new db tables
 

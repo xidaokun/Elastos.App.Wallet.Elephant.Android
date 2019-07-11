@@ -3,6 +3,7 @@ package com.breadwallet.presenter.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +23,7 @@ import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
@@ -29,6 +31,7 @@ import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaAttribute;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaTransactionRes;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaTransactions;
+import com.elastos.jni.Utility;
 import com.google.gson.Gson;
 
 import org.elastos.sdk.keypair.ElastosKeypairSign;
@@ -129,7 +132,10 @@ public class MultiSignTxActivity extends BRActivity {
             mCallbackUrl = URLDecoder.decode(returnurl);
         }
 
-        mMyPublicKey = WalletElaManager.getInstance(this).getPublicKey();
+        String mn = getMn();
+        mMyPublicKey = Utility.getInstance(this).getSinglePublicKey(mn);
+
+//        mMyPublicKey = WalletElaManager.getInstance(this).getPublicKey();
         // if public key is null, finish and return.
         // The app will show authentication screen
         if (mMyPublicKey == null) {
@@ -137,6 +143,19 @@ public class MultiSignTxActivity extends BRActivity {
         }
 
         return true;
+    }
+
+    private String getMn() {
+        byte[] phrase = null;
+        try {
+            phrase = BRKeyStore.getPhrase(this, 0);
+            if (phrase != null) {
+                return new String(phrase);
+            }
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private void initView() {
@@ -154,6 +173,7 @@ public class MultiSignTxActivity extends BRActivity {
         MultiSignCreateActivity.MultiSignParam param = new Gson().fromJson(pref, MultiSignCreateActivity.MultiSignParam.class);
         mRequiredCount = param.RequiredCount;
         mPublicKeys = param.PublicKeys;
+
 
         for (int i = 0; i < mPublicKeys.length; i++) {
             if (mMyPublicKey.equals(mPublicKeys[i])) {
@@ -185,7 +205,7 @@ public class MultiSignTxActivity extends BRActivity {
         mBalanceText = mListView.findViewById(R.id.multisign_tx_balance);
 
         double ela =  (double) tx.Outputs.get(0).amount / 100000000L;
-        DecimalFormat df = new DecimalFormat("#.########");
+        DecimalFormat df = new DecimalFormat(",###.########");
         String amountStr = df.format(ela) + " ELA";
         amount.setText(amountStr);
 

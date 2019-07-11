@@ -12,6 +12,7 @@ public class AuthorInfoItem {
     public static final String PUBLIC_KEY = "PublicKey";
     public static final String NICK_NAME = "Nickname";
     public static final String ELA_ADDRESS = "ELAAddress";
+    public static final String IOEX_ADDRESS = "IOEXAddress";
     public static final String BTC_ADDRESS = "BTCAddress";
     public static final String ETH_ADDRESS = "ETHAddress";
     public static final String BCH_ADDRESS = "BCHAddress";
@@ -66,6 +67,10 @@ public class AuthorInfoItem {
                 BaseWalletManager ela = WalletsMaster.getInstance(context).getWalletByIso(context, "ELA");
                 return new String[]{ela.getAddress()};
 
+            } if(IOEX_ADDRESS.equals(cname)){
+                BaseWalletManager ioex = WalletsMaster.getInstance(context).getWalletByIso(context, "IOEX");
+                return new String[]{ioex.getAddress()};
+
             } else if(BTC_ADDRESS.equals(cname)){
                 BaseWalletManager btc = WalletsMaster.getInstance(context).getWalletByIso(context, "BTC");
                 return new String[]{btc.getAddress()};
@@ -76,7 +81,8 @@ public class AuthorInfoItem {
 
             } else if(BCH_ADDRESS.equals(cname)){
                 BaseWalletManager bch = WalletsMaster.getInstance(context).getWalletByIso(context, "BCH");
-                return new String[]{bch.getAddress()};
+                String stringifyAddress = bch.getReceiveAddress(context).stringify();
+                return new String[]{bch.decorateAddress(stringifyAddress)};
 
             } else if(PHONE_NUMBER.equals(cname)){
                 String area = BRSharedPrefs.getArea(context);

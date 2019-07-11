@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#4D000000">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/explore_about_bg"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true">
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/share_tv"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:gravity="center"
+            android:lines="1"
+            android:text="@string/explore_pop_share"
+            android:textColor="#222222"
+            android:textSize="18sp" />
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/about_line1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#ebebeb" />
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/about_tv"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:gravity="center"
+            android:lines="1"
+            android:text="@string/explore_pop_about"
+            android:textColor="#222222"
+            android:textSize="18sp" />
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/about_line2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#ebebeb" />
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/cancel_tv"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:gravity="center"
+            android:lines="1"
+            android:text="@string/explore_pop_cancel"
+            android:textColor="#222222"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+</RelativeLayout>

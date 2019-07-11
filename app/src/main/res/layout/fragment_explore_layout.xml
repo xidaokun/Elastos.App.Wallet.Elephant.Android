@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primary_background"
+    android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.breadwallet.presenter.activities.settings.WebViewActivity">
 
@@ -31,7 +31,7 @@
         android:layout_marginTop="15dp"
         android:layout_marginLeft="20dp"
         android:visibility="gone"
-        android:text="Cancel"/>
+        android:text="@string/explore_pop_cancel"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/explore_done_tv"
@@ -44,7 +44,7 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginRight="20dp"
         android:visibility="gone"
-        android:text="Done"/>
+        android:text="@string/explore_pop_done"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/explore_add_tv"
@@ -73,7 +73,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="32dp"
-        android:text="My apps"
+        android:text="@string/explore_mini_app_title"
         android:textSize="15sp"
         android:textColor="#1f1f1f"
         app:layout_constraintTop_toBottomOf="@+id/title"
@@ -87,7 +87,7 @@
         android:layout_marginTop="18dp"/>
 
     <include
-        android:id="@+id/explore_pop_layout"
+        android:id="@+id/explore_menu_pop_layout"
         android:visibility="gone"
         layout="@layout/explore_pop_layout"/>
 
@@ -95,5 +95,20 @@
         android:id="@+id/disclaim_layout"
         android:visibility="gone"
         layout="@layout/explore_dialog_layout"/>
+
+    <include
+        android:id="@+id/explore_about_layout"
+        android:visibility="gone"
+        layout="@layout/mini_app_about_layout" />
+
+    <include
+        android:id="@+id/explore_remove_app_layout"
+        android:visibility="gone"
+        layout="@layout/remove_mini_dialog_layout"/>
+
+    <include
+        android:id="@+id/explore_load_app_layout"
+        android:visibility="gone"
+        layout="@layout/load_mini_dialog_layout"/>
 
 </android.support.constraint.ConstraintLayout>

@@ -11,6 +11,8 @@ import android.support.constraint.ConstraintSet;
 import android.support.transition.AutoTransition;
 import android.support.transition.TransitionManager;
 import android.support.v4.app.FragmentActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -245,6 +247,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         String iso = BRSharedPrefs.getCurrentWalletIso(getContext());
         if(StringUtil.isNullOrEmpty(iso) || !iso.equalsIgnoreCase("ELA") ||
                 balance.longValue()<1 || StringUtil.isNullOrEmpty(candidatesStr)){
+            BRSharedPrefs.setAutoVote(getContext(), false);
             mAutoVoteCb.setVisibility(View.GONE);
             hideVoteView();
             return;
@@ -342,6 +345,21 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                     set.connect(mCurrencyCode.getId(), ConstraintSet.BOTTOM, -1, ConstraintSet.TOP, -1);
                     set.applyTo(mAmountLayout);
                 }
+            }
+        });
+
+        mAmountEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                hideVoteCheckView();
             }
         });
 
@@ -702,6 +720,45 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
     }
 
+    private void hideVoteCheckView(){
+        try {
+            if(StringUtil.isNullOrEmpty(mAmountEdit.getText().toString())){
+                BRSharedPrefs.setAutoVote(getContext(), false);
+                mAutoVoteCb.setVisibility(View.GONE);
+                hideVoteView();
+                return;
+            }
+
+            String iso = BRSharedPrefs.getCurrentWalletIso(getContext());
+            if(StringUtil.isNullOrEmpty(iso) ||
+                    !iso.equalsIgnoreCase("ELA")){
+                BRSharedPrefs.setAutoVote(getContext(), false);
+                mAutoVoteCb.setVisibility(View.GONE);
+                hideVoteView();
+                return;
+            }
+
+            String amountStr = mAmountEdit.getText().toString();
+            BigDecimal rawAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) || amountStr.equalsIgnoreCase(".") ? "0" : amountStr);
+            BigDecimal totalAmount = rawAmount.multiply(new BigDecimal(100000000)).add(new BigDecimal(4860));
+            BigDecimal balance = BRSharedPrefs.getCachedBalance(getContext(), "ELA").multiply(new BigDecimal(100000000));
+            String candidatesStr = BRSharedPrefs.getCandidate(getContext());
+            if(balance.compareTo(new BigDecimal(100000000))>0 &&
+                    totalAmount.compareTo(balance)<0 &&
+                    !StringUtil.isNullOrEmpty(candidatesStr)){
+                mAutoVoteCb.setVisibility(View.VISIBLE);
+                hideVoteView();
+            } else {
+                BRSharedPrefs.setAutoVote(getContext(), false);
+                mAutoVoteCb.setVisibility(View.GONE);
+                hideVoteView();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
     private void copyText() {
         StringBuilder sb = new StringBuilder();
         if(mProducers==null || mProducers.size()<=0) return;
@@ -972,6 +1029,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             }
         }
         mAmountEdit.setText(newAmount.toString());
+        hideVoteCheckView();
     }
 
     private void setButton(boolean isRegular) {
@@ -1032,6 +1090,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             }
             if(!Utils.isNullOrEmpty(mViewModel.getAmount())){
                 mAmountEdit.setText(mViewModel.getAmount());
+                hideVoteCheckView();
             }
         }
     }
@@ -1130,7 +1189,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                 set.applyTo(mAmountLayout);
             }
         }
-        if(!Utils.isNullOrEmpty(code)){
+        if(!Utils.isNullOrEmpty(code) && null!=mCurrencyCodeButton){
             mCurrencyCodeButton.setText(mFromElapay? wm.getIso():code.toUpperCase());
         }
         if (!Utils.isNullOrEmpty(address)) {

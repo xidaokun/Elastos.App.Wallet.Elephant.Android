@@ -297,18 +297,25 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         //request info
         callbackData.Nickname = (nickNameItem!=null)?nickNameItem.getValue(this)[0] : null;
         if((nickNameItem!=null) && nickNameItem.isChecked()) sb.append(AuthorInfoItem.NICK_NAME).append(",");
+
         callbackData.ELAAddress = (elaAddressItem!=null)?elaAddressItem.getValue(this)[0] : null;
         if((elaAddressItem!=null) && elaAddressItem.isChecked()) sb.append(AuthorInfoItem.ELA_ADDRESS).append(",");
+
         callbackData.BTCAddress = (btcAddressItem!=null)?btcAddressItem.getValue(this)[0] : null;
         if((btcAddressItem!=null) && btcAddressItem.isChecked()) sb.append(AuthorInfoItem.BTC_ADDRESS).append(",");
+
         callbackData.ETHAddress = (ethAddressItem!=null)?ethAddressItem.getValue(this)[0] : null;
         if((ethAddressItem!=null) && ethAddressItem.isChecked()) sb.append(AuthorInfoItem.ETH_ADDRESS).append(",");
+
         callbackData.BCHAddress = (bchAddressItem!=null)?bchAddressItem.getValue(this)[0] : null;
         if((bchAddressItem!=null) && bchAddressItem.isChecked()) sb.append(AuthorInfoItem.BCH_ADDRESS).append(",");
+
         callbackData.USDTAddress = (usdtAddressItem !=null)? usdtAddressItem.getValue(this)[0] : null;
         if((usdtAddressItem !=null) && usdtAddressItem.isChecked()) sb.append(AuthorInfoItem.USDT_ADDRESS).append(",");
+
         callbackData.Email = (emailItem!=null)?emailItem.getValue(this)[0] : null;
         if((emailItem!=null) && emailItem.isChecked()) sb.append(AuthorInfoItem.EMAIL).append(",");
+
         if(phoneNumberItem != null){
             PhoneNumber phoneNumber = new PhoneNumber();
             phoneNumber.PhoneNumber = phoneNumberItem.getValue(this)[1];

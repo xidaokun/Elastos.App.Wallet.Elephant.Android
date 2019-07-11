@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.transition.TransitionManager;
@@ -21,6 +22,7 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.breadwallet.BreadApp;
@@ -54,6 +56,7 @@ import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
+import com.breadwallet.wallet.wallets.ioex.WalletIoexManager;
 import com.platform.HTTPServer;
 
 import org.wallet.library.AuthorizeManager;
@@ -111,6 +114,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     private String mUri;
 
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
     public static String mCallbackUrl;
     public static String mReturnUrl;
     public static String mOrderId;
@@ -158,6 +163,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mSyncStatusLabel = findViewById(R.id.sync_status_label);
         mProgressLabel = findViewById(R.id.syncing_label);
         mWalletFooter = findViewById(R.id.bottom_toolbar_layout1);
+        mSwipeRefreshLayout = findViewById(R.id.recycler_layout);
 
         startSyncLoggerIfNeeded();
 
@@ -166,6 +172,18 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mBalanceSecondary.setTextSize(TypedValue.COMPLEX_UNIT_SP, SECONDARY_TEXT_SIZE);
 
         mSendButton.setHasShadow(false);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                }, 5*1000);
+            }
+        });
+
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -237,6 +255,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 WalletsMaster.getInstance(app).refreshBalances(app);
                 WalletsMaster.getInstance(app).getCurrentWallet(app).refreshAddress(app);
                 WalletElaManager.getInstance(app).updateTxHistory();
+                WalletIoexManager.getInstance(app).updateTxHistory();
                 ElaDataSource.getInstance(app).getProducerByTxid();
             }
         });
@@ -478,6 +497,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     @Override
     public void onConnectionChanged(boolean isConnected) {
         Log.d(TAG, "onConnectionChanged: isConnected: " + isConnected);
+//        Toast.makeText(this, getString(R.string.net_has_disconnect), Toast.LENGTH_SHORT).show();
         if (isConnected) {
             if (mBarFlipper != null && mBarFlipper.getDisplayedChild() == 2) {
                 mBarFlipper.setDisplayedChild(0);

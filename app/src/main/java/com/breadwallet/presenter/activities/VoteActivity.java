@@ -235,19 +235,35 @@ public class VoteActivity extends BaseSettingsActivity {
     private BigDecimal mAmount;
     private String  mCandidatesStr;
     private VoteNodeAdapter mAdapter;
-    private List<String> mCandidates;
+    private List<String> mCandidates = new ArrayList<>();
     private List<ProducerEntity> mProducers = new ArrayList<>();
     private void initData(){
         if (StringUtil.isNullOrEmpty(mUri)) return;
+
+        if(mUri.contains("%20")) {
+            mUri = Uri.decode(mUri);
+        }
+
         uriFactory = new UriFactory();
         uriFactory.parse(mUri);
 
         mCandidatesStr = uriFactory.getCandidatePublicKeys();
-        if(StringUtil.isNullOrEmpty(mCandidatesStr)) return;
+        if(StringUtil.isNullOrEmpty(mCandidatesStr)) {
+            mVoteCountTv.setText(String.format(getString(R.string.vote_nodes_count), 0));
+            mNodeListTitle.setText(String.format(getString(R.string.node_list_title), 0));
+            mBalanceTv.setText(String.format(getString(R.string.vote_balance), "0"));
+            return;
+        }
+        mCandidatesStr = mCandidatesStr.trim();
+        List<String> tmpCandidates = null;
         if(mCandidatesStr.contains("[")){
-            mCandidates = new Gson().fromJson(mCandidatesStr, new TypeToken<List<String>>(){}.getType());
+            tmpCandidates = new Gson().fromJson(mCandidatesStr, new TypeToken<List<String>>(){}.getType());
         } else {
-            mCandidates = Utils.spliteByComma(mCandidatesStr);
+            tmpCandidates = Utils.spliteByComma(mCandidatesStr);
+        }
+        if(null!=tmpCandidates && tmpCandidates.size()>0){
+            mCandidates.clear();
+            mCandidates.addAll(tmpCandidates);
         }
         BigDecimal balance = BRSharedPrefs.getCachedBalance(this, "ELA");
 

@@ -12,7 +12,9 @@ import android.net.ConnectivityManager;
 import android.os.Build;
 import android.util.Log;
 import android.view.Display;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.breadwallet.presenter.activities.util.ApplicationLifecycleObserver;
 import com.breadwallet.presenter.activities.util.BRActivity;
@@ -28,6 +30,8 @@ import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
 import com.tencent.bugly.Bugly;
 import com.tencent.bugly.beta.Beta;
+import com.tencent.bugly.beta.UpgradeInfo;
+import com.tencent.bugly.beta.ui.UILifecycleListener;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -149,6 +153,42 @@ public class BreadApp extends Application {
         ProcessLifecycleOwner.get().getLifecycle().addObserver(mObserver);
 
         Beta.upgradeDialogLayoutId = R.layout.upgrade_layout;
+        Beta.upgradeDialogLifecycleListener = new UILifecycleListener<UpgradeInfo>(){
+
+            @Override
+            public void onCreate(Context context, View view, UpgradeInfo upgradeInfo) {
+                TextView cancelBtn = view.findViewWithTag("beta_cancel_button");
+                TextView upgradeBtn = view.findViewWithTag("beta_confirm_button");
+
+                cancelBtn.setText("Next time");
+                upgradeBtn.setText("Upgrade");
+            }
+
+            @Override
+            public void onStart(Context context, View view, UpgradeInfo upgradeInfo) {
+
+            }
+
+            @Override
+            public void onResume(Context context, View view, UpgradeInfo upgradeInfo) {
+
+            }
+
+            @Override
+            public void onPause(Context context, View view, UpgradeInfo upgradeInfo) {
+
+            }
+
+            @Override
+            public void onStop(Context context, View view, UpgradeInfo upgradeInfo) {
+
+            }
+
+            @Override
+            public void onDestroy(Context context, View view, UpgradeInfo upgradeInfo) {
+
+            }
+        };
         Bugly.init(getApplicationContext(), BuildConfig.UPGRADE_TESTNET? "8b437eefc0":"8a9b0190e0", false);
     }
 

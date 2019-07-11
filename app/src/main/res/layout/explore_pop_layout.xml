@@ -18,7 +18,7 @@
         android:gravity="center_vertical"
         android:paddingLeft="15dp"
         android:paddingRight="5dp"
-        android:text="Edit"
+        android:text="@string/explore_pop_edit"
         android:textColor="#333333"
         android:visibility="gone"
         app:layout_constraintRight_toRightOf="parent"/>
@@ -43,7 +43,7 @@
             android:drawablePadding="10dp"
             android:gravity="center_vertical"
             android:paddingLeft="15dp"
-            android:text="Add by URL"
+            android:text="@string/explore_pop_add_by_url"
             android:textColor="#333333"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
@@ -59,7 +59,7 @@
             android:gravity="center_vertical"
             android:paddingLeft="15dp"
             android:paddingRight="5dp"
-            android:text="Scan to Add"
+            android:text="@string/explore_pop_scan_to_add"
             android:textColor="#333333"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"

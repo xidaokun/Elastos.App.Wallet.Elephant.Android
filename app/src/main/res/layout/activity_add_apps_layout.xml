@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_marginStart="16dp"
-            android:text="Add by URL"
+            android:text="@string/explore_pop_add_by_url"
             android:textColor="@color/black_333333"
             android:textSize="20sp" />
 
@@ -36,7 +36,7 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="16dp"
-            android:text="Add"
+            android:text="@string/TokenList.add"
             android:textColor="#ff3365"
             android:textSize="15sp" />
     </RelativeLayout>
@@ -44,24 +44,25 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/add_apps_url_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="70dp"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" >
 
         <com.breadwallet.presenter.customviews.BREdit
             android:id="@+id/add_apps_edt"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="66dp"
             android:layout_marginStart="15dp"
-            android:hint="App Url"
-            android:lines="1"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="65dp"
             android:background="@null"/>
         <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/add_apps_clean"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
+            android:layout_width="48dp"
+            android:layout_height="20dp"
             android:layout_marginEnd="15dp"
-            android:background="@drawable/ic_did_clean"
+            android:text="@string/esign_paste_btn"
+            android:textColor="#ff3365"
             app:layout_constraintBottom_toBottomOf="@id/add_apps_edt"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/add_apps_edt" />

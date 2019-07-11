@@ -2,15 +2,15 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 
 android {
-    compileSdkVersion = 27
+    compileSdkVersion = 28
     buildToolsVersion = '27.0.3'
 
     defaultConfig {
         testInstrumentationRunner = 'android.support.test.runner.AndroidJUnitRunner'
         applicationId = 'com.elastos.wallet'
         minSdkVersion 23
-        targetSdkVersion 27
-        versionCode 42
+        targetSdkVersion 28
+        versionCode 73
         versionName "1.3.3"
         multiDexEnabled true
 
@@ -223,7 +223,7 @@ dependencies {
     implementation project(':walletlibrary')
     implementation 'com.belerweb:pinyin4j:2.5.1'
     implementation project(':authorizelibrary')
-    implementation project(path: ':keypairlibrary')
+    implementation project(':keypairlibrary')
 }
 
 apply plugin: 'com.google.gms.google-services'

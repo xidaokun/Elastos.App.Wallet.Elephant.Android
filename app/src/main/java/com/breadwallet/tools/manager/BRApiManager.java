@@ -18,6 +18,7 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
+import com.breadwallet.wallet.wallets.ioex.WalletIoexManager;
 import com.platform.APIClient;
 
 import org.json.JSONArray;
@@ -185,6 +186,14 @@ public class BRApiManager {
                     }
                 });
             }
+//            if(w.getIso().equalsIgnoreCase("IOEX")){
+//                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        WalletIoexManager.getInstance(context).updateTxHistory();
+//                    }
+//                });
+//            }
             if(w.getIso().equalsIgnoreCase("ELA")){
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
@@ -192,12 +201,12 @@ public class BRApiManager {
                         w.refreshCachedBalance(context);
                     }
                 });
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        WalletElaManager.getInstance(context).updateTxHistory();
-                    }
-                });
+//                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        WalletElaManager.getInstance(context).updateTxHistory();
+//                    }
+//                });
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {
@@ -214,7 +223,8 @@ public class BRApiManager {
     private synchronized void updateErc20Rates(Context context) {
         //get all erc20 rates.
 //        String url = "https://api.coinmarketcap.com/v1/ticker/?limit=1000&convert=BTC";
-        String url = "https://api-wallet-ela.elastos.org/api/1/cmc?limit=1000";
+//        String url = "https://api-wallet-ela.elastos.org/api/1/cmc?limit=1000";
+        String url = "https://node1.elaphant.app/api/1/cmc?limit=1000";
         String result = urlGET(context, url);
         Log.i(TAG, "updateErc20Rates result:"+result);
         try {

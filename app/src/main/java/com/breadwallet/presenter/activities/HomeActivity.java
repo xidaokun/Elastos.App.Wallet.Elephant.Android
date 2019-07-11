@@ -1,8 +1,11 @@
 package com.breadwallet.presenter.activities;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -10,13 +13,16 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.fragments.FragmentExplore;
 import com.breadwallet.presenter.fragments.FragmentSetting;
 import com.breadwallet.presenter.fragments.FragmentWallet;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -43,7 +49,7 @@ import java.util.List;
  * Home activity that will show a list of a user's wallets
  */
 
-public class HomeActivity extends BRActivity implements InternetManager.ConnectionReceiverListener {
+public class HomeActivity extends BRActivity implements InternetManager.ConnectionReceiverListener, FragmentExplore.AboutShowListener {
 
     private static final String TAG = HomeActivity.class.getSimpleName() + "_test";
     private FragmentWallet mWalletFragment;
@@ -64,6 +70,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                     return true;
                 case R.id.navigation_explore:
                     showFragment(mExploreFragment);
+//                    UiUtils.startExploreActivity(HomeActivity.this);
                     return true;
                 case R.id.navigation_notifications:
                     showFragment(mSettingFragment);
@@ -86,13 +93,58 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mExploreFragment = FragmentExplore.newInstance("Explore");
         mSettingFragment = FragmentSetting.newInstance("Setting");
 
-        mCurrentFragment = mWalletFragment;
+        mExploreFragment.setAboutShowListener(this);
 //        clearFragment();
+        mCurrentFragment = mWalletFragment;
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
-        transaction.add(R.id.frame_layout, mWalletFragment).show(mWalletFragment).commitAllowingStateLoss();
+        transaction.add(R.id.frame_layout, mCurrentFragment).show(mCurrentFragment).commitAllowingStateLoss();
 
         didIsOnchain();
         mHomeActivity = this;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //TODO externel share
+//        Intent intent = getIntent();
+//        Uri uri = intent.getData();
+//        String externelPath = null;
+//        if(null != uri){
+//            externelPath = Uri.decode(uri.getEncodedPath());
+//        }
+//        if(!StringUtil.isNullOrEmpty(externelPath)){
+//            String fileOutPath = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+//            mExploreFragment.handleExternalCapsule(externelPath, fileOutPath);
+//            showFragment(mExploreFragment);
+//            navigation.setSelectedItemId(R.id.navigation_explore);
+//        }
+
+//        boolean iscrash = getIntent().getBooleanExtra("crash", false);
+//        Log.i(TAG, "iscrash:" + iscrash);
+//        if (iscrash) navigation.setSelectedItemId(R.id.navigation_home);
+        InternetManager.registerConnectionReceiver(this, this);
+    }
+
+    @Override
+    public void show() {
+        navigation.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hide() {
+        navigation.setVisibility(View.GONE);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode==KeyEvent.KEYCODE_BACK && (navigation.getVisibility()!=View.VISIBLE)) {
+            mExploreFragment.hideAboutView();
+            navigation.setVisibility(View.VISIBLE);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     class KeyValue {
@@ -151,9 +203,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                     if(StringUtil.isNullOrEmpty(data) || StringUtil.isNullOrEmpty(mSeed)) return;
                     String info = mDid.signInfo(mSeed, data);
                     if(StringUtil.isNullOrEmpty(info)) return;
-                    String txid = ProfileDataSource.getInstance(HomeActivity.this).upchain(info);
+                    ProfileDataSource.getInstance(HomeActivity.this).upchain(info);
                     BRSharedPrefs.putDid2ChainTime(HomeActivity.this, System.currentTimeMillis());
-                    Log.d("didIsOnchain", "txid:"+txid);
                 }
             }
         });
@@ -170,15 +221,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             e.printStackTrace();
         }
         return null;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        boolean iscrash = getIntent().getBooleanExtra("crash", false);
-        Log.i(TAG, "iscrash:" + iscrash);
-        if (iscrash) navigation.setSelectedItemId(R.id.navigation_home);
-        InternetManager.registerConnectionReceiver(this, this);
     }
 
     @Override
@@ -207,7 +249,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         if (mWalletFragment != null)
             mWalletFragment.onConnectionChanged(isConnected);
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginLeft="10dp">
+
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="20dp"
+            android:layout_height="25dp"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:src="@drawable/toolbar_back_arrow" />
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="16dp"
+            android:text="@string/esign_success_title"
+            android:textColor="@color/black_333333"
+            android:textSize="20sp" />
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/esign_history"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/ic_esign_history"/>
+    </RelativeLayout>
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/sign_success_folder"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="100dp"
+        android:background="@drawable/ic_sign_folder" />
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/success_text"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sign_success_folder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/esign_success_hint"
+        android:textColor="#222222" />
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/success_icon"
+        app:layout_constraintBottom_toBottomOf="@+id/success_text"
+        app:layout_constraintRight_toLeftOf="@+id/success_text"
+        app:layout_constraintTop_toTopOf="@+id/success_text"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginRight="12dp"
+        android:background="@drawable/ic_sign_sucess" />
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/sign_result"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/success_text"
+        android:layout_width="293dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:textColor="@color/black"
+        android:textSize="12sp" />
+
+
+    <com.breadwallet.presenter.customviews.BRButton
+        android:id="@+id/copy_btn"
+        app:buttonType="6"
+        app:isBreadButton="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="@dimen/bread_margin"
+        android:layout_marginEnd="@dimen/bread_margin"
+        android:layout_marginBottom="32dp"
+        android:padding="10dp"
+        android:text="@string/esign_success_copy"
+        android:textColor="#ff3365"
+        android:textSize="18sp" />
+</android.support.constraint.ConstraintLayout>

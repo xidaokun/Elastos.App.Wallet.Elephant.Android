@@ -185,7 +185,15 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     public void updateTxHistory() {
         String address = getAddress();
         if(StringUtil.isNullOrEmpty(address)) return;
+//        ElaDataSource.getInstance(mContext).getHistory(getPrivateKey(), address);
         ElaDataSource.getInstance(mContext).getHistory(address);
+        TxManager.getInstance().updateTxList(mContext);
+    }
+
+    public void refreshTxhistory(){
+        String address = getAddress();
+        if(StringUtil.isNullOrEmpty(address)) return;
+        ElaDataSource.getInstance(mContext).refreshHistory(address);
         TxManager.getInstance().updateTxList(mContext);
     }
 
@@ -398,7 +406,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public String getIso() {
-        return "ELA";//图标的选取，数量，价格都是根据这个iso来获取的
+        return "ELA";
     }
 
     @Override
@@ -434,7 +442,12 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         String candidatesStr = BRSharedPrefs.getCandidate(mContext);
         Log.d("posvote", "autoVote:"+autoVote);
         if(autoVote && !StringUtil.isNullOrEmpty(candidatesStr)){
-            List candidates = new Gson().fromJson(candidatesStr, new TypeToken<List<String>>(){}.getType());
+            List<String> candidates = null;
+            if(candidatesStr.contains("[")){
+                candidates = new Gson().fromJson(candidatesStr, new TypeToken<List<String>>(){}.getType());
+            } else {
+                candidates = Utils.spliteByComma(candidatesStr);
+            }
             brElaTransaction = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno, candidates);
         } else {
             brElaTransaction = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno);
