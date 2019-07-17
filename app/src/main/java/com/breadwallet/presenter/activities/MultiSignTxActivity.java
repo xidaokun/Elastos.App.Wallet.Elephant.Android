@@ -34,6 +34,7 @@ import com.google.gson.Gson;
 import org.elastos.sdk.keypair.ElastosKeypairSign;
 import org.json.JSONObject;
 import org.wallet.library.AuthorizeManager;
+import org.wallet.library.utils.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -130,6 +131,7 @@ public class MultiSignTxActivity extends BRActivity {
         }
 
         mMyPublicKey = WalletElaManager.getInstance(this).getPublicKey();
+
         // if public key is null, finish and return.
         // The app will show authentication screen
         if (mMyPublicKey == null) {
@@ -204,7 +206,9 @@ public class MultiSignTxActivity extends BRActivity {
 
                 try {
                     String str = new String(hexStringToByteArray(attr.data), "UTF-8");
-                    memo.setText(getString(R.string.TransactionDetails_commentsHeader) + ": " + str);
+                    int index = str.indexOf("msg:");
+                    memo.setText(getString(R.string.TransactionDetails_commentsHeader)
+                            + ": " + str.substring(index < 0 ? 0 : index + 4));
                     memo.setVisibility(View.VISIBLE);
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
@@ -326,7 +330,7 @@ public class MultiSignTxActivity extends BRActivity {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                String url = ElaDataSource.getUrl("/api/1/balance/" + mAddress);
+                String url = ElaDataSource.getInstance(getApplicationContext()).getUrl("/api/1/balance/" + mAddress);
                 try {
                     String result = ElaDataSource.getInstance(getApplicationContext()).urlGET(url);
                     JSONObject jsonObject = new JSONObject(result);
