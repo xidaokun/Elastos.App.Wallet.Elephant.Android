@@ -130,7 +130,7 @@ public class MultiSignTxActivity extends BRActivity {
 
         String callbackurl = uri.getQueryParameter("CallbackUrl");
         if(!StringUtil.isNullOrEmpty(callbackurl)) {
-            mCallbackUrl = URLDecoder.decode(returnurl);
+            mCallbackUrl = URLDecoder.decode(callbackurl);
         }
 
         String mn = getMn();
