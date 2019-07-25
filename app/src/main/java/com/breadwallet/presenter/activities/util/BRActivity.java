@@ -271,10 +271,17 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                     Uri uri = Uri.parse(mUri);
                     String scheme = uri.getScheme();
                     String host = uri.getHost();
-                    if (scheme != null && scheme.equals("elaphant")
-                            && host != null && host.equals("multitx")) {
-                        UiUtils.startMultiTxActivity(this, uri);
-                        return;
+                    if (scheme != null && scheme.equals("elaphant") && host != null) {
+                        switch (host) {
+                            case "multitx":
+                                UiUtils.startMultiTxActivity(this, uri);
+                                return;
+                            case "multicreate":
+                                UiUtils.startMultiCreateActivity(this, uri);
+                                return;
+                            default:
+                                break;
+                        }
                     }
 
                     if(mUri.contains("redpacket")){

@@ -196,10 +196,9 @@ public class UiUtils {
         context.startActivity(intent);
     }
 
-    public static void startMultiCreateActivity(Context context, String url) {
+    public static void startMultiCreateActivity(Context context, Uri uri) {
         Intent intent = new Intent();
         intent.setClass(context, MultiSignCreateActivity.class);
-        Uri uri = Uri.parse(url);
         intent.setData(uri);
         context.startActivity(intent);
     }

@@ -216,7 +216,7 @@ public class ExploreWebActivity extends BRActivity {
         } else if(url.contains("elaphant") && url.contains("eladposvote")) {
             UiUtils.startVoteActivity(ExploreWebActivity.this, url);
         } else if (url.contains("elaphant") && url.contains("multicreate")) {
-            UiUtils.startMultiCreateActivity(this, url);
+            UiUtils.startMultiCreateActivity(this, Uri.parse(url));
         } else if (url.contains("elaphant") && url.contains("multitx")) {
             UiUtils.startMultiTxActivity(this, Uri.parse(url));
         } else {
