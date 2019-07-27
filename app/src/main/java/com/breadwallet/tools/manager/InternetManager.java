@@ -90,7 +90,9 @@ public class InternetManager extends BroadcastReceiver {
 
             NetworkInfo wifiNetInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-            if (!mobNetInfo.isConnected() && !wifiNetInfo.isConnected()) {
+            if(null==mobNetInfo || null== wifiNetInfo){
+                connected = true;
+            } else if (!mobNetInfo.isConnected() && !wifiNetInfo.isConnected()) {
                 connected = false;
             } else {
                 connected = true;

@@ -664,19 +664,21 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             return;
         }
 
-        URL urlObj = null;
-        try {
-            urlObj = new URL(url);
-            URI uriObj = new URI(urlObj.getProtocol(), urlObj.getHost(), urlObj.getPath(), urlObj.getQuery(), null);
-        } catch (Exception e) {
-            e.printStackTrace();
+        String capsuleUrl = url;
+        if(url.contains("elapp:")) {
+            capsuleUrl = url.split("elapp:").length>1 ? url.split("elapp:")[1] : "";
+        }
+        if(StringUtil.isNullOrEmpty(capsuleUrl)){
             Toast.makeText(getContext(), getString(R.string.mini_app_invalid_url), Toast.LENGTH_SHORT).show();
             return;
         }
 
+        mDoloadFileName = capsuleUrl.substring(capsuleUrl.lastIndexOf("/") + 1).trim();
+        mDoloadUrl = capsuleUrl;
+
         mHandler.sendEmptyMessage(SHOW_LOADING);
         OkHttpClient okHttpClient = new OkHttpClient();
-        Request request = new Request.Builder().url(url).build();
+        Request request = new Request.Builder().url(capsuleUrl).build();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -696,10 +698,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                         FileOutputStream fos = null;
 
                         try {
-
-                            mDoloadFileName = url.substring(url.lastIndexOf("/") + 1).trim();
-                            mDoloadUrl = url;
-
                             is = response.body().byteStream();
                             long total = response.body().contentLength();
                             File file = new File(mDownloadDir, mDoloadFileName);

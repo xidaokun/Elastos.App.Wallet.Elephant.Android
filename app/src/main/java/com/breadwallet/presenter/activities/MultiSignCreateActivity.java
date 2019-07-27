@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
@@ -199,7 +198,7 @@ public class MultiSignCreateActivity extends BRActivity {
                 if (!StringUtil.isNullOrEmpty(mCallbackUrl)) {
                     String body = "{\"Data\":\"" + dataStr.replace("\"", "\\\"") + "\", \"Sign\":\"" + sign + "\"}";
                     Log.d(TAG, "post body: " + body);
-                    DidDataSource.getInstance(MultiSignCreateActivity.this).urlPost(mCallbackUrl, dataStr);
+                    DidDataSource.getInstance(MultiSignCreateActivity.this).urlPost(mCallbackUrl, body);
                 }
 
                 UiUtils.returnDataNeedSign(MultiSignCreateActivity.this, mReturnUrl, dataStr, sign, mAppID, "");
