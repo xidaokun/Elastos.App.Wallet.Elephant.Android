@@ -121,7 +121,7 @@ public class ElaDataSource implements BRDataSourceInterface {
         return mInstance;
     }
 
-    public static String getUrl(String api){
+    public String getUrl(String api){
         String node = BRSharedPrefs.getElaNode(mContext, ELA_NODE_KEY);
         if(StringUtil.isNullOrEmpty(node)) node = ELA_NODE;
         return new StringBuilder("https://").append(node).append("/").append(api).toString();
