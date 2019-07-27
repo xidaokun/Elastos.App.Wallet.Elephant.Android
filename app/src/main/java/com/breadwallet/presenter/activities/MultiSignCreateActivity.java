@@ -187,7 +187,7 @@ public class MultiSignCreateActivity extends BRActivity {
         if (!StringUtil.isNullOrEmpty(mCallbackUrl)) {
             String body = "{\"Data\":\"" + dataStr.replace("\"", "\\\"") + "\", \"Sign\":\"" + sign + "\"}";
             Log.d(TAG, "post body: " + body);
-            DidDataSource.getInstance(this).urlPost(mCallbackUrl, body);
+            DidDataSource.getInstance(this).urlPost(mCallbackUrl, dataStr);
         }
 
         if (!StringUtil.isNullOrEmpty(mReturnUrl)) {
