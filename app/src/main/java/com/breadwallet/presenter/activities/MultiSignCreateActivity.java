@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
@@ -22,6 +21,7 @@ import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.elastos.jni.Utility;
@@ -30,6 +30,7 @@ import com.google.gson.Gson;
 import org.elastos.sdk.keypair.ElastosKeypairSign;
 import org.wallet.library.AuthorizeManager;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,6 +46,7 @@ public class MultiSignCreateActivity extends BRActivity {
     private String mAddress;
     private String mReturnUrl;
     private String mCallbackUrl;
+    private String mAppID;
     private int mMyIndex = -1;
 
     @Override
@@ -83,11 +85,17 @@ public class MultiSignCreateActivity extends BRActivity {
 
         Log.d(TAG, "uri: " + uri.toString());
 
-        String appName = uri.getQueryParameter("AppName");
-        String appID = uri.getQueryParameter("AppID");
+        String appName;
+        try {
+            appName = URLDecoder.decode(uri.getQueryParameter("AppName"), "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return false;
+        }
+        mAppID = uri.getQueryParameter("AppID");
         String publicKey = uri.getQueryParameter("PublicKey");
         String did = uri.getQueryParameter("DID");
-        if (!AuthorizeManager.verify(this, did, publicKey, appName, appID)) {
+        if (!AuthorizeManager.verify(this, did, publicKey, appName, mAppID)) {
             Log.e(TAG, "check app ID failed!");
             return false;
         }
@@ -136,7 +144,7 @@ public class MultiSignCreateActivity extends BRActivity {
 
         String callbackurl = uri.getQueryParameter("CallbackUrl");
         if(!StringUtil.isNullOrEmpty(callbackurl)) {
-            mCallbackUrl = URLDecoder.decode(returnurl);
+            mCallbackUrl = URLDecoder.decode(callbackurl);
         }
 
         mAddress = ElastosKeypairSign.getMultiSignAddress(mPublicKeys, mPublicKeys.length, mRequiredCount);
@@ -180,33 +188,24 @@ public class MultiSignCreateActivity extends BRActivity {
         data.PublicKey = myPK;
         data.Address = address;
 
-        String dataStr = new Gson().toJson(data);
+        final String dataStr = new Gson().toJson(data);
 
-        String sign = AuthorizeManager.sign(this, pk, dataStr);
+        final String sign = AuthorizeManager.sign(this, pk, dataStr);
 
-        if (!StringUtil.isNullOrEmpty(mCallbackUrl)) {
-            String body = "{\"Data\":\"" + dataStr.replace("\"", "\\\"") + "\", \"Sign\":\"" + sign + "\"}";
-            Log.d(TAG, "post body: " + body);
-            DidDataSource.getInstance(this).urlPost(mCallbackUrl, dataStr);
-        }
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                if (!StringUtil.isNullOrEmpty(mCallbackUrl)) {
+                    String body = "{\"Data\":\"" + dataStr.replace("\"", "\\\"") + "\", \"Sign\":\"" + sign + "\"}";
+                    Log.d(TAG, "post body: " + body);
+                    DidDataSource.getInstance(MultiSignCreateActivity.this).urlPost(mCallbackUrl, body);
+                }
 
-        if (!StringUtil.isNullOrEmpty(mReturnUrl)) {
-            String url;
-            if (mReturnUrl.contains("?")) {
-                url = mReturnUrl + "&Data=";
-            } else {
-                url = mReturnUrl + "?Data=";
+                UiUtils.returnDataNeedSign(MultiSignCreateActivity.this, mReturnUrl, dataStr, sign, mAppID, "");
+                finish();
             }
-            url += Uri.encode(dataStr) + "&Sign=" + Uri.encode(sign) + "&Scheme=multicreate";
+        });
 
-            Log.d(TAG, "url: " + url);
-
-            if (url.startsWith("file://")) {
-                UiUtils.startWebviewActivity(this, url);
-            } else {
-                UiUtils.openUrlByBrowser(this, url);
-            }
-        }
         return true;
     }
 
@@ -282,8 +281,6 @@ public class MultiSignCreateActivity extends BRActivity {
 
         BRSharedPrefs.putMultiSignInfo(this, mAddress, new Gson().toJson(param));
         UiUtils.toast(getApplicationContext(), R.string.multisign_created);
-
-        finish();
     }
 
     private class MultiCreateReturn {
