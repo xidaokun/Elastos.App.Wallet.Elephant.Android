@@ -375,11 +375,9 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data
-                    android:scheme="content"
-                    android:host="*"
-                    android:pathPattern="/.*\\.elasign.*"
-                    android:mimeType="*/*"/>
+                <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\.elasign.*" />
+                <data android:scheme="content" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>

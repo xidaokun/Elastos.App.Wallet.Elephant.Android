@@ -3,6 +3,7 @@ package com.breadwallet.presenter.activities;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -72,11 +73,16 @@ public class MultiSignQrActivity extends BRActivity {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
         if (mHandler != null) {
             mHandler.removeCallbacks(runnable);
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     @Override
@@ -192,7 +198,12 @@ public class MultiSignQrActivity extends BRActivity {
     private void share(final String fileName) {
         File cachePath = new File(getCacheDir(), "images");
         File newFile = new File(cachePath, fileName);
-        Uri contentUri = FileProvider.getUriForFile(this, "com.elastos.wallet.imageprovider", newFile);
+        Uri contentUri;
+        if (Build.VERSION.SDK_INT >= 24) {
+            contentUri = FileProvider.getUriForFile(this, "com.elastos.wallet.imageprovider", newFile);
+        } else {
+            contentUri = Uri.fromFile(newFile);
+        }
         if (contentUri == null) return;
 
         Intent shareIntent = new Intent();

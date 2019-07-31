@@ -90,12 +90,12 @@ public class MultiSignTxActivity extends BRActivity {
         Uri uri = intent.getData();
         if (uri == null) return false;
 
+        Log.d(TAG, "uri: " + uri.toString());
+
         if (!uri.getScheme().equals("elaphant")) {
             uri = readTxFromFile(uri);
             if (uri == null) return false;
         }
-
-        Log.d(TAG, "uri: " + uri.toString());
 
         String appName = null;
         try {
@@ -435,7 +435,7 @@ public class MultiSignTxActivity extends BRActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (!isFinishing())
+                if (!isFinishing() && mLoadingDialog != null)
                     mLoadingDialog.show();
             }
         });
@@ -443,17 +443,24 @@ public class MultiSignTxActivity extends BRActivity {
 
 
     private void closeDialog() {
-        if(null != mLoadingDialog){
-            mLoadingDialog.dismiss();
-            mLoadingDialog = null;
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(null != mLoadingDialog && mLoadingDialog.isShowing()){
+                    mLoadingDialog.hide();
+                }
+            }
+        });
     }
 
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        closeDialog();
+        if(null != mLoadingDialog){
+            mLoadingDialog.dismiss();
+            mLoadingDialog = null;
+        }
     }
 
     private byte[] hexStringToByteArray(String s) {

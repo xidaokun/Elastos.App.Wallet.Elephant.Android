@@ -651,9 +651,7 @@ public class ElaDataSource implements BRDataSourceInterface {
                 if(mActivity!=null) toast(mActivity.getString(R.string.double_spend));
                 return null;
             }
-            historyTransactionEntity.txReversed = result;
-            cacheSingleTx(historyTransactionEntity);
-            Log.d("postvote", "txId:"+result);
+            Log.d("post multi-sig", "txId:"+result);
         } catch (Exception e) {
             if(mActivity!=null) toast(mActivity.getResources().getString(R.string.SendTransacton_failed));
             e.printStackTrace();
