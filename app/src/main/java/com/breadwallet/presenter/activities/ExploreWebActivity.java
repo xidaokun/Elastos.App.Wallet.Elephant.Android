@@ -207,6 +207,23 @@ public class ExploreWebActivity extends BRActivity {
     private synchronized void loadUrl(String url){
         Log.i("schemeLoadurl", "url:"+url);
         if(StringUtil.isNullOrEmpty(url)) return;
+
+        Uri uri = Uri.parse(url);
+        String scheme = uri.getScheme();
+        String host = uri.getHost();
+        if (scheme != null && scheme.equals("elaphant") && host != null) {
+            switch (host) {
+                case "multitx":
+                    UiUtils.startMultiTxActivity(this, uri);
+                    return;
+                case "multicreate":
+                    UiUtils.startMultiCreateActivity(this, uri);
+                    return;
+                default:
+                    break;
+            }
+        }
+
         if(url.startsWith("elaphant") && url.contains("identity")) {
             AuthorizeManager.startWalletActivity(ExploreWebActivity.this, url, "com.breadwallet.presenter.activities.did.DidAuthorizeActivity");
             finish();
@@ -215,10 +232,6 @@ public class ExploreWebActivity extends BRActivity {
             finish();
         } else if(url.contains("elaphant") && url.contains("eladposvote")) {
             UiUtils.startVoteActivity(ExploreWebActivity.this, url);
-        } else if (url.contains("elaphant") && url.contains("multicreate")) {
-            UiUtils.startMultiCreateActivity(this, Uri.parse(url));
-        } else if (url.contains("elaphant") && url.contains("multitx")) {
-            UiUtils.startMultiTxActivity(this, Uri.parse(url));
         } else {
             webView.loadUrl(url);
         }
