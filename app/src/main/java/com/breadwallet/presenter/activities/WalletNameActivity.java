@@ -153,5 +153,4 @@ public class WalletNameActivity extends BRActivity {
 
         finish();
     }
-
 }

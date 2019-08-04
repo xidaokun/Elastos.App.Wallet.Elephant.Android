@@ -175,6 +175,7 @@ public class IntroActivity extends BRActivity {
                 if (!UiUtils.isClickAllowed()) {
                     return;
                 }
+
                 UiUtils.startWalletNameActivity(IntroActivity.this, WalletNameActivity.WALLET_NAME_TYPE_RECOVER, mReenter);
             }
         });
