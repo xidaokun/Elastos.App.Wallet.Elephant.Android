@@ -191,7 +191,7 @@ public class WalletsMaster {
         return totalBalance;
     }
 
-    public synchronized boolean generateRandomSeed(final Context ctx) {
+    public synchronized boolean generateRandomSeed(final Context ctx, String walletName) {
         SecureRandom sr = new SecureRandom();
         final String[] words;
         List<String> list;
@@ -264,7 +264,7 @@ public class WalletsMaster {
         phraseInfo.authKey = authKey;
         phraseInfo.pubKey = pubKey;
         phraseInfo.creationTime = walletCreationTime;
-        phraseInfo.alias = "";
+        phraseInfo.alias = walletName;
         try {
             BRKeyStore.addPhraseInfo(ctx, phraseInfo);
         } catch (UserNotAuthenticatedException e) {

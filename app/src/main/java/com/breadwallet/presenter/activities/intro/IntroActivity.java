@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.InputPinActivity;
+import com.breadwallet.presenter.activities.WalletNameActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -148,7 +149,7 @@ public class IntroActivity extends BRActivity {
                 if (mReenter) {
                     String pin = BRKeyStore.getPinCode(IntroActivity.this);
                     if (!pin.isEmpty()) {
-                        PostAuth.getInstance().onCreateWalletAuth(IntroActivity.this, false, true);
+                        UiUtils.startWalletNameActivity(IntroActivity.this, WalletNameActivity.WALLET_NAME_TYPE_NEW, mReenter);
                         return;
                     }
                 }
@@ -166,10 +167,8 @@ public class IntroActivity extends BRActivity {
                 if (!UiUtils.isClickAllowed()) {
                     return;
                 }
-                Intent intent = new Intent(IntroActivity.this, RecoverActivity.class);
-                intent.putExtra(INTRO_REENTER, mReenter);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+
+                UiUtils.startWalletNameActivity(IntroActivity.this, WalletNameActivity.WALLET_NAME_TYPE_RECOVER, mReenter);
             }
         });
     }

@@ -63,9 +63,8 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
     private boolean mIsRestoring = false;
     private boolean mIsResettingPin = false;
 
-    private byte[] mUnlinkPhrase = null;
-
     private boolean mReenter = false;
+    private String mWalletName;
     private TypedValue mTypedValue = new TypedValue();
 
     @Override
@@ -144,9 +143,9 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
             mIsResettingPin = extras.getBoolean(EXTRA_RESET_PIN);
         }
         mReenter = getIntent().getBooleanExtra(IntroActivity.INTRO_REENTER, false);
+        mWalletName = getIntent().getStringExtra(WalletNameActivity.WALLET_NAME);
 
         if (mIsRestoring) {
-            mUnlinkPhrase = getIntent().getByteArrayExtra(UnlinkActivity.UNLINK_PHARE);
             //change the labels
             title.setText(getString(R.string.MenuViewController_recoverButton));
             description.setText(getString(R.string.WipeWallet_instruction));
@@ -210,7 +209,7 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
                             m.wipeAll(InputWordsActivity.this);
                         }
 
-                        UiUtils.switchPhrase(InputWordsActivity.this, cleanPhrase, mReenter);
+                        UiUtils.switchPhrase(InputWordsActivity.this, cleanPhrase, mReenter, mWalletName);
                     }
 
                 } else {
@@ -307,12 +306,7 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
     }
 
     private void restorePhrase(String cleanPhrase, final Activity app) {
-        if (mUnlinkPhrase == null || mUnlinkPhrase.length == 0) {
-            Log.e(TAG, "unknown unlink phrase");
-            return;
-        }
-
-        if (Arrays.equals(cleanPhrase.getBytes(), mUnlinkPhrase)) {
+        if (SmartValidator.isPaperKeyCorrect(cleanPhrase, app)) {
             Utils.hideKeyboard(app);
             clearWords();
 
@@ -370,6 +364,12 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
     }
 
     private void unlink() {
+        byte[] phrase;
+        try {
+            phrase = BRKeyStore.getPhrase(InputWordsActivity.this, 0);
+        } catch (UserNotAuthenticatedException e) {
+            return;
+        }
         List<PhraseInfo> phraseList;
         try {
             phraseList = BRKeyStore.getPhraseInfoList(InputWordsActivity.this);
@@ -389,22 +389,19 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
             BRSQLiteHelper.getInstance(InputWordsActivity.this).close();
             restart = true;
         } else {
-            // is current phrase
-            if (SmartValidator.isPaperKeyCorrect(new String(mUnlinkPhrase), InputWordsActivity.this)) {
-                int position = 0;
-                for (int i = 0; i < count; i++) {
-                    if (Arrays.equals(mUnlinkPhrase, phraseList.get(i).phrase)) {
-                        position = i;
-                        break;
-                    }
+            int position = 0;
+            for (int i = 0; i < count; i++) {
+                if (Arrays.equals(phrase, phraseList.get(i).phrase)) {
+                    position = i;
+                    break;
                 }
-                changeTo = phraseList.get(position + 1 >= count ? 0 : position + 1);
-                BRSQLiteHelper.getInstance(InputWordsActivity.this).close();
             }
+            changeTo = phraseList.get(position + 1 >= count ? 0 : position + 1);
+            BRSQLiteHelper.getInstance(InputWordsActivity.this).close();
 
             try {
                 PhraseInfo info = new PhraseInfo();
-                info.phrase = mUnlinkPhrase;
+                info.phrase = phrase;
                 BRKeyStore.removePhraseInfo(InputWordsActivity.this, info);
             } catch (UserNotAuthenticatedException e) {
                 e.printStackTrace();
@@ -413,7 +410,7 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
 
         // delete database file
         try {
-            String database = UiUtils.getStringMd5(new String(mUnlinkPhrase)) + ".db";
+            String database = UiUtils.getStringMd5(new String(phrase)) + ".db";
             deleteDatabase(database);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
@@ -424,9 +421,7 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
             return;
         }
 
-        if (changeTo == null) return;
-
-        UiUtils.switchPhrase(InputWordsActivity.this, new String(changeTo.phrase), true);
+        UiUtils.switchPhrase(InputWordsActivity.this, new String(changeTo.phrase), true, changeTo.alias);
     }
 
 }

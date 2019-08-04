@@ -1,42 +1,37 @@
 package com.breadwallet.presenter.activities;
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.ImageButton;
-import android.widget.ListView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
-import com.breadwallet.presenter.activities.settings.UnlinkActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.adapter.PhraseAdapter;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
-import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PhraseInfo;
-import com.breadwallet.tools.security.PostAuth;
-import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
+import com.breadwallet.tools.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class PhraseListActivity extends BRActivity {
+public class PhraseListActivity extends BRActivity implements PhraseAdapter.WalletCardListener {
     private final String TAG = PhraseListActivity.class.getName();
 
     private PhraseAdapter mAdapter;
+    private int mEditPosition = -1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,34 +46,14 @@ public class PhraseListActivity extends BRActivity {
             }
         });
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(PhraseListActivity.this, IntroActivity.class);
-                intent.putExtra(IntroActivity.INTRO_REENTER, true);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-        AuthManager.getInstance().authPrompt(PhraseListActivity.this, null,
-            getString(R.string.VerifyPin_continueBody), true, false, new BRAuthCompletion() {
-                @Override
-                public void onComplete() {
-                    initList();
-                }
-
-                @Override
-                public void onCancel() {
-                    finish();
-                }
-            });
-
+        initList();
     }
 
     private void initList() {
-        ListView mListView = findViewById(R.id.multiwallet_phrase_list);
+        RecyclerView recyclerView = findViewById(R.id.multiwallet_phrase_list);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
 
         List<PhraseInfo> list = null;
         try {
@@ -95,8 +70,9 @@ public class PhraseListActivity extends BRActivity {
 
                 for (PhraseInfo info : list) {
                     if (Arrays.equals(info.phrase, phrase)) {
-                        info.alias = "current";
-                        break;
+                        info.selected = true;
+                    } else {
+                        info.selected = false;
                     }
                 }
 
@@ -104,37 +80,9 @@ public class PhraseListActivity extends BRActivity {
                 e.printStackTrace();
             }
         }
-        mAdapter = new PhraseAdapter(this, R.layout.phrase_item, list);
+        mAdapter = new PhraseAdapter(this, list,this);
 
-        mListView.setAdapter(mAdapter);
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (!UiUtils.isClickAllowed()) return;
-                final PhraseInfo info = mAdapter.getItem(position);
-                assert info != null;
-                BRDialog.showCustomDialog(PhraseListActivity.this, "切换至", new String(info.phrase),
-                        getString(R.string.Button_ok), getString(R.string.JailbreakWarnings_close), new BRDialogView.BROnClickListener() {
-                            @Override
-                            public void onClick(BRDialogView brDialogView) {
-                                recoverTo(info);
-                                brDialogView.dismissWithAnimation();
-                            }
-                        }, new BRDialogView.BROnClickListener() {
-                            @Override
-                            public void onClick(BRDialogView brDialogView) {
-                                brDialogView.dismissWithAnimation();
-                            }
-                        }, null, 0);
-            }
-        });
-        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                unlink(position);
-                return true;
-            }
-        });
+        recyclerView.setAdapter(mAdapter);
     }
 
     private void recoverTo(final PhraseInfo info) {
@@ -159,7 +107,7 @@ public class PhraseListActivity extends BRActivity {
                                         }
                                     }, null, null, 0);
                         } else {
-                            UiUtils.switchPhrase(PhraseListActivity.this, new String(info.phrase), true);
+                            UiUtils.switchPhrase(PhraseListActivity.this, new String(info.phrase), true, info.alias);
                         }
                     }
 
@@ -170,38 +118,58 @@ public class PhraseListActivity extends BRActivity {
                 });
     }
 
-    private void unlink(final int position) {
-        AuthManager.getInstance().authPrompt(PhraseListActivity.this, null,
-                getString(R.string.VerifyPin_continueBody), true, false, new BRAuthCompletion() {
-                    @Override
-                    public void onComplete() {
-                        final PhraseInfo info = mAdapter.getItem(position);
-                        assert info != null;
-                        BRDialog.showCustomDialog(PhraseListActivity.this, "解绑该助记词", new String(info.phrase),
-                                getString(R.string.Button_ok), getString(R.string.JailbreakWarnings_close), new BRDialogView.BROnClickListener() {
-                                    @Override
-                                    public void onClick(BRDialogView brDialogView) {
-                                        brDialogView.dismissWithAnimation();
-                                        Intent intent = new Intent(PhraseListActivity.this, UnlinkActivity.class);
-                                        intent.putExtra(UnlinkActivity.UNLINK_PHARE, info.phrase);
-                                        startActivity(intent);
-                                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                                        finish();
-                                    }
-                                }, new BRDialogView.BROnClickListener() {
-                                    @Override
-                                    public void onClick(BRDialogView brDialogView) {
-                                        brDialogView.dismissWithAnimation();
-                                    }
-                                }, null, 0);
-
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        finish();
-                    }
-                });
+    @Override
+    public void OnItemClick(View v, int position) {
+        if (!UiUtils.isClickAllowed()) return;
+        final PhraseInfo info = mAdapter.getItem(position);
+        assert info != null;
+        recoverTo(info);
     }
 
+    @Override
+    public void OnEditNameClick(View v, int position) {
+        if (!UiUtils.isClickAllowed()) return;
+
+        mEditPosition = position;
+        Intent intent = new Intent(PhraseListActivity.this, WalletNameActivity.class);
+        intent.putExtra(WalletNameActivity.WALLET_NAME_PAGE_TYPE, WalletNameActivity.WALLET_NAME_TYPE_RENAME);
+        intent.putExtra(WalletNameActivity.WALLET_NAME, mAdapter.getItem(position).alias);
+        startActivityForResult(intent, WalletNameActivity.REQUEST_WALLET_RENAME);
+    }
+
+    @Override
+    public void OnNewClick(View v) {
+        if (!UiUtils.isClickAllowed()) return;
+
+        Intent intent = new Intent(PhraseListActivity.this, IntroActivity.class);
+        intent.putExtra(IntroActivity.INTRO_REENTER, true);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult " + requestCode + " " + resultCode);
+
+        if (requestCode == WalletNameActivity.REQUEST_WALLET_RENAME) {
+            int pos = mEditPosition;
+            mEditPosition = -1;
+
+            if (resultCode == RESULT_OK) {
+                String name = data.getStringExtra(WalletNameActivity.WALLET_NAME);
+                if (StringUtil.isNullOrEmpty(name) || pos < 0) return;
+
+                PhraseInfo info = mAdapter.getItem(pos);
+                info.alias = name;
+                try {
+                    BRKeyStore.updatePhraseInfo(PhraseListActivity.this, info);
+                    mAdapter.notifyDataSetChanged();
+                } catch (UserNotAuthenticatedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
 }

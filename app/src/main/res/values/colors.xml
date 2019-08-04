@@ -134,6 +134,9 @@
     <color name="setting_type_completed">#878787</color>
     <color name="esigin_btn_unable_color">#757575</color>
 
+    <color name="wallet_time_color">#CCFFFFFF</color>
+    <color name="wallet_normal_color">#5A5465</color>
+
     <array name="pin_digit_button_colors">
         <item>#ffffff</item>
         <item>#ffffff</item>

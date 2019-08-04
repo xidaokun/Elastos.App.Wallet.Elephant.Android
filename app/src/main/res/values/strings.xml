@@ -496,7 +496,7 @@
     <!-- Recovery Phrase button description -->
     <string name="SecurityCenter.paperKeyDescription">The only way to access your assets if you lose or upgrade your phone.</string>
     <!-- Recovery Phrase button title -->
-    <string name="SecurityCenter.paperKeyTitle">Phrase List</string>
+    <string name="SecurityCenter.paperKeyTitle">Recovery Phrase</string>
     <!-- PIN button description -->
     <string name="SecurityCenter.pinDescription">Protects your Elephant from unauthorized users.</string>
     <!-- PIN button title -->
@@ -1160,5 +1160,10 @@
 
     <string name="net_has_disconnect">Network disconnected</string>
 
-    <string name="multiwallet_phrase_list">Phrase List</string>
+    <string name="multi_wallet_switch">Switch wallet</string>
+    <string name="multi_wallet_new">+ New wallet</string>
+    <string name="multi_wallet_name">Wallet name</string>
+    <string name="multi_wallet_name_save">save</string>
+    <string name="multi_wallet_name_next">next</string>
+    <string name="multi_wallet_format_date">MMMM d, yyyy</string>
 </resources>
