@@ -4,6 +4,7 @@ public class PhraseInfo {
     public byte[] phrase;
     public byte[] authKey;
     public byte[] pubKey;
-    public int creationTime;
+    public long creationTime;
     public String alias;
+    public boolean selected = false;
 }

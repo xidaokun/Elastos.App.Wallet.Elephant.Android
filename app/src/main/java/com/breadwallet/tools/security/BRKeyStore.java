@@ -1258,4 +1258,39 @@ public class BRKeyStore {
         Log.e(TAG, "The phrase is not exist");
         return false;
     }
+
+    public static boolean updatePhraseInfo(Context context, PhraseInfo info) throws UserNotAuthenticatedException {
+        if (info == null || info.phrase == null || info.phrase.length == 0) {
+            Log.e(TAG, "Phrase info is null");
+            return false;
+        }
+
+        List<PhraseInfo> list = getPhraseInfoList(context);
+        if (list == null) {
+            Log.e(TAG, "no phrase exist");
+            return false;
+        }
+
+        for (int i = 0; i < list.size(); i++) {
+            PhraseInfo phrase = list.get(i);
+            if (!Arrays.equals(phrase.phrase, info.phrase)) continue;
+
+            list.set(i, info);
+            AliasObject obj = aliasObjectMap.get(PHRASE_LIST_ALIAS);
+            return _setData(context, new Gson().toJson(list).getBytes(), obj.alias, obj.datafileName, obj.ivFileName, 0, BRSharedPrefs.isUserAuthor(context));
+        }
+        Log.e(TAG, "The phrase is not exist");
+        return false;
+    }
+
+    public static int getPhraseCount(Context context) {
+        List<PhraseInfo> list = null;
+        try {
+            list = getPhraseInfoList(context);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
+        if (list == null) return 0;
+        else return list.size();
+    }
 }

@@ -87,10 +87,10 @@ public class PostAuth {
         return mInstance;
     }
 
-    public void onCreateWalletAuth(final Activity activity, boolean authAsked, boolean restart) {
+    public void onCreateWalletAuth(final Activity activity, boolean authAsked, boolean restart, String walletName) {
         Log.e(TAG, "onCreateWalletAuth: " + authAsked);
         long start = System.currentTimeMillis();
-        boolean success = WalletsMaster.getInstance(activity).generateRandomSeed(activity);
+        boolean success = WalletsMaster.getInstance(activity).generateRandomSeed(activity, walletName);
         if (success) {
             Intent intent = new Intent(activity, WriteDownActivity.class);
             intent.putExtra(WriteDownActivity.EXTRA_VIEW_REASON,
@@ -150,7 +150,7 @@ public class PostAuth {
         BRBitId.completeBitID(activity, authenticated);
     }
 
-    public void onRecoverWalletAuth(final Activity activity, boolean authAsked, boolean restartApp) {
+    public void onRecoverWalletAuth(final Activity activity, boolean authAsked, boolean restartApp, String walletName) {
         if (Utils.isNullOrEmpty(mCachedPaperKey)) {
             Log.e(TAG, "onRecoverWalletAuth: phraseForKeyStore is null or empty");
             BRReportsManager.reportBug(new NullPointerException("onRecoverWalletAuth: phraseForKeyStore is or empty"));
@@ -190,7 +190,7 @@ public class PostAuth {
                     } catch (NoSuchAlgorithmException e) {
                         e.printStackTrace();
                     }
-                    saveToPhraseList(activity, mCachedPaperKey.getBytes(), authKey, mpk.serialize());
+                    saveToPhraseList(activity, mCachedPaperKey.getBytes(), authKey, mpk.serialize(), walletName);
 
                     mCachedPaperKey = null;
 
@@ -414,19 +414,21 @@ public class PostAuth {
             byte[] seed = BRCoreKey.getSeedFromPhrase(phrase);
             byte[] authKey = BRCoreKey.getAuthPrivKeyForAPI(seed);
             BRCoreMasterPubKey mpk = new BRCoreMasterPubKey(phrase, true);
-            saveToPhraseList(activity, phrase, authKey, mpk.serialize());
+
+            saveToPhraseList(activity, phrase, authKey, mpk.serialize(), UiUtils.getDefaultWalletName(activity));
         }
 
         WalletsMaster.getInstance(activity).startTheWalletIfExists(activity);
     }
 
-    private void saveToPhraseList(Context context, byte[] phrase, byte[] authKey, byte[] pubkey) {
+    private void saveToPhraseList(Context context, byte[] phrase, byte[] authKey, byte[] pubkey, String alias) {
         PhraseInfo phraseInfo = new PhraseInfo();
         phraseInfo.phrase = phrase;
         phraseInfo.authKey = authKey;
         phraseInfo.pubKey = pubkey;
-        phraseInfo.creationTime = 0;
-        phraseInfo.alias = "";
+        phraseInfo.creationTime = System.currentTimeMillis() / 1000;
+        phraseInfo.alias = alias;
+
         try {
             BRKeyStore.addPhraseInfo(context, phraseInfo);
         } catch (UserNotAuthenticatedException e) {

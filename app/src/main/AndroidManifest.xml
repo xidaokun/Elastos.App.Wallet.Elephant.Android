@@ -397,7 +397,11 @@
                     android:host="multicreate"/>
             </intent-filter>
         </activity>
-        <activity android:name=".presenter.activities.PhraseListActivity" />
+        <activity android:name=".presenter.activities.PhraseListActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".presenter.activities.WalletNameActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysVisible"/>
 
         <provider
             android:name=".presenter.provider.BuglyFileProvider"

@@ -43,8 +43,10 @@ import com.breadwallet.presenter.activities.MultiSignCreateActivity;
 import com.breadwallet.presenter.activities.MultiSignTxActivity;
 import com.breadwallet.presenter.activities.VoteActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
+import com.breadwallet.presenter.activities.WalletNameActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.presenter.activities.did.DidAuthorizeActivity;
+import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.sign.SignDetailActivity;
 import com.breadwallet.presenter.activities.sign.SignSuccessActivity;
@@ -62,6 +64,7 @@ import com.breadwallet.presenter.fragments.FragmentSupport;
 import com.breadwallet.presenter.fragments.FragmentTxDetails;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
@@ -599,6 +602,12 @@ public class UiUtils {
     }
 
     public static void restartApp(Activity activity) {
+        // sleep 500ms for saving phrase list
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         PackageManager packageManager = activity.getPackageManager();
         Intent intent = packageManager.getLaunchIntentForPackage(activity.getPackageName());
         assert intent != null;
@@ -608,13 +617,26 @@ public class UiUtils {
         Runtime.getRuntime().exit(0);
     }
 
-    public static void switchPhrase(Activity context, String phrase, boolean restart) {
+    public static void switchPhrase(Activity context, String phrase, boolean restart, String walletName) {
         PostAuth.getInstance().setCachedPaperKey(phrase);
 
         //Disallow BTC and BCH sending.
         BRSharedPrefs.putAllowSpend(context, BaseBitcoinWalletManager.BITCASH_SYMBOL, false);
         BRSharedPrefs.putAllowSpend(context, BaseBitcoinWalletManager.BITCOIN_SYMBOL, false);
 
-        PostAuth.getInstance().onRecoverWalletAuth(context, false, restart);
+        PostAuth.getInstance().onRecoverWalletAuth(context, false, restart, walletName);
+    }
+
+    public static void startWalletNameActivity(Activity context, int type, boolean reenter) {
+        Intent intent = new Intent(context, WalletNameActivity.class);
+        intent.putExtra(WalletNameActivity.WALLET_NAME_PAGE_TYPE, type);
+        intent.putExtra(WalletNameActivity.WALLET_NAME, getDefaultWalletName(context));
+        intent.putExtra(IntroActivity.INTRO_REENTER, reenter);
+        context.startActivity(intent);
+    }
+
+    public static String getDefaultWalletName(Activity context) {
+        int count = BRKeyStore.getPhraseCount(context) + 1;
+        return "Wallet #" + count;
     }
 }

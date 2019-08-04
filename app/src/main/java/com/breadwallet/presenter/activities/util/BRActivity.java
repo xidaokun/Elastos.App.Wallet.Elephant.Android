@@ -16,6 +16,7 @@ import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.InputWordsActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
+import com.breadwallet.presenter.activities.WalletNameActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.intro.RecoverActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
@@ -200,7 +201,8 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            PostAuth.getInstance().onRecoverWalletAuth(BRActivity.this, true, false);
+                            PostAuth.getInstance().onRecoverWalletAuth(BRActivity.this,
+                                    true, false, UiUtils.getDefaultWalletName(BRActivity.this));
                         }
                     });
                 } else {
@@ -237,7 +239,8 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            PostAuth.getInstance().onCreateWalletAuth(BRActivity.this, true, false);
+                            PostAuth.getInstance().onCreateWalletAuth(BRActivity.this,
+                                    true, false, UiUtils.getDefaultWalletName(BRActivity.this));
                         }
                     });
 
@@ -253,7 +256,7 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                     boolean isPinAccepted = data.getBooleanExtra(InputPinActivity.EXTRA_PIN_ACCEPTED, false);
                     if (isPinAccepted) {
                         if (Utils.isNullOrEmpty(BRKeyStore.getMasterPublicKey(this))) {
-                            PostAuth.getInstance().onCreateWalletAuth(this, false, false);
+                            UiUtils.startWalletNameActivity(this, WalletNameActivity.WALLET_NAME_TYPE_NEW, false);
                         } else {
                             UiUtils.startBreadActivity(this, false);
                         }

@@ -37,7 +37,6 @@ public class UnlinkActivity extends BRActivity {
 
         ImageButton faq = findViewById(R.id.faq_button);
 
-        final byte[] phrase = getIntent().getByteArrayExtra(UNLINK_PHARE);
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,7 +52,6 @@ public class UnlinkActivity extends BRActivity {
                 if (!UiUtils.isClickAllowed()) return;
                 Intent intent = new Intent(UnlinkActivity.this, InputWordsActivity.class);
                 intent.putExtra(InputWordsActivity.EXTRA_UNLINK, true);
-                intent.putExtra(UNLINK_PHARE, phrase);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                 if (!UnlinkActivity.this.isDestroyed()) finish();
@@ -89,5 +87,6 @@ public class UnlinkActivity extends BRActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 }
