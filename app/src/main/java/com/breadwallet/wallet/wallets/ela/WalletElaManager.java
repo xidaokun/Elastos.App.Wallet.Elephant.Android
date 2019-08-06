@@ -182,6 +182,14 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         return new byte[1];
     }
 
+    public void checkTxHistory() {
+        String address = getAddress();
+        int currentPageNumber = BRSharedPrefs.getCurrentHistoryPageNumber(mContext);
+        for(int i=0; i<= currentPageNumber; i++) {
+            ElaDataSource.getInstance(mContext).getHistoryByPage(address, currentPageNumber);
+        }
+    }
+
     public void updateTxHistory() {
         String address = getAddress();
         if(StringUtil.isNullOrEmpty(address)) return;
