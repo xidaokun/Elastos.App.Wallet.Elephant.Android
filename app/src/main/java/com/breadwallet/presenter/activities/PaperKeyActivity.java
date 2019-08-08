@@ -37,6 +37,8 @@ public class PaperKeyActivity extends BRActivity {
     private static final float BUTTONS_LAYOUT_WEIGHT_SUM_DEFAULT = 2.0f;
     private static final float BUTTONS_LAYOUT_WEIGHT_SUM_SINGLE = 1.0f;
 
+    public static final String RESTART_APP = "restart_app";
+
     private ViewPager mWordViewPager;
     private Button mNextButton;
     private Button mPreviousButton;
@@ -44,6 +46,8 @@ public class PaperKeyActivity extends BRActivity {
     private TextView mItemIndexTextView;
     private ImageButton mCloseImageButton;
     private SparseArray<String> mWordMap;
+
+    private boolean mRestart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,8 +98,13 @@ public class PaperKeyActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) return;
-                UiUtils.startBreadActivity(PaperKeyActivity.this, false);
-                if (!isDestroyed()) finish();
+
+                if (mRestart) {
+                    UiUtils.restartApp(PaperKeyActivity.this);
+                } else {
+                    UiUtils.startBreadActivity(PaperKeyActivity.this, false);
+                    if (!isDestroyed()) finish();
+                }
             }
         });
 
@@ -107,6 +116,7 @@ public class PaperKeyActivity extends BRActivity {
             }
         });
 
+        mRestart = getIntent().getBooleanExtra(RESTART_APP, false);
         String cleanPhrase = getIntent().getExtras() == null ? null : getIntent().getStringExtra("phrase");
         mWordMap = new SparseArray<>();
 
@@ -179,7 +189,7 @@ public class PaperKeyActivity extends BRActivity {
         if (isNext) {
             setButtonEnabled(true);
             if (currentIndex >= 11) {
-                PostAuth.getInstance().onPhraseProveAuth(this, false);
+                PostAuth.getInstance().onPhraseProveAuth(this, false, mRestart);
             } else {
                 mWordViewPager.setCurrentItem(currentIndex + 1);
             }
