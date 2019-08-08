@@ -107,7 +107,7 @@ public class PostAuth {
         }
     }
 
-    public void onPhraseCheckAuth(Activity activity, boolean authAsked) {
+    public void onPhraseCheckAuth(Activity activity, boolean authAsked, boolean restart) {
         String cleanPhrase;
         try {
             byte[] raw = BRKeyStore.getPhrase(activity, BRConstants.SHOW_PHRASE_REQUEST_CODE);
@@ -125,11 +125,12 @@ public class PostAuth {
         }
         Intent intent = new Intent(activity, PaperKeyActivity.class);
         intent.putExtra("phrase", cleanPhrase);
+        intent.putExtra(PaperKeyActivity.RESTART_APP, restart);
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
     }
 
-    public void onPhraseProveAuth(Activity activity, boolean authAsked) {
+    public void onPhraseProveAuth(Activity activity, boolean authAsked, boolean restart) {
         String cleanPhrase;
         try {
             cleanPhrase = new String(BRKeyStore.getPhrase(activity, BRConstants.PROVE_PHRASE_REQUEST));
@@ -142,6 +143,7 @@ public class PostAuth {
         }
         Intent intent = new Intent(activity, PaperKeyProveActivity.class);
         intent.putExtra("phrase", cleanPhrase);
+        intent.putExtra(PaperKeyActivity.RESTART_APP, restart);
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
     }

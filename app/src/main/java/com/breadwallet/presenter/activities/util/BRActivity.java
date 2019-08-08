@@ -181,7 +181,7 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            PostAuth.getInstance().onPhraseCheckAuth(BRActivity.this, true);
+                            PostAuth.getInstance().onPhraseCheckAuth(BRActivity.this, true, false);
                         }
                     });
                 }
@@ -191,7 +191,7 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            PostAuth.getInstance().onPhraseProveAuth(BRActivity.this, true);
+                            PostAuth.getInstance().onPhraseProveAuth(BRActivity.this, true, false);
                         }
                     });
                 }

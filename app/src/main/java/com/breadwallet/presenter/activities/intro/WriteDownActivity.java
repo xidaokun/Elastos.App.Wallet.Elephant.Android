@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.activities.intro;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -86,7 +87,8 @@ public class WriteDownActivity extends BRActivity {
                         getString(R.string.VerifyPin_continueBody), true, false, new BRAuthCompletion() {
                             @Override
                             public void onComplete() {
-                                PostAuth.getInstance().onPhraseCheckAuth(WriteDownActivity.this, false);
+                                PostAuth.getInstance().onPhraseCheckAuth(WriteDownActivity.this,
+                                        false, viewReason == ViewReason.NEW_WALLET_ADD);
                             }
 
                             @Override
