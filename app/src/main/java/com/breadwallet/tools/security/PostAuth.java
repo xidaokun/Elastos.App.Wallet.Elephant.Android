@@ -89,6 +89,7 @@ public class PostAuth {
 
     public void onCreateWalletAuth(final Activity activity, boolean authAsked, boolean restart, String walletName) {
         Log.e(TAG, "onCreateWalletAuth: " + authAsked);
+        WalletsMaster.getInstance(activity).wipePartOfKeyStore(activity);
         long start = System.currentTimeMillis();
         boolean success = WalletsMaster.getInstance(activity).generateRandomSeed(activity, walletName);
         if (success) {
@@ -158,6 +159,7 @@ public class PostAuth {
             BRReportsManager.reportBug(new NullPointerException("onRecoverWalletAuth: phraseForKeyStore is or empty"));
             return;
         }
+        WalletsMaster.getInstance(activity).wipePartOfKeyStore(activity);
 
         try {
             boolean success = false;
@@ -390,7 +392,7 @@ public class PostAuth {
             String strPhrase = new String((phrase == null) ? new byte[0] : phrase);
             if (strPhrase.isEmpty()) {
                 WalletsMaster m = WalletsMaster.getInstance(activity);
-                m.wipeKeyStore(activity);
+                m.wipePartOfKeyStore(activity);
                 m.wipeWalletButKeystore(activity);
             } else {
                 Log.e(TAG, "onCanaryCheck: Canary wasn't there, but the phrase persists, adding canary to keystore.");

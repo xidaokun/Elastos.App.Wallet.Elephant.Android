@@ -55,6 +55,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -799,6 +800,46 @@ public class BRKeyStore {
                 return false;
             }
             Log.e(TAG, "resetWalletKeyStore: removed:" + count);
+//            Assert.assertEquals(count, 11);
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return false;
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+            return false;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        } catch (java.security.cert.CertificateException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    public synchronized static boolean resetPartOfWalletKeyStore(Context context) {
+        KeyStore keyStore;
+        try {
+            keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+            keyStore.load(null);
+            int count = 0;
+            Enumeration<String> aliases = keyStore.aliases();
+            if (aliases != null) {
+                while (aliases.hasMoreElements()) {
+                    String alias = aliases.nextElement();
+                    if (!alias.equals(PHRASE_ALIAS) && !alias.equals(PUB_KEY_ALIAS)
+                            && !alias.equals(WALLET_CREATION_TIME_ALIAS) && !alias.equals(AUTH_KEY_ALIAS)
+                            && !alias.equals(TOKEN_ALIAS) && !alias.equals(ETH_PUBKEY_ALIAS)) continue;
+                    Log.d(TAG, "clear data keystore alias: " + alias);
+                    removeAliasAndDatas(keyStore, alias, context);
+                    destroyEncryptedData(context, alias);
+                    count++;
+                }
+            } else {
+                BRReportsManager.reportBug(new NullPointerException("keyStore.aliases() is null"));
+                return false;
+            }
+            Log.e(TAG, "resetPartOfWalletKeyStore: removed:" + count);
 //            Assert.assertEquals(count, 11);
 
         } catch (NoSuchAlgorithmException e) {
