@@ -301,6 +301,10 @@ public class WalletsMaster {
         return BRKeyStore.resetWalletKeyStore(context);
     }
 
+    public boolean wipePartOfKeyStore(Context context) {
+        return BRKeyStore.resetPartOfWalletKeyStore(context);
+    }
+
     /**
      * true if keystore is available and we know that no wallet exists on it
      */
