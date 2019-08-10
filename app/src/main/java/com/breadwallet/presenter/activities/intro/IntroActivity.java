@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.os.Bundle;
+import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,13 +17,17 @@ import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.WalletNameActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.security.SmartValidator;
+import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+
+import java.security.NoSuchAlgorithmException;
 
 
 /**
@@ -99,6 +104,8 @@ public class IntroActivity extends BRActivity {
             Utils.printPhoneSpecs();
         }
 
+        initGlobal();
+
         byte[] masterPubKey = BRKeyStore.getMasterPublicKey(this);
 
         boolean isFirstAddressCorrect = false;
@@ -173,5 +180,26 @@ public class IntroActivity extends BRActivity {
         });
     }
 
+
+    private void initGlobal() {
+        byte[] phrase;
+        try {
+            phrase = BRKeyStore.getPhrase(this, 0);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        if (phrase == null) return;
+
+        try {
+            String hash = UiUtils.getStringMd5(new String(phrase));
+            BRSQLiteHelper.DATABASE_NAME = hash + ".db";
+            BRSharedPrefs.PREFS_NAME = "profile_" + hash;
+            Log.d(TAG, "profile: " + BRSharedPrefs.PREFS_NAME);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
