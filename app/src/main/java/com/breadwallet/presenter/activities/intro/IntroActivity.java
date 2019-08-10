@@ -30,6 +30,8 @@ import com.platform.sqlite.PlatformSqliteHelper;
 
 import java.security.NoSuchAlgorithmException;
 
+import java.security.NoSuchAlgorithmException;
+
 
 /**
  * BreadWallet
