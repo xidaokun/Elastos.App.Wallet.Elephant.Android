@@ -395,6 +395,7 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
         try {
             String database = UiUtils.getStringMd5(new String(phrase)) + ".db";
             deleteDatabase(database);
+            BRSharedPrefs.clearAllPrefs(InputWordsActivity.this);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }

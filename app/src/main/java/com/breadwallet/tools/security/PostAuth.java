@@ -191,6 +191,7 @@ public class PostAuth {
                     try {
                         String hash = UiUtils.getStringMd5(mCachedPaperKey);
                         BRSQLiteHelper.DATABASE_NAME = hash + ".db";
+                        BRSharedPrefs.PREFS_NAME = "profile_" + hash;
                     } catch (NoSuchAlgorithmException e) {
                         e.printStackTrace();
                     }
@@ -409,12 +410,6 @@ public class PostAuth {
         }
         // add to phrase list
         if (phrase != null) {
-            try {
-                String hash = UiUtils.getStringMd5(new String(phrase));
-                BRSQLiteHelper.DATABASE_NAME = hash + ".db";
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
             byte[] seed = BRCoreKey.getSeedFromPhrase(phrase);
             byte[] authKey = BRCoreKey.getAuthPrivKeyForAPI(seed);
             BRCoreMasterPubKey mpk = new BRCoreMasterPubKey(phrase, true);

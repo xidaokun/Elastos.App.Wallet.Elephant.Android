@@ -254,6 +254,7 @@ public class WalletsMaster {
         try {
             String hash = UiUtils.getStringMd5(new String(paperKeyBytes));
             BRSQLiteHelper.DATABASE_NAME = hash + ".db";
+            BRSharedPrefs.PREFS_NAME = "profile_" + hash;
             Log.d(TAG, "new set sqlite file name " + BRSQLiteHelper.DATABASE_NAME);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();

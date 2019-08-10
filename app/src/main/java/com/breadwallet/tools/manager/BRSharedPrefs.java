@@ -46,7 +46,7 @@ import java.util.UUID;
 public class BRSharedPrefs {
     public static final String TAG = BRSharedPrefs.class.getName();
 
-    public static final String PREFS_NAME = "MyPrefsFile";
+    public static String PREFS_NAME = "MyPrefsFile";
 
     public static String getPreferredFiatIso(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, 0);
