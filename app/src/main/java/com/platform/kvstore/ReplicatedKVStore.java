@@ -604,6 +604,7 @@ public class ReplicatedKVStore implements BreadApp.OnAppBackgrounded {
      * Sync all kvs to and from the remote kv store adaptor
      */
     public boolean syncAllKeys() {
+        Log.d(TAG, "sync kv store");
         // update all kvs locally and on the remote server, replacing missing kvs
         //
         // 1. get a list of all kvs from the server

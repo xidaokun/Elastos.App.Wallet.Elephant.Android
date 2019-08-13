@@ -30,6 +30,7 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.platform.entities.TxMetaData;
+import com.platform.sqlite.PlatformSqliteHelper;
 import com.platform.tools.BRBitId;
 import com.platform.tools.KVStoreManager;
 
@@ -191,6 +192,7 @@ public class PostAuth {
                     try {
                         String hash = UiUtils.getStringMd5(mCachedPaperKey);
                         BRSQLiteHelper.DATABASE_NAME = hash + ".db";
+                        PlatformSqliteHelper.DATABASE_NAME = hash + "_platform.db";
                         BRSharedPrefs.PREFS_NAME = "profile_" + hash;
                     } catch (NoSuchAlgorithmException e) {
                         e.printStackTrace();

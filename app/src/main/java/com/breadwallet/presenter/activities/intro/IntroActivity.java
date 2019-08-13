@@ -26,6 +26,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.platform.sqlite.PlatformSqliteHelper;
 
 import java.security.NoSuchAlgorithmException;
 
@@ -195,8 +196,8 @@ public class IntroActivity extends BRActivity {
         try {
             String hash = UiUtils.getStringMd5(new String(phrase));
             BRSQLiteHelper.DATABASE_NAME = hash + ".db";
+            PlatformSqliteHelper.DATABASE_NAME = hash + "_platform.db";
             BRSharedPrefs.PREFS_NAME = "profile_" + hash;
-            Log.d(TAG, "profile: " + BRSharedPrefs.PREFS_NAME);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }

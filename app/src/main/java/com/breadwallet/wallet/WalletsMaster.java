@@ -38,6 +38,7 @@ import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 import com.breadwallet.wallet.wallets.ioex.WalletIoexManager;
 import com.platform.entities.TokenListMetaData;
 import com.platform.entities.WalletInfo;
+import com.platform.sqlite.PlatformSqliteHelper;
 import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
@@ -254,6 +255,7 @@ public class WalletsMaster {
         try {
             String hash = UiUtils.getStringMd5(new String(paperKeyBytes));
             BRSQLiteHelper.DATABASE_NAME = hash + ".db";
+            PlatformSqliteHelper.DATABASE_NAME = hash + "_platform.db";
             BRSharedPrefs.PREFS_NAME = "profile_" + hash;
             Log.d(TAG, "new set sqlite file name " + BRSQLiteHelper.DATABASE_NAME);
         } catch (NoSuchAlgorithmException e) {
