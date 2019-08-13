@@ -393,7 +393,10 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
 
         // delete database file
         try {
-            String database = UiUtils.getStringMd5(new String(phrase)) + ".db";
+            String md5Str = UiUtils.getStringMd5(new String(phrase));
+            String database = md5Str + ".db";
+            deleteDatabase(database);
+            database = md5Str + "_platform.db";
             deleteDatabase(database);
             BRSharedPrefs.clearAllPrefs(InputWordsActivity.this);
         } catch (NoSuchAlgorithmException e) {
