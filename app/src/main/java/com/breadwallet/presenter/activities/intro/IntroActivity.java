@@ -27,8 +27,11 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.sqlite.PlatformSqliteHelper;
+<<<<<<< HEAD
 
 import java.security.NoSuchAlgorithmException;
+=======
+>>>>>>> remove sycn kv store
 
 import java.security.NoSuchAlgorithmException;
 
