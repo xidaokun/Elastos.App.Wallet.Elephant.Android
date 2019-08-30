@@ -124,7 +124,10 @@ public class WalletNameActivity extends BRActivity {
 
         String name = mEdit.getText().toString();
         Log.d(TAG, "input name: " + name);
-        if (StringUtils.isNullOrEmpty(name)) return;
+        if (StringUtils.isNullOrEmpty(name)) {
+            UiUtils.toast(getApplicationContext(), R.string.multi_wallet_name_required);
+            return;
+        }
 
         switch (mType) {
             case WALLET_NAME_TYPE_RENAME:
@@ -150,4 +153,5 @@ public class WalletNameActivity extends BRActivity {
 
         finish();
     }
+
 }

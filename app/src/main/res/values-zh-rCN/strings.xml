@@ -1153,11 +1153,13 @@
 
     <string name="net_has_disconnect">网络已断开</string>
 
-    <string name="multi_wallet_switch">切换助记词</string>
-    <string name="multi_wallet_new">+ 新增助记词</string>
+    <string name="multi_wallet_switch">切换钱包</string>
+    <string name="multi_wallet_new">+ 新增钱包</string>
     <string name="multi_wallet_name">钱包名称</string>
+    <string name="multi_wallet_name_hint">钱包名称</string>
     <string name="multi_wallet_name_save">保存</string>
     <string name="multi_wallet_name_next">下一步</string>
+    <string name="multi_wallet_name_required">请输入钱包名称</string>
     <string name="multi_wallet_format_date">MM月d日, yyyy</string>
 
 </resources>

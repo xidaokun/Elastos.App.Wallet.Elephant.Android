@@ -55,6 +55,7 @@ public final class BRConstants {
     public static final int UPLOAD_FILE_REQUEST = 120;
     public static final int SIGN_PURPOSE_REQUEST = 121;
     public static final int SIGN_CONTENT_REQUEST = 122;
+    public static final int GET_PHRASE_LIST_REQUEST_CODE = 123;
 
     /**
      * Request codes for take picture

@@ -372,7 +372,7 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
         }
         List<PhraseInfo> phraseList;
         try {
-            phraseList = BRKeyStore.getPhraseInfoList(InputWordsActivity.this);
+            phraseList = BRKeyStore.getPhraseInfoList(InputWordsActivity.this, 0);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
             return;

@@ -1163,7 +1163,9 @@
     <string name="multi_wallet_switch">Switch wallet</string>
     <string name="multi_wallet_new">+ New wallet</string>
     <string name="multi_wallet_name">Wallet name</string>
+    <string name="multi_wallet_name_hint">wallet name</string>
     <string name="multi_wallet_name_save">save</string>
-    <string name="multi_wallet_name_next">next</string>
+    <string name="multi_wallet_name_next">Next</string>
+    <string name="multi_wallet_name_required">Name is required</string>
     <string name="multi_wallet_format_date">MMMM d, yyyy</string>
 </resources>

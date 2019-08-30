@@ -14,13 +14,12 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.adapter.PhraseAdapter;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
-import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PhraseInfo;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 
 import java.util.ArrayList;
@@ -57,7 +56,7 @@ public class PhraseListActivity extends BRActivity implements PhraseAdapter.Wall
 
         List<PhraseInfo> list = null;
         try {
-            list = BRKeyStore.getPhraseInfoList(this);
+            list = BRKeyStore.getPhraseInfoList(this, BRConstants.GET_PHRASE_LIST_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
@@ -86,36 +85,25 @@ public class PhraseListActivity extends BRActivity implements PhraseAdapter.Wall
     }
 
     private void recoverTo(final PhraseInfo info) {
-        AuthManager.getInstance().authPrompt(PhraseListActivity.this, null,
-                getString(R.string.VerifyPin_continueBody), true, false, new BRAuthCompletion() {
-                    @Override
-                    public void onComplete() {
-                        byte[] phrase;
-                        try {
-                            phrase = BRKeyStore.getPhrase(PhraseListActivity.this, 0);
-                        } catch (UserNotAuthenticatedException e) {
-                            e.printStackTrace();
-                            return;
-                        }
+        byte[] phrase;
+        try {
+            phrase = BRKeyStore.getPhrase(PhraseListActivity.this, 0);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+            return;
+        }
 
-                        if (Arrays.equals(phrase, info.phrase)) {
-                            BRDialog.showCustomDialog(PhraseListActivity.this, "", "已经是当前助记词",
-                                    getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-                                        @Override
-                                        public void onClick(BRDialogView brDialogView) {
-                                            brDialogView.dismissWithAnimation();
-                                        }
-                                    }, null, null, 0);
-                        } else {
-                            UiUtils.switchPhrase(PhraseListActivity.this, new String(info.phrase), true, info.alias);
+        if (Arrays.equals(phrase, info.phrase)) {
+            BRDialog.showCustomDialog(PhraseListActivity.this, "", "已经是当前助记词",
+                    getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            brDialogView.dismissWithAnimation();
                         }
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        finish();
-                    }
-                });
+                    }, null, null, 0);
+        } else {
+            UiUtils.switchPhrase(PhraseListActivity.this, new String(info.phrase), true, info.alias);
+        }
     }
 
     @Override
@@ -168,6 +156,12 @@ public class PhraseListActivity extends BRActivity implements PhraseAdapter.Wall
                 } catch (UserNotAuthenticatedException e) {
                     e.printStackTrace();
                 }
+            }
+        } else if (requestCode == BRConstants.GET_PHRASE_LIST_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                initList();
+            } else {
+                finish();
             }
         }
 

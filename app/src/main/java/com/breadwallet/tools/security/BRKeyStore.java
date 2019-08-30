@@ -901,7 +901,7 @@ public class BRKeyStore {
     public synchronized static void showAuthenticationScreen(Context context, int requestCode, String alias) {
         // Create the Confirm Credentials screen. You can customize the title and description. Or
         // we will provide a generic one for you if you leave it null
-        if (!alias.equalsIgnoreCase(PHRASE_ALIAS) && !alias.equalsIgnoreCase(CANARY_ALIAS)) {
+        if (!alias.equalsIgnoreCase(PHRASE_ALIAS) && !alias.equalsIgnoreCase(CANARY_ALIAS) && !alias.equals(PHRASE_LIST_ALIAS)) {
             BRReportsManager.reportBug(new IllegalArgumentException("requesting auth for: " + alias), true);
         }
 //        Log.e(TAG, "showAuthenticationScreen: " + alias);
@@ -1243,7 +1243,7 @@ public class BRKeyStore {
             return false;
         }
 
-        List<PhraseInfo> list = getPhraseInfoList(context);
+        List<PhraseInfo> list = getPhraseInfoList(context, 0);
         if (list != null) {
             for (PhraseInfo phrase : list) {
                 if (Arrays.equals(phrase.phrase, info.phrase)) {
@@ -1261,15 +1261,14 @@ public class BRKeyStore {
         return _setData(context, str.getBytes(), obj.alias, obj.datafileName, obj.ivFileName, 0, BRSharedPrefs.isUserAuthor(context));
     }
 
-
-    public static List<PhraseInfo> getPhraseInfoList(Context context) throws UserNotAuthenticatedException {
+    public static List<PhraseInfo> getPhraseInfoList(Context context, int requestCode) throws UserNotAuthenticatedException {
         if (PostAuth.mAuthLoopBugHappened) {
             showLoopBugMessage(context);
             throw new UserNotAuthenticatedException();
         }
 
         AliasObject obj = aliasObjectMap.get(PHRASE_LIST_ALIAS);
-        byte[] data =  _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
+        byte[] data =  _getData(context, obj.alias, obj.datafileName, obj.ivFileName, requestCode);
         if (data == null) return null;
 
         String str = new String(data);
@@ -1283,7 +1282,7 @@ public class BRKeyStore {
             return false;
         }
 
-        List<PhraseInfo> list = getPhraseInfoList(context);
+        List<PhraseInfo> list = getPhraseInfoList(context, 0);
         if (list == null) {
             Log.e(TAG, "no phrase exist");
             return false;
@@ -1306,7 +1305,8 @@ public class BRKeyStore {
             return false;
         }
 
-        List<PhraseInfo> list = getPhraseInfoList(context);
+
+        List<PhraseInfo> list = getPhraseInfoList(context, 0);
         if (list == null) {
             Log.e(TAG, "no phrase exist");
             return false;
@@ -1327,7 +1327,7 @@ public class BRKeyStore {
     public static int getPhraseCount(Context context) {
         List<PhraseInfo> list = null;
         try {
-            list = getPhraseInfoList(context);
+            list = getPhraseInfoList(context, 0);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
