@@ -1304,7 +1304,7 @@ public class BRKeyStore {
             Log.e(TAG, "Phrase info is null");
             return false;
         }
-
+        
         List<PhraseInfo> list = getPhraseInfoList(context, 0);
         if (list == null) {
             Log.e(TAG, "no phrase exist");

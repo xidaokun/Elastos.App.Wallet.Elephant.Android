@@ -2,10 +2,7 @@ package com.breadwallet.presenter.activities;
 
 import android.content.Context;
 import android.content.Intent;
-<<<<<<< HEAD
 import android.content.SharedPreferences;
-=======
->>>>>>> implement multi wallet follow new design
 import android.os.Bundle;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.Nullable;
@@ -22,15 +19,9 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.adapter.PhraseAdapter;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
-<<<<<<< HEAD
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PhraseInfo;
 import com.breadwallet.tools.util.BRConstants;
-=======
-import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.security.PhraseInfo;
->>>>>>> implement multi wallet follow new design
 import com.breadwallet.tools.util.StringUtil;
 
 import java.security.NoSuchAlgorithmException;
