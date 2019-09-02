@@ -27,11 +27,8 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.sqlite.PlatformSqliteHelper;
-<<<<<<< HEAD
 
 import java.security.NoSuchAlgorithmException;
-=======
->>>>>>> remove sycn kv store
 
 import java.security.NoSuchAlgorithmException;
 
@@ -209,7 +206,6 @@ public class IntroActivity extends BRActivity {
         if (requestCode == BRConstants.INIT_GLOBAL_REQUEST_CODE && resultCode == RESULT_OK) {
             initGlobal();
         }
-
     }
 
 }
