@@ -181,6 +181,8 @@ public class PostAuth {
                     Log.e(TAG, "onRecoverWalletAuth, !success && authAsked");
             } else {
                 if (mCachedPaperKey.length() != 0) {
+                    UiUtils.setStorageName(mCachedPaperKey);
+
                     BRSharedPrefs.putPhraseWroteDown(activity, true);
                     byte[] seed = BRCoreKey.getSeedFromPhrase(mCachedPaperKey.getBytes());
                     byte[] authKey = BRCoreKey.getAuthPrivKeyForAPI(seed);
@@ -189,14 +191,6 @@ public class PostAuth {
                     BRKeyStore.putMasterPublicKey(mpk.serialize(), activity);
 
                     // add to phrase list
-                    try {
-                        String hash = UiUtils.getStringMd5(mCachedPaperKey);
-                        BRSQLiteHelper.DATABASE_NAME = hash + ".db";
-                        PlatformSqliteHelper.DATABASE_NAME = hash + "_platform.db";
-                        BRSharedPrefs.PREFS_NAME = "profile_" + hash;
-                    } catch (NoSuchAlgorithmException e) {
-                        e.printStackTrace();
-                    }
                     saveToPhraseList(activity, mCachedPaperKey.getBytes(), authKey, mpk.serialize(), walletName);
 
                     mCachedPaperKey = null;

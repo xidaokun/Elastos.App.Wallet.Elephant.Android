@@ -1,6 +1,8 @@
 package com.breadwallet.presenter.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.Nullable;
@@ -22,6 +24,7 @@ import com.breadwallet.tools.security.PhraseInfo;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -79,9 +82,33 @@ public class PhraseListActivity extends BRActivity implements PhraseAdapter.Wall
                 e.printStackTrace();
             }
         }
-        mAdapter = new PhraseAdapter(this, list,this);
+        List<Boolean> backupList = getBackupList(list);
+        mAdapter = new PhraseAdapter(this, list,backupList, this);
 
         recyclerView.setAdapter(mAdapter);
+    }
+
+    private List<Boolean> getBackupList(List<PhraseInfo> phrases) {
+        if (phrases == null) {
+            return new ArrayList<>();
+        }
+        List<Boolean> list = new ArrayList<>(phrases.size());
+        for (PhraseInfo info : phrases) {
+            String hash = null;
+            try {
+                hash = UiUtils.getStringMd5(new String(info.phrase));
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+                list.add(false);
+                continue;
+            }
+            String prefName = "profile_" + hash;
+            SharedPreferences prefs = getSharedPreferences(prefName, Context.MODE_PRIVATE);
+            boolean written =  prefs.getBoolean("phraseWritten", false);
+            list.add(written);
+        }
+
+        return list;
     }
 
     private void recoverTo(final PhraseInfo info) {

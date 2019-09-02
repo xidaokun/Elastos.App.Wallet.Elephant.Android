@@ -25,12 +25,14 @@ public class PhraseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private static final int FOOTER_VIEW = 1;
 
     private List<PhraseInfo> mList;
+    private List<Boolean> mBackupList;
     private WalletCardListener mListener;
     private Context mContext;
 
-    public PhraseAdapter(@NonNull Context context, @NonNull List<PhraseInfo> objects, WalletCardListener listener) {
+    public PhraseAdapter(@NonNull Context context, @NonNull List<PhraseInfo> objects, @NonNull List<Boolean> backupList, WalletCardListener listener) {
         mContext = context;
         mList = objects;
+        mBackupList = backupList;
         mListener = listener;
     }
 
@@ -62,6 +64,7 @@ public class PhraseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         } else {
             ViewHolder viewHolder = (ViewHolder)holder;
             PhraseInfo info = mList.get(position);
+            Boolean backup = mBackupList.get(position);
             viewHolder.alias.setText(info.alias.isEmpty() ? "mnemonic" : info.alias);
             viewHolder.creationTime.setText(getTimeString(info.creationTime));
 
@@ -75,6 +78,8 @@ public class PhraseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 viewHolder.selected.setVisibility(View.INVISIBLE);
                 viewHolder.root.setCardBackgroundColor(mContext.getColor(R.color.wallet_normal_color));
             }
+
+            viewHolder.walletBackup.setVisibility(backup ? View.GONE : View.VISIBLE);
 
             viewHolder.card.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -127,6 +132,7 @@ public class PhraseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         TextView creationTime;
         LinearLayout aliasLable;
         ImageView selected;
+        LinearLayout walletBackup;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -136,6 +142,7 @@ public class PhraseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             alias = itemView.findViewById(R.id.wallet_name);
             creationTime = itemView.findViewById(R.id.wallet_time);
             selected = itemView.findViewById(R.id.wallet_selected);
+            walletBackup = itemView.findViewById(R.id.wallet_backup);
         }
 
     }

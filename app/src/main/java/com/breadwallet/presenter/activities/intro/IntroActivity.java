@@ -193,14 +193,7 @@ public class IntroActivity extends BRActivity {
 
         if (phrase == null) return;
 
-        try {
-            String hash = UiUtils.getStringMd5(new String(phrase));
-            BRSQLiteHelper.DATABASE_NAME = hash + ".db";
-            PlatformSqliteHelper.DATABASE_NAME = hash + "_platform.db";
-            BRSharedPrefs.PREFS_NAME = "profile_" + hash;
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
+        UiUtils.setStorageName(new String(phrase));
     }
 
 }

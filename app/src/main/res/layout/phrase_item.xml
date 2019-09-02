@@ -72,6 +72,31 @@
             android:layout_alignParentEnd="true"
             android:src="@drawable/walletselected"/>
 
+        <LinearLayout
+            android:id="@+id/wallet_backup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:gravity="center_vertical">
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:src="@drawable/infonotbackup"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:textSize="11sp"
+                android:textColor="#FFFBFB"
+                android:text="@string/multi_wallet_phares_not_backup"/>
+
+        </LinearLayout>
+
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>

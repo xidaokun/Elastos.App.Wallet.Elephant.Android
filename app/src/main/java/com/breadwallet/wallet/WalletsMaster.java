@@ -252,15 +252,7 @@ public class WalletsMaster {
         BRKeyStore.putMasterPublicKey(pubKey, ctx);
 
         // add to phrase list
-        try {
-            String hash = UiUtils.getStringMd5(new String(paperKeyBytes));
-            BRSQLiteHelper.DATABASE_NAME = hash + ".db";
-            PlatformSqliteHelper.DATABASE_NAME = hash + "_platform.db";
-            BRSharedPrefs.PREFS_NAME = "profile_" + hash;
-            Log.d(TAG, "new set sqlite file name " + BRSQLiteHelper.DATABASE_NAME);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
+        UiUtils.setStorageName(new String(paperKeyBytes));
 
         PhraseInfo phraseInfo = new PhraseInfo();
         phraseInfo.phrase = paperKeyBytes;
