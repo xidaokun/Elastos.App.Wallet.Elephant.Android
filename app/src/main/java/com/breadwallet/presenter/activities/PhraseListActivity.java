@@ -121,7 +121,7 @@ public class PhraseListActivity extends BRActivity implements PhraseAdapter.Wall
         }
 
         if (Arrays.equals(phrase, info.phrase)) {
-            BRDialog.showCustomDialog(PhraseListActivity.this, "", "已经是当前助记词",
+            BRDialog.showCustomDialog(PhraseListActivity.this, "", getString(R.string.multi_wallet_already_current),
                     getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {

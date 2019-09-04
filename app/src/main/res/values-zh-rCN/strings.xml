@@ -1162,5 +1162,6 @@
     <string name="multi_wallet_name_required">请输入钱包名称</string>
     <string name="multi_wallet_format_date">MM月d日, yyyy</string>
     <string name="multi_wallet_phares_not_backup">还未备份助记词</string>
+    <string name="multi_wallet_already_current">已经是当前助记词</string>
 
 </resources>

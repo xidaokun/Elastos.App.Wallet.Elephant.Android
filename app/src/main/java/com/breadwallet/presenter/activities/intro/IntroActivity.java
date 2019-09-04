@@ -185,7 +185,7 @@ public class IntroActivity extends BRActivity {
     private void initGlobal() {
         byte[] phrase;
         try {
-            phrase = BRKeyStore.getPhrase(this, 0);
+            phrase = BRKeyStore.getPhrase(this, BRConstants.INIT_GLOBAL_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
             return;
@@ -194,6 +194,17 @@ public class IntroActivity extends BRActivity {
         if (phrase == null) return;
 
         UiUtils.setStorageName(new String(phrase));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult " + requestCode + " " + resultCode);
+
+        if (requestCode == BRConstants.INIT_GLOBAL_REQUEST_CODE && resultCode == RESULT_OK) {
+            initGlobal();
+        }
+
     }
 
 }
