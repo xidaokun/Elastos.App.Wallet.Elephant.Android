@@ -57,12 +57,10 @@ import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.breadwallet.wallet.wallets.ioex.WalletIoexManager;
+import com.elastos.jni.AuthorizeManager;
+import com.elastos.jni.Constants;
+import com.elastos.jni.UriFactory;
 import com.platform.HTTPServer;
-
-import org.wallet.library.AuthorizeManager;
-import org.wallet.library.Constants;
-import org.wallet.library.entity.UriFactory;
-
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;

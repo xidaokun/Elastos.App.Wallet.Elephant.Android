@@ -855,7 +855,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         if (StringUtil.isNullOrEmpty(mDidStr) || StringUtil.isNullOrEmpty(miniAppId)) return;
         String path = "/Apps/" + BRConstants.ELAPHANT_APP_ID + "/MiniPrograms/" + miniAppId + "/Status";
         String data = getKeyVale(path, status);
-        String info = mDid.signInfo(mSeed, data);
+        String info = mDid.signInfo(mSeed, data, false);
         ProfileDataSource.getInstance(getContext()).upchainSync(info);
     }
 
@@ -863,7 +863,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         String path = "/Apps/" + BRConstants.ELAPHANT_APP_ID + "/MiniPrograms/" + miniAppId + "/Status";
         if (mDid == null) return null;
         mDid.syncInfo();
-        String value = mDid.getInfo(path);
+        String value = mDid.getInfo(path, false, mSeed);
         if (!StringUtil.isNullOrEmpty(value)) {
             return new Gson().fromJson(value, StringChainData.class);
         }
@@ -874,7 +874,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         String ids = new Gson().toJson(appIds);
         String path = mDidStr + "/Apps";
         String data = getKeyVale(path, ids);
-        String info = mDid.signInfo(mSeed, data);
+        String info = mDid.signInfo(mSeed, data, false);
         ProfileDataSource.getInstance(getContext()).upchainSync(info);
     }
 
@@ -882,7 +882,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         String path = mDidStr + "/Apps";
         if (null == mDid) return null;
         mDid.syncInfo();
-        String appIds = mDid.getInfo(path);
+        String appIds = mDid.getInfo(path, false, mSeed);
         if (!StringUtil.isNullOrEmpty(appIds)) {
             return new Gson().fromJson(appIds, UserAppInfo.class);
         }
@@ -911,11 +911,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         if (null == mDid || null == mPublicKey) {
             String mnemonic = getMn();
             if (StringUtil.isNullOrEmpty(mnemonic)) return;
-            String language = Utility.detectLang(getContext(), mnemonic);
-            if (StringUtil.isNullOrEmpty(language)) return;
-            String words = Utility.getWords(getContext(), language + "-BIP39Words.txt");
-            if (StringUtil.isNullOrEmpty(words)) return;
-            mSeed = IdentityManager.getSeed(mnemonic, Utility.getLanguage(language), words, "");
+            mSeed = IdentityManager.getSeed(mnemonic, "");
             if (StringUtil.isNullOrEmpty(mSeed)) return;
             Identity identity = IdentityManager.createIdentity(getContext().getFilesDir().getAbsolutePath());
             DidManager didManager = identity.createDidManager(mSeed);

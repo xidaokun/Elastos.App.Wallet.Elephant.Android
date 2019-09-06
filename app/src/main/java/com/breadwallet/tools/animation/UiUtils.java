@@ -67,9 +67,8 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
+import com.elastos.jni.Constants;
 import com.google.gson.Gson;
-
-import org.wallet.library.Constants;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

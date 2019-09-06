@@ -4,10 +4,12 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -168,11 +170,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         if(null == mDid){
             String mnemonic = getMn();
             if(StringUtil.isNullOrEmpty(mnemonic)) return;
-            String language = Utility.detectLang(HomeActivity.this, mnemonic);
-            if(StringUtil.isNullOrEmpty(language)) return;
-            String words = Utility.getWords(HomeActivity.this,  language +"-BIP39Words.txt");
-            if(StringUtil.isNullOrEmpty(words)) return;
-            mSeed = IdentityManager.getSeed(mnemonic, Utility.getLanguage(language), words, "");
+            mSeed = IdentityManager.getSeed(mnemonic, "");
             if(StringUtil.isNullOrEmpty(mSeed)) return;
             Identity identity = IdentityManager.createIdentity(getFilesDir().getAbsolutePath());
             DidManager didManager = identity.createDidManager(mSeed);
@@ -195,13 +193,13 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 initDid();
                 if(null == mDid) return;
                 mDid.syncInfo();
-                String value = mDid.getInfo("PublicKey");
+                String value = mDid.getInfo("PublicKey", false, mSeed);
                 Log.i("didIsOnchain", "value:"+value);
                 if(StringUtil.isNullOrEmpty(value) || !value.contains("PublicKey")){
                     if(StringUtil.isNullOrEmpty(publicKey)) return;
                     String data = getKeyVale("PublicKey", publicKey);
                     if(StringUtil.isNullOrEmpty(data) || StringUtil.isNullOrEmpty(mSeed)) return;
-                    String info = mDid.signInfo(mSeed, data);
+                    String info = mDid.signInfo(mSeed, data, false);
                     if(StringUtil.isNullOrEmpty(info)) return;
                     ProfileDataSource.getInstance(HomeActivity.this).upchain(info);
                     BRSharedPrefs.putDid2ChainTime(HomeActivity.this, System.currentTimeMillis());
@@ -217,7 +215,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             if(phrase != null) {
                 return new String(phrase);
             }
-        } catch (UserNotAuthenticatedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;

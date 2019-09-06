@@ -216,12 +216,7 @@ public class ProfileActivity extends BRActivity {
         if(mDid == null){
             String mnemonic = getMn();
             if(StringUtil.isNullOrEmpty(mnemonic)) return;
-            String language = Utility.detectLang(ProfileActivity.this, mnemonic);
-            Log.i("ProfileFunction", "language:"+ language);
-            if(StringUtil.isNullOrEmpty(language)) return;
-            String words = Utility.getWords(ProfileActivity.this,  language +"-BIP39Words.txt");
-            Log.i("ProfileFunction", "words is null:"+ (null==words));
-            mSeed = IdentityManager.getSeed(mnemonic, Utility.getLanguage(language), words, "");
+            mSeed = IdentityManager.getSeed(mnemonic, "");
             if(StringUtil.isNullOrEmpty(mSeed)) return;
             Identity identity = IdentityManager.createIdentity(getFilesDir().getAbsolutePath());
             BlockChainNode node = new BlockChainNode(ProfileDataSource.DID_URL);
@@ -264,7 +259,7 @@ public class ProfileActivity extends BRActivity {
                 if(null == mDid) return;
                 mDid.syncInfo();
                 PayloadInfo payloadInfo = null;
-                String nickname = mDid.getInfo(APPID+"/Nickname");
+                String nickname = mDid.getInfo(APPID+"/Nickname", false, mSeed);
                 payloadInfo = getPayloadInfo(nickname);
                 String nickTxid = BRSharedPrefs.getCacheTxid(ProfileActivity.this, BRSharedPrefs.NICKNAME_txid);
                 if(null!=payloadInfo && (StringUtil.isNullOrEmpty(nickTxid) || nickTxid.equals(payloadInfo.txid))){
@@ -272,7 +267,7 @@ public class ProfileActivity extends BRActivity {
                     BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.NICKNAME_STATE, SettingsUtil.IS_COMPLETED);
                 }
 
-                String email = mDid.getInfo(APPID+"/Email");
+                String email = mDid.getInfo(APPID+"/Email", false, mSeed);
                 payloadInfo = getPayloadInfo(email);
                 String emailTxid = BRSharedPrefs.getCacheTxid(ProfileActivity.this, BRSharedPrefs.EMAIL_txid);
                 if(null!=payloadInfo && (StringUtil.isNullOrEmpty(emailTxid) || emailTxid.equals(payloadInfo.txid))) {
@@ -280,7 +275,7 @@ public class ProfileActivity extends BRActivity {
                     BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.EMAIL_STATE, SettingsUtil.IS_COMPLETED);
                 }
 
-                String mobile = mDid.getInfo(APPID+"/Mobile");
+                String mobile = mDid.getInfo(APPID+"/Mobile", false, mSeed);
                 payloadInfo = getPayloadInfo(mobile);
                 String mobileTxid = BRSharedPrefs.getCacheTxid(ProfileActivity.this, BRSharedPrefs.MOBILE_txid);
                 if(null!=payloadInfo && (StringUtil.isNullOrEmpty(mobileTxid) || mobileTxid.equals(payloadInfo.txid))) {
@@ -288,7 +283,7 @@ public class ProfileActivity extends BRActivity {
                     BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.MOBILE_STATE, SettingsUtil.IS_COMPLETED);
                 }
 
-                String idCard = mDid.getInfo(APPID+"/ChineseIDCard");
+                String idCard = mDid.getInfo(APPID+"/ChineseIDCard", false, mSeed);
                 PayloadInfoId payloadInfoId = getPayloadInfoId(idCard);
                 String idTxid = BRSharedPrefs.getCacheTxid(ProfileActivity.this, BRSharedPrefs.ID_txid);
                 if(null!=payloadInfoId && null!=payloadInfoId.value && (StringUtil.isNullOrEmpty(idTxid) || idTxid.equals(payloadInfo.txid))) {
@@ -304,7 +299,7 @@ public class ProfileActivity extends BRActivity {
     private String uploadData(String data){
         Log.i("ProfileFunction", "upload Data:"+ data);
         if(null == mDid) return null;
-        String info = mDid.signInfo(mSeed, data);
+        String info = mDid.signInfo(mSeed, data, false);
         Log.i("ProfileFunction", "sign info:"+info);
         String txid = ProfileDataSource.getInstance(ProfileActivity.this).upchain(info);
         Log.i("ProfileFunction", "txid:"+txid);
