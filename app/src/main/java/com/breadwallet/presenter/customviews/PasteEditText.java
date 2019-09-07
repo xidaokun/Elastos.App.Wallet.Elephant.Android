@@ -4,7 +4,12 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 
+import com.breadwallet.presenter.interfaces.EditPasteListener;
+
 public class PasteEditText extends BREdit {
+
+    private EditPasteListener mListener;
+
     public PasteEditText(Context context) {
         super(context);
     }
@@ -19,8 +24,15 @@ public class PasteEditText extends BREdit {
 
     @Override
     public boolean onTextContextMenuItem(int id) {
-        Log.i("xidaokun_tag", "id:"+id);
+        if(id==android.R.id.paste && mListener!=null) {
+            mListener.onPaste(this);
+            return true;
+        }
         return super.onTextContextMenuItem(id);
+    }
+
+    public void setPasteListener(EditPasteListener listener) {
+        this.mListener = listener;
     }
 
 
