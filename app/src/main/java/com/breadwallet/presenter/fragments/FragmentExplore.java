@@ -856,7 +856,9 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         String path = "/Apps/" + BRConstants.ELAPHANT_APP_ID + "/MiniPrograms/" + miniAppId + "/Status";
         String data = getKeyVale(path, status);
         String info = mDid.signInfo(mSeed, data, false);
-        ProfileDataSource.getInstance(getContext()).upchainSync(info);
+        if(!StringUtil.isNullOrEmpty(info)) {
+            ProfileDataSource.getInstance(getContext()).upchainSync(info);
+        }
     }
 
     private StringChainData getAppStatus(String miniAppId) {
@@ -875,6 +877,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         String path = mDidStr + "/Apps";
         String data = getKeyVale(path, ids);
         String info = mDid.signInfo(mSeed, data, false);
+        if(StringUtil.isNullOrEmpty(info)) return;
         ProfileDataSource.getInstance(getContext()).upchainSync(info);
     }
 

@@ -481,7 +481,9 @@ public class ExploreActivity extends BRActivity implements OnStartDragListener, 
         String path = mDidStr + "/Apps";
         String data = getKeyVale(path, ids);
         String info = mDid.signInfo(mSeed, data, false);
-        ProfileDataSource.getInstance(this).upchainSync(info);
+        if(!StringUtil.isNullOrEmpty(info)) {
+            ProfileDataSource.getInstance(this).upchainSync(info);
+        }
     }
 
     private void upAppUrlData(final String miniAppId, final String value) {
@@ -489,7 +491,9 @@ public class ExploreActivity extends BRActivity implements OnStartDragListener, 
         String path = mDidStr + "/Apps/" + miniAppId;
         String data = getKeyVale(path, value);
         String info = mDid.signInfo(mSeed, data, false);
-        ProfileDataSource.getInstance(this).upchainSync(info);
+        if(!StringUtil.isNullOrEmpty(info)) {
+            ProfileDataSource.getInstance(this).upchainSync(info);
+        }
     }
 
     private void getInterApps() {
@@ -618,7 +622,9 @@ public class ExploreActivity extends BRActivity implements OnStartDragListener, 
 //        String path = mDidStr + "/Apps/" + miniAppId + "/Status";
         String data = getKeyVale(path, status);
         String info = mDid.signInfo(mSeed, data, false);
-        ProfileDataSource.getInstance(this).upchainSync(info);
+        if(!StringUtil.isNullOrEmpty(info)) {
+            ProfileDataSource.getInstance(this).upchainSync(info);
+        }
     }
 
     private String getJsonFromCapsule(File filePath) {
