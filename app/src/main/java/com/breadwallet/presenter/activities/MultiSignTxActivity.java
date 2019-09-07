@@ -350,7 +350,7 @@ public class MultiSignTxActivity extends BRActivity {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                String url = ElaDataSource.getInstance(getApplicationContext()).getUrl("/api/1/balance/" + mAddress);
+                String url = ElaDataSource.getInstance(getApplicationContext()).getUrl("api/1/balance/" + mAddress);
                 try {
                     String result = ElaDataSource.getInstance(getApplicationContext()).urlGET(url);
                     JSONObject jsonObject = new JSONObject(result);
