@@ -4,7 +4,6 @@ import android.content.Context;
 
 import org.elastos.sdk.keypair.ElastosKeypair;
 import org.elastos.sdk.keypair.ElastosKeypairDID;
-import org.elastos.sdk.keypair.ElastosKeypairSign;
 
 public class Utility {
     private static Utility mInstance;
@@ -23,7 +22,7 @@ public class Utility {
 
     public String getSinglePrivateKey(String mnemonic){
         ElastosKeypair.Data seed = new ElastosKeypair.Data();
-        int ret = ElastosKeypair.getSeedFromMnemonic(seed, mnemonic, "0");
+        int ret = ElastosKeypair.getSeedFromMnemonic(seed, mnemonic, "");
         if(ret <= 0) return null;
 
         return ElastosKeypair.getSinglePrivateKey(seed, ret);
@@ -33,7 +32,7 @@ public class Utility {
     public String getSinglePublicKey(String mnemonic){
 
         ElastosKeypair.Data seed = new ElastosKeypair.Data();
-        int length = ElastosKeypair.getSeedFromMnemonic(seed, mnemonic, "0");
+        int length = ElastosKeypair.getSeedFromMnemonic(seed, mnemonic, "");
         if(length <= 0) return null;
 
         return ElastosKeypair.getSinglePublicKey(seed, length);
@@ -41,10 +40,6 @@ public class Utility {
 
     public String getAddress(String jpublickey){
         return ElastosKeypair.getAddress(jpublickey);
-    }
-
-    public String generateRawTransaction(String transaction){
-        return ElastosKeypairSign.generateRawTransaction(transaction, null);
     }
 
     public byte[] sign(String privateKey, byte[] data){
