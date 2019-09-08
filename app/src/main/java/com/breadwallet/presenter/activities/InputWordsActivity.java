@@ -205,12 +205,12 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
                         resetPin(cleanPhrase, app);
                     } else {
                         Utils.hideKeyboard(app);
-                        if (!mReenter) {
-                            WalletsMaster m = WalletsMaster.getInstance(InputWordsActivity.this);
-                            m.wipeAll(InputWordsActivity.this);
-                        }
+//                        if (!mReenter) {
+//                            WalletsMaster m = WalletsMaster.getInstance(InputWordsActivity.this);
+//                            m.wipeAll(InputWordsActivity.this);
+//                        }
 
-                        UiUtils.switchPhrase(InputWordsActivity.this, cleanPhrase, mReenter, mWalletName);
+                        UiUtils.switchPhrase(InputWordsActivity.this, cleanPhrase, mReenter, true, mWalletName);
                     }
 
                 } else {
@@ -426,7 +426,7 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
             return;
         }
 
-        UiUtils.switchPhrase(InputWordsActivity.this, new String(changeTo.phrase), true, changeTo.alias);
+        UiUtils.switchPhrase(InputWordsActivity.this, new String(changeTo.phrase), true, false, changeTo.alias);
     }
 
 }

@@ -156,12 +156,10 @@ public class IntroActivity extends BRActivity {
                     return;
                 }
 
-                if (mReenter) {
-                    String pin = BRKeyStore.getPinCode(IntroActivity.this);
-                    if (!pin.isEmpty()) {
-                        UiUtils.startWalletNameActivity(IntroActivity.this, WalletNameActivity.WALLET_NAME_TYPE_NEW, mReenter);
-                        return;
-                    }
+                String pin = BRKeyStore.getPinCode(IntroActivity.this);
+                if (mReenter || !pin.isEmpty()) {
+                    UiUtils.startWalletNameActivity(IntroActivity.this, WalletNameActivity.WALLET_NAME_TYPE_NEW, mReenter);
+                    return;
                 }
 
                 Intent intent = new Intent(IntroActivity.this, InputPinActivity.class);

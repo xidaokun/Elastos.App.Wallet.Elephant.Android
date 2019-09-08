@@ -111,7 +111,7 @@ import static android.content.Context.ACTIVITY_SERVICE;
 
 public class UiUtils {
     private static final String TAG = UiUtils.class.getName();
-    public static final int CLICK_PERIOD_ALLOWANCE = 300;
+    public static final int CLICK_PERIOD_ALLOWANCE = 1000;
     private static long mLastClickTime = 0;
     private static boolean mSupportIsShowing;
 
@@ -605,7 +605,7 @@ public class UiUtils {
     public static void restartApp(Activity activity) {
         // sleep 500ms for saving phrase list
         try {
-            Thread.sleep(500);
+            Thread.sleep(200);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -618,14 +618,14 @@ public class UiUtils {
         Runtime.getRuntime().exit(0);
     }
 
-    public static void switchPhrase(Activity context, String phrase, boolean restart, String walletName) {
+    public static void switchPhrase(Activity context, String phrase, boolean restart, boolean recover, String walletName) {
         PostAuth.getInstance().setCachedPaperKey(phrase);
 
         //Disallow BTC and BCH sending.
         BRSharedPrefs.putAllowSpend(context, BaseBitcoinWalletManager.BITCASH_SYMBOL, false);
         BRSharedPrefs.putAllowSpend(context, BaseBitcoinWalletManager.BITCOIN_SYMBOL, false);
 
-        PostAuth.getInstance().onRecoverWalletAuth(context, false, restart, walletName);
+        PostAuth.getInstance().onRecoverWalletAuth(context, false, restart, recover, walletName);
     }
 
     public static void startWalletNameActivity(Activity context, int type, boolean reenter) {

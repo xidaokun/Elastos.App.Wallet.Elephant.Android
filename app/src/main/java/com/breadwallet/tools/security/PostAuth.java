@@ -19,6 +19,7 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.manager.BRPublicSharedPrefs;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.SendManager;
@@ -154,7 +155,7 @@ public class PostAuth {
         BRBitId.completeBitID(activity, authenticated);
     }
 
-    public void onRecoverWalletAuth(final Activity activity, boolean authAsked, boolean restartApp, String walletName) {
+    public void onRecoverWalletAuth(final Activity activity, boolean authAsked, boolean restartApp, boolean recover, String walletName) {
         if (Utils.isNullOrEmpty(mCachedPaperKey)) {
             Log.e(TAG, "onRecoverWalletAuth: phraseForKeyStore is null or empty");
             BRReportsManager.reportBug(new NullPointerException("onRecoverWalletAuth: phraseForKeyStore is or empty"));
@@ -163,6 +164,11 @@ public class PostAuth {
         WalletsMaster.getInstance(activity).wipePartOfKeyStore(activity);
 
         try {
+            // save status before put phrase
+            BRPublicSharedPrefs.putRecoverNeedRestart(activity, restartApp);
+            BRPublicSharedPrefs.putIsRecover(activity, recover);
+            BRPublicSharedPrefs.putRecoverWalletName(activity, walletName);
+
             boolean success = false;
             try {
                 success = BRKeyStore.putPhrase(mCachedPaperKey.getBytes(),
@@ -183,7 +189,11 @@ public class PostAuth {
                 if (mCachedPaperKey.length() != 0) {
                     UiUtils.setStorageName(mCachedPaperKey);
 
-                    BRSharedPrefs.putPhraseWroteDown(activity, true);
+                    // not change pref if switch wallet.
+                    if (recover) {
+                        BRSharedPrefs.putPhraseWroteDown(activity, true);
+                    }
+
                     byte[] seed = BRCoreKey.getSeedFromPhrase(mCachedPaperKey.getBytes());
                     byte[] authKey = BRCoreKey.getAuthPrivKeyForAPI(seed);
                     BRKeyStore.putAuthKey(authKey, activity);

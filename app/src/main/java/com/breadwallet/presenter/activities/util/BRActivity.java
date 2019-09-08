@@ -23,6 +23,7 @@ import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRApiManager;
+import com.breadwallet.tools.manager.BRPublicSharedPrefs;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.AuthManager;
@@ -198,11 +199,15 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                 break;
             case BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
+                    final boolean restart = BRPublicSharedPrefs.getRecoverNeedRestart(BRActivity.this);
+                    final boolean recover = BRPublicSharedPrefs.getIsRecover(BRActivity.this);
+                    final String walletName = BRPublicSharedPrefs.getRecoverWalletName(BRActivity.this);
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
                             PostAuth.getInstance().onRecoverWalletAuth(BRActivity.this,
-                                    true, false, UiUtils.getDefaultWalletName(BRActivity.this));
+                                    true, restart, recover,
+                                    StringUtil.isNullOrEmpty(walletName) ? UiUtils.getDefaultWalletName(BRActivity.this) : walletName);
                         }
                     });
                 } else {

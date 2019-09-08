@@ -134,6 +134,7 @@ public class WalletNameActivity extends BRActivity {
                 Intent intent = new Intent();
                 intent.putExtra(WALLET_NAME, name);
                 setResult(Activity.RESULT_OK, intent);
+                finish();
                 break;
             case WALLET_NAME_TYPE_NEW:
                 PostAuth.getInstance().onCreateWalletAuth(WalletNameActivity.this, false,
@@ -145,13 +146,13 @@ public class WalletNameActivity extends BRActivity {
                 recoverIntent.putExtra(WALLET_NAME, name);
                 startActivity(recoverIntent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                finish();
                 break;
             default:
-                return;
+                Log.e(TAG, "not support page type!");
+                break;
         }
 
-
-        finish();
     }
 
 }
