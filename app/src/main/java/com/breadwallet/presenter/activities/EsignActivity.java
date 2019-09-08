@@ -3,11 +3,9 @@ package com.breadwallet.presenter.activities;
 import android.os.Bundle;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.AppCompatCheckBox;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.breadwallet.R;
@@ -21,11 +19,8 @@ import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.EsignDataSource;
 import com.breadwallet.tools.util.StringUtil;
-import com.breadwallet.wallet.wallets.ela.WalletElaManager;
+import com.elastos.jni.AuthorizeManager;
 import com.elastos.jni.Utility;
-
-import org.wallet.library.AuthorizeManager;
-
 import java.util.Calendar;
 import java.util.Date;
 

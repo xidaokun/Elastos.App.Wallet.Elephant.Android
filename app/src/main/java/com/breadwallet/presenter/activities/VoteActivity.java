@@ -31,12 +31,10 @@ import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.breadwallet.wallet.wallets.ela.data.TxProducerEntity;
 import com.breadwallet.wallet.wallets.ela.data.TxProducersEntity;
+import com.elastos.jni.AuthorizeManager;
+import com.elastos.jni.UriFactory;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
-import org.wallet.library.AuthorizeManager;
-import org.wallet.library.entity.UriFactory;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;

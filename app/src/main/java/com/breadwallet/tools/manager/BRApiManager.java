@@ -19,12 +19,12 @@ import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.breadwallet.wallet.wallets.ioex.WalletIoexManager;
+import com.elastos.jni.utils.HexUtils;
 import com.platform.APIClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.wallet.library.utils.HexUtils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

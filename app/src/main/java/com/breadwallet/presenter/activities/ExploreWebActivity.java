@@ -26,10 +26,8 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.tools.animation.UiUtils;
-
 import com.breadwallet.tools.util.StringUtil;
-
-import org.wallet.library.AuthorizeManager;
+import com.elastos.jni.AuthorizeManager;
 
 public class ExploreWebActivity extends BRActivity {
     private final String TAG = ExploreWebActivity.class.getName();
