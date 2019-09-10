@@ -180,15 +180,17 @@ public class MultiSignQrActivity extends BRActivity {
         try {
             File imagePath = new File(getCacheDir(), "images");
             imagePath.mkdirs();
+            deleteTempFile(imagePath.getAbsolutePath());
 
-            FileOutputStream fOut = new FileOutputStream(imagePath + "/tx" + FILE_SUFFIX);
+            String fileName = "tx" + System.currentTimeMillis() + FILE_SUFFIX;
+            FileOutputStream fOut = new FileOutputStream(imagePath + "/" + fileName);
             OutputStreamWriter outWriter = new OutputStreamWriter(fOut);
             outWriter.write(getUrl());
             outWriter.close();
             fOut.flush();
             fOut.close();
 
-            share("tx" + FILE_SUFFIX);
+            share(fileName);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -197,7 +199,9 @@ public class MultiSignQrActivity extends BRActivity {
 
     private void share(final String fileName) {
         File cachePath = new File(getCacheDir(), "images");
+
         File newFile = new File(cachePath, fileName);
+
         Uri contentUri;
         if (Build.VERSION.SDK_INT >= 24) {
             contentUri = FileProvider.getUriForFile(this, "com.elastos.wallet.imageprovider", newFile);
@@ -217,6 +221,18 @@ public class MultiSignQrActivity extends BRActivity {
 
         shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
         startActivity(Intent.createChooser(shareIntent, "Share"));
+    }
+
+    private void deleteTempFile(String folder) {
+        File file = new File(folder);
+        File[] fileList = file.listFiles();
+
+        for (File temp : fileList) {
+            if (temp.getName().endsWith(FILE_SUFFIX)) {
+                temp.delete();
+                Log.d(TAG, "delete " + temp.getAbsolutePath());
+            }
+        }
     }
 
     private void changeQrcode() {

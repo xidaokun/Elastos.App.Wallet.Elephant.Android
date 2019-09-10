@@ -81,7 +81,7 @@
     <TextView
         android:id="@+id/multisign_qr_share_json"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:text="@string/multisign_share_json"
         android:textColor="@color/create_new_wallet_button_dark"
         android:textSize="12sp"
