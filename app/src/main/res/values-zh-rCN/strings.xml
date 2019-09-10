@@ -305,7 +305,7 @@
     <!-- Menu button title -->
     <string name="MenuButton.lock">锁住钱包</string>
     <!-- (Click here to) manage (your list of) wallets -->
-    <string name="MenuButton.manageWallets">管理钱包</string>
+    <string name="MenuButton.manageWallets">管理币种</string>
     <!-- (press here to) scan (a) QR code -->
     <string name="MenuButton.scan">扫描QR</string>
     <!-- Menu button title -->
@@ -672,7 +672,7 @@
     <!-- Hide [this token from view] -->
     <string name="TokenList.hide">隐藏</string>
     <!-- [click here to] Manage [your] Wallets -->
-    <string name="TokenList.manageTitle">管理钱包</string>
+    <string name="TokenList.manageTitle">管理币种</string>
     <!-- Remove [this item from the list] -->
     <string name="TokenList.remove">移除</string>
     <!-- Show [this item on your home screen] -->

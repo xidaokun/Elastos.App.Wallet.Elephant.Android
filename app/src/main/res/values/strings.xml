@@ -307,7 +307,7 @@
     <!-- Did Authorizations -->
     <string name="MenuButton.authorizations.qr">Authorizations QR</string>
     <!-- (Click here to) manage (your list of) wallets -->
-    <string name="MenuButton.manageWallets">Manage Wallets</string>
+    <string name="MenuButton.manageWallets">Manage Tokens</string>
     <!-- (press here to) scan (a) QR code -->
     <string name="MenuButton.scan">Scan QR Code</string>
     <!-- Menu button title -->
@@ -674,7 +674,7 @@
     <!-- Hide [this token from view] -->
     <string name="TokenList.hide">Hide</string>
     <!-- [click here to] Manage [your] Wallets -->
-    <string name="TokenList.manageTitle">Manage Wallets</string>
+    <string name="TokenList.manageTitle">Manage Tokens</string>
     <!-- Remove [this item from the list] -->
     <string name="TokenList.remove">Remove</string>
     <!-- Show [this item on your home screen] -->
