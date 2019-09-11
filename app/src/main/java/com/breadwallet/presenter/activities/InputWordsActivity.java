@@ -17,9 +17,12 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
+import com.breadwallet.presenter.customviews.PasteEditText;
+import com.breadwallet.presenter.interfaces.EditPasteListener;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
@@ -139,6 +142,20 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
             description.setText(getString(R.string.RecoverWallet_subheader_reset_pin));
         }
 
+        PasteEditText pasteEditText = (PasteEditText) mEditWords.get(0);
+        pasteEditText.setPasteListener(new EditPasteListener() {
+            @Override
+            public void onPaste(View view) {
+                String inputWords = BRClipboardManager.getClipboard(InputWordsActivity.this);
+                String[] words = inputWords.trim().split(" ");
+                if(words.length == 12) {
+                    for(int i=0; i<12; i++) {
+                        mEditWords.get(i).setText(words[i]);
+                    }
+                }
+
+            }
+        });
 
         mEditWords.get(LAST_WORD_INDEX).setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {

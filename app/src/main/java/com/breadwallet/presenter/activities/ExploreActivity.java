@@ -288,11 +288,7 @@ public class ExploreActivity extends BRActivity implements OnStartDragListener, 
         if (null == mDid || null == mPublicKey) {
             String mnemonic = getMn();
             if (StringUtil.isNullOrEmpty(mnemonic)) return;
-            String language = Utility.detectLang(this, mnemonic);
-            if (StringUtil.isNullOrEmpty(language)) return;
-            String words = Utility.getWords(this, language + "-BIP39Words.txt");
-            if (StringUtil.isNullOrEmpty(words)) return;
-            mSeed = IdentityManager.getSeed(mnemonic, Utility.getLanguage(language), words, "");
+            mSeed = IdentityManager.getSeed(mnemonic, "");
             if (StringUtil.isNullOrEmpty(mSeed)) return;
             Identity identity = IdentityManager.createIdentity(this.getFilesDir().getAbsolutePath());
             DidManager didManager = identity.createDidManager(mSeed);
@@ -484,16 +480,20 @@ public class ExploreActivity extends BRActivity implements OnStartDragListener, 
         String ids = new Gson().toJson(appIds);
         String path = mDidStr + "/Apps";
         String data = getKeyVale(path, ids);
-        String info = mDid.signInfo(mSeed, data);
-        ProfileDataSource.getInstance(this).upchainSync(info);
+        String info = mDid.signInfo(mSeed, data, false);
+        if(!StringUtil.isNullOrEmpty(info)) {
+            ProfileDataSource.getInstance(this).upchainSync(info);
+        }
     }
 
     private void upAppUrlData(final String miniAppId, final String value) {
         if (StringUtil.isNullOrEmpty(miniAppId) || StringUtil.isNullOrEmpty(value)) return;
         String path = mDidStr + "/Apps/" + miniAppId;
         String data = getKeyVale(path, value);
-        String info = mDid.signInfo(mSeed, data);
-        ProfileDataSource.getInstance(this).upchainSync(info);
+        String info = mDid.signInfo(mSeed, data, false);
+        if(!StringUtil.isNullOrEmpty(info)) {
+            ProfileDataSource.getInstance(this).upchainSync(info);
+        }
     }
 
     private void getInterApps() {
@@ -552,7 +552,7 @@ public class ExploreActivity extends BRActivity implements OnStartDragListener, 
     private StringChainData getAppsUrl(String miniAppId) {
         String path = mDidStr + "/Apps/" + miniAppId;
         mDid.syncInfo();
-        String url = mDid.getInfo(path);
+        String url = mDid.getInfo(path, false, mSeed);
         if (!StringUtil.isNullOrEmpty(url)) {
             return new Gson().fromJson(url, StringChainData.class);
         }
@@ -564,7 +564,7 @@ public class ExploreActivity extends BRActivity implements OnStartDragListener, 
 //        String path = mDidStr + "/Apps/" + miniAppId + "/Status";
 //        String path = "iXiqJ7brdiH18vrHiTo9WiAHh692xgXi5y/Apps/8816ed501878a9f4404f5926c4fb2df56239424e41da9c449b4db35e9a8b99d5f976a0537858d709511b5b41cf11c0e88be8778008eb5f918a6aa712ac20c421/MiniPrograms/317DD1D2188C459EB24EAEBC81932F6ADB305FF66F073AB1DC767869EF2B1A04273A8A875";
         mDid.syncInfo();
-        String value = mDid.getInfo(path);
+        String value = mDid.getInfo(path, false, mSeed);
         if (!StringUtil.isNullOrEmpty(value)) {
             return new Gson().fromJson(value, StringChainData.class);
         }
@@ -574,7 +574,7 @@ public class ExploreActivity extends BRActivity implements OnStartDragListener, 
     private StringChainData getMiniApps() {
         String path = mDidStr + "/Apps";
         mDid.syncInfo();
-        String appIds = mDid.getInfo(path);
+        String appIds = mDid.getInfo(path, false, mSeed);
         if (!StringUtil.isNullOrEmpty(appIds)) {
             return new Gson().fromJson(appIds, StringChainData.class);
         }
@@ -621,8 +621,10 @@ public class ExploreActivity extends BRActivity implements OnStartDragListener, 
         String path =  mDidStr + "/Apps/" + BRConstants.ELAPHANT_APP_ID + "/MiniPrograms/" + miniAppId + "/Status";
 //        String path = mDidStr + "/Apps/" + miniAppId + "/Status";
         String data = getKeyVale(path, status);
-        String info = mDid.signInfo(mSeed, data);
-        ProfileDataSource.getInstance(this).upchainSync(info);
+        String info = mDid.signInfo(mSeed, data, false);
+        if(!StringUtil.isNullOrEmpty(info)) {
+            ProfileDataSource.getInstance(this).upchainSync(info);
+        }
     }
 
     private String getJsonFromCapsule(File filePath) {

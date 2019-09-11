@@ -24,12 +24,10 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
+import com.elastos.jni.AuthorizeManager;
 import com.elastos.jni.Utility;
 import com.google.gson.Gson;
-
 import org.elastos.sdk.keypair.ElastosKeypairSign;
-import org.wallet.library.AuthorizeManager;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;

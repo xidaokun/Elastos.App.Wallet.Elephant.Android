@@ -139,9 +139,13 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     }
 
     public String getPublicKey(){
-        String pk = getPrivateKey();
-        if(StringUtil.isNullOrEmpty(pk)) return null;
-        return Utility.getInstance(mContext).getPublicKeyFromPrivateKey(pk);
+        try {
+            byte[] phrase = BRKeyStore.getPhrase(mContext, 0);
+            return Utility.getInstance(mContext).getSinglePublicKey(new String(phrase));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private String mAddress;

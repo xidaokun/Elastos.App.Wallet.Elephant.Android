@@ -31,14 +31,12 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.StringUtil;
+import com.elastos.jni.AuthorizeManager;
+import com.elastos.jni.Constants;
+import com.elastos.jni.UriFactory;
 import com.elastos.jni.Utility;
 import com.google.gson.Gson;
-
-import org.wallet.library.AuthorizeManager;
-import org.wallet.library.Constants;
-import org.wallet.library.entity.UriFactory;
 
 import java.util.ArrayList;
 import java.util.Calendar;
