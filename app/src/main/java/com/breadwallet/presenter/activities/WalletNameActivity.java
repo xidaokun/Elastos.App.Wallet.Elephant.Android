@@ -22,8 +22,6 @@ import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.StringUtil;
 
-import org.wallet.library.utils.StringUtils;
-
 public class WalletNameActivity extends BRActivity {
     private static final String TAG = WalletNameActivity.class.getName();
 
@@ -124,7 +122,7 @@ public class WalletNameActivity extends BRActivity {
 
         String name = mEdit.getText().toString();
         Log.d(TAG, "input name: " + name);
-        if (StringUtils.isNullOrEmpty(name)) {
+        if (StringUtil.isNullOrEmpty(name)) {
             UiUtils.toast(getApplicationContext(), R.string.multi_wallet_name_required);
             return;
         }
