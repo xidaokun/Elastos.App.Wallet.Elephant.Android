@@ -187,7 +187,7 @@ public class PostAuth {
                     Log.e(TAG, "onRecoverWalletAuth, !success && authAsked");
             } else {
                 if (mCachedPaperKey.length() != 0) {
-                    UiUtils.setStorageName(mCachedPaperKey);
+                    UiUtils.setStorageName(mCachedPaperKey.getBytes());
 
                     // not change pref if switch wallet.
                     if (recover) {

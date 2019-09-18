@@ -193,7 +193,7 @@ public class IntroActivity extends BRActivity {
 
         if (phrase == null) return;
 
-        UiUtils.setStorageName(new String(phrase));
+        UiUtils.setStorageName(phrase);
     }
 
     @Override

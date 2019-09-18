@@ -95,14 +95,12 @@ public class PhraseListActivity extends BRActivity implements PhraseAdapter.Wall
         }
         List<Boolean> list = new ArrayList<>(phrases.size());
         for (PhraseInfo info : phrases) {
-            String hash = null;
-            try {
-                hash = UiUtils.getStringMd5(new String(info.phrase));
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
+            String hash = UiUtils.getSha256(info.phrase);
+            if (StringUtil.isNullOrEmpty(hash)) {
                 list.add(false);
                 continue;
             }
+
             String prefName = "profile_" + hash;
             SharedPreferences prefs = getSharedPreferences(prefName, Context.MODE_PRIVATE);
             boolean written =  prefs.getBoolean("phraseWritten", false);

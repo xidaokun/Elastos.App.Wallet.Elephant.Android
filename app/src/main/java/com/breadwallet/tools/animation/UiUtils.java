@@ -63,6 +63,7 @@ import com.breadwallet.presenter.fragments.FragmentSignal;
 import com.breadwallet.presenter.fragments.FragmentSupport;
 import com.breadwallet.presenter.fragments.FragmentTxDetails;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
+import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
@@ -641,14 +642,21 @@ public class UiUtils {
         return "Wallet #" + count;
     }
 
-    public static void setStorageName(String phrase) {
-        try {
-            String hash = UiUtils.getStringMd5(phrase);
-            BRSQLiteHelper.DATABASE_NAME = hash + ".db";
-            PlatformSqliteHelper.DATABASE_NAME = hash + "_platform.db";
-            BRSharedPrefs.PREFS_NAME = "profile_" + hash;
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
+    public static String getSha256(byte[] data) {
+        byte[] digest = CryptoHelper.sha256(data);
+        if (digest == null) return "";
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : digest) hexString.append(String.format("%02x", b));
+
+        return hexString.toString();
+    }
+
+    public static void setStorageName(byte[] phrase) {
+        String hash = getSha256(phrase);
+        if (StringUtil.isNullOrEmpty(hash)) return;
+
+        BRSQLiteHelper.DATABASE_NAME = hash + ".db";
+        PlatformSqliteHelper.DATABASE_NAME = hash + "_platform.db";
+        BRSharedPrefs.PREFS_NAME = "profile_" + hash;
     }
 }

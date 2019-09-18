@@ -252,7 +252,7 @@ public class WalletsMaster {
         BRKeyStore.putMasterPublicKey(pubKey, ctx);
 
         // add to phrase list
-        UiUtils.setStorageName(new String(paperKeyBytes));
+        UiUtils.setStorageName(paperKeyBytes);
 
         PhraseInfo phraseInfo = new PhraseInfo();
         phraseInfo.phrase = paperKeyBytes;

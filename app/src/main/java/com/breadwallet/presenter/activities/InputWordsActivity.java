@@ -35,6 +35,7 @@ import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.security.SmartValidator;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -410,15 +411,13 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
         }
 
         // delete database file
-        try {
-            String md5Str = UiUtils.getStringMd5(new String(phrase));
-            String database = md5Str + ".db";
+        String hash = UiUtils.getSha256(phrase);
+        if (!StringUtil.isNullOrEmpty(hash)) {
+            String database = hash + ".db";
             deleteDatabase(database);
-            database = md5Str + "_platform.db";
+            database = hash + "_platform.db";
             deleteDatabase(database);
             BRSharedPrefs.clearAllPrefs(InputWordsActivity.this);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
         }
 
         if (restart) {
