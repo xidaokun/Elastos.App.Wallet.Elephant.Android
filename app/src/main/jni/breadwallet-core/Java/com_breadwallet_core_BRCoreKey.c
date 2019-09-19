@@ -132,9 +132,14 @@ JNIEXPORT jbyteArray JNICALL
 Java_com_breadwallet_core_BRCoreKey_getSeedFromPhrase
         (JNIEnv *env, jclass thisClass, jbyteArray phrase) {
 
+    size_t bytePhraseLen = (size_t) (*env)->GetArrayLength (env, phrase);
     jbyte *bytePhrase = (*env)->GetByteArrayElements(env, phrase, 0);
+
+    char charPhrase[1 + bytePhraseLen];
+    memcpy (charPhrase, bytePhrase, bytePhraseLen);
+    charPhrase[bytePhraseLen] = '\0';
+
     UInt512 key = UINT512_ZERO;
-    char *charPhrase = (char *) bytePhrase;
     BRBIP39DeriveKey(key.u8, charPhrase, NULL);
 
     jbyteArray result = (*env)->NewByteArray(env, (jsize) sizeof(key));

@@ -233,6 +233,10 @@ public class WalletsMaster {
         }
         if (Utils.isNullOrEmpty(phrase)) throw new NullPointerException("phrase is null!!");
         if (phrase.length == 0) throw new RuntimeException("phrase is empty");
+
+        // set storage file name first.
+        UiUtils.setStorageName(paperKeyBytes);
+
         byte[] seed = BRCoreKey.getSeedFromPhrase(phrase);
         if (seed == null || seed.length == 0) throw new RuntimeException("seed is null");
         byte[] authKey = BRCoreKey.getAuthPrivKeyForAPI(seed);//privatekey
@@ -252,8 +256,6 @@ public class WalletsMaster {
         BRKeyStore.putMasterPublicKey(pubKey, ctx);
 
         // add to phrase list
-        UiUtils.setStorageName(paperKeyBytes);
-
         PhraseInfo phraseInfo = new PhraseInfo();
         phraseInfo.phrase = paperKeyBytes;
         phraseInfo.authKey = authKey;
