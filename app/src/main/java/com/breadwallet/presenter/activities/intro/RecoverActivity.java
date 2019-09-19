@@ -7,6 +7,7 @@ import android.widget.Button;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.InputWordsActivity;
+import com.breadwallet.presenter.activities.WalletNameActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.UiUtils;
 
@@ -25,12 +26,17 @@ public class RecoverActivity extends BRActivity {
         setContentView(R.layout.activity_intro_recover);
 
         nextButton = findViewById(R.id.send_button);
+        Intent intent = getIntent();
+        final boolean reenter = intent.getBooleanExtra(IntroActivity.INTRO_REENTER, false);
+        final String walletName = intent.getStringExtra(WalletNameActivity.WALLET_NAME);
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) return;
                 Intent intent = new Intent(RecoverActivity.this, InputWordsActivity.class);
+                intent.putExtra(IntroActivity.INTRO_REENTER, reenter);
+                intent.putExtra(WalletNameActivity.WALLET_NAME, walletName);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
@@ -59,5 +65,6 @@ public class RecoverActivity extends BRActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 }

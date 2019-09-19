@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.activities.intro;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -22,6 +23,9 @@ public class WriteDownActivity extends BRActivity {
 
         /* Activity was shown from settings.  */
         SETTINGS(1),
+
+        /* Activity was shown from phrase list new button.  */
+        NEW_WALLET_ADD(2),
 
         /* Invalid reason.  */
         ERROR(-1);
@@ -63,6 +67,9 @@ public class WriteDownActivity extends BRActivity {
                     case NEW_WALLET:
                         UiUtils.startBreadActivity(WriteDownActivity.this, false);
                         break;
+                    case NEW_WALLET_ADD:
+                        UiUtils.restartApp(WriteDownActivity.this);
+                        break;
                     case SETTINGS:
                         // Fall through
                     default:
@@ -80,7 +87,8 @@ public class WriteDownActivity extends BRActivity {
                         getString(R.string.VerifyPin_continueBody), true, false, new BRAuthCompletion() {
                             @Override
                             public void onComplete() {
-                                PostAuth.getInstance().onPhraseCheckAuth(WriteDownActivity.this, false);
+                                PostAuth.getInstance().onPhraseCheckAuth(WriteDownActivity.this,
+                                        false, viewReason == ViewReason.NEW_WALLET_ADD);
                             }
 
                             @Override

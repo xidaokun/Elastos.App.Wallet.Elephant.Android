@@ -14,10 +14,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.AddWalletsActivity;
+import com.breadwallet.presenter.activities.PhraseListActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRNotificationBar;
@@ -36,6 +38,7 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class FragmentWallet extends Fragment implements RatesDataSource.OnDataChanged{
 
@@ -173,6 +176,16 @@ public class FragmentWallet extends Fragment implements RatesDataSource.OnDataCh
                 if (info.listener != null)
                     info.listener.onClick(mPromptContinue);
                 hidePrompt();
+            }
+        });
+
+        ImageButton btn = rootView.findViewById(R.id.phrases_icon);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(BreadApp.mContext, PhraseListActivity.class);
+                startActivity(intent);
+                Objects.requireNonNull(getActivity()).overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
             }
         });
     }

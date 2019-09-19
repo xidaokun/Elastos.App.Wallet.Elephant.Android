@@ -19,9 +19,11 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.manager.BRPublicSharedPrefs;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.SendManager;
+import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
@@ -29,10 +31,12 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.platform.entities.TxMetaData;
+import com.platform.sqlite.PlatformSqliteHelper;
 import com.platform.tools.BRBitId;
 import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 
@@ -85,13 +89,15 @@ public class PostAuth {
         return mInstance;
     }
 
-    public void onCreateWalletAuth(final Activity activity, boolean authAsked) {
+    public void onCreateWalletAuth(final Activity activity, boolean authAsked, boolean restart, String walletName) {
         Log.e(TAG, "onCreateWalletAuth: " + authAsked);
+        WalletsMaster.getInstance(activity).wipePartOfKeyStore(activity);
         long start = System.currentTimeMillis();
-        boolean success = WalletsMaster.getInstance(activity).generateRandomSeed(activity);
+        boolean success = WalletsMaster.getInstance(activity).generateRandomSeed(activity, walletName);
         if (success) {
             Intent intent = new Intent(activity, WriteDownActivity.class);
-            intent.putExtra(WriteDownActivity.EXTRA_VIEW_REASON, WriteDownActivity.ViewReason.NEW_WALLET.getValue());
+            intent.putExtra(WriteDownActivity.EXTRA_VIEW_REASON,
+                    restart ? WriteDownActivity.ViewReason.NEW_WALLET_ADD.getValue() : WriteDownActivity.ViewReason.NEW_WALLET.getValue());
             activity.startActivity(intent);
             activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             activity.finish();
@@ -104,7 +110,7 @@ public class PostAuth {
         }
     }
 
-    public void onPhraseCheckAuth(Activity activity, boolean authAsked) {
+    public void onPhraseCheckAuth(Activity activity, boolean authAsked, boolean restart) {
         String cleanPhrase;
         try {
             byte[] raw = BRKeyStore.getPhrase(activity, BRConstants.SHOW_PHRASE_REQUEST_CODE);
@@ -122,11 +128,12 @@ public class PostAuth {
         }
         Intent intent = new Intent(activity, PaperKeyActivity.class);
         intent.putExtra("phrase", cleanPhrase);
+        intent.putExtra(PaperKeyActivity.RESTART_APP, restart);
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
     }
 
-    public void onPhraseProveAuth(Activity activity, boolean authAsked) {
+    public void onPhraseProveAuth(Activity activity, boolean authAsked, boolean restart) {
         String cleanPhrase;
         try {
             cleanPhrase = new String(BRKeyStore.getPhrase(activity, BRConstants.PROVE_PHRASE_REQUEST));
@@ -139,6 +146,7 @@ public class PostAuth {
         }
         Intent intent = new Intent(activity, PaperKeyProveActivity.class);
         intent.putExtra("phrase", cleanPhrase);
+        intent.putExtra(PaperKeyActivity.RESTART_APP, restart);
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
     }
@@ -147,14 +155,20 @@ public class PostAuth {
         BRBitId.completeBitID(activity, authenticated);
     }
 
-    public void onRecoverWalletAuth(final Activity activity, boolean authAsked) {
+    public void onRecoverWalletAuth(final Activity activity, boolean authAsked, boolean restartApp, boolean recover, String walletName) {
         if (Utils.isNullOrEmpty(mCachedPaperKey)) {
             Log.e(TAG, "onRecoverWalletAuth: phraseForKeyStore is null or empty");
             BRReportsManager.reportBug(new NullPointerException("onRecoverWalletAuth: phraseForKeyStore is or empty"));
             return;
         }
+        WalletsMaster.getInstance(activity).wipePartOfKeyStore(activity);
 
         try {
+            // save status before put phrase
+            BRPublicSharedPrefs.putRecoverNeedRestart(activity, restartApp);
+            BRPublicSharedPrefs.putIsRecover(activity, recover);
+            BRPublicSharedPrefs.putRecoverWalletName(activity, walletName);
+
             boolean success = false;
             try {
                 success = BRKeyStore.putPhrase(mCachedPaperKey.getBytes(),
@@ -173,19 +187,37 @@ public class PostAuth {
                     Log.e(TAG, "onRecoverWalletAuth, !success && authAsked");
             } else {
                 if (mCachedPaperKey.length() != 0) {
-                    BRSharedPrefs.putPhraseWroteDown(activity, true);
+                    UiUtils.setStorageName(mCachedPaperKey.getBytes());
+
+                    // not change pref if switch wallet.
+                    if (recover) {
+                        BRSharedPrefs.putPhraseWroteDown(activity, true);
+                    }
+
                     byte[] seed = BRCoreKey.getSeedFromPhrase(mCachedPaperKey.getBytes());
                     byte[] authKey = BRCoreKey.getAuthPrivKeyForAPI(seed);
                     BRKeyStore.putAuthKey(authKey, activity);
                     BRCoreMasterPubKey mpk = new BRCoreMasterPubKey(mCachedPaperKey.getBytes(), true);
                     BRKeyStore.putMasterPublicKey(mpk.serialize(), activity);
 
-                    Intent intent = new Intent(activity, InputPinActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                    activity.startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
+                    // add to phrase list
+                    saveToPhraseList(activity, mCachedPaperKey.getBytes(), authKey, mpk.serialize(), walletName);
 
                     mCachedPaperKey = null;
+
+                    if (restartApp) {
+                        UiUtils.restartApp(activity);
+                    } else {
+                        String pin = BRKeyStore.getPinCode(activity);
+                        if (pin.isEmpty()) {
+                            Intent intent = new Intent(activity, InputPinActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                            activity.startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
+                        } else {
+                            UiUtils.startBreadActivity(activity, false);
+                        }
+                    }
                 }
 
             }
@@ -351,22 +383,23 @@ public class PostAuth {
             }
             return;
         }
-        if (canary == null || !canary.equalsIgnoreCase(BRConstants.CANARY_STRING)) {
-            byte[] phrase;
-            try {
-                phrase = BRKeyStore.getPhrase(activity, BRConstants.CANARY_REQUEST_CODE);
-            } catch (UserNotAuthenticatedException e) {
-                if (authAsked) {
-                    Log.e(TAG, "onCanaryCheck: WARNING!!!! LOOP");
-                    mAuthLoopBugHappened = true;
-                }
-                return;
-            }
 
+        byte[] phrase;
+        try {
+            phrase = BRKeyStore.getPhrase(activity, BRConstants.CANARY_REQUEST_CODE);
+        } catch (UserNotAuthenticatedException e) {
+            if (authAsked) {
+                Log.e(TAG, "onCanaryCheck: WARNING!!!! LOOP");
+                mAuthLoopBugHappened = true;
+            }
+            return;
+        }
+
+        if (canary == null || !canary.equalsIgnoreCase(BRConstants.CANARY_STRING)) {
             String strPhrase = new String((phrase == null) ? new byte[0] : phrase);
             if (strPhrase.isEmpty()) {
                 WalletsMaster m = WalletsMaster.getInstance(activity);
-                m.wipeKeyStore(activity);
+                m.wipePartOfKeyStore(activity);
                 m.wipeWalletButKeystore(activity);
             } else {
                 Log.e(TAG, "onCanaryCheck: Canary wasn't there, but the phrase persists, adding canary to keystore.");
@@ -381,7 +414,31 @@ public class PostAuth {
                 }
             }
         }
+        // add to phrase list
+        if (phrase != null) {
+            byte[] seed = BRCoreKey.getSeedFromPhrase(phrase);
+            byte[] authKey = BRCoreKey.getAuthPrivKeyForAPI(seed);
+            BRCoreMasterPubKey mpk = new BRCoreMasterPubKey(phrase, true);
+
+            saveToPhraseList(activity, phrase, authKey, mpk.serialize(), UiUtils.getDefaultWalletName(activity));
+        }
+
         WalletsMaster.getInstance(activity).startTheWalletIfExists(activity);
+    }
+
+    private void saveToPhraseList(Context context, byte[] phrase, byte[] authKey, byte[] pubkey, String alias) {
+        PhraseInfo phraseInfo = new PhraseInfo();
+        phraseInfo.phrase = phrase;
+        phraseInfo.authKey = authKey;
+        phraseInfo.pubKey = pubkey;
+        phraseInfo.creationTime = System.currentTimeMillis() / 1000;
+        phraseInfo.alias = alias;
+
+        try {
+            BRKeyStore.addPhraseInfo(context, phraseInfo);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
     }
 
 }

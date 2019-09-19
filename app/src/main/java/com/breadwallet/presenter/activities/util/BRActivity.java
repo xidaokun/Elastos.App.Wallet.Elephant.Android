@@ -16,12 +16,14 @@ import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.InputWordsActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
+import com.breadwallet.presenter.activities.WalletNameActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.intro.RecoverActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRApiManager;
+import com.breadwallet.tools.manager.BRPublicSharedPrefs;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.AuthManager;
@@ -180,7 +182,7 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            PostAuth.getInstance().onPhraseCheckAuth(BRActivity.this, true);
+                            PostAuth.getInstance().onPhraseCheckAuth(BRActivity.this, true, false);
                         }
                     });
                 }
@@ -190,17 +192,22 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            PostAuth.getInstance().onPhraseProveAuth(BRActivity.this, true);
+                            PostAuth.getInstance().onPhraseProveAuth(BRActivity.this, true, false);
                         }
                     });
                 }
                 break;
             case BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
+                    final boolean restart = BRPublicSharedPrefs.getRecoverNeedRestart(BRActivity.this);
+                    final boolean recover = BRPublicSharedPrefs.getIsRecover(BRActivity.this);
+                    final String walletName = BRPublicSharedPrefs.getRecoverWalletName(BRActivity.this);
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            PostAuth.getInstance().onRecoverWalletAuth(BRActivity.this, true);
+                            PostAuth.getInstance().onRecoverWalletAuth(BRActivity.this,
+                                    true, restart, recover,
+                                    StringUtil.isNullOrEmpty(walletName) ? UiUtils.getDefaultWalletName(BRActivity.this) : walletName);
                         }
                     });
                 } else {
@@ -237,7 +244,8 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            PostAuth.getInstance().onCreateWalletAuth(BRActivity.this, true);
+                            PostAuth.getInstance().onCreateWalletAuth(BRActivity.this,
+                                    true, false, UiUtils.getDefaultWalletName(BRActivity.this));
                         }
                     });
 
@@ -253,7 +261,7 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                     boolean isPinAccepted = data.getBooleanExtra(InputPinActivity.EXTRA_PIN_ACCEPTED, false);
                     if (isPinAccepted) {
                         if (Utils.isNullOrEmpty(BRKeyStore.getMasterPublicKey(this))) {
-                            PostAuth.getInstance().onCreateWalletAuth(this, false);
+                            UiUtils.startWalletNameActivity(this, WalletNameActivity.WALLET_NAME_TYPE_NEW, false);
                         } else {
                             UiUtils.startBreadActivity(this, false);
                         }

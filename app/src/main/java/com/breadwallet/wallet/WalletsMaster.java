@@ -21,6 +21,8 @@ import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.security.PhraseInfo;
+import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Bip39Reader;
@@ -36,9 +38,11 @@ import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 import com.breadwallet.wallet.wallets.ioex.WalletIoexManager;
 import com.platform.entities.TokenListMetaData;
 import com.platform.entities.WalletInfo;
+import com.platform.sqlite.PlatformSqliteHelper;
 import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
@@ -188,7 +192,7 @@ public class WalletsMaster {
         return totalBalance;
     }
 
-    public synchronized boolean generateRandomSeed(final Context ctx) {
+    public synchronized boolean generateRandomSeed(final Context ctx, String walletName) {
         SecureRandom sr = new SecureRandom();
         final String[] words;
         List<String> list;
@@ -247,6 +251,22 @@ public class WalletsMaster {
         byte[] pubKey = new BRCoreMasterPubKey(paperKeyBytes, true).serialize();
         BRKeyStore.putMasterPublicKey(pubKey, ctx);
 
+        // add to phrase list
+        UiUtils.setStorageName(paperKeyBytes);
+
+        PhraseInfo phraseInfo = new PhraseInfo();
+        phraseInfo.phrase = paperKeyBytes;
+        phraseInfo.authKey = authKey;
+        phraseInfo.pubKey = pubKey;
+        phraseInfo.creationTime = walletCreationTime;
+        phraseInfo.alias = walletName;
+        try {
+            BRKeyStore.addPhraseInfo(ctx, phraseInfo);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+            return false;
+        }
+
         return true;
 
     }
@@ -273,8 +293,11 @@ public class WalletsMaster {
     }
 
     public boolean wipeKeyStore(Context context) {
-        Log.d(TAG, "wipeKeyStore");
         return BRKeyStore.resetWalletKeyStore(context);
+    }
+
+    public boolean wipePartOfKeyStore(Context context) {
+        return BRKeyStore.resetPartOfWalletKeyStore(context);
     }
 
     /**

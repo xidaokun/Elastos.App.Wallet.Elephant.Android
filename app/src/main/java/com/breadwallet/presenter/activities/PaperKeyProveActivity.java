@@ -49,6 +49,8 @@ public class PaperKeyProveActivity extends BRActivity {
     private ConstraintSet applyConstraintSet = new ConstraintSet();
     private ConstraintSet resetConstraintSet = new ConstraintSet();
 
+    private boolean mRestart;
+
     public static PaperKeyProveActivity getApp() {
         return app;
     }
@@ -111,9 +113,13 @@ public class PaperKeyProveActivity extends BRActivity {
                     UiUtils.showBreadSignal(PaperKeyProveActivity.this, getString(R.string.Alerts_paperKeySet), getString(R.string.Alerts_paperKeySetSubheader), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                         @Override
                         public void onComplete() {
-                            UiUtils.startBreadActivity(PaperKeyProveActivity.this, false);
-                            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                            finishAffinity();
+                            if (mRestart) {
+                                UiUtils.restartApp(PaperKeyProveActivity.this);
+                            } else {
+                                UiUtils.startBreadActivity(PaperKeyProveActivity.this, false);
+                                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                                finishAffinity();
+                            }
                         }
                     });
                 } else {
@@ -133,6 +139,7 @@ public class PaperKeyProveActivity extends BRActivity {
         });
         String cleanPhrase = null;
 
+        mRestart = getIntent().getBooleanExtra(PaperKeyActivity.RESTART_APP, false);
         cleanPhrase = getIntent().getExtras() == null ? null : getIntent().getStringExtra("phrase");
 
         if (Utils.isNullOrEmpty(cleanPhrase)) {
@@ -205,6 +212,7 @@ public class PaperKeyProveActivity extends BRActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     private void validateWord(EditText view) {

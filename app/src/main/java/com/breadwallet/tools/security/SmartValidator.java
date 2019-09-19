@@ -8,8 +8,11 @@ import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.Bip39Reader;
+import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.wallet.WalletsMaster;
+
+import org.apache.shiro.util.StringUtils;
 
 import java.text.Normalizer;
 import java.util.Arrays;
@@ -91,6 +94,10 @@ public class SmartValidator {
 
     public static boolean checkFirstAddress(Activity app, byte[] mpk) {
         String addressFromPrefs = BRSharedPrefs.getFirstAddress(app);
+        // if address is null or empty, it's the first time start app after switch phrase
+        if (StringUtil.isNullOrEmpty(addressFromPrefs)) {
+            return true;
+        }
 
         String generatedAddress = new BRCoreMasterPubKey(mpk, false).getPubKeyAsCoreKey().address();
         if (!addressFromPrefs.equalsIgnoreCase(generatedAddress) && addressFromPrefs.length() != 0 && generatedAddress.length() != 0) {

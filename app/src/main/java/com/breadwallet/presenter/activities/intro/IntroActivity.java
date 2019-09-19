@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.os.Bundle;
+import android.security.keystore.UserNotAuthenticatedException;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -12,15 +14,23 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.InputPinActivity;
+import com.breadwallet.presenter.activities.WalletNameActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.security.SmartValidator;
+import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.platform.sqlite.PlatformSqliteHelper;
+
+import java.security.NoSuchAlgorithmException;
+
+import java.security.NoSuchAlgorithmException;
 
 
 /**
@@ -53,6 +63,10 @@ public class IntroActivity extends BRActivity {
     private Button mNewWalletButton;
     private Button mRecoverWalletButton;
 
+    public static final String INTRO_REENTER = "intro.reenter";
+
+    private boolean mReenter = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +74,7 @@ public class IntroActivity extends BRActivity {
         mNewWalletButton = findViewById(R.id.button_new_wallet);
         mRecoverWalletButton = findViewById(R.id.button_recover_wallet);
         TextView subtitle = findViewById(R.id.intro_subtitle);
+
 
 //        String aa = android.os.Build.CPU_ABI;
 //        if(!"armeabi-v7a".equals(android.os.Build.CPU_ABI)){
@@ -92,6 +107,8 @@ public class IntroActivity extends BRActivity {
             Utils.printPhoneSpecs();
         }
 
+        initGlobal();
+
         byte[] masterPubKey = BRKeyStore.getMasterPublicKey(this);
 
         boolean isFirstAddressCorrect = false;
@@ -101,6 +118,9 @@ public class IntroActivity extends BRActivity {
         if (!isFirstAddressCorrect) {
             WalletsMaster.getInstance(this).wipeWalletButKeystore(this);
         }
+
+        mReenter = getIntent().getBooleanExtra(INTRO_REENTER, false);
+        if (mReenter) return;
 
         PostAuth.getInstance().onCanaryCheck(IntroActivity.this, false);
 
@@ -135,6 +155,13 @@ public class IntroActivity extends BRActivity {
                 if (!UiUtils.isClickAllowed()) {
                     return;
                 }
+
+                String pin = BRKeyStore.getPinCode(IntroActivity.this);
+                if (mReenter || !pin.isEmpty()) {
+                    UiUtils.startWalletNameActivity(IntroActivity.this, WalletNameActivity.WALLET_NAME_TYPE_NEW, mReenter);
+                    return;
+                }
+
                 Intent intent = new Intent(IntroActivity.this, InputPinActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
@@ -148,12 +175,35 @@ public class IntroActivity extends BRActivity {
                 if (!UiUtils.isClickAllowed()) {
                     return;
                 }
-                Intent intent = new Intent(IntroActivity.this, RecoverActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+
+                UiUtils.startWalletNameActivity(IntroActivity.this, WalletNameActivity.WALLET_NAME_TYPE_RECOVER, mReenter);
             }
         });
     }
 
+
+    private void initGlobal() {
+        byte[] phrase;
+        try {
+            phrase = BRKeyStore.getPhrase(this, BRConstants.INIT_GLOBAL_REQUEST_CODE);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        if (phrase == null) return;
+
+        UiUtils.setStorageName(phrase);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult " + requestCode + " " + resultCode);
+
+        if (requestCode == BRConstants.INIT_GLOBAL_REQUEST_CODE && resultCode == RESULT_OK) {
+            initGlobal();
+        }
+    }
 
 }

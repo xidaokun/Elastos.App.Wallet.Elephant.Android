@@ -46,7 +46,7 @@ import java.util.UUID;
 public class BRSharedPrefs {
     public static final String TAG = BRSharedPrefs.class.getName();
 
-    public static final String PREFS_NAME = "MyPrefsFile";
+    public static String PREFS_NAME = "MyPrefsFile";
 
     public static String getPreferredFiatIso(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, 0);
@@ -71,7 +71,6 @@ public class BRSharedPrefs {
     public static boolean getPhraseWroteDown(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean("phraseWritten", false);
-
     }
 
     public static void putPhraseWroteDown(Context context, boolean check) {
@@ -389,18 +388,6 @@ public class BRSharedPrefs {
         SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(did, b);
-        editor.apply();
-    }
-
-    public static boolean getUseFingerprint(Context activity) {
-        SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getBoolean("useFingerprint", false);
-    }
-
-    public static void putUseFingerprint(Context activity, boolean use) {
-        SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean("useFingerprint", use);
         editor.apply();
     }
 
