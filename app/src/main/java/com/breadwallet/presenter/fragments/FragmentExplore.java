@@ -287,6 +287,18 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 copyCapsuleToDownloadCache(getContext(), mDownloadDir.getAbsolutePath(), mDoloadFileName);
                 refreshApps();
             }
+            showDialog();
+            StringChainData elaAppsStatus = getAppStatus(BRConstants.ELA_APPS_ID);
+            if (null == elaAppsStatus ||
+                    StringUtil.isNullOrEmpty(elaAppsStatus.value) ||
+                    elaAppsStatus.value.equals("normal")) {
+                Log.d(TAG, "copy elaApps");
+                mDoloadFileName = "elapp.capsule";
+                mDoloadUrl = "https://elaphant.app/elapp.capsule";
+                copyCapsuleToDownloadCache(getContext(), mDownloadDir.getAbsolutePath(), mDoloadFileName);
+                refreshApps();
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
