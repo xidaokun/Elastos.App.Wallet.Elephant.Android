@@ -14,8 +14,7 @@ import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
 import com.breadwallet.tools.adapter.AuthorAdapter;
 import com.breadwallet.tools.util.PinyinUtil;
 import com.breadwallet.tools.util.StringUtil;
-
-import org.wallet.library.utils.StringUtils;
+import com.elastos.jni.utils.StringUtils;
 
 import java.text.Collator;
 import java.util.Collections;

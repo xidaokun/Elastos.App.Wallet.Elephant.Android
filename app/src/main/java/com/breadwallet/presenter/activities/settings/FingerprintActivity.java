@@ -22,6 +22,7 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.manager.BRPublicSharedPrefs;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -61,7 +62,7 @@ public class FingerprintActivity extends BaseSettingsActivity {
         limitExchange = findViewById(R.id.limit_exchange);
         limitInfo = findViewById(R.id.limit_info);
 
-        toggleButton.setChecked(BRSharedPrefs.getUseFingerprint(this));
+        toggleButton.setChecked(BRPublicSharedPrefs.getUseFingerprint(this));
 
         limitExchange.setText(getLimitText());
 
@@ -79,7 +80,7 @@ public class FingerprintActivity extends BaseSettingsActivity {
                             }, null, null, 0);
                     buttonView.setChecked(false);
                 } else {
-                    BRSharedPrefs.putUseFingerprint(app, isChecked);
+                    BRPublicSharedPrefs.putUseFingerprint(app, isChecked);
                 }
 
             }

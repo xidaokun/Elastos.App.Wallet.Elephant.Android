@@ -24,6 +24,7 @@ import com.breadwallet.presenter.customviews.PinLayout;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.manager.BRPublicSharedPrefs;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -88,7 +89,7 @@ public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgroun
             }
         });
 
-        final boolean useFingerprint = AuthManager.isFingerPrintAvailableAndSetup(this) && BRSharedPrefs.getUseFingerprint(this);
+        final boolean useFingerprint = AuthManager.isFingerPrintAvailableAndSetup(this) && BRPublicSharedPrefs.getUseFingerprint(this);
         mFingerPrint.setVisibility(useFingerprint ? View.VISIBLE : View.GONE);
 
         if (useFingerprint) {

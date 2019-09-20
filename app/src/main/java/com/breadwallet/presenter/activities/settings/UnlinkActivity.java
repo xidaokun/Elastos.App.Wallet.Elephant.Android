@@ -21,6 +21,8 @@ public class UnlinkActivity extends BRActivity {
     public static boolean appVisible = false;
     private static UnlinkActivity app;
 
+    public static final String UNLINK_PHARE = "unlink.phrase";
+
     public static UnlinkActivity getApp() {
         return app;
     }
@@ -85,5 +87,6 @@ public class UnlinkActivity extends BRActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 }

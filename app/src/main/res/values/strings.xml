@@ -307,7 +307,7 @@
     <!-- Did Authorizations -->
     <string name="MenuButton.authorizations.qr">Authorizations QR</string>
     <!-- (Click here to) manage (your list of) wallets -->
-    <string name="MenuButton.manageWallets">Manage Wallets</string>
+    <string name="MenuButton.manageWallets">Manage Tokens</string>
     <!-- (press here to) scan (a) QR code -->
     <string name="MenuButton.scan">Scan QR Code</string>
     <!-- Menu button title -->
@@ -674,7 +674,7 @@
     <!-- Hide [this token from view] -->
     <string name="TokenList.hide">Hide</string>
     <!-- [click here to] Manage [your] Wallets -->
-    <string name="TokenList.manageTitle">Manage Wallets</string>
+    <string name="TokenList.manageTitle">Manage Tokens</string>
     <!-- Remove [this item from the list] -->
     <string name="TokenList.remove">Remove</string>
     <!-- Show [this item on your home screen] -->
@@ -1159,4 +1159,15 @@
     <string name="history_pull_refresh_hint">Tap or pull up to load more</string>
 
     <string name="net_has_disconnect">Network disconnected</string>
+
+    <string name="multi_wallet_switch">Switch wallet</string>
+    <string name="multi_wallet_new">+ New wallet</string>
+    <string name="multi_wallet_name">Wallet name</string>
+    <string name="multi_wallet_name_hint">wallet name</string>
+    <string name="multi_wallet_name_save">save</string>
+    <string name="multi_wallet_name_next">Next</string>
+    <string name="multi_wallet_name_required">Name is required</string>
+    <string name="multi_wallet_format_date">MMMM d, yyyy</string>
+    <string name="multi_wallet_phares_not_backup">Recovery phrase not backed up</string>
+    <string name="multi_wallet_already_current">Already the current mnemonic</string>
 </resources>

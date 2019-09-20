@@ -3,6 +3,8 @@ package com.breadwallet.presenter.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.security.keystore.UserNotAuthenticatedException;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
@@ -15,23 +17,33 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
+import com.breadwallet.presenter.activities.settings.UnlinkActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
+import com.breadwallet.presenter.customviews.PasteEditText;
+import com.breadwallet.presenter.interfaces.EditPasteListener;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
+import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.security.PhraseInfo;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.security.SmartValidator;
+import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class InputWordsActivity extends BRActivity implements View.OnFocusChangeListener {
@@ -51,6 +63,10 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
     //will be true if this screen was called from the restore screen
     private boolean mIsRestoring = false;
     private boolean mIsResettingPin = false;
+
+    private boolean mReenter = false;
+    private String mWalletName;
+
     private TypedValue mTypedValue = new TypedValue();
 
     @Override
@@ -128,6 +144,8 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
             mIsRestoring = extras.getBoolean(EXTRA_UNLINK);
             mIsResettingPin = extras.getBoolean(EXTRA_RESET_PIN);
         }
+        mReenter = getIntent().getBooleanExtra(IntroActivity.INTRO_REENTER, false);
+        mWalletName = getIntent().getStringExtra(WalletNameActivity.WALLET_NAME);
 
         if (mIsRestoring) {
             //change the labels
@@ -139,6 +157,20 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
             description.setText(getString(R.string.RecoverWallet_subheader_reset_pin));
         }
 
+        PasteEditText pasteEditText = (PasteEditText) mEditWords.get(0);
+        pasteEditText.setPasteListener(new EditPasteListener() {
+            @Override
+            public void onPaste(View view) {
+                String inputWords = BRClipboardManager.getClipboard(InputWordsActivity.this);
+                String[] words = inputWords.trim().split(" ");
+                if(words.length == 12) {
+                    for(int i=0; i<12; i++) {
+                        mEditWords.get(i).setText(words[i]);
+                    }
+                }
+
+            }
+        });
 
         mEditWords.get(LAST_WORD_INDEX).setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -168,64 +200,18 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
                 }
                 if (SmartValidator.isPaperKeyValid(app, cleanPhrase)) {
 
-                    if (mIsRestoring || mIsResettingPin) {
-                        if (SmartValidator.isPaperKeyCorrect(cleanPhrase, app)) {
-                            Utils.hideKeyboard(app);
-                            clearWords();
-
-                            if (mIsRestoring) {
-                                BRDialog.showCustomDialog(InputWordsActivity.this, getString(R.string.WipeWallet_alertTitle),
-                                        getString(R.string.WipeWallet_alertMessage), getString(R.string.WipeWallet_wipe), getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
-                                            @Override
-                                            public void onClick(BRDialogView brDialogView) {
-                                                brDialogView.dismissWithAnimation();
-                                                WalletsMaster m = WalletsMaster.getInstance(InputWordsActivity.this);
-                                                m.wipeWalletButKeystore(app);
-                                                m.wipeKeyStore(app);
-                                                Intent intent = new Intent(app, IntroActivity.class);
-                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                                                startActivity(intent);
-                                                if (!InputWordsActivity.this.isDestroyed())
-                                                    finish();
-                                            }
-                                        }, new BRDialogView.BROnClickListener() {
-                                            @Override
-                                            public void onClick(BRDialogView brDialogView) {
-                                                brDialogView.dismissWithAnimation();
-                                            }
-                                        }, null, 0);
-
-                            } else {
-                                AuthManager.getInstance().setPinCode(InputWordsActivity.this, "");
-                                Intent intent = new Intent(app, InputPinActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                                startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
-                            }
-
-
-                        } else {
-                            BRDialog.showCustomDialog(app, "", getString(R.string.RecoverWallet_invalid),
-                                    getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-                                        @Override
-                                        public void onClick(BRDialogView brDialogView) {
-                                            brDialogView.dismissWithAnimation();
-                                        }
-                                    }, null, null, 0);
-                        }
-
+                    if (mIsRestoring) {
+                        restorePhrase(cleanPhrase, app);
+                    } else if (mIsResettingPin) {
+                        resetPin(cleanPhrase, app);
                     } else {
                         Utils.hideKeyboard(app);
-                        WalletsMaster m = WalletsMaster.getInstance(InputWordsActivity.this);
-                        m.wipeAll(InputWordsActivity.this);
-                        PostAuth.getInstance().setCachedPaperKey(cleanPhrase);
+//                        if (!mReenter) {
+//                            WalletsMaster m = WalletsMaster.getInstance(InputWordsActivity.this);
+//                            m.wipeAll(InputWordsActivity.this);
+//                        }
 
-                        //Disallow BTC and BCH sending.
-                        BRSharedPrefs.putAllowSpend(app, BaseBitcoinWalletManager.BITCASH_SYMBOL, false);
-                        BRSharedPrefs.putAllowSpend(app, BaseBitcoinWalletManager.BITCOIN_SYMBOL, false);
-
-                        PostAuth.getInstance().onRecoverWalletAuth(app, false);
+                        UiUtils.switchPhrase(InputWordsActivity.this, cleanPhrase, mReenter, true, mWalletName);
                     }
 
                 } else {
@@ -319,6 +305,127 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
             }
         }
 
+    }
+
+    private void restorePhrase(String cleanPhrase, final Activity app) {
+        if (SmartValidator.isPaperKeyCorrect(cleanPhrase, app)) {
+            Utils.hideKeyboard(app);
+            clearWords();
+
+            BRDialog.showCustomDialog(InputWordsActivity.this, getString(R.string.WipeWallet_alertTitle),
+                    getString(R.string.WipeWallet_alertMessage), getString(R.string.WipeWallet_wipe), getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            brDialogView.dismissWithAnimation();
+                            unlink();
+                            if (!InputWordsActivity.this.isDestroyed())
+                                finish();
+                        }
+                    }, new BRDialogView.BROnClickListener() {
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            brDialogView.dismissWithAnimation();
+                        }
+                    }, null, 0);
+
+
+        } else {
+            BRDialog.showCustomDialog(app, "", getString(R.string.RecoverWallet_invalid),
+                    getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            brDialogView.dismissWithAnimation();
+                        }
+                    }, null, null, 0);
+        }
+
+    }
+
+    private void resetPin(String cleanPhrase, final Activity app) {
+        if (SmartValidator.isPaperKeyCorrect(cleanPhrase, app)) {
+            Utils.hideKeyboard(app);
+            clearWords();
+
+            AuthManager.getInstance().setPinCode(InputWordsActivity.this, "");
+            Intent intent = new Intent(app, InputPinActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+            startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
+
+
+        } else {
+            BRDialog.showCustomDialog(app, "", getString(R.string.RecoverWallet_invalid),
+                    getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            brDialogView.dismissWithAnimation();
+                        }
+                    }, null, null, 0);
+        }
+
+    }
+
+    private void unlink() {
+        byte[] phrase;
+        try {
+            phrase = BRKeyStore.getPhrase(InputWordsActivity.this, 0);
+        } catch (UserNotAuthenticatedException e) {
+            return;
+        }
+        List<PhraseInfo> phraseList;
+        try {
+            phraseList = BRKeyStore.getPhraseInfoList(InputWordsActivity.this, 0);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        PhraseInfo changeTo = null;
+        assert phraseList != null;
+        int count = phraseList.size();
+        boolean restart = false;
+        if (count == 1) {
+            // the last one, clear all the data
+            WalletsMaster m = WalletsMaster.getInstance(InputWordsActivity.this);
+            m.wipeAll(InputWordsActivity.this);
+            BRSQLiteHelper.getInstance(InputWordsActivity.this).close();
+            restart = true;
+        } else {
+            int position = 0;
+            for (int i = 0; i < count; i++) {
+                if (Arrays.equals(phrase, phraseList.get(i).phrase)) {
+                    position = i;
+                    break;
+                }
+            }
+            changeTo = phraseList.get(position + 1 >= count ? 0 : position + 1);
+            BRSQLiteHelper.getInstance(InputWordsActivity.this).close();
+
+            try {
+                PhraseInfo info = new PhraseInfo();
+                info.phrase = phrase;
+                BRKeyStore.removePhraseInfo(InputWordsActivity.this, info);
+            } catch (UserNotAuthenticatedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // delete database file
+        String hash = UiUtils.getSha256(phrase);
+        if (!StringUtil.isNullOrEmpty(hash)) {
+            String database = hash + ".db";
+            deleteDatabase(database);
+            database = hash + "_platform.db";
+            deleteDatabase(database);
+            BRSharedPrefs.clearAllPrefs(InputWordsActivity.this);
+        }
+
+        if (restart) {
+            UiUtils.restartApp(InputWordsActivity.this);
+            return;
+        }
+
+        UiUtils.switchPhrase(InputWordsActivity.this, new String(changeTo.phrase), true, false, changeTo.alias);
     }
 
 }

@@ -26,6 +26,8 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
 
@@ -51,7 +53,11 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -120,6 +126,7 @@ public class BRKeyStore {
     private static final String TOKEN_IV = "ivtoken";
     private static final String PASS_TIME_IV = "ivpasstimetoken";
     private static final String ETH_PUBKEY_IV = "ivethpubkey";
+    private static final String PHRASE_LIST_IV= "ivphraselist";
 
     public static final String PHRASE_ALIAS = "phrase";
     public static final String CANARY_ALIAS = "canary";
@@ -134,6 +141,7 @@ public class BRKeyStore {
     public static final String TOKEN_ALIAS = "token";
     public static final String PASS_TIME_ALIAS = "passTime";
     public static final String ETH_PUBKEY_ALIAS = "ethpubkey";
+    public static final String PHRASE_LIST_ALIAS = "phraselist";
 
     private static final String PHRASE_FILENAME = "my_phrase";
     private static final String CANARY_FILENAME = "my_canary";
@@ -148,6 +156,7 @@ public class BRKeyStore {
     private static final String TOKEN_FILENAME = "my_token";
     private static final String PASS_TIME_FILENAME = "my_pass_time";
     private static final String ETH_PUBKEY_FILENAME = "my_eth_pubkey";
+    private static final String PHRASE_LIST_FILENAME = "my_phrase_list";
     private static boolean bugMessageShowing;
 
     public static final int AUTH_DURATION_SEC = 300;
@@ -168,8 +177,9 @@ public class BRKeyStore {
         aliasObjectMap.put(PASS_TIME_ALIAS, new AliasObject(PASS_TIME_ALIAS, PASS_TIME_FILENAME, PASS_TIME_IV));
         aliasObjectMap.put(TOTAL_LIMIT_ALIAS, new AliasObject(TOTAL_LIMIT_ALIAS, TOTAL_LIMIT_FILENAME, TOTAL_LIMIT_IV));
         aliasObjectMap.put(ETH_PUBKEY_ALIAS, new AliasObject(ETH_PUBKEY_ALIAS, ETH_PUBKEY_FILENAME, ETH_PUBKEY_IV));
+        aliasObjectMap.put(PHRASE_LIST_ALIAS, new AliasObject(PHRASE_LIST_ALIAS, PHRASE_LIST_FILENAME, PHRASE_LIST_IV));
 
-        Assert.assertEquals(aliasObjectMap.size(), 13);
+        Assert.assertEquals(aliasObjectMap.size(), 14);
 
     }
 
@@ -416,7 +426,7 @@ public class BRKeyStore {
         }
 
         if (auth_required)
-            if (!alias.equals(PHRASE_ALIAS) && !alias.equals(CANARY_ALIAS))
+            if (!alias.equals(PHRASE_ALIAS) && !alias.equals(CANARY_ALIAS) && !alias.equals(PHRASE_LIST_ALIAS))
                 throw new IllegalArgumentException("keystore auth_required is true but alias is: " + alias);
     }
 
@@ -780,6 +790,7 @@ public class BRKeyStore {
             if (keyStore.aliases() != null) {
                 while (keyStore.aliases().hasMoreElements()) {
                     String alias = keyStore.aliases().nextElement();
+                    Log.d(TAG, "clear data keystore alias: " + alias);
                     removeAliasAndDatas(keyStore, alias, context);
                     destroyEncryptedData(context, alias);
                     count++;
@@ -789,6 +800,46 @@ public class BRKeyStore {
                 return false;
             }
             Log.e(TAG, "resetWalletKeyStore: removed:" + count);
+//            Assert.assertEquals(count, 11);
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return false;
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+            return false;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        } catch (java.security.cert.CertificateException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    public synchronized static boolean resetPartOfWalletKeyStore(Context context) {
+        KeyStore keyStore;
+        try {
+            keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+            keyStore.load(null);
+            int count = 0;
+            Enumeration<String> aliases = keyStore.aliases();
+            if (aliases != null) {
+                while (aliases.hasMoreElements()) {
+                    String alias = aliases.nextElement();
+                    if (!alias.equals(PHRASE_ALIAS) && !alias.equals(PUB_KEY_ALIAS)
+                            && !alias.equals(WALLET_CREATION_TIME_ALIAS) && !alias.equals(AUTH_KEY_ALIAS)
+                            && !alias.equals(TOKEN_ALIAS) && !alias.equals(ETH_PUBKEY_ALIAS)) continue;
+                    Log.d(TAG, "clear data keystore alias: " + alias);
+                    removeAliasAndDatas(keyStore, alias, context);
+                    destroyEncryptedData(context, alias);
+                    count++;
+                }
+            } else {
+                BRReportsManager.reportBug(new NullPointerException("keyStore.aliases() is null"));
+                return false;
+            }
+            Log.e(TAG, "resetPartOfWalletKeyStore: removed:" + count);
 //            Assert.assertEquals(count, 11);
 
         } catch (NoSuchAlgorithmException e) {
@@ -850,7 +901,7 @@ public class BRKeyStore {
     public synchronized static void showAuthenticationScreen(Context context, int requestCode, String alias) {
         // Create the Confirm Credentials screen. You can customize the title and description. Or
         // we will provide a generic one for you if you leave it null
-        if (!alias.equalsIgnoreCase(PHRASE_ALIAS) && !alias.equalsIgnoreCase(CANARY_ALIAS)) {
+        if (!alias.equalsIgnoreCase(PHRASE_ALIAS) && !alias.equalsIgnoreCase(CANARY_ALIAS) && !alias.equals(PHRASE_LIST_ALIAS)) {
             BRReportsManager.reportBug(new IllegalArgumentException("requesting auth for: " + alias), true);
         }
 //        Log.e(TAG, "showAuthenticationScreen: " + alias);
@@ -1183,5 +1234,103 @@ public class BRKeyStore {
         cp.init(Cipher.DECRYPT_MODE, keyPrivate);
         byte[] encrypted = retrieveEncryptedData(context, "profile_data");
         return new String(cp.doFinal(encrypted));
+    }
+
+
+    public static boolean addPhraseInfo(Context context, PhraseInfo info) throws UserNotAuthenticatedException {
+        if (info == null || info.phrase == null || info.phrase.length == 0) {
+            Log.e(TAG, "Phrase info is null");
+            return false;
+        }
+
+        List<PhraseInfo> list = getPhraseInfoList(context, 0);
+        if (list != null) {
+            for (PhraseInfo phrase : list) {
+                if (Arrays.equals(phrase.phrase, info.phrase)) {
+                    Log.e(TAG, "the phrase already exist");
+                    return false;
+                }
+            }
+        } else {
+            list = new ArrayList<>();
+        }
+        list.add(info);
+
+        AliasObject obj = aliasObjectMap.get(PHRASE_LIST_ALIAS);
+        String str = new Gson().toJson(list);
+        return _setData(context, str.getBytes(), obj.alias, obj.datafileName, obj.ivFileName, 0, BRSharedPrefs.isUserAuthor(context));
+    }
+
+    public static List<PhraseInfo> getPhraseInfoList(Context context, int requestCode) throws UserNotAuthenticatedException {
+        if (PostAuth.mAuthLoopBugHappened) {
+            showLoopBugMessage(context);
+            throw new UserNotAuthenticatedException();
+        }
+
+        AliasObject obj = aliasObjectMap.get(PHRASE_LIST_ALIAS);
+        byte[] data =  _getData(context, obj.alias, obj.datafileName, obj.ivFileName, requestCode);
+        if (data == null) return null;
+
+        String str = new String(data);
+
+        return new Gson().fromJson(str, new TypeToken<List<PhraseInfo>>(){}.getType());
+    }
+
+    public static boolean removePhraseInfo(Context context, PhraseInfo info) throws UserNotAuthenticatedException {
+        if (info == null || info.phrase == null || info.phrase.length == 0) {
+            Log.e(TAG, "Phrase info is null");
+            return false;
+        }
+
+        List<PhraseInfo> list = getPhraseInfoList(context, 0);
+        if (list == null) {
+            Log.e(TAG, "no phrase exist");
+            return false;
+        }
+
+        for (PhraseInfo phrase : list) {
+            if (!Arrays.equals(phrase.phrase, info.phrase)) continue;
+
+            list.remove(phrase);
+            AliasObject obj = aliasObjectMap.get(PHRASE_LIST_ALIAS);
+            return _setData(context, new Gson().toJson(list).getBytes(), obj.alias, obj.datafileName, obj.ivFileName, 0, BRSharedPrefs.isUserAuthor(context));
+        }
+        Log.e(TAG, "The phrase is not exist");
+        return false;
+    }
+
+    public static boolean updatePhraseInfo(Context context, PhraseInfo info) throws UserNotAuthenticatedException {
+        if (info == null || info.phrase == null || info.phrase.length == 0) {
+            Log.e(TAG, "Phrase info is null");
+            return false;
+        }
+
+        List<PhraseInfo> list = getPhraseInfoList(context, 0);
+        if (list == null) {
+            Log.e(TAG, "no phrase exist");
+            return false;
+        }
+
+        for (int i = 0; i < list.size(); i++) {
+            PhraseInfo phrase = list.get(i);
+            if (!Arrays.equals(phrase.phrase, info.phrase)) continue;
+
+            list.set(i, info);
+            AliasObject obj = aliasObjectMap.get(PHRASE_LIST_ALIAS);
+            return _setData(context, new Gson().toJson(list).getBytes(), obj.alias, obj.datafileName, obj.ivFileName, 0, BRSharedPrefs.isUserAuthor(context));
+        }
+        Log.e(TAG, "The phrase is not exist");
+        return false;
+    }
+
+    public static int getPhraseCount(Context context) {
+        List<PhraseInfo> list = null;
+        try {
+            list = getPhraseInfoList(context, 0);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
+        if (list == null) return 0;
+        else return list.size();
     }
 }

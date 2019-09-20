@@ -31,14 +31,13 @@ import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaAttribute;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaTransactionRes;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaTransactions;
+import com.elastos.jni.AuthorizeManager;
 import com.elastos.jni.Utility;
+import com.elastos.jni.utils.StringUtils;
 import com.google.gson.Gson;
 
 import org.elastos.sdk.keypair.ElastosKeypairSign;
 import org.json.JSONObject;
-import org.wallet.library.AuthorizeManager;
-import org.wallet.library.utils.StringUtils;
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -351,7 +350,7 @@ public class MultiSignTxActivity extends BRActivity {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                String url = ElaDataSource.getInstance(getApplicationContext()).getUrl("/api/1/balance/" + mAddress);
+                String url = ElaDataSource.getInstance(getApplicationContext()).getUrl("api/1/balance/" + mAddress);
                 try {
                     String result = ElaDataSource.getInstance(getApplicationContext()).urlGET(url);
                     JSONObject jsonObject = new JSONObject(result);

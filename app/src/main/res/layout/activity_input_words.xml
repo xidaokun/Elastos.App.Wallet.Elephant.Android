@@ -88,7 +88,7 @@
             android:orientation="horizontal"
             android:weightSum="3">
 
-            <com.breadwallet.presenter.customviews.BREdit
+            <com.breadwallet.presenter.customviews.PasteEditText
                 android:id="@+id/word1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"

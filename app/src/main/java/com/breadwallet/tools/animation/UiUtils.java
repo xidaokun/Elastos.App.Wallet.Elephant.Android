@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -42,8 +43,10 @@ import com.breadwallet.presenter.activities.MultiSignCreateActivity;
 import com.breadwallet.presenter.activities.MultiSignTxActivity;
 import com.breadwallet.presenter.activities.VoteActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
+import com.breadwallet.presenter.activities.WalletNameActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.presenter.activities.did.DidAuthorizeActivity;
+import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.sign.SignDetailActivity;
 import com.breadwallet.presenter.activities.sign.SignSuccessActivity;
@@ -60,16 +63,20 @@ import com.breadwallet.presenter.fragments.FragmentSignal;
 import com.breadwallet.presenter.fragments.FragmentSupport;
 import com.breadwallet.presenter.fragments.FragmentTxDetails;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
+import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.security.PostAuth;
+import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
+import com.elastos.jni.Constants;
 import com.google.gson.Gson;
-
-import org.wallet.library.Constants;
+import com.platform.sqlite.PlatformSqliteHelper;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -105,7 +112,7 @@ import static android.content.Context.ACTIVITY_SERVICE;
 
 public class UiUtils {
     private static final String TAG = UiUtils.class.getName();
-    public static final int CLICK_PERIOD_ALLOWANCE = 300;
+    public static final int CLICK_PERIOD_ALLOWANCE = 1000;
     private static long mLastClickTime = 0;
     private static boolean mSupportIsShowing;
 
@@ -596,4 +603,60 @@ public class UiUtils {
         context.startActivity(Intent.createChooser(textIntent, "Share"));
     }
 
+    public static void restartApp(Activity activity) {
+        // sleep 500ms for saving phrase list
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        PackageManager packageManager = activity.getPackageManager();
+        Intent intent = packageManager.getLaunchIntentForPackage(activity.getPackageName());
+        assert intent != null;
+        ComponentName componentName = intent.getComponent();
+        Intent mainIntent = Intent.makeRestartActivityTask(componentName);
+        activity.startActivity(mainIntent);
+        Runtime.getRuntime().exit(0);
+    }
+
+    public static void switchPhrase(Activity context, String phrase, boolean restart, boolean recover, String walletName) {
+        PostAuth.getInstance().setCachedPaperKey(phrase);
+
+        //Disallow BTC and BCH sending.
+        BRSharedPrefs.putAllowSpend(context, BaseBitcoinWalletManager.BITCASH_SYMBOL, false);
+        BRSharedPrefs.putAllowSpend(context, BaseBitcoinWalletManager.BITCOIN_SYMBOL, false);
+
+        PostAuth.getInstance().onRecoverWalletAuth(context, false, restart, recover, walletName);
+    }
+
+    public static void startWalletNameActivity(Activity context, int type, boolean reenter) {
+        Intent intent = new Intent(context, WalletNameActivity.class);
+        intent.putExtra(WalletNameActivity.WALLET_NAME_PAGE_TYPE, type);
+        intent.putExtra(WalletNameActivity.WALLET_NAME, getDefaultWalletName(context));
+        intent.putExtra(IntroActivity.INTRO_REENTER, reenter);
+        context.startActivity(intent);
+    }
+
+    public static String getDefaultWalletName(Activity context) {
+        int count = BRKeyStore.getPhraseCount(context) + 1;
+        return "Wallet #" + count;
+    }
+
+    public static String getSha256(byte[] data) {
+        byte[] digest = CryptoHelper.sha256(data);
+        if (digest == null) return "";
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : digest) hexString.append(String.format("%02x", b));
+
+        return hexString.toString();
+    }
+
+    public static void setStorageName(byte[] phrase) {
+        String hash = getSha256(phrase);
+        if (StringUtil.isNullOrEmpty(hash)) return;
+
+        BRSQLiteHelper.DATABASE_NAME = hash + ".db";
+        PlatformSqliteHelper.DATABASE_NAME = hash + "_platform.db";
+        BRSharedPrefs.PREFS_NAME = "profile_" + hash;
+    }
 }

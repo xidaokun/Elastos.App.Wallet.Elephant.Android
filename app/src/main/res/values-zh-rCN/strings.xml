@@ -305,7 +305,7 @@
     <!-- Menu button title -->
     <string name="MenuButton.lock">锁住钱包</string>
     <!-- (Click here to) manage (your list of) wallets -->
-    <string name="MenuButton.manageWallets">管理钱包</string>
+    <string name="MenuButton.manageWallets">管理币种</string>
     <!-- (press here to) scan (a) QR code -->
     <string name="MenuButton.scan">扫描QR</string>
     <!-- Menu button title -->
@@ -672,7 +672,7 @@
     <!-- Hide [this token from view] -->
     <string name="TokenList.hide">隐藏</string>
     <!-- [click here to] Manage [your] Wallets -->
-    <string name="TokenList.manageTitle">管理钱包</string>
+    <string name="TokenList.manageTitle">管理币种</string>
     <!-- Remove [this item from the list] -->
     <string name="TokenList.remove">移除</string>
     <!-- Show [this item on your home screen] -->
@@ -1152,4 +1152,16 @@
     <string name="history_pull_refresh_hint">点击或上拉加载更多</string>
 
     <string name="net_has_disconnect">网络已断开</string>
+
+    <string name="multi_wallet_switch">切换钱包</string>
+    <string name="multi_wallet_new">+ 新增钱包</string>
+    <string name="multi_wallet_name">钱包名称</string>
+    <string name="multi_wallet_name_hint">钱包名称</string>
+    <string name="multi_wallet_name_save">保存</string>
+    <string name="multi_wallet_name_next">下一步</string>
+    <string name="multi_wallet_name_required">请输入钱包名称</string>
+    <string name="multi_wallet_format_date">MM月d日, yyyy</string>
+    <string name="multi_wallet_phares_not_backup">还未备份助记词</string>
+    <string name="multi_wallet_already_current">已经是当前助记词</string>
+
 </resources>

@@ -86,7 +86,7 @@ public class PromptManager {
         assert (app != null);
         switch (item) {
             case FINGER_PRINT:
-                return !BRSharedPrefs.getUseFingerprint(app) && Utils.isFingerprintAvailable(app) && !BRSharedPrefs.getPromptDismissed(app, "fingerprint");
+                return !BRPublicSharedPrefs.getUseFingerprint(app) && Utils.isFingerprintAvailable(app) && !BRSharedPrefs.getPromptDismissed(app, "fingerprint");
             case PAPER_KEY:
                 return !BRSharedPrefs.getPhraseWroteDown(app);
             case UPGRADE_PIN:
