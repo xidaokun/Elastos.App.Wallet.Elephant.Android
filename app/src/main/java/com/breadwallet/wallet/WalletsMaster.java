@@ -198,6 +198,9 @@ public class WalletsMaster {
         List<String> list;
         String languageCode = Locale.getDefault().getLanguage();
         if (languageCode == null) languageCode = "en";
+        if(languageCode.equals("zh")){
+            languageCode = Bip39Reader.getChineseString();
+        }
         list = Bip39Reader.bip39List(ctx, languageCode);
         words = list.toArray(new String[list.size()]);
         final byte[] randomSeed = sr.generateSeed(16);//128bit

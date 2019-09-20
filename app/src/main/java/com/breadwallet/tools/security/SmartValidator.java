@@ -9,15 +9,12 @@ import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.Bip39Reader;
 import com.breadwallet.tools.util.StringUtil;
-import com.breadwallet.tools.util.TypesConverter;
-import com.breadwallet.wallet.WalletsMaster;
-
-import org.apache.shiro.util.StringUtils;
 
 import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+
 
 /**
  * BreadWallet
@@ -50,6 +47,9 @@ public class SmartValidator {
 
     public static boolean isPaperKeyValid(Context ctx, String paperKey) {
         String languageCode = Locale.getDefault().getLanguage();
+        if(languageCode.equals("zh")){
+            languageCode = Bip39Reader.getChineseString();
+        }
         if (!isValid(ctx, paperKey, languageCode)) {
             //try all langs
             for (String lang : Bip39Reader.LANGS) {
