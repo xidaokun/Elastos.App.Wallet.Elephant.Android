@@ -173,7 +173,7 @@ public final class SettingsUtil {
         }, false, 0));
 
         final WalletElaManager elaManager = WalletElaManager.getInstance(activity);
-        String elaSettingsLabel = String.format("%s %s", elaManager.getName(), activity.getString(R.string.Settings_title));
+        String elaSettingsLabel = String.format("%s %s", activity.getString(R.string.Settings_title), elaManager.getName());
         items.add(new BRSettingsItem(elaSettingsLabel, currentFiatCode, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -183,7 +183,7 @@ public final class SettingsUtil {
         }, false, 0));
 
         final WalletBitcoinManager walletBitcoinManager = WalletBitcoinManager.getInstance(activity);
-        String bitcoinSettingsLabel = String.format("%s %s", walletBitcoinManager.getName(), activity.getString(R.string.Settings_title));
+        String bitcoinSettingsLabel = String.format("%s %s", activity.getString(R.string.Settings_title), walletBitcoinManager.getName());
         items.add(new BRSettingsItem(bitcoinSettingsLabel, currentFiatCode, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -192,7 +192,7 @@ public final class SettingsUtil {
             }
         }, false, 0));
         final WalletBchManager walletBchManager = WalletBchManager.getInstance(activity);
-        String bchSettingsLabel = String.format("%s %s", walletBchManager.getName(), activity.getString(R.string.Settings_title));
+        String bchSettingsLabel = String.format("%s %s", activity.getString(R.string.Settings_title), walletBchManager.getName());
 
         items.add(new BRSettingsItem(bchSettingsLabel, currentFiatCode, new View.OnClickListener() {
             @Override

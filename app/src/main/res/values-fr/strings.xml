@@ -744,7 +744,7 @@
   <!-- e.g. I received money from an account. -->
   <string name="TransactionDetails.account">compte</string>
   <!-- Address received from header -->
-  <string name="TransactionDetails.addressFromHeader">Depuis</string>
+  <string name="TransactionDetails.addressFromHeader">De</string>
   <!-- Address sent to header -->
   <string name="TransactionDetails.addressToHeader">Vers</string>
   <!-- e.g. "(this was received) via (address #1)" via = by way of -->
@@ -754,7 +754,7 @@
   <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
   <string name="TransactionDetails.amountWhenReceived">%1$s au moment de l\'envoi, %2$s à présent</string>
   <!-- Block height label -->
-  <string name="TransactionDetails.blockHeightLabel">Confirmé en bloc</string>
+  <string name="TransactionDetails.blockHeightLabel">Confirmé au bloc</string>
   <!-- Memo section header -->
   <string name="TransactionDetails.commentsHeader">Mémo</string>
   <!-- Memo field placeholder -->
@@ -943,8 +943,5 @@
   <string name="MenuButton.authorizations">Autorisations</string>
   <string name="Upgrade.title">Mise à jour</string>
   <string name="Did.Description">DID est l'identité personnelle virtuelle dans le monde de la blockchain. Elle est stockée de manière décentralisée et sécurisée. Elle peut identifier n’importe quoi dans le monde réel, comme une personne, un actif, une chose.</string>
-  <string name="TransactionDetails.addressFromHeader">De</string>
-  <string name="TransactionDetails.blockHeightLabel">Confirmé au bloc</string>
-
 
 </resources>
