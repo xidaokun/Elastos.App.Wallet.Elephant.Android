@@ -133,7 +133,7 @@
   <!-- Click this button to sell an asset -->
   <string name="Button.sell">Vendre</string>
   <!-- send button -->
-  <string name="Button.send">envoyer</string>
+  <string name="Button.send">Envoyer</string>
   <!-- Settings button label -->
   <string name="Button.settings">Paramètres</string>
   <!-- Settings button label -->
@@ -708,7 +708,7 @@
   <!-- Availability status text -->
   <string name="Transaction.available">Disponible pour dépenser</string>
   <!-- Transaction complete label -->
-  <string name="Transaction.complete">Terminer</string>
+  <string name="Transaction.complete">Terminé</string>
   <!-- Transaction is confirming status text -->
   <string name="Transaction.confirming">En cours</string>
   <!-- eg. Ending balance: $50.00 -->
@@ -744,7 +744,7 @@
   <!-- e.g. I received money from an account. -->
   <string name="TransactionDetails.account">compte</string>
   <!-- Address received from header -->
-  <string name="TransactionDetails.addressFromHeader">Depuis</string>
+  <string name="TransactionDetails.addressFromHeader">De</string>
   <!-- Address sent to header -->
   <string name="TransactionDetails.addressToHeader">Vers</string>
   <!-- e.g. "(this was received) via (address #1)" via = by way of -->
@@ -754,7 +754,7 @@
   <!-- "(it was worth) $100 when sent, (and it is worth) $200 now" -->
   <string name="TransactionDetails.amountWhenReceived">%1$s au moment de l\'envoi, %2$s à présent</string>
   <!-- Block height label -->
-  <string name="TransactionDetails.blockHeightLabel">Confirmé en bloc</string>
+  <string name="TransactionDetails.blockHeightLabel">Confirmé au bloc</string>
   <!-- Memo section header -->
   <string name="TransactionDetails.commentsHeader">Mémo</string>
   <!-- Memo field placeholder -->
@@ -931,4 +931,17 @@
   <string name="WritePaperPhrase.previous">Précédent</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d de %2$d</string>
+
+  <string name="My.wallet.title">MMon portefeuille</string>
+  <string name="Token.list"> Liste des jetons</string>
+  <string name="Send.balance.hint">Montant</string>
+  <string name="My.explore.title">Explorer</string>
+  <string name="explore_pop_add_by_url">Ajouter par URL</string>
+  <string name="explore_pop_scan_to_add">Scanner pour ajouter</string>
+  <string name="explore_pop_edit">Editer</string>
+  <string name="Did.What.Did">Qu’est ce que DID ?</string>
+  <string name="MenuButton.authorizations">Autorisations</string>
+  <string name="Upgrade.title">Mise à jour</string>
+  <string name="Did.Description">DID est l'identité personnelle virtuelle dans le monde de la blockchain. Elle est stockée de manière décentralisée et sécurisée. Elle peut identifier n’importe quoi dans le monde réel, comme une personne, un actif, une chose.</string>
+
 </resources>

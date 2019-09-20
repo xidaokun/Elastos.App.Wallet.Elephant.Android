@@ -69,7 +69,6 @@ public class SmartValidator {
         List<String> list = Bip39Reader.bip39List(ctx, lang);
         String[] words = list.toArray(new String[list.size()]);
         if (words.length % Bip39Reader.WORD_LIST_SIZE != 0) {
-            Log.e(TAG, "isPaperKeyValid: " + "The list size should divide by " + Bip39Reader.WORD_LIST_SIZE);
             BRReportsManager.reportBug(new IllegalArgumentException("words.length is not dividable by " + Bip39Reader.WORD_LIST_SIZE), true);
         }
         return BRCoreMasterPubKey.validateRecoveryPhrase(words, paperKey);
@@ -101,7 +100,6 @@ public class SmartValidator {
 
         String generatedAddress = new BRCoreMasterPubKey(mpk, false).getPubKeyAsCoreKey().address();
         if (!addressFromPrefs.equalsIgnoreCase(generatedAddress) && addressFromPrefs.length() != 0 && generatedAddress.length() != 0) {
-            Log.e(TAG, "checkFirstAddress: WARNING, addresses don't match: Prefs:" + addressFromPrefs + ", gen:" + generatedAddress);
         }
         return addressFromPrefs.equals(generatedAddress);
     }
@@ -112,10 +110,8 @@ public class SmartValidator {
     }
 
     public static boolean isWordValid(Context ctx, String word) {
-        Log.e(TAG, "isWordValid: word:" + word + ":" + word.length());
         if (list == null) list = Bip39Reader.bip39List(ctx, null);
         String cleanWord = Bip39Reader.cleanWord(word);
-        Log.e(TAG, "isWordValid: cleanWord:" + cleanWord + ":" + cleanWord.length());
         return list.contains(cleanWord);
 
     }
