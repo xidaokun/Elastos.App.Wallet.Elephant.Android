@@ -539,9 +539,9 @@ public class UiUtils {
     private static void payReturn(Context context, String txid) {
         if (!StringUtil.isNullOrEmpty(WalletActivity.mReturnUrl)) { //call return url
             if (WalletActivity.mReturnUrl.contains("?")) {
-                UiUtils.startWebviewActivity(context, WalletActivity.mReturnUrl + "&TXID=" + txid + "&OrderID" + WalletActivity.mOrderId);
+                UiUtils.startWebviewActivity(context, WalletActivity.mReturnUrl + "&TXID=" + txid + "&OrderID=" + WalletActivity.mOrderId);
             } else {
-                UiUtils.startWebviewActivity(context, WalletActivity.mReturnUrl + "?TXID=" + txid + "&OrderID" + WalletActivity.mOrderId);
+                UiUtils.startWebviewActivity(context, WalletActivity.mReturnUrl + "?TXID=" + txid + "&OrderID=" + WalletActivity.mOrderId);
             }
         }
     }
