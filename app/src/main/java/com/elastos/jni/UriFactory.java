@@ -2,6 +2,7 @@ package com.elastos.jni;
 
 import android.net.Uri;
 
+import com.breadwallet.tools.util.StringUtil;
 import com.elastos.jni.utils.StringUtils;
 
 import java.util.HashMap;
@@ -74,8 +75,8 @@ public class UriFactory {
 
     public String getCandidatePublicKeys() {
         String candidate = getValue("CandidatePublicKeys".toLowerCase());
-        if(StringUtils.isNullOrEmpty(candidate.trim())) return null;
-        return candidate;
+        if(StringUtils.isNullOrEmpty(candidate)) return null;
+        return candidate.trim();
     }
 
     public String getOrderID() {return getValue("OrderID".toLowerCase());}
@@ -252,6 +253,10 @@ public class UriFactory {
     public void parse(String uri){
         result.clear();
         String[] schemeArr = null;
+        if(StringUtil.isNullOrEmpty(uri)) return;
+        if(uri.toUpperCase().contains("ELAPHANT%3A%2F%2F") || uri.toUpperCase().contains("ELASTOS%3A%2F%2F")) {
+           uri = Uri.decode(uri);
+        }
         if(uri.contains("elastos://")){
             schemeArr = uri.split("elastos://");
             result.put(SCHEME_KEY, "elastos");
