@@ -34,6 +34,7 @@ import com.breadwallet.wallet.wallets.ela.response.create.Payload;
 import com.breadwallet.wallet.wallets.ela.response.history.History;
 import com.breadwallet.wallet.wallets.ela.response.history.TxHistory;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.platform.APIClient;
 
 import org.elastos.sdk.keypair.ElastosKeypairSign;
@@ -583,8 +584,6 @@ public class ElaDataSource implements BRDataSourceInterface {
     List<BRElaTransaction> multiElaTransaction = new ArrayList<>();
     public synchronized List<BRElaTransaction> createElaTx(final String inputAddress, final String outputsAddress, final long amount, String memo, List<String> payload){
         if(StringUtil.isNullOrEmpty(inputAddress) || StringUtil.isNullOrEmpty(outputsAddress)) return null;
-        multiHistoryTransactionEntity.clear();
-        multiElaTransaction.clear();
 
         if(mActivity!=null) toast(mActivity.getResources().getString(R.string.SendTransacton_sending));
         try {
@@ -607,6 +606,8 @@ public class ElaDataSource implements BRDataSourceInterface {
             String tranactions = jsonObject.getString("result");
             ElaTransactionRes res = new Gson().fromJson(tranactions, ElaTransactionRes.class);
 
+            multiHistoryTransactionEntity.clear();
+            multiElaTransaction.clear();
             for(int i=0; i< res.Transactions.size(); i++) {
                 if(!StringUtil.isNullOrEmpty(memo)) res.Transactions.get(i).Memo = new Meno("text", memo).toString();
                 List<ElaUTXOInputs> inputs = res.Transactions.get(i).UTXOInputs;
@@ -738,7 +739,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 
             String json = "{\"data\":" + new Gson().toJson(rawTransactions) + "}";
 
-            String tmp = urlPost(url, json);
+            String tmp = urlPost(url, json) /*"{\"result\":[\"a0ccbef0e7bfb00b452efd1e3c329ea16de1ed4523216c197ad27b3cb85505e7\",\"e1a228df7b1c6c747d83827835e1551435e7fcaa12115f1d6cdda5bf94121b02\",\"a0ccbef0e7bfb00b452efd1e3c329ea16de1ed4523216c197ad27b3cb85505e8\",\"a0ccbef0e7bfb00b452efd1e3c329ea16de1ed4523216c197ad27b3cb85505a9\",\"a0ccbef0e7bfb00b452efd1e3c329ea16de1ed4523216c197ad27b3cb85577e7\"],\"status\":200}"*/;
             JSONObject jsonObject = new JSONObject(tmp);
             result = jsonObject.getString("result");
             if(result==null || result.contains("ERROR") || result.contains(" ")) {
@@ -746,6 +747,12 @@ public class ElaDataSource implements BRDataSourceInterface {
                 if(mActivity!=null) toast(/*mActivity.getString(R.string.double_spend)*/"send transaction error");
 //                toast(result);
                 return null;
+            }
+            List<String> historyTransactions = new Gson().fromJson(result, new TypeToken<List<String>>() {
+            }.getType());
+            if(multiHistoryTransactionEntity.size() != historyTransactions.size()) return null;
+            for(int i=0; i<historyTransactions.size(); i++) {
+                multiHistoryTransactionEntity.get(i).txReversed = historyTransactions.get(i);
             }
             cacheMultTx(multiHistoryTransactionEntity);
             Log.d("posvote", "txId:"+result);
