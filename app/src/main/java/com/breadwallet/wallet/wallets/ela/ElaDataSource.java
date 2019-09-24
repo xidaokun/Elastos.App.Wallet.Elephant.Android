@@ -588,7 +588,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 
         if(mActivity!=null) toast(mActivity.getResources().getString(R.string.SendTransacton_sending));
         try {
-            String url = getUrl("api/1/createVoteTx");
+            String url = getUrl("api/v1/createTx");
             Log.i(TAG, "create tx url:"+url);
             CreateTx tx = new CreateTx();
             tx.inputs.add(inputAddress);
@@ -728,15 +728,16 @@ public class ElaDataSource implements BRDataSourceInterface {
 
         String result = null;
         try {
-            String url = getUrl("api/1/sendRawTx");
+            String url = getUrl("api/v1/sendRawTx");
             Log.i(TAG, "send raw url:"+url);
             List<String> rawTransactions = new ArrayList<>();
             for(int i=0; i<transactions.size(); i++) {
-                String rawTransaction = ElastosKeypairSign.generateRawTransaction(rawTransactions.get(i), BRConstants.ELA_ASSET_ID);
+                String rawTransaction = ElastosKeypairSign.generateRawTransaction(transactions.get(i).getTx(), BRConstants.ELA_ASSET_ID);
                 rawTransactions.add(rawTransaction);
             }
 
-            String json = new Gson().toJson(rawTransactions);
+            String json = "{\"data\":" + new Gson().toJson(rawTransactions) + "}";
+
             String tmp = urlPost(url, json);
             JSONObject jsonObject = new JSONObject(tmp);
             result = jsonObject.getString("result");

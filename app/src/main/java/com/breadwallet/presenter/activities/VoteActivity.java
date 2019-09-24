@@ -187,11 +187,9 @@ public class VoteActivity extends BaseSettingsActivity {
                         Log.d("posvote", "mCandidatesStr:"+mCandidatesStr);
                         String address = WalletElaManager.getInstance(VoteActivity.this).getAddress();
                         long amout = (null==mCandidates || mCandidates.size()<=0)? 100: 0L;
-                        BRElaTransaction transaction = ElaDataSource.getInstance(VoteActivity.this).createElaTx(address, address, amout, "vote", mCandidates);
-                        if(null == transaction) return;
-                        String txId = transaction.getTx();
-                        if(StringUtil.isNullOrEmpty(txId)) return;
-                        String mRwTxid = ElaDataSource.getInstance(VoteActivity.this).sendElaRawTx(txId);
+                        List<BRElaTransaction> transactions = ElaDataSource.getInstance(VoteActivity.this).createElaTx(address, address, amout, "vote", mCandidates);
+                        if(null == transactions) return;
+                        String mRwTxid = ElaDataSource.getInstance(VoteActivity.this).sendElaRawTx(transactions);
                         callBackUrl(mRwTxid);
                         callReturnUrl(mRwTxid);
                         if(null==mCandidates || mCandidates.size()<=0) {
