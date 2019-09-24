@@ -5,6 +5,7 @@ import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.breadwallet.wallet.wallets.ela.BRElaTransaction;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * BreadWallet
@@ -34,14 +35,14 @@ public class CryptoTransaction {
 
     private BRCoreTransaction mCoreTx;
     private BREthereumTransaction mEtherTx;
-    private BRElaTransaction mElaTx;
+    private List<BRElaTransaction> mElaTx;
 
     public CryptoTransaction(Object transaction) {
         if (transaction instanceof BRCoreTransaction) mCoreTx = (BRCoreTransaction) transaction;
         else if (transaction instanceof BREthereumTransaction)
             mEtherTx = (BREthereumTransaction) transaction;
         else if(transaction instanceof BRElaTransaction)
-            mElaTx = (BRElaTransaction) transaction;
+            mElaTx = (List<BRElaTransaction>) transaction;
 
     }
 
@@ -62,7 +63,7 @@ public class CryptoTransaction {
         else return null;
     }
 
-    public BRElaTransaction getElaTx(){
+    public List<BRElaTransaction> getElaTx(){
         return mElaTx;
     }
 
