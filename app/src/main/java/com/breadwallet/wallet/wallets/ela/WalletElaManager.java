@@ -290,7 +290,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         return new CryptoTransaction[0];
     }
 
-    private static final BigDecimal ELA_FEE = new BigDecimal(10).divide(ONE_ELA_TO_SALA, 8, BRConstants.ROUNDING_MODE);
+    private static final BigDecimal ELA_FEE = new BigDecimal(4860).divide(ONE_ELA_TO_SALA, 8, BRConstants.ROUNDING_MODE);
 
     @Override
     public BigDecimal getTxFee(CryptoTransaction tx) {

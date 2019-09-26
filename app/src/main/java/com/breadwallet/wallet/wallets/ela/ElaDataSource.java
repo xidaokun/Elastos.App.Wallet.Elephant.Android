@@ -614,20 +614,13 @@ public class ElaDataSource implements BRDataSourceInterface {
             for(int i=0; i< res.Transactions.size(); i++) {
                 if(!checkSignature(res.Transactions.get(i))) return null;
                 if(!StringUtil.isNullOrEmpty(memo)) res.Transactions.get(i).Memo = new Meno("text", memo).toString();
+
                 List<ElaUTXOInputs> inputs = res.Transactions.get(i).UTXOInputs;
                 List<ElaOutputs> outputs = res.Transactions.get(i).Outputs;
 
                 for(int j=0; j<inputs.size(); j++){
                     ElaUTXOInputs utxoInputs = inputs.get(j);
                     utxoInputs.privateKey  = WalletElaManager.getInstance(mContext).getPrivateKey();
-                }
-
-                for(int h=0; h<outputs.size(); h++) {
-                    ElaOutputs output = outputs.get(h);
-                    String address = output.address;
-                    if(!StringUtil.isNullOrEmpty(address) && address.equals(outputsAddress)){
-                        checkAmount += output.amount;
-                    }
                 }
 
                 if(null!=payload && payload.size()>0){
@@ -646,7 +639,6 @@ public class ElaDataSource implements BRDataSourceInterface {
                 brElaTransaction.setTxId(inputs.get(0).txid);
 
                 HistoryTransactionEntity historyTransactionEntity = new HistoryTransactionEntity();
-                historyTransactionEntity.txReversed = inputs.get(0).txid;
                 historyTransactionEntity.fromAddress = inputAddress;
                 historyTransactionEntity.toAddress = outputsAddress;
                 historyTransactionEntity.isReceived = false;
@@ -654,12 +646,20 @@ public class ElaDataSource implements BRDataSourceInterface {
                 historyTransactionEntity.blockHeight = 0;
                 historyTransactionEntity.hash = new byte[1];
                 historyTransactionEntity.txSize = 0;
-                historyTransactionEntity.amount = new BigDecimal(amount).longValue();
                 historyTransactionEntity.balanceAfterTx = 0;
                 historyTransactionEntity.timeStamp = System.currentTimeMillis()/1000;
                 historyTransactionEntity.isValid = true;
                 historyTransactionEntity.isVote = (payload!=null && payload.size()>0);
                 historyTransactionEntity.memo = memo;
+
+                for(int h=0; h<outputs.size(); h++) {
+                    ElaOutputs output = outputs.get(h);
+                    String address = output.address;
+                    if(!StringUtil.isNullOrEmpty(address) && address.equals(outputsAddress)){
+                        checkAmount += output.amount;
+                        historyTransactionEntity.amount = new BigDecimal(output.amount).longValue();
+                    }
+                }
 
                 multiElaTransaction.add(brElaTransaction);
                 multiHistoryTransactionEntity.add(historyTransactionEntity);
