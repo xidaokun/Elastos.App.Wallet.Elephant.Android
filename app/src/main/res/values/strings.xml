@@ -301,7 +301,7 @@
     <!-- Manage wallet modal title -->
     <string name="ManageWallet.title">Manage Wallet</string>
     <!-- "Add [a] Wallet [to the home screen]" -->
-    <string name="MenuButton.addWallet">Add Wallet</string>
+    <string name="MenuButton.addWallet">Add Token</string>
     <!-- Menu button title -->
     <string name="MenuButton.lock">Lock Wallet</string>
     <!-- Did Authorizations -->
