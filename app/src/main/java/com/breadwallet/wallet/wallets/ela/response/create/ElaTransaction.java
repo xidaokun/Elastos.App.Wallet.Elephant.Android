@@ -26,10 +26,11 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class ElaTransactions {
+public class ElaTransaction {
     public List<ElaOutputs> Outputs;
     public long Fee;
     public String Memo;
+    public ElaPostmark Postmark;
     public List<ElaUTXOInputs> UTXOInputs;
     public List<ElaAttribute> Attributes;
 }

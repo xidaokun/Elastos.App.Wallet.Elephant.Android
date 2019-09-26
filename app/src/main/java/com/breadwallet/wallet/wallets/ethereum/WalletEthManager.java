@@ -1093,7 +1093,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
                                     }
                                 }
 
-                                Log.d(TAG, "Rpc ElaTransactions array length -> " + transactionsArray.length());
+                                Log.d(TAG, "Rpc ElaTransaction array length -> " + transactionsArray.length());
                             } catch (JSONException e) {
                                 Log.e(TAG, "onRpcRequestCompleted: ", e);
 
