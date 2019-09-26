@@ -594,11 +594,11 @@ public class ElaDataSource implements BRDataSourceInterface {
             CreateTx tx = new CreateTx();
             tx.inputs.add(inputAddress);
 
-            Outputs outputs = new Outputs();
-            outputs.addr = outputsAddress;
-            outputs.amt = amount;
+            Outputs reqOutputs = new Outputs();
+            reqOutputs.addr = outputsAddress;
+            reqOutputs.amt = amount;
 
-            tx.outputs.add(outputs);
+            tx.outputs.add(reqOutputs);
 
             String json = new Gson().toJson(tx);
             Log.d("posvote", "request json:"+json);
@@ -610,13 +610,24 @@ public class ElaDataSource implements BRDataSourceInterface {
 
             multiHistoryTransactionEntity.clear();
             multiElaTransaction.clear();
+            long checkAmount = 0;
             for(int i=0; i< res.Transactions.size(); i++) {
                 if(!checkSignature(res.Transactions.get(i))) return null;
                 if(!StringUtil.isNullOrEmpty(memo)) res.Transactions.get(i).Memo = new Meno("text", memo).toString();
                 List<ElaUTXOInputs> inputs = res.Transactions.get(i).UTXOInputs;
+                List<ElaOutputs> outputs = res.Transactions.get(i).Outputs;
+
                 for(int j=0; j<inputs.size(); j++){
                     ElaUTXOInputs utxoInputs = inputs.get(j);
                     utxoInputs.privateKey  = WalletElaManager.getInstance(mContext).getPrivateKey();
+                }
+
+                for(int h=0; h<outputs.size(); h++) {
+                    ElaOutputs output = outputs.get(h);
+                    String address = output.address;
+                    if(!StringUtil.isNullOrEmpty(address) && address.equals(outputsAddress)){
+                        checkAmount += output.amount;
+                    }
                 }
 
                 if(null!=payload && payload.size()>0){
@@ -653,6 +664,7 @@ public class ElaDataSource implements BRDataSourceInterface {
                 multiElaTransaction.add(brElaTransaction);
                 multiHistoryTransactionEntity.add(historyTransactionEntity);
             }
+            if(checkAmount != amount) return null;
         } catch (Exception e) {
             if(mActivity!=null) toast(mActivity.getResources().getString(R.string.SendTransacton_failed));
             e.printStackTrace();
@@ -707,11 +719,9 @@ public class ElaDataSource implements BRDataSourceInterface {
 
             String json = "{\"data\":" + new Gson().toJson(rawTransactions) + "}";
 
-            Log.d("utxoSplit", "json:"+json);
             String tmp = urlPost(url, json) /*"{\"result\":[\"a0ccbef0e7bfb00b452efd1e3c329ea16de1ed4523216c197ad27b3cb85505e7\",\"e1a228df7b1c6c747d83827835e1551435e7fcaa12115f1d6cdda5bf94121b02\",\"a0ccbef0e7bfb00b452efd1e3c329ea16de1ed4523216c197ad27b3cb85505e8\",\"a0ccbef0e7bfb00b452efd1e3c329ea16de1ed4523216c197ad27b3cb85505a9\",\"a0ccbef0e7bfb00b452efd1e3c329ea16de1ed4523216c197ad27b3cb85577e7\"],\"status\":200}"*/;
             JSONObject jsonObject = new JSONObject(tmp);
             result = jsonObject.getString("result");
-            Log.d("utxoSplit", "result:"+result);
             if(result==null || result.contains("ERROR") || result.contains(" ")) {
                 Thread.sleep(3000);
                 if(mActivity!=null) toast(/*mActivity.getString(R.string.double_spend)*/"send transaction error");
@@ -725,7 +735,6 @@ public class ElaDataSource implements BRDataSourceInterface {
                 multiHistoryTransactionEntity.get(i).txReversed = historyTransactions.get(i);
             }
             cacheMultTx(multiHistoryTransactionEntity);
-            Log.d("posvote", "txId:"+result);
         } catch (Exception e) {
             if(mActivity!=null) toast(mActivity.getResources().getString(R.string.SendTransacton_failed));
             e.printStackTrace();
