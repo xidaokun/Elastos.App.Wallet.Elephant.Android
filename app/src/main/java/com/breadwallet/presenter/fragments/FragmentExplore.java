@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Html;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -670,8 +671,13 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     }
 
     public void downloadCapsule(final String url) {
-        Log.d("capsule_download", "url:"+url);
         if (StringUtil.isNullOrEmpty(url)) {
+            Toast.makeText(getContext(), getString(R.string.mini_app_invalid_url), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        boolean isValid = Patterns.WEB_URL.matcher(url).matches();
+        if(!isValid) {
             Toast.makeText(getContext(), getString(R.string.mini_app_invalid_url), Toast.LENGTH_SHORT).show();
             return;
         }
