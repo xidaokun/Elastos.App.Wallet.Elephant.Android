@@ -182,7 +182,7 @@ public class SignaureActivity extends BRActivity {
         callbackData.DID = myDid;
         callbackData.PublicKey = myPK;
         callbackData.RequesterDID = mSignInfo.getDid();
-        callbackData.RequestedConent = mSignInfo.getContent();
+        callbackData.RequestedContent = mSignInfo.getContent();
         callbackData.Timestamp = mSignInfo.getTimestamp();
         callbackData.UseStatement = mSignInfo.getPurpose();
 

@@ -16,6 +16,6 @@ public class CallbackData {
     public ChineseIDCard ChineseIDCard;
     public String RandomNumber;
     public String RequesterDID;
-    public String RequestedConent;
+    public String RequestedContent;
     public String UseStatement;
 }
