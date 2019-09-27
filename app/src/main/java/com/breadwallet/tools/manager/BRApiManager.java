@@ -224,7 +224,7 @@ public class BRApiManager {
         //get all erc20 rates.
 //        String url = "https://api.coinmarketcap.com/v1/ticker/?limit=1000&convert=BTC";
 //        String url = "https://api-wallet-ela.elastos.org/api/1/cmc?limit=1000";
-        String url = "https://node1.elaphant.app/api/1/cmc?limit=1000";
+        String url = "https://api-price.elaphant.app/api/1/cmc?limit=1000";
         String result = urlGET(context, url);
         Log.i(TAG, "updateErc20Rates result:"+result);
         try {
