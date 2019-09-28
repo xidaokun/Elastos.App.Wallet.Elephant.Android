@@ -99,7 +99,7 @@ public class MultiSignTxActivity extends BRActivity {
         String appName = null;
         try {
             appName = URLDecoder.decode(uri.getQueryParameter("AppName"), "utf-8");
-        } catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException | UnsupportedOperationException | NullPointerException e) {
             e.printStackTrace();
             return false;
         }
