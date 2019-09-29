@@ -369,7 +369,7 @@ public class APIClient {
         } catch (IOException e) {
             Log.e(TAG, "sendRequest: ", e);
             return new Response.Builder().code(599).request(request)
-                    .body(ResponseBody.create(null, e.getMessage())).protocol(Protocol.HTTP_1_1).build();
+                    .body(ResponseBody.create(null, "error")).protocol(Protocol.HTTP_1_1).build();
         }
         byte[] bytesBody = new byte[0];
         try {
