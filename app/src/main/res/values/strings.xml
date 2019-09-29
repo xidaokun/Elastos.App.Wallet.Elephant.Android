@@ -1072,7 +1072,7 @@
     
     <string name="sign_signature_request_title">Signature Request</string>
     <string name="sign_request_information">Request information:</string>
-    <string name="sign_developer_did">Develop DID:</string>
+    <string name="sign_developer_did">Developer DID</string>
     <string name="sign_timestamp">Timestamp</string>
     <string name="sign_purpose">Purpose</string>
     <string name="sign_content">Content</string>

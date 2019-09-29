@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.fragments;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -138,12 +139,12 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                     mAdapter.notifyDataSetChanged();
                     break;
                 case SHOW_LOADING:
-                    if (!mLoadingDialog.isShowing()) {
+                    if (mActivity!=null && !mActivity.isFinishing() && !mLoadingDialog.isShowing()) {
                         mLoadingDialog.show();
                     }
                     break;
                 case DISMISS_LOADING:
-                    if (mLoadingDialog.isShowing()) {
+                    if (mActivity!=null && !mActivity.isFinishing() && mLoadingDialog.isShowing()) {
                         mLoadingDialog.dismiss();
                     }
                     break;
@@ -171,6 +172,12 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         }
     };
 
+    private Activity mActivity;
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.mActivity = activity;
+    }
 
     @Nullable
     @Override

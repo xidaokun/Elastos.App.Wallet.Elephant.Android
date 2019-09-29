@@ -183,7 +183,7 @@ public class SignaureActivity extends BRActivity {
         callbackData.PublicKey = myPK;
         callbackData.RequesterDID = mSignInfo.getDid();
         callbackData.RequestedContent = mSignInfo.getContent();
-        callbackData.Timestamp = mSignInfo.getTimestamp();
+        callbackData.Timestamp = mSignInfo.getTimestamp() / 1000;
         callbackData.UseStatement = mSignInfo.getPurpose();
 
         final String Data = new Gson().toJson(callbackData);
