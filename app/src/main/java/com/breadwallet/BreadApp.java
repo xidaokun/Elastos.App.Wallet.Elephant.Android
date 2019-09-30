@@ -6,6 +6,8 @@ import android.app.Application;
 import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
 import android.net.ConnectivityManager;
@@ -16,6 +18,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.breadwallet.cache.UpgradeHandler;
 import com.breadwallet.presenter.activities.util.ApplicationLifecycleObserver;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.crypto.Base32;
@@ -34,6 +37,7 @@ import com.tencent.bugly.beta.UpgradeInfo;
 import com.tencent.bugly.beta.ui.UILifecycleListener;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -190,6 +194,26 @@ public class BreadApp extends Application {
             }
         };
         Bugly.init(getApplicationContext(), BuildConfig.UPGRADE_TESTNET? "8b437eefc0":"8a9b0190e0", false);
+        upgradeAction();
+    }
+
+    private void upgradeAction(){
+        PackageInfo packageInfo = null;
+        try {
+            packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        int newVersion = packageInfo != null ? packageInfo.versionCode : 0;
+        int oldVerson = BRSharedPrefs.getVersionCode(this, "version");
+        if(oldVerson != newVersion){
+            UpgradeHandler.getInstance(this).deleteAllKVs();
+//            BRSharedPrefs.putCachedBalance(this, "ELA",  new BigDecimal(0));
+//            UpgradeHandler.getInstance(this).deleteAllTransactions();
+//            UpgradeHandler.getInstance(this).deleteAllKVs();
+//            BRSharedPrefs.putVersionCode(this, "version", newVersion);
+        }
+
     }
 
     public static void generateWalletIfIfNeeded(Context app, String address) {

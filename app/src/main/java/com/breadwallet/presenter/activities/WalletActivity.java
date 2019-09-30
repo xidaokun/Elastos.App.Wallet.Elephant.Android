@@ -438,7 +438,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                         String appName = factory.getAppName();
                         String appId = factory.getAppID();
                         String PK = factory.getPublicKey();
-                        String des = "OrderID="+factory.getOrderID();
+                        String des = StringUtil.isNullOrEmpty(factory.getOrderID())?  "" : "OrderID="+factory.getOrderID();
                         mCallbackUrl = factory.getCallbackUrl();
                         mReturnUrl = factory.getReturnUrl();
                         mOrderId = factory.getOrderID();

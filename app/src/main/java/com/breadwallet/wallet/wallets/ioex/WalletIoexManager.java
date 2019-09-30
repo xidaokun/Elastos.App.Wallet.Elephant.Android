@@ -361,7 +361,7 @@ public class WalletIoexManager extends BRCoreWalletManager implements BaseWallet
 
     @Override
     public boolean addressIsUsed(String address) {
-        return true;
+        return false;
     }
 
     @Override

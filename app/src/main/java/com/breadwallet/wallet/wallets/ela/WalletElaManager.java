@@ -402,7 +402,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public boolean addressIsUsed(String address) {
-        return true;
+        return false;
     }
 
     @Override
