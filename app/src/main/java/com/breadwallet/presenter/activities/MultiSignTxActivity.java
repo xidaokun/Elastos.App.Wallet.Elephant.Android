@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
@@ -30,7 +29,7 @@ import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaAttribute;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaTransactionRes;
-import com.breadwallet.wallet.wallets.ela.response.create.ElaTransactions;
+import com.breadwallet.wallet.wallets.ela.response.create.ElaTransaction;
 import com.elastos.jni.AuthorizeManager;
 import com.elastos.jni.Utility;
 import com.elastos.jni.utils.StringUtils;
@@ -162,7 +161,7 @@ public class MultiSignTxActivity extends BRActivity {
 
     private void initView() {
         ElaTransactionRes res = new Gson().fromJson(mTransaction, ElaTransactionRes.class);
-        ElaTransactions tx = res.Transactions.get(0);
+        ElaTransaction tx = res.Transactions.get(0);
 
         String pref = BRSharedPrefs.getMultiSignInfo(this, tx.UTXOInputs.get(0).address);
         if(StringUtil.isNullOrEmpty(pref)) {
