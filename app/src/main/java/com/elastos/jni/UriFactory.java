@@ -2,11 +2,12 @@ package com.elastos.jni;
 
 import android.net.Uri;
 
-import com.breadwallet.tools.util.StringUtil;
 import com.elastos.jni.utils.StringUtils;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 public class UriFactory {
 
@@ -98,133 +99,29 @@ public class UriFactory {
         return tmp;
     }
 
-    private String RequestType;
-    public UriFactory setRequestType(String type){
-        this.RequestType = type;
-        return this;
-    }
-
-    private String AppID;
-    public UriFactory setAppID(String appID){
-        this.AppID = appID;
-        return this;
-    }
-
-    private String SerialNumber;
-    public UriFactory setSerialNumber(String serialNumber){
-        this.SerialNumber = serialNumber;
-        return this;
-    }
-
-    private String AppName;
-    public UriFactory setAppName(String appName){
-        this.AppName = appName;
-        return this;
-    }
-
-    private String DID;
-    public UriFactory setDID(String DID){
-        this.DID = DID;
-        return this;
-    }
-
-    private String PublicKey;
-    public UriFactory setPublicKey(String publicKey){
-        this.PublicKey = publicKey;
-        return this;
-    }
-
-    private String Signature;
-    public UriFactory setSignature(String signature){
-        this.Signature = signature;
-        return this;
-    }
-
-    private String Description;
-    public UriFactory setDescription(String description){
-        this.Description = description;
-        return this;
-    }
-
-    private String RandomNumber;
-    public UriFactory setRandomNumber(String RandomNumber){
-        this.RandomNumber = RandomNumber;
-        return this;
-    }
-
-    private String CallbackUrl;
-    public UriFactory setCallbackUrl(String callbackUrl){
-        this.CallbackUrl = callbackUrl;
-        return this;
-    }
-
-    private String OrderID;
-    public UriFactory setOrderID(String orderID){
-        this.OrderID = orderID;
-        return this;
-    }
-
-    private String ReceivingAddress;
-    public UriFactory setReceivingAddress(String receivingAddress){
-        this.ReceivingAddress = receivingAddress;
-        return this;
-    }
-
-    private String Target;
-    public UriFactory setTarget(String target){
-        this.Target = target;
-        return this;
-    }
-
-    public String buildLoginUri(){
-        result.clear();
-//        result.put(RequestType.getClass().getSimpleName(), RequestType);
-        result.put("AppID".toLowerCase(), AppID);
-        result.put("SerialNumber".toLowerCase(), SerialNumber);
-        result.put("AppName".toLowerCase(), AppName);
-        result.put("DID".toLowerCase(), DID);
-        result.put("PublicKey".toLowerCase(), PublicKey);
-        result.put("Signature".toLowerCase(), Signature);
-        result.put("Description".toLowerCase(), Description);
-        result.put("RandomNumber".toLowerCase(), RandomNumber);
-        result.put("CallbackUrl".toLowerCase(), CallbackUrl);
-
-        return create(RequestType, result);
-    }
-
-    private String Amount;
-    public UriFactory setAmount(String amount){
-        this.Amount = amount;
-        return this;
-    }
-
-    private String CoinName;
-    public UriFactory setCoinName(String CoinName){
-        this.CoinName = CoinName;
-        return this;
-    }
-
-    public String buildPayUri(){
-        result.clear();
-        result.put("AppID".toLowerCase(), AppID);
-        result.put("SerialNumber".toLowerCase(), SerialNumber);
-        result.put("AppName".toLowerCase(), AppName);
-        result.put("DID".toLowerCase(), DID);
-        result.put("PublicKey".toLowerCase(), PublicKey);
-        result.put("Signature".toLowerCase(), Signature);
-        result.put("Description".toLowerCase(), Description);
-        result.put("CallbackUrl".toLowerCase(), CallbackUrl);
-        result.put("ReceivingAddress".toLowerCase(), ReceivingAddress);
-        result.put("Amount".toLowerCase(), Amount);
-        result.put("CoinName".toLowerCase(), CoinName);
-
-        return create(RequestType, result);
-    }
-
     private Map<String, String> result = new HashMap();
-//    public void parse(String uri){
-//        result.clear();
+
+    public void parse(String url){
+        result.clear();
+
+        Uri uri = Uri.parse(url);
+        Set names = uri.getQueryParameterNames();
+        Iterator<String> it = names.iterator();
+
+        String scheme = uri.getScheme();
+        result.put(SCHEME_KEY, scheme);
+
+        while (it.hasNext()) {
+            String key = it.next();
+            String value = uri.getQueryParameter(key);
+            result.put(key.toLowerCase(), value);
+        }
+
 //        String[] schemeArr = null;
+//        if(StringUtil.isNullOrEmpty(uri)) return;
+//        if(uri.toUpperCase().contains("ELAPHANT%3A%2F%2F") || uri.toUpperCase().contains("ELASTOS%3A%2F%2F")) {
+//           uri = Uri.decode(uri);
+//        }
 //        if(uri.contains("elastos://")){
 //            schemeArr = uri.split("elastos://");
 //            result.put(SCHEME_KEY, "elastos");
@@ -248,42 +145,6 @@ public class UriFactory {
 //
 //            }
 //        }
-//    }
-
-    public void parse(String uri){
-        result.clear();
-        String[] schemeArr = null;
-        if(StringUtil.isNullOrEmpty(uri)) return;
-        if(uri.toUpperCase().contains("ELAPHANT%3A%2F%2F") || uri.toUpperCase().contains("ELASTOS%3A%2F%2F")) {
-           uri = Uri.decode(uri);
-        }
-        if(uri.contains("elastos://")){
-            schemeArr = uri.split("elastos://");
-            result.put(SCHEME_KEY, "elastos");
-        } else if(uri.contains("elaphant")){
-            schemeArr = uri.split("elaphant://");
-            result.put(SCHEME_KEY, "elaphant");
-        }
-        if(schemeArr!=null && schemeArr.length>1) {
-            String[] typeArr = schemeArr[1].split("\\?");
-            if(typeArr!=null && typeArr.length>1){
-                result.put(TYPE_KEY, typeArr[0]);
-
-                String[] andArr = typeArr[1].split("&");
-                if(andArr==null || andArr.length<=0) return;
-                for(String and : andArr){
-                    String[] params = and.split("=");
-                    if(params!=null && params.length>1) {
-                        result.put(params[0].toLowerCase(), params[1]);
-                    }
-                }
-
-            }
-        }
-    }
-
-    public void parseUrl(String uri){
-        
     }
 
 
@@ -301,3 +162,4 @@ public class UriFactory {
     }
 
 }
+
