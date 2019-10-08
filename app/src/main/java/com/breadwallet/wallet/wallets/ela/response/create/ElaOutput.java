@@ -25,7 +25,7 @@ package com.breadwallet.wallet.wallets.ela.response.create;
  * THE SOFTWARE.
  */
 
-public class ElaOutputs {
+public class ElaOutput {
     public long amount;
     public String address;
     public Payload payload;

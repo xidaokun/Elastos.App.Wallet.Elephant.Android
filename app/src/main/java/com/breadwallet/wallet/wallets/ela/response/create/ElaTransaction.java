@@ -27,7 +27,7 @@ import java.util.List;
  * THE SOFTWARE.
  */
 public class ElaTransaction {
-    public List<ElaOutputs> Outputs;
+    public List<ElaOutput> Outputs;
     public long Fee;
     public String Memo;
     public ElaPostmark Postmark;

@@ -26,7 +26,8 @@ import com.breadwallet.wallet.wallets.ela.data.TxProducerEntity;
 import com.breadwallet.wallet.wallets.ela.data.TxProducersEntity;
 import com.breadwallet.wallet.wallets.ela.request.CreateTx;
 import com.breadwallet.wallet.wallets.ela.request.Outputs;
-import com.breadwallet.wallet.wallets.ela.response.create.ElaOutputs;
+import com.breadwallet.wallet.wallets.ela.response.create.ElaOutput;
+import com.breadwallet.wallet.wallets.ela.response.create.ElaTransaction;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaTransactionRes;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaUTXOInputs;
 import com.breadwallet.wallet.wallets.ela.response.create.Meno;
@@ -36,6 +37,7 @@ import com.breadwallet.wallet.wallets.ela.response.history.TxHistory;
 import com.google.gson.Gson;
 import com.platform.APIClient;
 
+import org.elastos.sdk.keypair.ElastosKeypair;
 import org.elastos.sdk.keypair.ElastosKeypairSign;
 import org.json.JSONObject;
 
@@ -602,6 +604,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             JSONObject jsonObject = new JSONObject(result);
             String tranactions = jsonObject.getString("result");
             ElaTransactionRes res = new Gson().fromJson(tranactions, ElaTransactionRes.class);
+            if(!checkTx(inputAddress, outputsAddress, amount, res.Transactions)) return null;
             if(!StringUtil.isNullOrEmpty(memo)) res.Transactions.get(0).Memo = new Meno("text", memo).toString();
 //            if(!StringUtil.isNullOrEmpty(memo)) {
 //                String memoStr = null;
@@ -623,9 +626,9 @@ public class ElaDataSource implements BRDataSourceInterface {
             }
 
             if(null!=payload && payload.size()>0){
-                List<ElaOutputs> outputsR = res.Transactions.get(0).Outputs;
+                List<ElaOutput> outputsR = res.Transactions.get(0).Outputs;
                 if(outputsR.size() > 1) {
-                    ElaOutputs output = outputsR.get(1);
+                    ElaOutput output = outputsR.get(1);
                     Payload tmp = new Payload();
                     tmp.candidatePublicKeys = payload;
                     output.payload = tmp;
@@ -659,6 +662,98 @@ public class ElaDataSource implements BRDataSourceInterface {
         }
 
         return brElaTransaction;
+    }
+
+    public boolean checkTx(String inputAddress, String outputAddress, long amount, List<ElaTransaction> elaTransactions) {
+        if(StringUtil.isNullOrEmpty(inputAddress) ||
+                StringUtil.isNullOrEmpty(outputAddress) ||
+                amount<0 ||
+                elaTransactions == null) return false;
+
+        long nodeFee = 0;
+        boolean hasOutAddress = false;
+        boolean hasNodeAddress = false;
+        String nodeAddress = null;
+
+        for(ElaTransaction elaTransaction : elaTransactions){
+            if(elaTransaction.Postmark != null) {
+                nodeAddress = ElastosKeypair.getAddress(elaTransaction.Postmark.pub);
+            }
+
+            for(ElaOutput output : elaTransaction.Outputs){
+                if(outputAddress == inputAddress){
+                    if(output.address == nodeAddress){
+                        if(output.amount != nodeFee) {
+                            return false;
+                        }
+
+                        if(hasNodeAddress){
+                            return false;
+                        }
+                        hasNodeAddress = true;
+                    } else {
+                        if(output.address != inputAddress){
+                            return false;
+                        }
+                    }
+                } else {
+                   if(outputAddress != nodeAddress){
+                       if(output.address == nodeAddress){
+                           if(output.amount != nodeFee){
+                               return false;
+                           }
+                           if(hasNodeAddress){
+                               return false;
+                           }
+                           hasNodeAddress = false;
+                       } else if(output.address == outputAddress){
+                            if(output.amount != amount){
+                                return false;
+                            }
+                            if(hasOutAddress){
+                                return false;
+                            }
+                            hasOutAddress = true;
+                       } else if(output.address != inputAddress){
+                            return false;
+                       }
+                   } else {
+                       if(output.address == nodeAddress){
+                           if(amount != nodeFee){
+                                if(output.amount == nodeFee){
+                                    if(hasNodeAddress){
+                                        return false;
+                                    }
+                                    hasNodeAddress = true;
+                                } else if(output.amount == amount){
+                                    if(hasOutAddress){
+                                        return false;
+                                    }
+                                    hasOutAddress = true;
+                                } else {
+                                    return false;
+                                }
+                           } else {
+                               if(output.amount != nodeFee){
+                                   return false;
+                               }
+                               if(!hasNodeAddress){
+                                   hasNodeAddress = true;
+                               } else if(!hasOutAddress){
+                                   hasOutAddress = true;
+                               } else {
+                                   return false;
+                               }
+                           }
+                       } else if(output.address != inputAddress){
+                            return false;
+                       }
+                   }
+                }
+            }
+        }
+
+        return true;
     }
 
     public String getPublicKeyByAddress(String address){
