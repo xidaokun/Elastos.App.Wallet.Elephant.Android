@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -135,7 +136,7 @@ public class ElaNodeActivity extends BRActivity {
                              }
                          });
                      }
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     runOnUiThread(new Runnable() {
                         @Override
@@ -205,6 +206,10 @@ public class ElaNodeActivity extends BRActivity {
                         String oldNode = BRSharedPrefs.getElaNode(ElaNodeActivity.this, ElaDataSource.ELA_NODE_KEY);
                         String input = inputEdit.getText().toString().trim();
                         if(!StringUtil.isNullOrEmpty(input) && !input.equals(oldNode)) {
+                            if(input.contains("http") || input.contains("https")){
+                                Uri uri = Uri.parse(input);
+                                input = uri.getHost();
+                            }
                             mCurrentNode.setText(input);
                             testConnect(input);
                         }
