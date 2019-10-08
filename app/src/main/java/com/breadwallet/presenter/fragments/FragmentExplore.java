@@ -41,6 +41,7 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 import com.elastos.jni.Utility;
+import com.elastos.jni.utils.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -677,13 +678,20 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         }
     }
 
-    public void downloadCapsule(final String url) {
+    public void downloadCapsule(String url) {
         if (StringUtil.isNullOrEmpty(url)) {
             Toast.makeText(getContext(), getString(R.string.mini_app_invalid_url), Toast.LENGTH_SHORT).show();
             return;
         }
 
-        boolean isValid = Patterns.WEB_URL.matcher(url).matches();
+        if(url.contains("elapp:")) {
+            String[] tmp = url.split("elapp:");
+            if(tmp!=null && tmp.length==2) {
+                url = tmp[1].trim();
+            }
+        }
+
+        boolean isValid = StringUtils.isUrl(url);
         if(!isValid) {
             Toast.makeText(getContext(), getString(R.string.mini_app_invalid_url), Toast.LENGTH_SHORT).show();
             return;
