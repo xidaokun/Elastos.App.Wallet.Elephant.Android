@@ -22,6 +22,7 @@ import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.presenter.customviews.RoundImageView;
 import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
@@ -66,7 +67,6 @@ public class SignaureActivity extends BRActivity {
             String action = intent.getAction();
             if (!StringUtil.isNullOrEmpty(action) && action.equals(Intent.ACTION_VIEW)) {
                 Uri uri = intent.getData();
-                Log.i(TAG, "server mUri: " + uri.toString());
                 mUri = uri.toString();
             } else {
                 mUri = intent.getStringExtra(Constants.INTENT_EXTRA_KEY.META_EXTRA);
@@ -130,13 +130,15 @@ public class SignaureActivity extends BRActivity {
         mAddLimitTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UiUtils.startSignEditActivity(SignaureActivity.this, "limit",mSignInfo.getPurpose(), BRConstants.SIGN_PURPOSE_REQUEST);
+                BRSharedPrefs.putEsignPurpose(SignaureActivity.this, mSignInfo.getPurpose());
+                UiUtils.startSignEditActivity(SignaureActivity.this, "limit",  BRConstants.SIGN_PURPOSE_REQUEST);
             }
         });
         mViewAllTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UiUtils.startSignEditActivity(SignaureActivity.this, "viewAll",mSignInfo.getContent(), BRConstants.SIGN_CONTENT_REQUEST);
+                BRSharedPrefs.putEsignContent(SignaureActivity.this, mSignInfo.getContent());
+                UiUtils.startSignEditActivity(SignaureActivity.this, "viewAll", BRConstants.SIGN_CONTENT_REQUEST);
             }
         });
     }

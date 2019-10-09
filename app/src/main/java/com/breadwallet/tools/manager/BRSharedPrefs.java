@@ -793,4 +793,28 @@ public class BRSharedPrefs {
         return prefs.getInt("totalPageNumber", 0);
     }
 
+    public static void putEsignPurpose(Context context, String limit) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("esign_purpose", limit);
+        editor.apply();
+    }
+
+    public static String getEsignPurpose(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("esign_purpose", "");
+    }
+
+    public static void putEsignContent(Context context, String limit) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("esign_content", limit);
+        editor.apply();
+    }
+
+    public static String getEsignContent(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("esign_content", "");
+    }
+
 }
