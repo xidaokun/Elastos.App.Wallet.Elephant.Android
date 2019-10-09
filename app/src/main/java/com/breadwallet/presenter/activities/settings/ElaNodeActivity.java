@@ -33,6 +33,8 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.platform.APIClient;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -89,9 +91,8 @@ public class ElaNodeActivity extends BRActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if(i < nodes.length-1){
                     Log.i(TAG, "item:"+i);
-                    String oldNode = BRSharedPrefs.getElaNode(ElaNodeActivity.this, ElaDataSource.ELA_NODE_KEY);
                     String input = nodes[i];
-                    if(!StringUtil.isNullOrEmpty(input) && !input.equals(oldNode)) {
+                    if(!StringUtil.isNullOrEmpty(input)) {
                         testConnect(input);
                     }
 //                    testConnect(input);
@@ -118,21 +119,21 @@ public class ElaNodeActivity extends BRActivity {
                 try {
                      ret = urlGET(url);
                      //{"result":312513,"status":200}
-                     if(!StringUtil.isNullOrEmpty(ret) && ret.equalsIgnoreCase("success")) {
+                    JSONObject object = new JSONObject(ret);
+                    long height = object.getLong("result");
+                    int status = object.getInt("status");
+                     if(height>0 && status==200) {
                          runOnUiThread(new Runnable() {
                              @Override
                              public void run() {
-                                 BRSharedPrefs.putElaNode(ElaNodeActivity.this, ElaDataSource.ELA_NODE_KEY, node.trim());
-                                 mCurrentNode.setText(node);
-                                 mConnectStatus.setText(getString(R.string.NodeSelector_connected));
-                                 wipeData();
+                                 changeConnectStatus(node, true);
                              }
                          });
                      } else {
                          runOnUiThread(new Runnable() {
                              @Override
                              public void run() {
-                                 mConnectStatus.setText(getString(R.string.NodeSelector_connect_error));
+                                 changeConnectStatus(node, false);
                              }
                          });
                      }
@@ -141,12 +142,19 @@ public class ElaNodeActivity extends BRActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mConnectStatus.setText(getString(R.string.NodeSelector_connect_error));
+                            changeConnectStatus(node, false);
                         }
                     });
                 }
             }
         }).start();
+    }
+
+    private void changeConnectStatus(String node, boolean success){
+        BRSharedPrefs.putElaNode(ElaNodeActivity.this, ElaDataSource.ELA_NODE_KEY, node.trim());
+        mCurrentNode.setText(node);
+        mConnectStatus.setText(success?getString(R.string.NodeSelector_connected) : getString(R.string.NodeSelector_connect_error));
+        wipeData();
     }
 
     private void hideList(){
@@ -203,9 +211,8 @@ public class ElaNodeActivity extends BRActivity {
         alertDialog.setPositiveButton(getString(R.string.Button_ok),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        String oldNode = BRSharedPrefs.getElaNode(ElaNodeActivity.this, ElaDataSource.ELA_NODE_KEY);
                         String input = inputEdit.getText().toString().trim();
-                        if(!StringUtil.isNullOrEmpty(input) && !input.equals(oldNode)) {
+                        if(!StringUtil.isNullOrEmpty(input)) {
                             if(input.contains("http") || input.contains("https")){
                                 Uri uri = Uri.parse(input);
                                 input = uri.getHost();
@@ -253,9 +260,9 @@ public class ElaNodeActivity extends BRActivity {
         Response response = APIClient.testNodeClient.newCall(request).execute();
 
         if (response.isSuccessful()) {
-            return "success";
+            return response.body().string();
         } else {
-            return "failed";
+            throw new IOException("Unexpected code " + response);
         }
     }
 }
