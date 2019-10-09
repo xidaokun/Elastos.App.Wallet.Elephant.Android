@@ -481,9 +481,10 @@ public class UiUtils {
         activity.startActivityForResult(intent, requestCode);
     }
 
-    public static void startSignEditActivity(Activity activity, String from, int requestCode) {
+    public static void startSignEditActivity(Activity activity, String from, String value, int requestCode) {
         Intent intent = new Intent(activity, SignaureEditActivity.class);
         intent.putExtra("from", from);
+        intent.putExtra("value", value);
         activity.startActivityForResult(intent, requestCode);
     }
 

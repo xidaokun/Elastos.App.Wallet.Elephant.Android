@@ -11,7 +11,6 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BREdit;
 import com.breadwallet.presenter.customviews.BaseTextView;
-import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.StringUtil;
 
 public class SignaureEditActivity extends BRActivity {
@@ -74,19 +73,20 @@ public class SignaureEditActivity extends BRActivity {
         Intent intent = getIntent();
         if(null == intent) return;
         String from = intent.getStringExtra("from");
+        String value = intent.getStringExtra("value");
         if(!StringUtil.isNullOrEmpty(from)) {
             if(from.equalsIgnoreCase("limit")){
                 mTitleTv.setText(getString(R.string.sign_purpose));
                 mLimitLayout.setVisibility(View.VISIBLE);
                 mContentLayout.setVisibility(View.GONE);
                 mCloseTv.setVisibility(View.VISIBLE);
-                mLimitEdt.setText(BRSharedPrefs.getEsignPurpose(this));
+                if(null != value) mLimitEdt.setText(value);
             } else if(from.equalsIgnoreCase("viewAll")){
                 mTitleTv.setText(getString(R.string.sign_content));
                 mLimitLayout.setVisibility(View.GONE);
                 mCloseTv.setVisibility(View.GONE);
                 mContentLayout.setVisibility(View.VISIBLE);
-                mContentTv.setText(BRSharedPrefs.getEsignContent(this));
+                if(null != value) mContentTv.setText(value);
             }
         }
     }
