@@ -2,6 +2,7 @@ package com.elastos.jni;
 
 import android.net.Uri;
 
+import com.breadwallet.tools.util.StringUtil;
 import com.elastos.jni.utils.StringUtils;
 
 import java.util.HashMap;
@@ -10,7 +11,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class UriFactory {
-
 
 
     public static final String SCHEME_KEY = "scheme_key";
@@ -68,42 +68,53 @@ public class UriFactory {
         return getValue("CoinName".toLowerCase());
     }
 
-    public String getReturnUrl(){
+    public String getReturnUrl() {
         return getValue("ReturnUrl".toLowerCase());
     }
 
-    public String getRequestInfo() {return getValue("RequestInfo".toLowerCase());}
+    public String getRequestInfo() {
+        return getValue("RequestInfo".toLowerCase());
+    }
 
     public String getCandidatePublicKeys() {
         String candidate = getValue("CandidatePublicKeys".toLowerCase());
-        if(StringUtils.isNullOrEmpty(candidate)) return null;
+        if (StringUtils.isNullOrEmpty(candidate)) return null;
         return candidate.trim();
     }
 
-    public String getOrderID() {return getValue("OrderID".toLowerCase());}
+    public String getOrderID() {
+        return getValue("OrderID".toLowerCase());
+    }
 
-    public String getReceivingAddress() {return getValue("ReceivingAddress".toLowerCase());}
+    public String getReceivingAddress() {
+        return getValue("ReceivingAddress".toLowerCase());
+    }
 
-    public String getTarget() {return getValue("Target".toLowerCase());}
+    public String getTarget() {
+        return getValue("Target".toLowerCase());
+    }
 
-    public String getRequestedContent(){
+    public String getRequestedContent() {
         return getValue("RequestedContent".toLowerCase());
     }
 
-    public String getUseStatement(){
+    public String getUseStatement() {
         return getValue("UseStatement".toLowerCase());
     }
 
-    private String getValue(String key){
+    private String getValue(String key) {
         String tmp = Uri.decode(result.get(key));
         return tmp;
     }
 
     private Map<String, String> result = new HashMap();
 
-    public void parse(String url){
+    public void parse(String url) {
+        if (StringUtil.isNullOrEmpty(url)) return;
+        if (url.toUpperCase().contains("ELAPHANT%3A%2F%2F") || url.toUpperCase().contains("ELASTOS%3A%2F%2F")) {
+            url = Uri.decode(url);
+        }
         result.clear();
-
         Uri uri = Uri.parse(url);
         Set names = uri.getQueryParameterNames();
         Iterator<String> it = names.iterator();
@@ -148,17 +159,17 @@ public class UriFactory {
     }
 
 
-    public String create(String type, Map<String, String> params){
-        if(StringUtils.isNullOrEmpty(type) || params.isEmpty()) return null;
+    public String create(String type, Map<String, String> params) {
+        if (StringUtils.isNullOrEmpty(type) || params.isEmpty()) return null;
 
         StringBuilder sb = new StringBuilder();
         sb.append("elaphant://").append(type).append("?");
 
-        for(Map.Entry<String, String> entry : params.entrySet()){
+        for (Map.Entry<String, String> entry : params.entrySet()) {
             sb.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
         }
 
-        return sb.deleteCharAt(sb.length()-1).toString();
+        return sb.deleteCharAt(sb.length() - 1).toString();
     }
 
 }
