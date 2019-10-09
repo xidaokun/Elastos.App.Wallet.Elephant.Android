@@ -135,11 +135,13 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 UriFactory factory = new UriFactory();
                 factory.parse(mUri);
                 String coinName = factory.getCoinName();
-                if(StringUtil.isNullOrEmpty(coinName)) return;
+                if(StringUtil.isNullOrEmpty(coinName)) {
+                    finish();
+                    return;
+                }
                 if(coinName.toLowerCase().contains("usdt")) coinName = "USDT";
                 BRSharedPrefs.putCurrentWalletIso(BreadApp.mContext, coinName);
             }
-            Log.i("author_test", "walletActivity1 mUri:"+mUri);
         }
 
         BRSharedPrefs.putIsNewWallet(this, false);

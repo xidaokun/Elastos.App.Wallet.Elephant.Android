@@ -110,31 +110,35 @@ public class UriFactory {
     private Map<String, String> result = new HashMap();
 
     public void parse(String url) {
-        if (StringUtil.isNullOrEmpty(url)) return;
-        if (url.toUpperCase().contains("ELAPHANT%3A%2F%2F") || url.toUpperCase().contains("ELASTOS%3A%2F%2F")) {
-            url = Uri.decode(url);
-        }
+        try {
+            if (StringUtil.isNullOrEmpty(url)) return;
+            if (url.toUpperCase().contains("ELAPHANT%3A%2F%2F") || url.toUpperCase().contains("ELASTOS%3A%2F%2F")) {
+                url = Uri.decode(url);
+            }
 
-        if(url.contains("elastos://")){
-            url = url.split("elastos://")[1];
-            result.put(SCHEME_KEY, "elastos");
-        } else if(url.contains("elaphant")){
-            url = url.split("elaphant://")[1];
-            result.put(SCHEME_KEY, "elaphant");
-        }
+            if(url.contains("elastos://")){
+                url = url.split("elastos://")[1];
+                result.put(SCHEME_KEY, "elastos");
+            } else if(url.contains("elaphant")){
+                url = url.split("elaphant://")[1];
+                result.put(SCHEME_KEY, "elaphant");
+            }
 
-        result.clear();
-        Uri uri = Uri.parse(url);
-        Set names = uri.getQueryParameterNames();
-        Iterator<String> it = names.iterator();
+            result.clear();
+            Uri uri = Uri.parse(url);
+            Set names = uri.getQueryParameterNames();
+            Iterator<String> it = names.iterator();
 
-        String scheme = uri.getScheme();
-        result.put(SCHEME_KEY, scheme);
+            String scheme = uri.getScheme();
+            result.put(SCHEME_KEY, scheme);
 
-        while (it.hasNext()) {
-            String key = it.next();
-            String value = uri.getQueryParameter(key);
-            result.put(key.toLowerCase(), value);
+            while (it.hasNext()) {
+                String key = it.next();
+                String value = uri.getQueryParameter(key);
+                result.put(key.toLowerCase(), value);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
 //        String[] schemeArr = null;
