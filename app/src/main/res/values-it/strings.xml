@@ -35,7 +35,7 @@
   <!-- Error alert title -->
   <string name="Alert.error">Errore</string>
   <!-- Keystore error -->
-  <string name="Alert.keystore.generic.android">C’è un problema con il KeyStore del tuo sistema operativo Android, per favore, contatta support@Elephantwallet.com</string>
+  <string name="Alert.keystore.generic.android">C’è un problema con il KeyStore del tuo sistema operativo Android, per favore, contatta support@elaphant.app</string>
   <!-- KeyStore error, keys are invalidated -->
   <string name="Alert.keystore.invalidated.android">I tuoi dati criptati di Elephant sono stati recentemente  invalidati  perché la schermata di blocco del tuo Android era disabilitata.</string>
   <!-- Keystore error title -->

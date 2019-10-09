@@ -1,7 +1,5 @@
 package com.breadwallet.wallet.wallets.ela.response.create;
 
-import java.util.List;
-
 /**
  * BreadWallet
  * <p/>
@@ -26,10 +24,9 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class ElaTransactions {
-    public List<ElaOutputs> Outputs;
-    public long Fee;
-    public String Memo;
-    public List<ElaUTXOInputs> UTXOInputs;
-    public List<ElaAttribute> Attributes;
+
+public class ElaOutput {
+    public long amount;
+    public String address;
+    public Payload payload;
 }

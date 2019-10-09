@@ -27,5 +27,5 @@ import java.util.List;
  * THE SOFTWARE.
  */
 public class ElaTransactionRes {
-    public List<ElaTransactions> Transactions;
+    public List<ElaTransaction> Transactions;
 }

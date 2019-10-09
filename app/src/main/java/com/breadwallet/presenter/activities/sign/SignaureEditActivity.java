@@ -76,13 +76,13 @@ public class SignaureEditActivity extends BRActivity {
         String value = intent.getStringExtra("value");
         if(!StringUtil.isNullOrEmpty(from)) {
             if(from.equalsIgnoreCase("limit")){
-                mTitleTv.setText("Add limitation");
+                mTitleTv.setText(getString(R.string.sign_purpose));
                 mLimitLayout.setVisibility(View.VISIBLE);
                 mContentLayout.setVisibility(View.GONE);
                 mCloseTv.setVisibility(View.VISIBLE);
                 if(null != value) mLimitEdt.setText(value);
             } else if(from.equalsIgnoreCase("viewAll")){
-                mTitleTv.setText("Content");
+                mTitleTv.setText(getString(R.string.sign_content));
                 mLimitLayout.setVisibility(View.GONE);
                 mCloseTv.setVisibility(View.GONE);
                 mContentLayout.setVisibility(View.VISIBLE);

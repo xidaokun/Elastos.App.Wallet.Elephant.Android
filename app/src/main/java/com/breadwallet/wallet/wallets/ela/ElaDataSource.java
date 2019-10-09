@@ -26,7 +26,8 @@ import com.breadwallet.wallet.wallets.ela.data.TxProducerEntity;
 import com.breadwallet.wallet.wallets.ela.data.TxProducersEntity;
 import com.breadwallet.wallet.wallets.ela.request.CreateTx;
 import com.breadwallet.wallet.wallets.ela.request.Outputs;
-import com.breadwallet.wallet.wallets.ela.response.create.ElaOutputs;
+import com.breadwallet.wallet.wallets.ela.response.create.ElaOutput;
+import com.breadwallet.wallet.wallets.ela.response.create.ElaTransaction;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaTransactionRes;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaUTXOInputs;
 import com.breadwallet.wallet.wallets.ela.response.create.Meno;
@@ -36,6 +37,7 @@ import com.breadwallet.wallet.wallets.ela.response.history.TxHistory;
 import com.google.gson.Gson;
 import com.platform.APIClient;
 
+import org.elastos.sdk.keypair.ElastosKeypair;
 import org.elastos.sdk.keypair.ElastosKeypairSign;
 import org.json.JSONObject;
 
@@ -124,7 +126,7 @@ public class ElaDataSource implements BRDataSourceInterface {
     public String getUrl(String api){
         String node = BRSharedPrefs.getElaNode(mContext, ELA_NODE_KEY);
         if(StringUtil.isNullOrEmpty(node)) node = ELA_NODE;
-        return new StringBuilder("https://").append(node).append("/").append(api).toString();
+        return new StringBuilder("https://").append(node).append("/api/1/").append(api).toString();
     }
 
     private final String[] allColumns = {
@@ -346,7 +348,7 @@ public class ElaDataSource implements BRDataSourceInterface {
         if(address==null || address.isEmpty()) return null;
         String balance = null;
         try {
-            String url = getUrl("api/1/balance/"+address);
+            String url = getUrl("balance/"+address);
             Log.i(TAG, "balance url:"+url);
             String result = urlGET(url);
             JSONObject object = new JSONObject(result);
@@ -374,7 +376,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             ProducerTxid producerTxid = new ProducerTxid();
             producerTxid.txid = mVoteTxid;
             String json = new Gson().toJson(producerTxid);
-            String url = getUrl("api/1/dpos/transaction/producer");
+            String url = getUrl("dpos/transaction/producer");
             String result = urlPost(url, json);
             multiTxProducerEntity = new Gson().fromJson(result, MultiTxProducerEntity.class);
         } catch (Exception e) {
@@ -391,7 +393,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             producerTxid.txid = new ArrayList<>();
             producerTxid.txid.add(txid);
             String json = new Gson().toJson(producerTxid);
-            String url = getUrl("api/1/dpos/transaction/producer");
+            String url = getUrl("dpos/transaction/producer");
             String result = urlPost(url, json);
             Log.i("test", "test");
         } catch (Exception e) {
@@ -404,7 +406,7 @@ public class ElaDataSource implements BRDataSourceInterface {
         if(StringUtil.isNullOrEmpty(address)) return;
         mVoteTxid.clear();
         try {
-            String url = getUrl("api/1/history/"+address +"?pageNum=1&pageSize="+ONE_PAGE_SIZE+"&order=desc");
+            String url = getUrl("history/"+address +"?pageNum=1&pageSize="+ONE_PAGE_SIZE+"&order=desc");
             Log.i(TAG, "history url:"+url);
             String result = urlGET(url);
             JSONObject jsonObject = new JSONObject(result);
@@ -448,7 +450,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             if(StringUtil.isNullOrEmpty(address)) return;
             mVoteTxid.clear();
             try {
-                String url = getUrl("api/1/history/"+address +"?pageNum="+pageNumber+"&pageSize="+ONE_PAGE_SIZE+"&order=desc");
+                String url = getUrl("history/"+address +"?pageNum="+pageNumber+"&pageSize="+ONE_PAGE_SIZE+"&order=desc");
                 Log.i(TAG, "history url:"+url);
                 String result = urlGET(url);
                 JSONObject jsonObject = new JSONObject(result);
@@ -495,7 +497,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             int currentPageNumber = BRSharedPrefs.getCurrentHistoryPageNumber(mContext);
             int range = BRSharedPrefs.getHistoryRange(mContext);
             int pageNumber = currentPageNumber+range;
-            String url = getUrl("api/1/history/"+address +"?pageNum="+pageNumber+"&pageSize="+ONE_PAGE_SIZE+"&order=desc");
+            String url = getUrl("history/"+address +"?pageNum="+pageNumber+"&pageSize="+ONE_PAGE_SIZE+"&order=desc");
             Log.i(TAG, "history url:"+url);
             String result = urlGET(url);
             JSONObject jsonObject = new JSONObject(result);
@@ -584,7 +586,7 @@ public class ElaDataSource implements BRDataSourceInterface {
         BRElaTransaction brElaTransaction = null;
         if(mActivity!=null) toast(mActivity.getResources().getString(R.string.SendTransacton_sending));
         try {
-            String url = getUrl("api/1/createVoteTx");
+            String url = getUrl("createVoteTx");
             Log.i(TAG, "create tx url:"+url);
             CreateTx tx = new CreateTx();
             tx.inputs.add(inputAddress);
@@ -602,6 +604,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             JSONObject jsonObject = new JSONObject(result);
             String tranactions = jsonObject.getString("result");
             ElaTransactionRes res = new Gson().fromJson(tranactions, ElaTransactionRes.class);
+            if(!checkTx(inputAddress, outputsAddress, amount, res.Transactions)) return null;
             if(!StringUtil.isNullOrEmpty(memo)) res.Transactions.get(0).Memo = new Meno("text", memo).toString();
 //            if(!StringUtil.isNullOrEmpty(memo)) {
 //                String memoStr = null;
@@ -623,9 +626,9 @@ public class ElaDataSource implements BRDataSourceInterface {
             }
 
             if(null!=payload && payload.size()>0){
-                List<ElaOutputs> outputsR = res.Transactions.get(0).Outputs;
+                List<ElaOutput> outputsR = res.Transactions.get(0).Outputs;
                 if(outputsR.size() > 1) {
-                    ElaOutputs output = outputsR.get(1);
+                    ElaOutput output = outputsR.get(1);
                     Payload tmp = new Payload();
                     tmp.candidatePublicKeys = payload;
                     output.payload = tmp;
@@ -661,8 +664,104 @@ public class ElaDataSource implements BRDataSourceInterface {
         return brElaTransaction;
     }
 
+    public boolean checkTx(String inputAddress, String outputAddress, long amount, List<ElaTransaction> elaTransactions) {
+        if(StringUtil.isNullOrEmpty(inputAddress) ||
+                StringUtil.isNullOrEmpty(outputAddress) ||
+                amount<0 ||
+                elaTransactions == null) return false;
+
+        long nodeFee = 0;
+        boolean hasOutAddress = false;
+        boolean hasNodeAddress = false;
+        String nodeAddress = null;
+
+        for(ElaTransaction elaTransaction : elaTransactions){
+            if(elaTransaction.Postmark != null) {
+                nodeAddress = ElastosKeypair.getAddress(elaTransaction.Postmark.pub);
+            }
+
+            for(ElaOutput output : elaTransaction.Outputs){
+
+                if(outputAddress.equals(inputAddress)){
+
+                    if(output.address == nodeAddress){
+
+                        if(output.amount != nodeFee) {
+                            return false;
+                        }
+
+                        if(hasNodeAddress){
+                            return false;
+                        }
+                        hasNodeAddress = true;
+                    } else {
+
+                        if(!inputAddress.equals(output.address)){
+                            return false;
+                        }
+                    }
+                } else {
+                   if(!outputAddress.equals(nodeAddress)){
+                       if(output.address.equals(nodeAddress)){
+                           if(output.amount != nodeFee){
+                               return false;
+                           }
+                           if(hasNodeAddress){
+                               return false;
+                           }
+                           hasNodeAddress = false;
+                       } else if(output.address.equals(outputAddress)){
+                            if(output.amount != amount){
+                                return false;
+                            }
+                            if(hasOutAddress){
+                                return false;
+                            }
+                            hasOutAddress = true;
+                       } else if(!output.address.equals(inputAddress)){
+                            return false;
+                       }
+                   } else {
+                       if(output.address.equals(nodeAddress)){
+                           if(amount != nodeFee){
+                                if(output.amount == nodeFee){
+                                    if(hasNodeAddress){
+                                        return false;
+                                    }
+                                    hasNodeAddress = true;
+                                } else if(output.amount == amount){
+                                    if(hasOutAddress){
+                                        return false;
+                                    }
+                                    hasOutAddress = true;
+                                } else {
+                                    return false;
+                                }
+                           } else {
+                               if(output.amount != nodeFee){
+                                   return false;
+                               }
+                               if(!hasNodeAddress){
+                                   hasNodeAddress = true;
+                               } else if(!hasOutAddress){
+                                   hasOutAddress = true;
+                               } else {
+                                   return false;
+                               }
+                           }
+                       } else if(!output.address.equals(inputAddress) ){
+                            return false;
+                       }
+                   }
+                }
+            }
+        }
+
+        return true;
+    }
+
     public String getPublicKeyByAddress(String address){
-        String url = getUrl("/api/1/pubkey/"+address);
+        String url = getUrl("pubkey/"+address);
         try {
             String result = urlGET(url);
             JSONObject object = new JSONObject(result);
@@ -678,7 +777,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 
         String result = null;
         try {
-            String url = getUrl("api/1/sendRawTx");
+            String url = getUrl("sendRawTx");
             Log.i(TAG, "send raw url:"+url);
             String rawTransaction = ElastosKeypairSign.generateRawTransaction(transaction, BRConstants.ELA_ASSET_ID);
             String json = "{"+"\"data\"" + ":" + "\"" + rawTransaction + "\"" +"}";
@@ -706,7 +805,7 @@ public class ElaDataSource implements BRDataSourceInterface {
     public synchronized String sendSerializedRawTx(final String rawTransaction) {
         String result = null;
         try {
-            String url = getUrl("api/1/sendRawTx");
+            String url = getUrl("sendRawTx");
             Log.i(TAG, "send raw url:"+url);
             String json = "{"+"\"data\"" + ":" + "\"" + rawTransaction + "\"" +"}";
             Log.i(TAG, "rawTransaction:"+rawTransaction);
@@ -731,7 +830,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 
     public void getProducers(){
         try {
-            String jsonRes = urlGET(getUrl("api/1/dpos/rank/height/9999999999999999"));
+            String jsonRes = urlGET(getUrl("dpos/rank/height/9999999999999999"));
             if(!StringUtil.isNullOrEmpty(jsonRes) && jsonRes.contains("result")) {
                 ProducersEntity producersEntity = new Gson().fromJson(jsonRes, ProducersEntity.class);
                 List list = producersEntity.result;

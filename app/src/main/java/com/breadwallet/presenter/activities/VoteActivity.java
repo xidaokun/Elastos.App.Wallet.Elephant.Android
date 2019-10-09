@@ -238,9 +238,9 @@ public class VoteActivity extends BaseSettingsActivity {
     private void initData(){
         if (StringUtil.isNullOrEmpty(mUri)) return;
 
-        if(mUri.contains("%20")) {
-            mUri = Uri.decode(mUri);
-        }
+//        if(mUri.contains("%20")) {
+//            mUri = Uri.decode(mUri);
+//        }
 
         uriFactory = new UriFactory();
         uriFactory.parse(mUri);

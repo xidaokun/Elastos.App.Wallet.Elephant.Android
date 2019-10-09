@@ -35,7 +35,7 @@
     <!-- Error alert title -->
     <string name="Alert.error">Error</string>
     <!-- Keystore error -->
-    <string name="Alert.keystore.generic.android">There is a problem with your Android OS keystore, please contact support@Elephantwallet.com</string>
+    <string name="Alert.keystore.generic.android">There is a problem with your Android OS keystore, please contact support@elaphant.app</string>
     <!-- KeyStore error, keys are invalidated -->
     <string name="Alert.keystore.invalidated.android">Your Elephant encrypted data was recently invalidated because your Android lock screen was disabled.</string>
     <!-- Keystore error title -->
@@ -301,7 +301,7 @@
     <!-- Manage wallet modal title -->
     <string name="ManageWallet.title">Manage Wallet</string>
     <!-- "Add [a] Wallet [to the home screen]" -->
-    <string name="MenuButton.addWallet">Add Wallet</string>
+    <string name="MenuButton.addWallet">Add Token</string>
     <!-- Menu button title -->
     <string name="MenuButton.lock">Lock Wallet</string>
     <!-- Did Authorizations -->
@@ -1036,7 +1036,7 @@
     <string name="My.Profile.Completed">Completed</string>
 
     <string name="disclaim_title">Disclaimer</string>
-    <string name="disclaim_content">Neither Elephant nor Elastos has control over the contents of any app and is not responsible for these apps, their content, or their availability.</string>
+    <string name="disclaim_content">Applications in Explore are provided by third party vendors. Neither Elephant nor Elastos has control over the contents of any app and is not responsible for these apps, their content, or their availability.</string>
     <string name="disclaim_ok">OK</string>
 
     <string name="invalid_number">invalid number</string>
@@ -1072,7 +1072,7 @@
     
     <string name="sign_signature_request_title">Signature Request</string>
     <string name="sign_request_information">Request information:</string>
-    <string name="sign_developer_did">Develop DID:</string>
+    <string name="sign_developer_did">Developer DID</string>
     <string name="sign_timestamp">Timestamp</string>
     <string name="sign_purpose">Purpose</string>
     <string name="sign_content">Content</string>

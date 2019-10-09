@@ -3,7 +3,7 @@
     <!-- App name -->
     <string name="About.appName.android">Elephant</string>
     <!-- About screen blog label -->
-    <string name="About.blog">部落格</string>
+    <string name="About.blog">博客</string>
     <!-- About screen footer -->
     <string name="About.footer">由 Elastos Application Lab 製作。版本 %1$s Build %2$s</string>
     <!-- Privay Policy button label -->
@@ -31,11 +31,11 @@
     <!-- Default wallet name -->
     <string name="AccountHeader.defaultWalletName">我的 Elephant</string>
     <!-- Third party keyboard warning -->
-    <string name="Alert.customKeyboard.android">您似乎在使用第三方鍵盤，這可能會記錄您按下的鍵並竊取您的「紙鑰」。請切換至預設的 Android 鍵盤以獲得額外的保護。</string>
+    <string name="Alert.customKeyboard.android">您似乎在使用第三方鍵盤，這可能會記錄您按下的鍵並竊取您的「私鑰」。請切換至預設的 Android 鍵盤以獲得額外的保護。</string>
     <!-- Error alert title -->
     <string name="Alert.error">錯誤</string>
     <!-- Keystore error -->
-    <string name="Alert.keystore.generic.android">您的 Android OS 金鑰儲存區有問題，請聯絡 support@Elephantwallet.com</string>
+    <string name="Alert.keystore.generic.android">您的 Android OS 金鑰儲存區有問題，請聯絡 support@elaphant.app</string>
     <!-- KeyStore error, keys are invalidated -->
     <string name="Alert.keystore.invalidated.android">您的 Elephant 加密資料最近已被判定為無效，因爲您的 Android 螢幕鎖定已被停用。</string>
     <!-- Keystore error title -->
@@ -49,7 +49,7 @@
     <!-- Addresses Copied Alert sub header -->
     <string name="Alerts.copiedAddressesSubheader">已成功複製所有的電子錢包位址。</string>
     <!-- Alert Header Label (the paper key was set) -->
-    <string name="Alerts.paperKeySet">紙上金鑰已設定</string>
+    <string name="Alerts.paperKeySet">助記詞已設定</string>
     <!-- Alert Subheader label (playfully positive) -->
     <string name="Alerts.paperKeySetSubheader">太棒了！</string>
     <!-- Alert Header label (the PIN was set) -->
@@ -157,9 +157,9 @@
     <!-- Total Cost: ($5.00) -->
     <string name="Confirmation.totalLabel">總計</string>
     <!-- Confirm paper phrase error message -->
-    <string name="ConfirmPaperPhrase.error">輸入之文字與您的紙金鑰不符，請再試一次</string>
+    <string name="ConfirmPaperPhrase.error">輸入之文字與您的助記詞不符，請再試一次</string>
     <!-- Confirm paper phrase view label. -->
-    <string name="ConfirmPaperPhrase.label">要確保每項資料都正確寫下，請從紙上金鑰輸入下列字組。</string>
+    <string name="ConfirmPaperPhrase.label">要確保每項資料都正確寫下，請從助記詞中輸入下列字組。</string>
     <!-- Word label eg. Word #1, Word #2 -->
     <string name="ConfirmPaperPhrase.word">字組 #%1$s</string>
     <!-- Agree to legal terms button -->
@@ -235,45 +235,45 @@
     <!-- (Tap here to) trade (your assets for other assets) -->
     <string name="HomeScreen.trade">首页</string>
     <!-- Checking private key balance progress view text -->
-    <string name="Import.checking">正在檢查私密金鑰餘額…</string>
+    <string name="Import.checking">正在檢查私鑰餘額…</string>
     <!-- Sweep private key confirmation message -->
-    <string name="Import.confirm">要從這個私密金鑰寄出 %1$s 到您的電子錢包嗎？比特幣網路會收到 %2$s 的費用。</string>
+    <string name="Import.confirm">要從這個私鑰寄出 %1$s 到您的電子錢包嗎？比特幣網路會收到 %2$s 的費用。</string>
     <!-- Duplicate key error message -->
-    <string name="Import.Error.duplicate">此私密金鑰已經在您的電子錢包了。</string>
+    <string name="Import.Error.duplicate">此私鑰已經在您的電子錢包了。</string>
     <!-- empty private key error message -->
-    <string name="Import.Error.empty">此私密金鑰是空白的。</string>
+    <string name="Import.Error.empty">此私鑰是空白的。</string>
     <!-- High fees error message -->
-    <string name="Import.Error.highFees">交易手續費可能會超過此私密金鑰上的可用資金。</string>
+    <string name="Import.Error.highFees">交易手續費可能會超過此私鑰上的可用資金。</string>
     <!-- Not a valid private key error message -->
-    <string name="Import.Error.notValid">不是有效的私密金鑰</string>
+    <string name="Import.Error.notValid">不是有效的私鑰</string>
     <!-- Import signing error message -->
     <string name="Import.Error.signing">簽署交易出錯</string>
     <!-- [Redeem] the funds stored on this private key. -->
     <string name="Import.importButton">兌換</string>
     <!-- Importing wallet progress view label -->
-    <string name="Import.importing">兌換私密金鑰中</string>
+    <string name="Import.importing">兌換私鑰中</string>
     <!-- Caption for graphics -->
-    <string name="Import.leftCaption">私密金鑰</string>
+    <string name="Import.leftCaption">私鑰</string>
     <!-- Import wallet intro screen message -->
-    <string name="Import.message">私密金鑰通常以 QR 碼形式印在紙上，作為離線儲存資金使用。利用單一交易兌換私密金鑰下所控制的所有資金匯入您的 Elephant。</string>
+    <string name="Import.message">私鑰通常以 QR 碼形式印在紙上，作為離線儲存資金使用。利用單一交易兌換私鑰下所控制的所有資金匯入您的 Elephant。</string>
     <!-- Enter password alert view title -->
-    <string name="Import.password">此私密金鑰受密碼保護。</string>
+    <string name="Import.password">此私鑰受密碼保護。</string>
     <!-- password textfield placeholder -->
     <string name="Import.passwordPlaceholder">密碼</string>
     <!-- Caption for graphics -->
     <string name="Import.rightCaption">您的 Elephant 錢包</string>
     <!-- Scan Private key button label -->
-    <string name="Import.scan">掃描私密金鑰</string>
+    <string name="Import.scan">掃描私鑰</string>
     <!-- Import wallet success alert title -->
     <string name="Import.success">成功</string>
     <!-- Successfully imported wallet message body -->
-    <string name="Import.SuccessBody">成功兌換私密金鑰。</string>
+    <string name="Import.SuccessBody">成功兌換私鑰。</string>
     <!-- Import Wallet screen title -->
-    <string name="Import.title">兌換私密金鑰</string>
+    <string name="Import.title">兌換私鑰</string>
     <!-- Unlocking Private key activity view message. -->
-    <string name="Import.unlockingActivity">正在解除鎖定金鑰</string>
+    <string name="Import.unlockingActivity">正在解除鎖定私鑰</string>
     <!-- Import wallet intro warning message -->
-    <string name="Import.warning">兌換私密金鑰並不會匯入交易歷史或其他資料。</string>
+    <string name="Import.warning">兌換私鑰並不會匯入交易歷史或其他資料。</string>
     <!-- Wrong password alert message -->
     <string name="Import.wrongPassword">密碼錯誤，請重試一次。</string>
     <!-- Close app button -->
@@ -287,7 +287,7 @@
     <!-- Jailbreak warning title -->
     <string name="JailbreakWarnings.title">警告</string>
     <!-- Wipe wallet button -->
-    <string name="JailbreakWarnings.wipe">抹除</string>
+    <string name="JailbreakWarnings.wipe">解綁</string>
     <!-- Location services disabled error -->
     <string name="LocationPlugin.disabled">定位服務已停用。</string>
     <!-- No permissions for location services -->
@@ -301,15 +301,17 @@
     <!-- Manage wallet modal title -->
     <string name="ManageWallet.title">管理電子錢包</string>
     <!-- "Add [a] Wallet [to the home screen]" -->
-    <string name="MenuButton.addWallet">增加錢包</string>
+    <string name="MenuButton.addWallet">增加幣種</string>
     <!-- Menu button title -->
     <string name="MenuButton.lock">鎖定電子錢包</string>
     <!-- (Click here to) manage (your list of) wallets -->
-    <string name="MenuButton.manageWallets">管理錢包</string>
+    <string name="MenuButton.manageWallets">管理幣種</string>
     <!-- (press here to) scan (a) QR code -->
     <string name="MenuButton.scan">掃描 QR</string>
     <!-- Menu button title -->
     <string name="MenuButton.security">資訊安全中心</string>
+    <!-- E-sign title -->
+    <string name="MenuButton.e.sign">簽名</string>
     <!-- Menu button title -->
     <string name="MenuButton.settings">設定</string>
     <!-- Menu button title -->
@@ -325,7 +327,9 @@
     <!-- Node is connected label -->
     <string name="NodeSelector.connected">已連線</string>
     <!-- Node is connecting label -->
-    <string name="NodeSelector.connecting">連接中</string>
+    <string name="NodeSelector.connecting">正在連接</string>
+    <!-- Node is connect error label -->
+    <string name="NodeSelector.connect.error">連接失敗</string>
     <!-- Enter node ip address view body -->
     <string name="NodeSelector.enterBody">输入节点地址</string>
     <!-- Enter Node ip address view title -->
@@ -342,6 +346,7 @@
     <string name="NodeSelector.statusLabel">節點連線狀態</string>
     <!-- Node Selector view title -->
     <string name="NodeSelector.title">比特幣節點</string>
+    <string name="ELA_NodeSelector.title">Elastos節點</string>
     <!-- Bad Payment request alert title -->
     <string name="PaymentProtocol.Errors.badPaymentRequest">不良的付款請求</string>
     <!-- Error opening payment protocol file message -->
@@ -373,7 +378,7 @@
     <!-- Device encryption prompt title -->
     <string name="Prompts.NoScreenLock.title.android">螢幕鎖定已停用</string>
     <!-- Warning about paper key. -->
-    <string name="Prompts.PaperKey.body">必須儲存紙上金鑰，以防萬一您遺失或換電話。點選這裡來繼續。</string>
+    <string name="Prompts.PaperKey.body">必須儲存助記詞，以防萬一您遺失或換電話。點選這裡來繼續。</string>
     <!-- An action is required (You must do this action). -->
     <string name="Prompts.PaperKey.title">需要採取動作</string>
     <!-- Transaction rejected prompt body -->
@@ -413,7 +418,7 @@
     <!-- Share via email button label -->
     <string name="Receive.emailButton">電子郵件</string>
     <!-- Request button label -->
-    <string name="Receive.request">要求帳戶</string>
+    <string name="Receive.request">申請金額</string>
     <!-- Share button label -->
     <string name="Receive.share">分享</string>
     <!-- Share via text message (SMS) -->
@@ -427,11 +432,11 @@
     <!-- Reset PIN with paper key: header -->
     <string name="RecoverWallet.header_reset_pin">重設 PIN 碼</string>
     <!-- Enter paper key instruction -->
-    <string name="RecoverWallet.instruction">輸入紙本金鑰</string>
+    <string name="RecoverWallet.instruction">輸入助記詞</string>
     <!-- Recover wallet intro -->
-    <string name="RecoverWallet.intro">以您的紙本金鑰復原您的钱包</string>
+    <string name="RecoverWallet.intro">以您的助記詞復原您的钱包</string>
     <!-- Invalid paper key message -->
-    <string name="RecoverWallet.invalid">紙本金鑰</string>
+    <string name="RecoverWallet.invalid">助記詞</string>
     <!-- Previous button accessibility label -->
     <string name="RecoverWallet.leftArrow">左箭頭</string>
     <!-- Next button label -->
@@ -441,13 +446,13 @@
     <!-- Next button accessibility label -->
     <string name="RecoverWallet.rightArrow">右箭頭</string>
     <!-- Recover wallet sub-header -->
-    <string name="RecoverWallet.subheader">針對您想要復原的錢包輸入紙本金鑰。</string>
+    <string name="RecoverWallet.subheader">針對您想要復原的錢包輸入助記詞。</string>
     <!-- Reset PIN with paper key: sub-header -->
-    <string name="RecoverWallet.subheader_reset_pin">為重設 PIN 碼，請在下方空格內輸入您的紙本金鑰上的字串。</string>
+    <string name="RecoverWallet.subheader_reset_pin">為重設 PIN 碼，請在下方空格內輸入您的助記詞上的字串。</string>
     <!-- No amount entered error message. -->
-    <string name="RequestAnAmount.noAmount">請先輸入一個帳戶</string>
+    <string name="RequestAnAmount.noAmount">請先輸入金額。</string>
     <!-- Request a specific amount of bitcoin -->
-    <string name="RequestAnAmount.title">要求帳戶</string>
+    <string name="RequestAnAmount.title">申請金額</string>
     <!-- Alert action button label -->
     <string name="ReScan.alertAction">同步</string>
     <!-- Alert message body -->
@@ -489,7 +494,7 @@
     <!-- Paper Key button description -->
     <string name="SecurityCenter.paperKeyDescription">您的手機遺失或升級時，存取您的比特幣唯一的方式。</string>
     <!-- Paper Key button title -->
-    <string name="SecurityCenter.paperKeyTitle">助記詞列表</string>
+    <string name="SecurityCenter.paperKeyTitle">備份助記詞</string>
     <!-- PIN button description -->
     <string name="SecurityCenter.pinDescription">保護您的 Elephant，防範未經授權的使用者。</string>
     <!-- PIN button title -->
@@ -527,7 +532,7 @@
     <!-- Network Fee: $0.01 -->
     <string name="Send.fee">網路費：%1$s</string>
     <!-- Payee identity not certified alert title. -->
-    <string name="Send.identityNotCertified">受款人身分未經認證。</string>
+    <string name="Send.identityNotCertified">收款人身分未經認證。</string>
     <!-- Insufficient funds error -->
     <string name="Send.insufficientFunds">資金不足</string>
     <!-- e,g, "You must have at least $2 in your wallet in order to transfer this type of token." In this case, "token" is an ethereum ERC20 token. -->
@@ -593,7 +598,7 @@
     <!-- Face ID spending limit label -->
     <string name="Settings.faceIdLimit">Face ID 消費上限</string>
     <!-- Redeem the funds stored on this private key. -->
-    <string name="Settings.importTitle">兌換私密金鑰</string>
+    <string name="Settings.importTitle">兌換私鑰</string>
     <!-- Manage settings section header -->
     <string name="Settings.manage">管理</string>
     <!-- Notifications label -->
@@ -627,13 +632,13 @@
     <!-- Share data switch label. -->
     <string name="ShareData.toggleLabel">分享匿名資料？</string>
     <!-- button label -->
-    <string name="StartPaperPhrase.againButtonTitle">再寫一次紙本金鑰</string>
+    <string name="StartPaperPhrase.againButtonTitle">再寫一次助記詞</string>
     <!-- Paper key explanation text. -->
-    <string name="StartPaperPhrase.body">您的手機遺失、損壞或升級時，紙本金鑰是復原\n Elephant 唯一的方式。\n\n我們會向您出示一個字串，請寫在紙上並妥善保管。</string>
+    <string name="StartPaperPhrase.body">您的手機遺失、損壞或升級時，助記詞是復原\n Elephant 唯一的方式。\n\n我們會向您出示一個字串，請寫在紙上並妥善保管。</string>
     <!-- button label -->
-    <string name="StartPaperPhrase.buttonTitle">寫下紙本金鑰</string>
+    <string name="StartPaperPhrase.buttonTitle">寫下助記詞</string>
     <!-- Argument is date -->
-    <string name="StartPaperPhrase.date">您最近一次在 %1$s 寫下了您的紙本金鑰</string>
+    <string name="StartPaperPhrase.date">您最近一次在 %1$s 寫下了您的助記詞</string>
     <!-- button label -->
     <string name="StartViewController.createButton">創建新錢包</string>
     <!-- Start view message -->
@@ -663,11 +668,11 @@
     <!-- Add [this item to the list] -->
     <string name="TokenList.add">增加</string>
     <!-- Add Wallets  [to your home screen] -->
-    <string name="TokenList.addTitle">增加錢包</string>
+    <string name="TokenList.addTitle">增加幣種</string>
     <!-- Hide [this token from view] -->
     <string name="TokenList.hide">隱藏</string>
     <!-- [click here to] Manage [your] Wallets -->
-    <string name="TokenList.manageTitle">管理錢包</string>
+    <string name="TokenList.manageTitle">管理幣種</string>
     <!-- Remove [this item from the list] -->
     <string name="TokenList.remove">移除</string>
     <!-- Show [this item on your home screen] -->
@@ -907,23 +912,23 @@
     <!-- Wipe wallet alert message -->
     <string name="WipeWallet.alertMessage">確定要刪除此錢包嗎？</string>
     <!-- Wipe wallet alert title -->
-    <string name="WipeWallet.alertTitle">抹除錢包？</string>
+    <string name="WipeWallet.alertTitle">解綁錢包嗎？</string>
     <!-- Failed wipe wallet alert message -->
-    <string name="WipeWallet.failedMessage">抹除錢包失敗。</string>
+    <string name="WipeWallet.failedMessage">解綁錢包失敗。</string>
     <!-- Failed wipe wallet alert title -->
     <string name="WipeWallet.failedTitle">失敗</string>
     <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] paper key that needs to be entered). -->
-    <string name="WipeWallet.instruction">啟用新錢包或恢復已存在錢包，您必須先移除目前已安裝錢包的連結。欲繼續，鍵入目前錢包的私密金鑰。</string>
+    <string name="WipeWallet.instruction">啟用新錢包或恢復已存在錢包，首先要解綁錢包。欲繼續，鍵入目前錢包的助記詞。</string>
     <!-- Instructions for unlinking the wallet -->
-    <string name="WipeWallet.startMessage">自此裝置移除您錢包的連結。一旦移除此錢包的連結，您可在此裝置上啟用新錢包或恢復其他不同錢包。</string>
+    <string name="WipeWallet.startMessage">解綁錢包可將其從本設備移除。一旦錢包被解綁，您可以啟用新錢包，或恢復本設備的其他錢包。</string>
     <!-- Start wipe wallet view warning -->
-    <string name="WipeWallet.startWarning">您將再也無法從這項裝置存取目前的 Elephant 錢包。餘額會留在片段上。</string>
+    <string name="WipeWallet.startWarning">您無法再在這個設備上使用現在的Elephant錢包。現在的一切資金都留在助記詞上。</string>
     <!-- Unlink this wallet from this device. -->
-    <string name="WipeWallet.title">移除錢包連結</string>
+    <string name="WipeWallet.title">解綁錢包</string>
     <!-- Wipe wallet button title -->
-    <string name="WipeWallet.wipe">抹除</string>
+    <string name="WipeWallet.wipe">解綁</string>
     <!-- Wiping activity message -->
-    <string name="WipeWallet.wiping">正在抹除……</string>
+    <string name="WipeWallet.wiping">正在解綁……</string>
     <!-- Paper key instructions. -->
     <string name="WritePaperPhrase.instruction">請依序寫下每個字，保存在安全的地方。</string>
     <!-- button label -->
@@ -939,6 +944,7 @@
     <string name="Transaction.rate">交易時價格</string>
     <string name="Confirm.block">確認塊</string>
     <string name="Transaction.id">交易ID</string>
+
     <string name="Token.list"> 幣列表</string>
     <string name="Intro_title">使用加密貨幣最安全且最可靠的方式。</string>
     <string name="Address.isused.Hint">%1$s 地址已被重複使用過。</string>
@@ -952,10 +958,12 @@
     <string name="Gas.price">燃料價格</string>
     <string name="Gas.limit">燃料上限</string>
 
+    <!--upgrade-->
     <string name="upgrade_confirm">更新</string>
     <string name="upgrade_cancel">下次</string>
 
     <string name="Did.Will.Get">%1$s 將要獲取您的:</string>
+    <string name="MenuButton.authorizations">授權</string>
     <string name="Did.Authorized">已授權</string>
     <string name="Did.Authorize">授權</string>
     <string name="Did.Authorize.time">授權時間</string>
@@ -963,6 +971,14 @@
     <string name="Did.Author.Info">授權信息</string>
     <string name="Did.Nick.Name">暱稱</string>
     <string name="Did.Public.Key">公鑰</string>
+    <string name="Did.Btc.Address">比特幣地址</string>
+    <string name="Did.Eth.Address">以太坊地址</string>
+    <string name="Did.Bch.Address">比特現金地址</string>
+    <string name="Did.Usd.Address">USDT地址</string>
+    <string name="Did.Ela.Address">ELA地址</string>
+    <string name="Did.PhoneNumber">手機號</string>
+    <string name="Did.Email">郵箱</string>
+    <string name="Did.Chinese.ID">中國居民身份證</string>
     <string name="Did.What.Did">DID是什麼？</string>
     <string name="Did.Quest">問題</string>
     <string name="Did.Required">必選</string>
@@ -981,6 +997,16 @@
     <string name="Did.Detail.Nick.Name">- 暱稱</string>
     <string name="Did.Detail.DID">- DID</string>
     <string name="Did.Detail.Public.Key">- 公鑰</string>
+
+    <string name="My.Profile.Title.Nickname">暱稱</string>
+    <string name="Did.Detail.Ela.Address">- ELA地址</string>
+    <string name="Did.Detail.Btc.Address">- 比特幣地址</string>
+    <string name="Did.Detail.Bch.Address">- 比特現金地址</string>
+    <string name="Did.Detail.Eth.Address">- 以太坊地址</string>
+    <string name="Did.Detail.Ioex.Address">- IOEX地址</string>
+    <string name="Did.Detail.Email">- 邮箱</string>
+    <string name="Did.Detail.Phone.Number">- 手机号</string>
+    <string name="Did.Detail.Chinese.Id.Card">- 中国身份证</string>
     <string name="User.Not.Author.Message">您的手機系統不支持安卓標準KeyStore技術，而我們用這個技術來存儲你的私鑰，如果你想繼續使用我們的app，請升級手機操作系統到安卓8.0或以上，或者點擊繼續按鈕來允許我們app不經過您的授權即可訪問您的keystore信息。</string>
     <string name="User.Not.Author.Exit">退出</string>
     <string name="User.Not.Author.Continue">繼續</string>
@@ -995,15 +1021,6 @@
     <string name="My.Profile.Real.Name">真實姓名</string>
     <string name="My.Profile.Title.Email">郵箱</string>
     <string name="My.Profile.Title.Mobile">手機</string>
-    <string name="My.Profile.Title.Nickname">暱稱</string>
-    <string name="Did.Detail.Ela.Address">- Ela地址</string>
-    <string name="Did.Detail.Btc.Address">- Btc地址</string>
-    <string name="Did.Detail.Bch.Address">- Bch地址</string>
-    <string name="Did.Detail.Eth.Address">- Eth地址</string>
-    <string name="Did.Detail.Ioex.Address">- Ioex地址</string>
-    <string name="Did.Detail.Email">- 邮箱</string>
-    <string name="Did.Detail.Phone.Number">- 手机号</string>
-    <string name="Did.Detail.Chinese.Id.Card">- 中国身份证</string>
     <string name="My.Profile.Message">-完善個人信息，構建個人信用-</string>
     <string name="My.Profile.List.Title">信息</string>
 
@@ -1019,18 +1036,123 @@
     <string name="invalid_number">無效號碼</string>
     <string name="invalid_email">無效郵件</string>
     <string name="invalid_id">無效ID</string>
+
+    <string name="explore_menu_about">關于</string>
+    <string name="explore_menu_cancel">取消</string>
+
+    <string name="redpackage_title">紅包</string>
     <string name="vote_title">投票</string>
-    <string name="pin_author_vote">授权投票</string>
+    <string name="vote_nodes_count">你正在向%1$d個節點投票(最多36個)</string>
+    <string name="vote_balance">%1$s ELA</string>
+    <string name="vote_hint">投票只需要很少的手續費:0.0000486 ELA</string>
+    <string name="vote_hint2">投票結束后，您可以隨時使用ELA，但您的投票將被取消。</string>
+    <string name="pin_author_vote">授權投票</string>
     <string name="vote_cancel_btn_txt">取消</string>
-    <string name="vote_confirm_btn_txt">确认</string>
-    <string name="vote_hint">你只需要支付少量的手續費: 0.0001 ELA.</string>
-    <string name="vote_hint2">投票結束後，您可以隨時使用ELA，但您的投票將被取消。</string>
-    <string name="votes_ela">选票:(ELA)</string>
+    <string name="vote_confirm_btn_txt">確認</string>
+    <string name="votes_ela">票數:(ELA)</string>
     <string name="vote_wallet_balance_title">錢包餘額:</string>
     <string name="pin_author_vote_msg">請輸入PIN碼授權投票</string>
+
+    <string name="loading_hint">請稍候....</string>
     <string name="auto_vote_hint">自動使用ELA餘額投票</string>
     <string name="explore_vote_about_desc1">ELA投票</string>
-    <string name="explore_vote_aoubt_desc2">ELA投票應用程序將允許任何ELA持有者一次投票最多36個DPO超節點</string>
+    <string name="explore_vote_about_desc2">投票小程序允許你每次最多投給36個DPoS超級節點。</string>
+    <string name="vote_balance_not_insufficient">ELA余額少于1</string>
+    <string name="vote_candidates_is_none">候選人列表為空</string>
+    <string name="beyond_max_vote_node">最多36個節點</string>
+    <string name="redpackage_hint1">紅包</string>
+    <string name="redpackage_hint2">使用ELA紅包小程序，你可以給好友發ELA紅包啦!</string>
+    <string name="exchange_hint1">SWFT</string>
+    <string name="exchange_hint2">SWFT Blockchain是“下一代區塊鏈全球轉移協議”。專注于整合全球主流交易所和區塊鏈項目，以有效對沖風險，并為客戶提供一個高效、易用的加密貨幣兌換平臺。</string>
+    <string name="double_spend">您有另外一筆交易正在處理，請在2分鐘后重試</string>
+
+    <string name="sign_signature_request_title">簽名請求</string>
+    <string name="sign_request_information">請求信息:</string>
+    <string name="sign_developer_did">開發者DID</string>
+    <string name="sign_timestamp">時間戳</string>
+    <string name="sign_purpose">用途</string>
+    <string name="sign_content">內容</string>
+    <string name="sign_add_limitation">添加限制</string>
+    <string name="sign_view_all_detail">顯示詳情</string>
+    <string name="sign_sign_btn">簽名</string>
+    <string name="node_list_title">%1$d個節點列表:</string>
+
+    <string name="explore_mini_app_title">我的小程序</string>
+    <string name="explore_pop_edit">編輯</string>
+    <string name="explore_pop_add_by_url">通過URL添加</string>
+    <string name="explore_pop_scan_to_add">掃描添加</string>
+    <string name="explore_pop_remove">删除</string>
+    <string name="explore_pop_share">分享應用</string>
+    <string name="explore_pop_about">關于%1$s</string>
+    <string name="explore_pop_cancel">取消</string>
+    <string name="explore_pop_done">完成</string>
+    <string name="explore_delete_app_hint">你確定刪除這個小程序嗎?</string>
+
+    <string name="explore_about_developer">開發者:%1$s</string>
+    <string name="multisign_deny">拒絕</string>
+    <string name="multisign_approve">批準</string>
+    <string name="multisign_approve_send">批準并付款</string>
+    <string name="multisign_spend">付款方：</string>
+    <string name="multisign_accept">收款方：</string>
+    <string name="multisign_signed_title">%2$d個私鑰中至少需要%1$d個批準后才能付款。</string>
+    <string name="multisign_toolbar_title">審批請求</string>
+    <string name="multisign_spend_desc">正在通過一個多簽錢包花費</string>
+    <string name="multisign_balance">余額：</string>
+    <string name="multisign_approved">你已經成功批準了付款請求。</string>
+    <string name="multisign_pass_next">請將請求發給下一個人繼續審批。</string>
+    <string name="multisign_share_qrcode">分享二維碼</string>
+    <string name="multisign_share_or">--- 或 ---</string>
+    <string name="multisign_share_json">分享json文件</string>
+    <string name="multisign_approved_title">審批通過</string>
+    <string name="multisign_send_succeeded">這筆付款已經執行。</string>
+    <string name="multisign_wallet_creation">創建多簽錢包</string>
+    <string name="multisign_create">創建</string>
+    <string name="multisign_create_desc">正在創建一個多簽錢包</string>
+    <string name="multisign_created">錢包已創建</string>
+    <string name="multisign_create_addr">錢包地址</string>
+    <string name="multisign_create_keys">公鑰總數：%1$d</string>
+    <string name="multisign_create_unlock_keys">審批需要私鑰數：%1$d</string>
+    <string name="multisign_create_failed_title">失敗</string>
+    <string name="multisign_create_failed">創建失敗，請重試</string>
+    <string name="multisign_wallet_pubkey_me">(我)</string>
+    <string name="multisign_create_pubkey_not_in_list">創建錢包失敗，因為您的公鑰不在批準列表里。</string>
+    <string name="multisign_wallet_not_created">多簽錢包還沒創建成功，請稍后重試。</string>
+    <string name="multisign_tx_pubkey_not_in_list">您的公鑰不在批準列表里，請查看你的公鑰或切換到正確的錢包。</string>
+    <string name="esign_title">簽名</string>
+    <string name="esign_doc_to_sign">簽名內容</string>
+    <string name="esign_doc_to_signed">已簽名內容</string>
+    <string name="esign_agreement">點擊“簽名”按鈕，即代表您確認使用個人簽名對此文檔進行電子簽名。</string>
+    <string name="esign_detail_title">簽名詳情</string>
+    <string name="esign_history_title">簽名歷史</string>
+    <string name="esign_sign_btn">簽名</string>
+    <string name="esign_paste_btn">粘貼</string>
+    <string name="esign_success_title">簽名</string>
+    <string name="esign_success_hint">簽名成功</string>
+    <string name="esign_success_copy">復制</string>
+    <string name="esign_copy_to_clipboard">已復制到粘貼板</string>
+    <string name="esign_remove_nini_app_hint">你確定刪除<Data><![CDATA[<font color="#ff3365">%1$s</font>]]></Data>?</string>
+    <string name="esign_load_no">否</string>
+    <string name="esign_load_yes">是</string>
+    <string name="esign_load_mini_app_hint">您確定要加載<Data><![CDATA[<font color="#ff3365">%1$s</font>]]></Data> 小應用嗎？</string>
+    <string name="mini_app_dialog_remove">刪除</string>
+    <string name="esign_please_contnet_empty_hint">請輸入加密內容。</string>
+
+    <string name="mini_app_app_id">小程序ID</string>
+    <string name="mini_app_website">網站</string>
+    <string name="mini_app_name">名稱</string>
+    <string name="mini_app_publickey">公鑰</string>
+    <string name="mini_app_category">分類</string>
+    <string name="mini_app_platform">平臺</string>
+    <string name="mini_app_version">版本</string>
+    <string name="mini_app_shortdesc">概述</string>
+
+    <string name="mini_app_invalid_url">無效url</string>
+
+    <string name="history_loading_hint">正在加載更多的數據...</string>
+    <string name="history_load_no_data">已經全部加載完畢</string>
+    <string name="history_pull_refresh_hint">點擊或上拉加載更多</string>
+
+    <string name="net_has_disconnect">網絡已斷開</string>
 
     <string name="multi_wallet_switch">切換錢包</string>
     <string name="multi_wallet_new">+ 新增錢包</string>

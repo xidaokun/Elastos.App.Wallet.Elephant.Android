@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.fragments;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Html;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -39,6 +41,7 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 import com.elastos.jni.Utility;
+import com.elastos.jni.utils.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -137,12 +140,12 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                     mAdapter.notifyDataSetChanged();
                     break;
                 case SHOW_LOADING:
-                    if (!mLoadingDialog.isShowing()) {
+                    if (mActivity!=null && !mActivity.isFinishing() && !mLoadingDialog.isShowing()) {
                         mLoadingDialog.show();
                     }
                     break;
                 case DISMISS_LOADING:
-                    if (mLoadingDialog.isShowing()) {
+                    if (mActivity!=null && !mActivity.isFinishing() && mLoadingDialog.isShowing()) {
                         mLoadingDialog.dismiss();
                     }
                     break;
@@ -170,6 +173,12 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         }
     };
 
+    private Activity mActivity;
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.mActivity = activity;
+    }
 
     @Nullable
     @Override
@@ -669,9 +678,21 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         }
     }
 
-    public void downloadCapsule(final String url) {
-        Log.d("capsule_download", "url:"+url);
+    public void downloadCapsule(String url) {
         if (StringUtil.isNullOrEmpty(url)) {
+            Toast.makeText(getContext(), getString(R.string.mini_app_invalid_url), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(url.contains("elapp:")) {
+            String[] tmp = url.split("elapp:");
+            if(tmp!=null && tmp.length==2) {
+                url = tmp[1].trim();
+            }
+        }
+
+        boolean isValid = StringUtils.isUrl(url);
+        if(!isValid) {
             Toast.makeText(getContext(), getString(R.string.mini_app_invalid_url), Toast.LENGTH_SHORT).show();
             return;
         }
