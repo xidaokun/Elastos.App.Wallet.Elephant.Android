@@ -2,6 +2,8 @@
 package com.breadwallet.presenter.activities.intro;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.cache.UpgradeHandler;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.WalletNameActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
@@ -196,6 +199,25 @@ public class IntroActivity extends BRActivity {
         UiUtils.setStorageName(phrase);
     }
 
+    private void upgradeAction(){
+        PackageInfo packageInfo = null;
+        try {
+            packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        int newVersion = packageInfo != null ? packageInfo.versionCode : 0;
+        int oldVerson = BRSharedPrefs.getVersionCode(this, "version");
+        if(oldVerson != newVersion){
+            UpgradeHandler.getInstance(this).deleteAllKVs();
+//            BRSharedPrefs.putCachedBalance(this, "ELA",  new BigDecimal(0));
+//            UpgradeHandler.getInstance(this).deleteAllTransactions();
+//            UpgradeHandler.getInstance(this).deleteAllKVs();
+//            BRSharedPrefs.putVersionCode(this, "version", newVersion);
+        }
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -203,6 +225,7 @@ public class IntroActivity extends BRActivity {
 
         if (requestCode == BRConstants.INIT_GLOBAL_REQUEST_CODE && resultCode == RESULT_OK) {
             initGlobal();
+            upgradeAction();
         }
     }
 

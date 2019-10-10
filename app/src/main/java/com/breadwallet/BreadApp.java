@@ -194,7 +194,7 @@ public class BreadApp extends Application {
             }
         };
         Bugly.init(getApplicationContext(), BuildConfig.UPGRADE_TESTNET? "8b437eefc0":"8a9b0190e0", false);
-        upgradeAction();
+//        upgradeAction();
     }
 
     private void upgradeAction(){
