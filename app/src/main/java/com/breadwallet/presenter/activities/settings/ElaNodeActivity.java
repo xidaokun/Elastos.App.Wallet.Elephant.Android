@@ -151,10 +151,12 @@ public class ElaNodeActivity extends BRActivity {
     }
 
     private void changeConnectStatus(String node, boolean success){
-        BRSharedPrefs.putElaNode(ElaNodeActivity.this, ElaDataSource.ELA_NODE_KEY, node.trim());
+        if (success) {
+            BRSharedPrefs.putElaNode(ElaNodeActivity.this, ElaDataSource.ELA_NODE_KEY, node.trim());
+            wipeData();
+        }
         mCurrentNode.setText(node);
         mConnectStatus.setText(success?getString(R.string.NodeSelector_connected) : getString(R.string.NodeSelector_connect_error));
-        wipeData();
     }
 
     private void hideList(){
