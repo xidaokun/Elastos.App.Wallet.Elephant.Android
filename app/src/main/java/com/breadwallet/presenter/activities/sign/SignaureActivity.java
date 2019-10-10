@@ -66,7 +66,6 @@ public class SignaureActivity extends BRActivity {
             String action = intent.getAction();
             if (!StringUtil.isNullOrEmpty(action) && action.equals(Intent.ACTION_VIEW)) {
                 Uri uri = intent.getData();
-                Log.i(TAG, "server mUri: " + uri.toString());
                 mUri = uri.toString();
             } else {
                 mUri = intent.getStringExtra(Constants.INTENT_EXTRA_KEY.META_EXTRA);

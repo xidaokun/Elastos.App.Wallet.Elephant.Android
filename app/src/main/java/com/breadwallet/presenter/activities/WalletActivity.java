@@ -116,6 +116,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     public static String mCallbackUrl;
     public static String mReturnUrl;
+    public static String mAppId;
     public static String mOrderId;
 
     @Override
@@ -135,11 +136,13 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 UriFactory factory = new UriFactory();
                 factory.parse(mUri);
                 String coinName = factory.getCoinName();
-                if(StringUtil.isNullOrEmpty(coinName)) return;
+                if(StringUtil.isNullOrEmpty(coinName)) {
+                    finish();
+                    return;
+                }
                 if(coinName.toLowerCase().contains("usdt")) coinName = "USDT";
                 BRSharedPrefs.putCurrentWalletIso(BreadApp.mContext, coinName);
             }
-            Log.i("author_test", "walletActivity1 mUri:"+mUri);
         }
 
         BRSharedPrefs.putIsNewWallet(this, false);
@@ -441,6 +444,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                         String des = StringUtil.isNullOrEmpty(factory.getOrderID())?  "" : "OrderID="+factory.getOrderID();
                         mCallbackUrl = factory.getCallbackUrl();
                         mReturnUrl = factory.getReturnUrl();
+                        mAppId = factory.getAppID();
                         mOrderId = factory.getOrderID();
                         Log.i(TAG, "walletActivity1 did:"+did+" appName:"+appName+" appId:"+appId+" PK: "+PK);
                         boolean isValide = AuthorizeManager.verify(WalletActivity.this, did, PK, appName, appId);
