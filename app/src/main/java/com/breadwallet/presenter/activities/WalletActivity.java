@@ -116,6 +116,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     public static String mCallbackUrl;
     public static String mReturnUrl;
+    public static String mAppId;
     public static String mOrderId;
 
     @Override
@@ -443,6 +444,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                         String des = StringUtil.isNullOrEmpty(factory.getOrderID())?  "" : "OrderID="+factory.getOrderID();
                         mCallbackUrl = factory.getCallbackUrl();
                         mReturnUrl = factory.getReturnUrl();
+                        mAppId = factory.getAppID();
                         mOrderId = factory.getOrderID();
                         Log.i(TAG, "walletActivity1 did:"+did+" appName:"+appName+" appId:"+appId+" PK: "+PK);
                         boolean isValide = AuthorizeManager.verify(WalletActivity.this, did, PK, appName, appId);

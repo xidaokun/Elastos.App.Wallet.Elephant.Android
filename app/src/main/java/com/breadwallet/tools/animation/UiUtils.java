@@ -533,15 +533,24 @@ public class UiUtils {
         payCallback(context, txid);
         WalletActivity.mCallbackUrl = null;
         WalletActivity.mReturnUrl = null;
+        WalletActivity.mAppId = null;
         WalletActivity.mOrderId = null;
     }
 
     private static void payReturn(Context context, String txid) {
+        String url = null;
         if (!StringUtil.isNullOrEmpty(WalletActivity.mReturnUrl)) { //call return url
             if (WalletActivity.mReturnUrl.contains("?")) {
-                UiUtils.startWebviewActivity(context, WalletActivity.mReturnUrl + "&TXID=" + txid + "&OrderID=" + WalletActivity.mOrderId);
+                url = WalletActivity.mReturnUrl + "&TXID=" + txid + "&OrderID=" + WalletActivity.mOrderId;
             } else {
-                UiUtils.startWebviewActivity(context, WalletActivity.mReturnUrl + "?TXID=" + txid + "&OrderID=" + WalletActivity.mOrderId);
+                url = WalletActivity.mReturnUrl + "?TXID=" + txid + "&OrderID=" + WalletActivity.mOrderId;
+            }
+
+            String addAppIds = BRSharedPrefs.getAddedAppId(context);
+            if (!StringUtil.isNullOrEmpty(addAppIds) && addAppIds.contains(WalletActivity.mAppId)) {
+                UiUtils.startWebviewActivity(context, url, WalletActivity.mAppId);
+            } else {
+                UiUtils.openUrlByBrowser(context, url);
             }
         }
     }
