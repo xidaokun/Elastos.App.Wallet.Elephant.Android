@@ -199,25 +199,6 @@ public class IntroActivity extends BRActivity {
         UiUtils.setStorageName(phrase);
     }
 
-    private void upgradeAction(){
-        PackageInfo packageInfo = null;
-        try {
-            packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        int newVersion = packageInfo != null ? packageInfo.versionCode : 0;
-        int oldVerson = BRSharedPrefs.getVersionCode(this, "version");
-        if(oldVerson != newVersion){
-            UpgradeHandler.getInstance(this).deleteAllKVs();
-//            BRSharedPrefs.putCachedBalance(this, "ELA",  new BigDecimal(0));
-//            UpgradeHandler.getInstance(this).deleteAllTransactions();
-//            UpgradeHandler.getInstance(this).deleteAllKVs();
-//            BRSharedPrefs.putVersionCode(this, "version", newVersion);
-        }
-
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -225,7 +206,6 @@ public class IntroActivity extends BRActivity {
 
         if (requestCode == BRConstants.INIT_GLOBAL_REQUEST_CODE && resultCode == RESULT_OK) {
             initGlobal();
-            upgradeAction();
         }
     }
 
