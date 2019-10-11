@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -47,6 +48,30 @@ public class BRSharedPrefs {
     public static final String TAG = BRSharedPrefs.class.getName();
 
     public static String PREFS_NAME = "MyPrefsFile";
+
+    public static void putAll(Context context, String spName, String key, Object value) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(spName, 0);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        if (value instanceof String) {
+            editor.putString(key, (String) value);
+        } else if (value instanceof Integer) {
+            editor.putInt(key, (Integer) value);
+        } else if (value instanceof Boolean) {
+            editor.putBoolean(key, (Boolean) value);
+        } else if (value instanceof Float) {
+            editor.putFloat(key, (Float) value);
+        } else if (value instanceof Long) {
+            editor.putLong(key, (Long) value);
+        } else {
+            editor.putString(key, value.toString());
+        }
+        editor.apply();
+    }
+
+    public static Map<String, ?> getAll(Context context, String spName) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(spName, 0);
+        return sharedPreferences.getAll();
+    }
 
     public static String getPreferredFiatIso(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, 0);
