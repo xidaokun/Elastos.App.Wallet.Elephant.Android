@@ -34,6 +34,7 @@ import com.platform.sqlite.PlatformSqliteHelper;
 import java.security.NoSuchAlgorithmException;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 
 
 /**
@@ -197,6 +198,15 @@ public class IntroActivity extends BRActivity {
         if (phrase == null) return;
 
         UiUtils.setStorageName(phrase);
+        backupSp(phrase);
+    }
+
+    private void backupSp(byte[] phrase) {
+        Map<String, ?> srcData = BRSharedPrefs.getAll(this, "MyPrefsFile");
+        String hash = UiUtils.getSha256(phrase);
+        for(Map.Entry<String, ?>  entry : srcData.entrySet()){
+            BRSharedPrefs.putAll(this, "profile_" + hash, entry.getKey(), entry.getValue());
+        }
     }
 
     @Override

@@ -28,6 +28,10 @@ import android.widget.Toast;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -324,6 +328,38 @@ public class Utils {
             e.printStackTrace();
         }
         return bitmap;
+    }
+
+    public static void copyFile(File src, File des, String capsuleName) {
+        if (null == src
+                || null == des
+                || StringUtil.isNullOrEmpty(capsuleName)) return;
+        if (!des.exists()) des.mkdirs();
+        File backupFile = new File(des, capsuleName);
+        if (backupFile.exists()) backupFile.delete();
+
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+        try {
+            inputStream = new FileInputStream(src);
+            outputStream = new FileOutputStream(backupFile);
+            byte[] buffer = new byte[1024];
+            int length = inputStream.read(buffer);
+            while (length > 0) {
+                outputStream.write(buffer, 0, length);
+                length = inputStream.read(buffer);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                outputStream.flush();
+                inputStream.close();
+                outputStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }
