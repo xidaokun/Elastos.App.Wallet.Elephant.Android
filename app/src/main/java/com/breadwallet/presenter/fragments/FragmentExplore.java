@@ -3,6 +3,7 @@ package com.breadwallet.presenter.fragments;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -229,84 +230,112 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     }
 
     public void initApps() {
-        mAppIds.clear();
-        mItems.clear();
-        mRemoveApp.clear();
+        try {
+            mAppIds.clear();
+            mItems.clear();
+            mRemoveApp.clear();
 
-//        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                BRSharedPrefs.setHasReset(getContext(), true);
-//                getInterApps();
-//            }
-//        });
-
-        BRSharedPrefs.putAddedAppId(getContext(), new Gson().toJson(mAppIds));
-        List<MyAppItem> tmp = ProfileDataSource.getInstance(getContext()).getMyAppItems();
-        if (tmp != null && tmp.size() > 0) { //database
-            Log.d(TAG, "MyAppItems size:" + tmp.size());
-            mItems.addAll(tmp);
-            for (MyAppItem item : tmp) {
-                mAppIds.add(item.appId);
-                BRSharedPrefs.putAddedAppId(getContext(), new Gson().toJson(mAppIds));
+//            AssetManager assetManager = getContext().getApplicationContext().getAssets();
+//            String[] apps = assetManager.list("apps");
+            BRSharedPrefs.putAddedAppId(getContext(), new Gson().toJson(mAppIds));
+            final List<MyAppItem> tmp = ProfileDataSource.getInstance(getContext()).getMyAppItems();
+            if(tmp!=null && tmp.size()>0) {
+                mItems.addAll(tmp);
+                for (MyAppItem item : tmp) {
+                    mAppIds.add(item.appId);
+                    BRSharedPrefs.putAddedAppId(getContext(), new Gson().toJson(mAppIds));
+                }
+                mAdapter.notifyDataSetChanged();
             }
-            mAdapter.notifyDataSetChanged();
-        } else {
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    getInterApps();
+                    getInterApps(tmp);
                 }
             });
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    private synchronized void getInterApps() {
+    private void addRedPackageApp() {
+        showDialog();
+        StringChainData redPackageStatus = getAppStatus(BRConstants.REA_PACKAGE_ID);
+        if (null == redPackageStatus ||
+                StringUtil.isNullOrEmpty(redPackageStatus.value) ||
+                redPackageStatus.value.equals("normal")) {
+            Log.d(TAG, "copy redpackage");
+            mDoloadFileName = "redpacket.capsule";
+            mDoloadUrl = "https://redpacket.elastos.org/redpacket.capsule";
+            copyCapsuleToDownloadCache(getContext(), mDownloadDir.getAbsolutePath(), mDoloadFileName);
+            refreshApps();
+        }
+    }
+
+    private void addDposVoteApp(){
+        showDialog();
+        StringChainData dposVoteStatus = getAppStatus(BRConstants.DPOS_VOTE_ID);
+        if (null == dposVoteStatus ||
+                StringUtil.isNullOrEmpty(dposVoteStatus.value) ||
+                dposVoteStatus.value.equals("normal")) {
+            Log.d(TAG, "copy dposvote");
+            mDoloadFileName = "vote.capsule";
+            mDoloadUrl = "http://elaphant.net/vote.capsule";
+            copyCapsuleToDownloadCache(getContext(), mDownloadDir.getAbsolutePath(), mDoloadFileName);
+            refreshApps();
+        }
+    }
+
+    private void addElaNewsApp(){
+        showDialog();
+        StringChainData elaNewsStatus = getAppStatus(BRConstants.ELA_NEWS_ID);
+        if (null == elaNewsStatus ||
+                StringUtil.isNullOrEmpty(elaNewsStatus.value) ||
+                elaNewsStatus.value.equals("normal")) {
+            Log.d(TAG, "copy elaNews");
+            mDoloadFileName = "ELANews01.capsule";
+            mDoloadUrl = "https://elanews.net/ELANews01.capsule";
+            copyCapsuleToDownloadCache(getContext(), mDownloadDir.getAbsolutePath(), mDoloadFileName);
+            refreshApps();
+        }
+    }
+
+    private void addElappApp(){
+        showDialog();
+        StringChainData elaAppsStatus = getAppStatus(BRConstants.ELA_APPS_ID);
+        if (null == elaAppsStatus ||
+                StringUtil.isNullOrEmpty(elaAppsStatus.value) ||
+                elaAppsStatus.value.equals("normal")) {
+            Log.d(TAG, "copy elaApps");
+            mDoloadFileName = "elapp.capsule";
+            mDoloadUrl = "https://elaphant.app/elapp.capsule";
+            copyCapsuleToDownloadCache(getContext(), mDownloadDir.getAbsolutePath(), mDoloadFileName);
+            refreshApps();
+        }
+    }
+
+    private synchronized void getInterApps(List<MyAppItem> apps) {
         try {
-            showDialog();
-            StringChainData redPackageStatus = getAppStatus(BRConstants.REA_PACKAGE_ID);
-            if (null == redPackageStatus ||
-                    StringUtil.isNullOrEmpty(redPackageStatus.value) ||
-                    redPackageStatus.value.equals("normal")) {
-                Log.d(TAG, "copy redpackage");
-                mDoloadFileName = "redpacket.capsule";
-                mDoloadUrl = "https://redpacket.elastos.org/redpacket.capsule";
-                copyCapsuleToDownloadCache(getContext(), mDownloadDir.getAbsolutePath(), mDoloadFileName);
-                refreshApps();
+
+            boolean hasRedPackage = false;
+            boolean hasDposVote = false;
+            boolean hasElaNews = false;
+            boolean hasElapp = false;
+
+            for(MyAppItem item : apps) {
+                if(item.appId.equals(BRConstants.REA_PACKAGE_ID)) hasRedPackage = true;
+                if(item.appId.equals(BRConstants.DPOS_VOTE_ID)) hasDposVote = true;
+                if(item.appId.equals(BRConstants.ELA_NEWS_ID)) hasElaNews = true;
+                if(item.appId.equals(BRConstants.ELA_APPS_ID)) hasElapp = true;
             }
-            showDialog();
-            StringChainData dposVoteStatus = getAppStatus(BRConstants.DPOS_VOTE_ID);
-            if (null == dposVoteStatus ||
-                    StringUtil.isNullOrEmpty(dposVoteStatus.value) ||
-                    dposVoteStatus.value.equals("normal")) {
-                Log.d(TAG, "copy dposvote");
-                mDoloadFileName = "vote.capsule";
-                mDoloadUrl = "http://elaphant.net/vote.capsule";
-                copyCapsuleToDownloadCache(getContext(), mDownloadDir.getAbsolutePath(), mDoloadFileName);
-                refreshApps();
-            }
-            showDialog();
-            StringChainData elaNewsStatus = getAppStatus(BRConstants.ELA_NEWS_ID);
-            if (null == elaNewsStatus ||
-                    StringUtil.isNullOrEmpty(elaNewsStatus.value) ||
-                    elaNewsStatus.value.equals("normal")) {
-                Log.d(TAG, "copy elaNews");
-                mDoloadFileName = "ELANews01.capsule";
-                mDoloadUrl = "https://elanews.net/ELANews01.capsule";
-                copyCapsuleToDownloadCache(getContext(), mDownloadDir.getAbsolutePath(), mDoloadFileName);
-                refreshApps();
-            }
-            showDialog();
-            StringChainData elaAppsStatus = getAppStatus(BRConstants.ELA_APPS_ID);
-            if (null == elaAppsStatus ||
-                    StringUtil.isNullOrEmpty(elaAppsStatus.value) ||
-                    elaAppsStatus.value.equals("normal")) {
-                Log.d(TAG, "copy elaApps");
-                mDoloadFileName = "elapp.capsule";
-                mDoloadUrl = "https://elaphant.app/elapp.capsule";
-                copyCapsuleToDownloadCache(getContext(), mDownloadDir.getAbsolutePath(), mDoloadFileName);
-                refreshApps();
-            }
+
+            if(!hasRedPackage) addRedPackageApp();
+
+            if(!hasDposVote) addDposVoteApp();
+
+            if(!hasElaNews) addElaNewsApp();
+
+            if(!hasElapp) addElappApp();
 
         } catch (Exception e) {
             e.printStackTrace();
