@@ -19,6 +19,7 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.adapter.PhraseAdapter;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PhraseInfo;
 import com.breadwallet.tools.util.BRConstants;
@@ -101,9 +102,7 @@ public class PhraseListActivity extends BRActivity implements PhraseAdapter.Wall
                 continue;
             }
 
-            String prefName = "profile_" + hash;
-            SharedPreferences prefs = getSharedPreferences(prefName, Context.MODE_PRIVATE);
-            boolean written =  prefs.getBoolean("phraseWritten", false);
+            boolean written = BRSharedPrefs.getPhraseWroteDown(this);
             list.add(written);
         }
 
