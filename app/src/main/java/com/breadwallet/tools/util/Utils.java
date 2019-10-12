@@ -11,9 +11,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
 import android.hardware.fingerprint.FingerprintManager;
-import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
@@ -28,10 +26,11 @@ import android.widget.Toast;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 
 import java.io.File;
-import java.lang.reflect.Array;
-import java.math.BigDecimal;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -326,4 +325,35 @@ public class Utils {
         return bitmap;
     }
 
+    public static void copyFile(File src, File des, String name) {
+        if (null == src
+                || null == des
+                || StringUtil.isNullOrEmpty(name)) return;
+        if (!des.exists()) des.mkdirs();
+        File backupFile = new File(des, name);
+        if (backupFile.exists()) backupFile.delete();
+
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+        try {
+            inputStream = new FileInputStream(src);
+            outputStream = new FileOutputStream(backupFile);
+            byte[] buffer = new byte[1024];
+            int length = inputStream.read(buffer);
+            while (length > 0) {
+                outputStream.write(buffer, 0, length);
+                length = inputStream.read(buffer);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                outputStream.flush();
+                inputStream.close();
+                outputStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

@@ -2,8 +2,6 @@
 package com.breadwallet.presenter.activities.intro;
 
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.os.Bundle;
@@ -15,25 +13,23 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.cache.UpgradeHandler;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.WalletNameActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.manager.BRPublicSharedPrefs;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.security.SmartValidator;
-import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.platform.sqlite.PlatformSqliteHelper;
 
-import java.security.NoSuchAlgorithmException;
-
-import java.security.NoSuchAlgorithmException;
+import java.io.File;
+import java.util.Map;
 
 
 /**
@@ -195,8 +191,30 @@ public class IntroActivity extends BRActivity {
         }
 
         if (phrase == null) return;
+        if(UiUtils.isSingleWallet(this, phrase) &&
+                StringUtil.isNullOrEmpty(BRSharedPrefs.getSingleWalletHash(this))) {
+            BRPublicSharedPrefs.putUseFingerprint(this, BRSharedPrefs.getUseFingerprint(this));
+            BRSharedPrefs.setSingleWalletHash(this,  UiUtils.getSha256(phrase));
+        }
 
         UiUtils.setStorageName(phrase);
+    }
+
+
+
+    private void backupSp(byte[] phrase) {
+        Map<String, ?> srcData = BRSharedPrefs.getAll(this, "MyPrefsFile");
+        String hash = UiUtils.getSha256(phrase);
+        for(Map.Entry<String, ?>  entry : srcData.entrySet()){
+            BRSharedPrefs.putAll(this, "profile_" + hash, entry.getKey(), entry.getValue());
+        }
+    }
+
+    private void backupDatabase(byte[] phrase) {
+        File path = new File(getFilesDir().getParent(), "databases");
+        String hash = UiUtils.getSha256(phrase);
+        Utils.copyFile(new File(path, "breadwallet.db"), path, hash + ".db");
+        Log.i("tag", "tag");
     }
 
     @Override
