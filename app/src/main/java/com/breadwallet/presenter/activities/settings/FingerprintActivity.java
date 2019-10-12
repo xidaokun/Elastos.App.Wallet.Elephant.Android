@@ -62,7 +62,7 @@ public class FingerprintActivity extends BaseSettingsActivity {
         limitExchange = findViewById(R.id.limit_exchange);
         limitInfo = findViewById(R.id.limit_info);
 
-        toggleButton.setChecked(BRPublicSharedPrefs.getUseFingerprint(this));
+        toggleButton.setChecked(BRSharedPrefs.getUseFingerprint(this));
 
         limitExchange.setText(getLimitText());
 
@@ -80,7 +80,7 @@ public class FingerprintActivity extends BaseSettingsActivity {
                             }, null, null, 0);
                     buttonView.setChecked(false);
                 } else {
-                    BRPublicSharedPrefs.putUseFingerprint(app, isChecked);
+                    BRSharedPrefs.putUseFingerprint(app, isChecked);
                 }
 
             }
