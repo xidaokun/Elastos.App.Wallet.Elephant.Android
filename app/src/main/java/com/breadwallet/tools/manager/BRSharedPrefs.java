@@ -820,14 +820,14 @@ public class BRSharedPrefs {
     }
 
     public static void setSingleWalletHash(Context context, String hash) {
-        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("singleHash", hash);
         editor.apply();
     }
 
     public static String getSingleWalletHash(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getSharedPreferences("MyPrefsFile", Context.MODE_PRIVATE);
         return prefs.getString("singleHash", null);
     }
 

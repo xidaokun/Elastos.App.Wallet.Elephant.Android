@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
+import com.breadwallet.tools.animation.UiUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +49,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     }
 
     public static BRSQLiteHelper getInstance(Context context) {
+        DATABASE_NAME = UiUtils.getCacheProviderName(context, DATABASE_NAME);
         if (instance == null) instance = new BRSQLiteHelper(context);
         return instance;
     }
