@@ -194,10 +194,11 @@ public class BreadApp extends Application {
             }
         };
         Bugly.init(getApplicationContext(), BuildConfig.UPGRADE_TESTNET? "8b437eefc0":"8a9b0190e0", false);
-//        upgradeAction();
+
+        cacheVersionCode();
     }
 
-    private void upgradeAction(){
+    private void cacheVersionCode() {
         PackageInfo packageInfo = null;
         try {
             packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
@@ -205,15 +206,7 @@ public class BreadApp extends Application {
             e.printStackTrace();
         }
         int newVersion = packageInfo != null ? packageInfo.versionCode : 0;
-        int oldVerson = BRSharedPrefs.getVersionCode(this, "version");
-        if(oldVerson != newVersion){
-            UpgradeHandler.getInstance(this).deleteAllKVs();
-//            BRSharedPrefs.putCachedBalance(this, "ELA",  new BigDecimal(0));
-//            UpgradeHandler.getInstance(this).deleteAllTransactions();
-//            UpgradeHandler.getInstance(this).deleteAllKVs();
-//            BRSharedPrefs.putVersionCode(this, "version", newVersion);
-        }
-
+        BRSharedPrefs.putVersionCode(this, "version", newVersion);
     }
 
     public static void generateWalletIfIfNeeded(Context app, String address) {

@@ -78,6 +78,7 @@ import com.elastos.jni.Constants;
 import com.google.gson.Gson;
 import com.platform.sqlite.PlatformSqliteHelper;
 
+import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -667,5 +668,32 @@ public class UiUtils {
         BRSQLiteHelper.DATABASE_NAME = hash + ".db";
         PlatformSqliteHelper.DATABASE_NAME = hash + "_platform.db";
         BRSharedPrefs.PREFS_NAME = "profile_" + hash;
+    }
+
+    public static String getCacheProviderName(Context context, String name) {
+        if(StringUtil.isNullOrEmpty(name)) return null;
+        String hash = BRSharedPrefs.getSingleWalletHash(context);
+        if(StringUtil.isNullOrEmpty(hash)) return name;
+        if(name.equals(hash+".db")) {
+            return "breadwallet.db";
+        } else if(name.equals(hash + "_platform.db")){
+            return "platform.db";
+        } else if(name.equals("profile_" + hash)){
+            return "MyPrefsFile";
+        }
+        return name;
+    }
+
+    public static boolean isSingleWallet(Context context, byte[] phrase){
+        File databasePath = new File(context.getFilesDir().getParent(), "databases");
+        File sharedPrefsPath = new File(context.getFilesDir().getParent(), "shared_prefs");
+
+        String hash = UiUtils.getSha256(phrase);
+
+        if(!new File(databasePath, hash + ".db").exists() && !new File(sharedPrefsPath, "profile_" + hash + ".xml").exists()) {
+            return true;
+        }
+
+        return false;
     }
 }

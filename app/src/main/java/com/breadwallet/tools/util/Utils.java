@@ -11,9 +11,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
 import android.hardware.fingerprint.FingerprintManager;
-import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
@@ -32,10 +30,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Array;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -330,12 +325,12 @@ public class Utils {
         return bitmap;
     }
 
-    public static void copyFile(File src, File des, String capsuleName) {
+    public static void copyFile(File src, File des, String name) {
         if (null == src
                 || null == des
-                || StringUtil.isNullOrEmpty(capsuleName)) return;
+                || StringUtil.isNullOrEmpty(name)) return;
         if (!des.exists()) des.mkdirs();
-        File backupFile = new File(des, capsuleName);
+        File backupFile = new File(des, name);
         if (backupFile.exists()) backupFile.delete();
 
         InputStream inputStream = null;
@@ -361,5 +356,4 @@ public class Utils {
             }
         }
     }
-
 }
