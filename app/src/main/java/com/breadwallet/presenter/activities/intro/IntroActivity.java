@@ -17,6 +17,7 @@ import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.WalletNameActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.manager.BRPublicSharedPrefs;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
@@ -192,6 +193,7 @@ public class IntroActivity extends BRActivity {
         if (phrase == null) return;
         if(UiUtils.isSingleWallet(this, phrase) &&
                 StringUtil.isNullOrEmpty(BRSharedPrefs.getSingleWalletHash(this))) {
+            BRPublicSharedPrefs.putUseFingerprint(this, BRSharedPrefs.getUseFingerprint(this));
             BRSharedPrefs.setSingleWalletHash(this,  UiUtils.getSha256(phrase));
         }
 

@@ -831,4 +831,9 @@ public class BRSharedPrefs {
         return prefs.getString("singleHash", null);
     }
 
+    public static boolean getUseFingerprint(Context activity) {
+        SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean("useFingerprint", false);
+    }
+
 }
