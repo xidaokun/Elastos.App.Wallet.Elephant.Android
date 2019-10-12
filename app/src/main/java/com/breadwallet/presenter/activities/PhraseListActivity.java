@@ -24,7 +24,6 @@ import com.breadwallet.tools.security.PhraseInfo;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -102,8 +101,9 @@ public class PhraseListActivity extends BRActivity implements PhraseAdapter.Wall
             }
 
             String prefName = "profile_" + hash;
-            SharedPreferences prefs = getSharedPreferences(prefName, Context.MODE_PRIVATE);
+            SharedPreferences prefs = getSharedPreferences(UiUtils.getCacheProviderName(this, prefName), Context.MODE_PRIVATE);
             boolean written =  prefs.getBoolean("phraseWritten", false);
+
             list.add(written);
         }
 
