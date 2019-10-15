@@ -4,4 +4,3 @@ public class ElaPostmark {
     public String pub;
     public String signature;
 }
-
