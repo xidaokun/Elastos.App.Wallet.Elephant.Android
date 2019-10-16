@@ -657,7 +657,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String ethRpcUrl = JsonRpcHelper.getEthereumRpcUrl();
+                final String ethRpcUrl = "https://api-eth.elaphant.app/api/1/eth/wrap";
                 final JSONObject payload = new JSONObject();
                 final JSONArray params = new JSONArray();
 
@@ -939,7 +939,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String ethRpcUrl = JsonRpcHelper.createEthereumTransactionsUrl(address);
+                final String ethRpcUrl = "https://api-eth.elaphant.app/api/1/eth/history";
 
                 final JSONObject payload = new JSONObject();
                 try {
