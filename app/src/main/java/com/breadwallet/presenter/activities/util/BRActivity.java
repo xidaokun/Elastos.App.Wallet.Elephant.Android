@@ -35,6 +35,7 @@ import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
+import com.elastos.jni.utils.StringUtils;
 import com.platform.HTTPServer;
 import com.platform.tools.BRBitId;
 
@@ -273,13 +274,13 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
 
             case BRConstants.SCANNER_DID_REQUEST:
                 if (resultCode == Activity.RESULT_OK) {
-                    final String mUri = data.getStringExtra("result");
-                    if(StringUtil.isNullOrEmpty(mUri)) return;
+                    String url = data.getStringExtra("result");
+                    if(StringUtil.isNullOrEmpty(url)) return;
 
-                    Uri uri = Uri.parse(mUri);
+                    Uri uri = Uri.parse(url);
                     String scheme = uri.getScheme();
                     String host = uri.getHost();
-                    if (scheme != null && scheme.equals("elaphant") && host != null) {
+                    if (StringUtils.isNullOrEmpty(scheme) && scheme.equals("elaphant") && StringUtils.isNullOrEmpty(host)) {
                         switch (host) {
                             case "multitx":
                                 UiUtils.startMultiTxActivity(this, uri);
@@ -287,19 +288,21 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                             case "multicreate":
                                 UiUtils.startMultiCreateActivity(this, uri);
                                 return;
+                            case "identity":
+                                UiUtils.startAuthorActivity(this, url);
+                                return;
+                            case "elapay":
+                                UiUtils.startWalletActivity(this, url);
+                                return;
+                            case "sign":
+                                UiUtils.startSignActivity(this, url);
+                                return;
+                            case "eladposvote":
+                                UiUtils.startVoteActivity(this, url);
+                                return;
                             default:
                                 break;
                         }
-                    }
-
-                    if(mUri.contains("identity")) {
-                        UiUtils.startAuthorActivity(this, mUri);
-                    } else if(mUri.contains("elapay")) {
-                        UiUtils.startWalletActivity(this, mUri);
-                    } else if(mUri.contains("sign")){
-                        UiUtils.startSignActivity(this, mUri);
-                    } else if(mUri.contains("eladposvote")){
-                        UiUtils.startVoteActivity(this, mUri);
                     }
                 }
                 break;

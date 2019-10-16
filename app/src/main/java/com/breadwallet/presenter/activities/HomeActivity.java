@@ -1,15 +1,10 @@
 package com.breadwallet.presenter.activities;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -24,7 +19,6 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.fragments.FragmentExplore;
 import com.breadwallet.presenter.fragments.FragmentSetting;
 import com.breadwallet.presenter.fragments.FragmentWallet;
-import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -33,6 +27,7 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 import com.elastos.jni.Utility;
+import com.elastos.jni.utils.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -253,11 +248,16 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         if(data == null) return;
         if(requestCode == BRConstants.ADD_APP_URL_REQUEST){
             String url = data.getStringExtra("result");
-            if(null != mExploreFragment){
-                mExploreFragment.downloadCapsule(url);
+            Uri uri = Uri.parse(url);
+            String scheme = uri.getScheme();
+            if(StringUtils.isNullOrEmpty(scheme)) return;
+            if(scheme.equals("elaphant")) {
+                super.onActivityResult(requestCode, resultCode, data);
+            } else {
+                if(null != mExploreFragment) mExploreFragment.downloadCapsule(url);
             }
         }
-        super.onActivityResult(requestCode, resultCode, data);
+
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.breadwallet.presenter.fragments;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,7 +15,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Html;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -58,8 +56,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -718,6 +714,12 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             if(tmp!=null && tmp.length==2) {
                 url = tmp[1].trim();
             }
+        }
+
+        if(StringUtils.isElsProtocol(url)) {
+            downloadCapsule(StringUtils.replaceElsProtocol(url, "http"));
+            downloadCapsule(StringUtils.replaceElsProtocol(url, "https"));
+            return;
         }
 
         boolean isValid = StringUtils.isUrl(url);
