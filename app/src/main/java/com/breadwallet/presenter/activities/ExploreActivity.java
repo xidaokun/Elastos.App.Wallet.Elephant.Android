@@ -193,7 +193,7 @@ public class ExploreActivity extends BRActivity implements OnStartDragListener, 
             @Override
             public void onClick(View v) {
                 mPopLayout.setVisibility(View.GONE);
-                UiUtils.startAddAppsActivity(ExploreActivity.this, BRConstants.ADD_APP_URL_REQUEST);
+                UiUtils.startAddAppsActivity(ExploreActivity.this, BRConstants.SCANNER_DID_OR_ADD_REQUEST);
             }
         });
 
@@ -201,7 +201,7 @@ public class ExploreActivity extends BRActivity implements OnStartDragListener, 
             @Override
             public void onClick(View v) {
                 mPopLayout.setVisibility(View.GONE);
-                UiUtils.openScanner(ExploreActivity.this, BRConstants.ADD_APP_URL_REQUEST);
+                UiUtils.openScanner(ExploreActivity.this, BRConstants.SCANNER_DID_OR_ADD_REQUEST);
             }
         });
 

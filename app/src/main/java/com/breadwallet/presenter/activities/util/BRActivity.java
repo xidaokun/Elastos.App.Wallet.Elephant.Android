@@ -20,6 +20,7 @@ import com.breadwallet.presenter.activities.WalletNameActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.intro.RecoverActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
+import com.breadwallet.presenter.fragments.FragmentExplore;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRApiManager;
@@ -67,6 +68,7 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
     private static final String TAG = BRActivity.class.getName();
     public static final Point screenParametersPoint = new Point();
     private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null : BreadApp.getBreadContext().getApplicationContext().getPackageName();
+    protected FragmentExplore mExploreFragment;
 
     static {
         try {
@@ -272,7 +274,7 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                 }
                 break;
 
-            case BRConstants.SCANNER_DID_REQUEST:
+            case BRConstants.SCANNER_DID_OR_ADD_REQUEST:
                 if (resultCode == Activity.RESULT_OK) {
                     String url = data.getStringExtra("result");
                     if(StringUtil.isNullOrEmpty(url)) return;
@@ -280,28 +282,32 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                     Uri uri = Uri.parse(url);
                     String scheme = uri.getScheme();
                     String host = uri.getHost();
-                    if (StringUtils.isNullOrEmpty(scheme) && scheme.equals("elaphant") && StringUtils.isNullOrEmpty(host)) {
-                        switch (host) {
-                            case "multitx":
-                                UiUtils.startMultiTxActivity(this, uri);
-                                return;
-                            case "multicreate":
-                                UiUtils.startMultiCreateActivity(this, uri);
-                                return;
-                            case "identity":
-                                UiUtils.startAuthorActivity(this, url);
-                                return;
-                            case "elapay":
-                                UiUtils.startWalletActivity(this, url);
-                                return;
-                            case "sign":
-                                UiUtils.startSignActivity(this, url);
-                                return;
-                            case "eladposvote":
-                                UiUtils.startVoteActivity(this, url);
-                                return;
-                            default:
-                                break;
+                    if (!StringUtils.isNullOrEmpty(scheme) && !StringUtils.isNullOrEmpty(host)) {
+                        if(scheme.equals("elaphant")) {
+                            switch (host) {
+                                case "multitx":
+                                    UiUtils.startMultiTxActivity(this, uri);
+                                    return;
+                                case "multicreate":
+                                    UiUtils.startMultiCreateActivity(this, uri);
+                                    return;
+                                case "identity":
+                                    UiUtils.startAuthorActivity(this, url);
+                                    return;
+                                case "elapay":
+                                    UiUtils.startWalletActivity(this, url);
+                                    return;
+                                case "sign":
+                                    UiUtils.startSignActivity(this, url);
+                                    return;
+                                case "eladposvote":
+                                    UiUtils.startVoteActivity(this, url);
+                                    return;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            if(null != mExploreFragment) mExploreFragment.downloadCapsule(url);
                         }
                     }
                 }

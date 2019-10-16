@@ -441,7 +441,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             @Override
             public void onClick(View v) {
                 mMenuPopLayout.setVisibility(View.GONE);
-                UiUtils.startAddAppsActivity(getActivity(), BRConstants.ADD_APP_URL_REQUEST);
+                UiUtils.startAddAppsActivity(getActivity(), BRConstants.SCANNER_DID_OR_ADD_REQUEST);
             }
         });
 
@@ -449,7 +449,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             @Override
             public void onClick(View v) {
                 mMenuPopLayout.setVisibility(View.GONE);
-                UiUtils.openScanner(getActivity(), BRConstants.ADD_APP_URL_REQUEST);
+                UiUtils.openScanner(getActivity(), BRConstants.SCANNER_DID_OR_ADD_REQUEST);
             }
         });
 
