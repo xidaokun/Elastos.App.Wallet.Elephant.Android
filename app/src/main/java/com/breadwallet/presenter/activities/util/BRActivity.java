@@ -68,7 +68,7 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
     private static final String TAG = BRActivity.class.getName();
     public static final Point screenParametersPoint = new Point();
     private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null : BreadApp.getBreadContext().getApplicationContext().getPackageName();
-    protected FragmentExplore mExploreFragment;
+    protected HomeActivity mHomeActivity;
 
     static {
         try {
@@ -307,7 +307,7 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                                     break;
                             }
                         } else {
-                            if(null != mExploreFragment) mExploreFragment.downloadCapsule(url);
+                            mHomeActivity.showAndDownloadCapsule(url);
                         }
                     }
                 }

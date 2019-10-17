@@ -1,8 +1,5 @@
 package com.breadwallet.presenter.activities;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -24,10 +21,8 @@ import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.ProfileDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 import com.elastos.jni.Utility;
-import com.elastos.jni.utils.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -51,9 +46,9 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     private static final String TAG = HomeActivity.class.getSimpleName() + "_test";
     private FragmentWallet mWalletFragment;
     private Fragment mSettingFragment;
+    private FragmentExplore mExploreFragment;
     private FragmentManager mFragmentManager;
     private BottomNavigationView navigation;
-    public static Activity mHomeActivity;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -233,6 +228,14 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             } else {
                 transaction.show(fragment).commitAllowingStateLoss();
             }
+        }
+    }
+
+    public void showAndDownloadCapsule(String url) {
+        if(mExploreFragment != null){
+            showFragment(mExploreFragment);
+            mExploreFragment.downloadCapsule(url);
+            navigation.setSelectedItemId(R.id.navigation_explore);
         }
     }
 

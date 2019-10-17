@@ -115,7 +115,7 @@ public class ElaDataSource implements BRDataSourceInterface {
         if (context instanceof Activity) {
             return (Activity) context;
         }
-        return HomeActivity.mHomeActivity;
+        return null;
     }
 
     public static ElaDataSource getInstance(Context context){

@@ -35,7 +35,6 @@ import com.breadwallet.presenter.activities.AddAppsActivity;
 import com.breadwallet.presenter.activities.AppAboutActivity;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.EsignHistoryActivity;
-import com.breadwallet.presenter.activities.ExploreActivity;
 import com.breadwallet.presenter.activities.ExploreWebActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.LoginActivity;
@@ -449,12 +448,6 @@ public class UiUtils {
     public static void startWebActivity(Activity activity, String url) {
         Intent intent = new Intent(activity, WebViewActivity.class);
         intent.putExtra(BRConstants.EXTRA_URL, url);
-        activity.startActivity(intent);
-        activity.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
-    }
-
-    public static void startExploreActivity(Activity activity) {
-        Intent intent = new Intent(activity, ExploreActivity.class);
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
     }
