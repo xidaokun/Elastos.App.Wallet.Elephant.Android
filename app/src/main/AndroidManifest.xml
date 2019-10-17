@@ -352,9 +352,6 @@
         <activity android:name=".presenter.activities.EsignHistoryActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".presenter.activities.ExploreActivity"
-            android:screenOrientation="portrait"/>
-
         <activity android:name=".presenter.activities.MultiSignQrActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".presenter.activities.MultiSignTxActivity"
