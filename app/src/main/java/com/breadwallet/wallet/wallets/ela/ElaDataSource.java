@@ -29,7 +29,7 @@ import com.breadwallet.wallet.wallets.ela.request.Outputs;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaOutput;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaTransaction;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaTransactionRes;
-import com.breadwallet.wallet.wallets.ela.response.create.ElaUTXOInputs;
+import com.breadwallet.wallet.wallets.ela.response.create.ElaUTXOInput;
 import com.breadwallet.wallet.wallets.ela.response.create.Meno;
 import com.breadwallet.wallet.wallets.ela.response.create.Payload;
 import com.breadwallet.wallet.wallets.ela.response.history.History;
@@ -628,14 +628,13 @@ public class ElaDataSource implements BRDataSourceInterface {
             multiElaTransaction.clear();
             long checkAmount = 0;
             for(int i=0; i< res.Transactions.size(); i++) {
-                if(!checkSignature(res.Transactions.get(i))) return null;
                 if(!StringUtil.isNullOrEmpty(memo)) res.Transactions.get(i).Memo = new Meno("text", memo).toString();
 
-                List<ElaUTXOInputs> inputs = res.Transactions.get(i).UTXOInputs;
+                List<ElaUTXOInput> inputs = res.Transactions.get(i).UTXOInputs;
                 List<ElaOutput> outputs = res.Transactions.get(i).Outputs;
 
                 for(int j=0; j<inputs.size(); j++){
-                    ElaUTXOInputs utxoInputs = inputs.get(j);
+                    ElaUTXOInput utxoInputs = inputs.get(j);
                     utxoInputs.privateKey  = WalletElaManager.getInstance(mContext).getPrivateKey();
                 }
 
@@ -690,11 +689,42 @@ public class ElaDataSource implements BRDataSourceInterface {
     }
 
     private boolean checkSignature(ElaTransaction tx){
+        if(tx == null) return false;
+
+        //        String pub = tx.Postmark.pub;
+//        String signature = tx.Postmark.signature;
+//        if(!StringUtil.isNullOrEmpty(pub) && !StringUtil.isNullOrEmpty(signature)){
+//            tx.Postmark = null;
+//            String source = new Gson().toJson(tx);
+//            boolean isValid = Utility.getInstance(mContext).verify(pub, source.getBytes(), HexUtils.hexToByteArray(signature));
+//            return isValid;
+//        }
+//
+//        return false;
+
+
         String pub = tx.Postmark.pub;
         String signature = tx.Postmark.signature;
-        if(!StringUtil.isNullOrEmpty(pub) && !StringUtil.isNullOrEmpty(signature)){
-            tx.Postmark = null;
-            String source = new Gson().toJson(tx);
+        if(!StringUtil.isNullOrEmpty(pub) && !StringUtil.isNullOrEmpty(signature)) {
+            StringBuilder sourceBuilder = new StringBuilder();
+            for(ElaUTXOInput input : tx.UTXOInputs) {
+                sourceBuilder.append(input.txid)
+                        .append("-")
+                        .append(input.index)
+                        .append(";");
+            }
+            sourceBuilder.append("&");
+
+            for(ElaOutput output : tx.Outputs) {
+                sourceBuilder.append(output.address)
+                        .append("-")
+                        .append(output.amount);
+            }
+            sourceBuilder.append("&");
+
+            sourceBuilder.append(tx.Fee);
+
+            String source = sourceBuilder.toString();
             boolean isValid = Utility.getInstance(mContext).verify(pub, source.getBytes(), HexUtils.hexToByteArray(signature));
             return isValid;
         }
@@ -702,29 +732,34 @@ public class ElaDataSource implements BRDataSourceInterface {
         return false;
     }
 
+
+
     public boolean checkTx(String inputAddress, String outputAddress, long amount, List<ElaTransaction> elaTransactions) {
         if(StringUtil.isNullOrEmpty(inputAddress) ||
                 StringUtil.isNullOrEmpty(outputAddress) ||
                 amount<0 ||
                 elaTransactions == null) return false;
 
-        long nodeFee = 0;
-        boolean hasOutAddress = false;
-        boolean hasNodeAddress = false;
         String nodeAddress = null;
+        long sumToAmount = 0;
+        boolean isSendToOther = false;
 
         for(ElaTransaction elaTransaction : elaTransactions){
+            if(checkSignature(elaTransaction)) return false;
+
             if(elaTransaction.Postmark != null) {
                 nodeAddress = ElastosKeypair.getAddress(elaTransaction.Postmark.pub);
             }
 
+            boolean hasToAddress = false;
+            boolean hasNodeAddress = false;
             for(ElaOutput output : elaTransaction.Outputs){
 
                 if(outputAddress.equals(inputAddress)){
 
                     if(output.address == nodeAddress){
 
-                        if(output.amount != nodeFee) {
+                        if(output.amount+elaTransaction.Fee != elaTransaction.Total_Node_Fee) {
                             return false;
                         }
 
@@ -733,15 +768,15 @@ public class ElaDataSource implements BRDataSourceInterface {
                         }
                         hasNodeAddress = true;
                     } else {
-
                         if(!inputAddress.equals(output.address)){
                             return false;
                         }
                     }
                 } else {
+                    isSendToOther = true;
                    if(!outputAddress.equals(nodeAddress)){
                        if(output.address.equals(nodeAddress)){
-                           if(output.amount != nodeFee){
+                           if(output.amount+elaTransaction.Fee != elaTransaction.Total_Node_Fee){
                                return false;
                            }
                            if(hasNodeAddress){
@@ -749,50 +784,38 @@ public class ElaDataSource implements BRDataSourceInterface {
                            }
                            hasNodeAddress = false;
                        } else if(output.address.equals(outputAddress)){
-                            if(output.amount != amount){
+                            sumToAmount += output.amount;
+                            if(hasToAddress) {
                                 return false;
                             }
-                            if(hasOutAddress){
-                                return false;
-                            }
-                            hasOutAddress = true;
+                            hasToAddress = true;
                        } else if(!output.address.equals(inputAddress)){
                             return false;
                        }
                    } else {
                        if(output.address.equals(nodeAddress)){
-                           if(amount != nodeFee){
-                                if(output.amount == nodeFee){
-                                    if(hasNodeAddress){
-                                        return false;
-                                    }
-                                    hasNodeAddress = true;
-                                } else if(output.amount == amount){
-                                    if(hasOutAddress){
-                                        return false;
-                                    }
-                                    hasOutAddress = true;
-                                } else {
-                                    return false;
-                                }
+                           if(output.amount+elaTransaction.Fee == elaTransaction.Total_Node_Fee) {
+                               if(hasNodeAddress) {
+                                   return false;
+                               }
+                               hasNodeAddress = true;
                            } else {
-                               if(output.amount != nodeFee){
+                               sumToAmount += output.amount;
+                               if(hasToAddress) {
                                    return false;
                                }
-                               if(!hasNodeAddress){
-                                   hasNodeAddress = true;
-                               } else if(!hasOutAddress){
-                                   hasOutAddress = true;
-                               } else {
-                                   return false;
-                               }
+                               hasToAddress = true;
                            }
-                       } else if(!output.address.equals(inputAddress) ){
+                       } else if(!output.address.equals(inputAddress) ){ //找零地址
                             return false;
                        }
                    }
                 }
             }
+        }
+
+        if(sumToAmount!=amount && isSendToOther) {
+            return false;
         }
 
         return true;

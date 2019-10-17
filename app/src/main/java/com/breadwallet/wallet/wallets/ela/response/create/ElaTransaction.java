@@ -31,6 +31,7 @@ public class ElaTransaction {
     public long Fee;
     public String Memo;
     public ElaPostmark Postmark;
-    public List<ElaUTXOInputs> UTXOInputs;
+    public List<ElaUTXOInput> UTXOInputs;
     public List<ElaAttribute> Attributes;
+    public long Total_Node_Fee;
 }
