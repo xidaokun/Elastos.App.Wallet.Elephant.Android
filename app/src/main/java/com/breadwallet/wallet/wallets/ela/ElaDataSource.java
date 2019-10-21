@@ -37,6 +37,7 @@ import com.breadwallet.wallet.wallets.ela.response.history.TxHistory;
 import com.elastos.jni.Utility;
 import com.elastos.jni.utils.HexUtils;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.platform.APIClient;
 
@@ -130,6 +131,12 @@ public class ElaDataSource implements BRDataSourceInterface {
         String node = BRSharedPrefs.getElaNode(mContext, ELA_NODE_KEY);
         if(StringUtil.isNullOrEmpty(node)) node = ELA_NODE;
         return new StringBuilder("https://").append(node).append("/api/1/").append(api).toString();
+    }
+
+    public String getUrlWithVersion(String api) {
+        String node = BRSharedPrefs.getElaNode(mContext, ELA_NODE_KEY);
+        if(StringUtil.isNullOrEmpty(node)) node = ELA_NODE;
+        return new StringBuilder("https://").append(node).append("/api/v1/").append(api).toString();
     }
 
     private final String[] allColumns = {
@@ -346,17 +353,29 @@ public class ElaDataSource implements BRDataSourceInterface {
             });
     }
 
+    public String getRewardAddress(){
+        String rewardAddress = null;
+        try {
+            String url = getUrlWithVersion("node/reward/address");
+            String result = urlGET(url);
+            JSONObject object = new JSONObject(result);
+            rewardAddress = object.getString("result");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return rewardAddress;
+    }
+
     @WorkerThread
     public String getElaBalance(String address){
         if(address==null || address.isEmpty()) return null;
         String balance = null;
         try {
             String url = getUrl("balance/"+address);
-            Log.i(TAG, "balance url:"+url);
             String result = urlGET(url);
             JSONObject object = new JSONObject(result);
             balance = object.getString("result");
-            Log.i(TAG, "balance:"+balance);
             int status = object.getInt("status");
             if(result==null || !result.contains("result") || !result.contains("status") || balance==null || status!=200) {
                 toast("balance crash result:");
@@ -749,6 +768,10 @@ public class ElaDataSource implements BRDataSourceInterface {
 
             if(elaTransaction.Postmark != null) {
                 nodeAddress = ElastosKeypair.getAddress(elaTransaction.Postmark.pub);
+                String rewardAddress = getRewardAddress();
+                if(!StringUtil.isNullOrEmpty(nodeAddress) && !nodeAddress.equals(rewardAddress)) {
+                    return true;
+                }
             }
 
             boolean hasToAddress = false;
