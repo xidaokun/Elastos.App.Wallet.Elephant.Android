@@ -308,6 +308,8 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                                     }
                                     break;
                             }
+                        } else {
+                            mHomeActivity.showAndDownloadCapsule(url);
                         }
                     }
                 }

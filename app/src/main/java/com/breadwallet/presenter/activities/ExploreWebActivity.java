@@ -225,14 +225,16 @@ public class ExploreWebActivity extends BRActivity {
             }
         }
 
-        if(url.startsWith("elaphant") && url.contains("identity")) {
+        if(url.contains("elaphant") && url.contains("identity")) {
             AuthorizeManager.startWalletActivity(ExploreWebActivity.this, url, "com.breadwallet.presenter.activities.did.DidAuthorizeActivity");
             finish();
-        } else if(url.startsWith("elaphant") && url.contains("elapay")) {
+        } else if(url.contains("elaphant") && url.contains("elapay")) {
             AuthorizeManager.startWalletActivity(ExploreWebActivity.this, url, "com.breadwallet.presenter.activities.WalletActivity");
             finish();
         } else if(url.contains("elaphant") && url.contains("eladposvote")) {
             UiUtils.startVoteActivity(ExploreWebActivity.this, url);
+        } else if(url.contains("elaphant") && url.contains("sign")) {
+            UiUtils.startSignActivity(ExploreWebActivity.this, url);
         } else {
             webView.loadUrl(url);
         }
