@@ -26,9 +26,9 @@ public class StringUtils {
         return matcher.matches();
     }
 
-    public static boolean isElsProtocol(String url){
+    public static boolean isDownloadCapsule(String url){
         if (isNullOrEmpty(url)) return false;
-        String regEx = "^(elsphant)\\://.+\\.capsule$";
+        String regEx = "^(elaphant)\\://.+\\.capsule$";
         Pattern p = Pattern.compile(regEx);
         Matcher matcher = p.matcher(url.toLowerCase());
         return matcher.matches();

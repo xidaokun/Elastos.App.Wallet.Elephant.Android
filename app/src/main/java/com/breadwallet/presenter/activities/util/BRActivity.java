@@ -20,7 +20,6 @@ import com.breadwallet.presenter.activities.WalletNameActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.intro.RecoverActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
-import com.breadwallet.presenter.fragments.FragmentExplore;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRApiManager;
@@ -304,10 +303,11 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                                     UiUtils.startVoteActivity(this, url);
                                     return;
                                 default:
+                                    if(StringUtils.isDownloadCapsule(url)) {
+                                        mHomeActivity.showAndDownloadCapsule(url);
+                                    }
                                     break;
                             }
-                        } else {
-                            mHomeActivity.showAndDownloadCapsule(url);
                         }
                     }
                 }

@@ -716,7 +716,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             }
         }
 
-        if(StringUtils.isElsProtocol(url)) {
+        if(StringUtils.isDownloadCapsule(url)) {
             downloadCapsule(StringUtils.replaceElsProtocol(url, "http"));
             downloadCapsule(StringUtils.replaceElsProtocol(url, "https"));
             return;
