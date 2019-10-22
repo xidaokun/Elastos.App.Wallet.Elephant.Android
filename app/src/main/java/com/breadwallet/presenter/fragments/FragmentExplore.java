@@ -842,11 +842,15 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             Log.d(TAG, "capsule legitimacy");
 
             if (item != null) {
-                for (MyAppItem myAppItem : mItems) {
-                    if (item.appId.equals(myAppItem.appId)) {
+                for(int i=0; i<mItems.size(); i++) {
+                    if(item.appId.equals(mItems.get(i).appId)) {
+                        mItems.add(i, item);
+                        mItems.remove(i+1);
+                        mHandler.sendEmptyMessage(UPDATE_APPS_MSG);
                         return;
                     }
                 }
+
                 mAppIds.add(item.appId);
                 mItems.add(item);
                 mHandler.sendEmptyMessage(UPDATE_APPS_MSG);
