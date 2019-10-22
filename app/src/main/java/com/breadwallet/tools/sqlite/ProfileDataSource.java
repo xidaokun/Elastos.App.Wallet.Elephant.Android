@@ -77,12 +77,14 @@ public class ProfileDataSource implements BRDataSourceInterface {
     }
 
     private final String[] allColumns = {
+            BRSQLiteHelper.ADD_APPS_NAME,
             BRSQLiteHelper.ADD_APPS_NAME_EN,
             BRSQLiteHelper.ADD_APPS_NAME_ZH_CN,
             BRSQLiteHelper.ADD_APPS_APP_ID,
             BRSQLiteHelper.ADD_APPS_DID,
             BRSQLiteHelper.ADD_APPS_PUBLICKEY,
             BRSQLiteHelper.ADD_APPS_ICON,
+            BRSQLiteHelper.ADD_APPS_SHORTDESC,
             BRSQLiteHelper.ADD_APPS_SHORTDESC_EN,
             BRSQLiteHelper.ADD_APPS_SHORTDESC_ZH_CN,
             BRSQLiteHelper.ADD_APPS_LONGDESC_EN,
@@ -99,23 +101,25 @@ public class ProfileDataSource implements BRDataSourceInterface {
 
     private MyAppItem cursorToInfo(Cursor cursor) {
         MyAppItem item = new MyAppItem();
-        item.name_en = cursor.getString(0);
-        item.name_zh_CN = cursor.getString(1);
-        item.appId = cursor.getString(2);
-        item.did = cursor.getString(3);
-        item.publicKey = cursor.getString(4);
-        item.icon = cursor.getString(5);
-        item.shortDesc_en = cursor.getString(6);
-        item.shortDesc_zh_CN = cursor.getString(7);
-        item.longDesc_en = cursor.getString(8);
-        item.longDesc_zh_CN = cursor.getString(9);
-        item.developer = cursor.getString(10);
-        item.url = cursor.getString(11);
-        item.path = cursor.getString(12);
-        item.hash = cursor.getString(13);
-        item.category = cursor.getString(14);
-        item.platform = cursor.getString(15);
-        item.version = cursor.getString(16);
+        item.name = cursor.getString(0);
+        item.name_en = cursor.getString(1);
+        item.name_zh_CN = cursor.getString(2);
+        item.appId = cursor.getString(3);
+        item.did = cursor.getString(4);
+        item.publicKey = cursor.getString(5);
+        item.icon = cursor.getString(6);
+        item.shortDesc = cursor.getString(7);
+        item.shortDesc_en = cursor.getString(8);
+        item.shortDesc_zh_CN = cursor.getString(9);
+        item.longDesc_en = cursor.getString(10);
+        item.longDesc_zh_CN = cursor.getString(11);
+        item.developer = cursor.getString(12);
+        item.url = cursor.getString(13);
+        item.path = cursor.getString(14);
+        item.hash = cursor.getString(15);
+        item.category = cursor.getString(16);
+        item.platform = cursor.getString(17);
+        item.version = cursor.getString(18);
 
         return item;
     }
@@ -163,12 +167,14 @@ public class ProfileDataSource implements BRDataSourceInterface {
                 MyAppItem item = entities.get(i);
                 if (item == null) return;
                 ContentValues value = new ContentValues();
+                value.put(BRSQLiteHelper.ADD_APPS_NAME, item.name);
                 value.put(BRSQLiteHelper.ADD_APPS_NAME_EN, item.name_en);
                 value.put(BRSQLiteHelper.ADD_APPS_NAME_ZH_CN, item.name_zh_CN);
                 value.put(BRSQLiteHelper.ADD_APPS_APP_ID, item.appId);
                 value.put(BRSQLiteHelper.ADD_APPS_DID, item.did);
                 value.put(BRSQLiteHelper.ADD_APPS_PUBLICKEY, item.publicKey);
                 value.put(BRSQLiteHelper.ADD_APPS_ICON, item.icon);
+                value.put(BRSQLiteHelper.ADD_APPS_SHORTDESC, item.shortDesc);
                 value.put(BRSQLiteHelper.ADD_APPS_SHORTDESC_EN, item.shortDesc_en);
                 value.put(BRSQLiteHelper.ADD_APPS_SHORTDESC_ZH_CN, item.shortDesc_zh_CN);
                 value.put(BRSQLiteHelper.ADD_APPS_LONGDESC_EN, item.longDesc_en);

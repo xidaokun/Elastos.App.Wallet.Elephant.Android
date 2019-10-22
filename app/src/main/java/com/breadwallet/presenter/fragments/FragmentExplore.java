@@ -151,7 +151,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                     Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
                     break;
                 case DOWNLOAD_FAILED:
-                    Toast.makeText(getContext(), "download failed", Toast.LENGTH_SHORT).show();
                     if (mLoadingDialog.isShowing()) {
                         mLoadingDialog.dismiss();
                     }
