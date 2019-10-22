@@ -14,10 +14,14 @@ public class UriFactory {
 
 
     public static final String SCHEME_KEY = "scheme_key";
-    public static final String TYPE_KEY = "type_key";
+    public static final String HOST_KEY = "host_key";
 
-    public String getRequestType() {
-        return result.get(TYPE_KEY);
+    public String getScheme() {
+        return result.get(SCHEME_KEY);
+    }
+
+    public String getHost() {
+        return result.get(HOST_KEY);
     }
 
     public String getAppID() {
@@ -109,6 +113,14 @@ public class UriFactory {
 
     private Map<String, String> result = new HashMap();
 
+    public UriFactory() {
+
+    }
+
+    public UriFactory(String url) {
+        parse(url);
+    }
+
     public void parse(String url) {
         try {
             if (StringUtil.isNullOrEmpty(url)) return;
@@ -131,6 +143,9 @@ public class UriFactory {
 
             String scheme = uri.getScheme();
             result.put(SCHEME_KEY, scheme);
+
+            String host = uri.getHost();
+            result.put(HOST_KEY, host);
 
             while (it.hasNext()) {
                 String key = it.next();
@@ -169,20 +184,6 @@ public class UriFactory {
 //
 //            }
 //        }
-    }
-
-
-    public String create(String type, Map<String, String> params) {
-        if (StringUtils.isNullOrEmpty(type) || params.isEmpty()) return null;
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("elaphant://").append(type).append("?");
-
-        for (Map.Entry<String, String> entry : params.entrySet()) {
-            sb.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
-        }
-
-        return sb.deleteCharAt(sb.length() - 1).toString();
     }
 
 }

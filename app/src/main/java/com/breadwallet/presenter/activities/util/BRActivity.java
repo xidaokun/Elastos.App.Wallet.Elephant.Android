@@ -35,6 +35,7 @@ import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
+import com.elastos.jni.UriFactory;
 import com.elastos.jni.utils.StringUtils;
 import com.platform.HTTPServer;
 import com.platform.tools.BRBitId;
@@ -278,17 +279,17 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                     String url = data.getStringExtra("result");
                     if(StringUtil.isNullOrEmpty(url)) return;
 
-                    Uri uri = Uri.parse(url);
+                    UriFactory uri = new UriFactory(url);
                     String scheme = uri.getScheme();
                     String host = uri.getHost();
                     if (!StringUtils.isNullOrEmpty(scheme) && !StringUtils.isNullOrEmpty(host)) {
-                        if(scheme.equals("elaphant")) {
+                        if(scheme.equals("elaphant") || scheme.equals("elastos")) {
                             switch (host) {
                                 case "multitx":
-                                    UiUtils.startMultiTxActivity(this, uri);
+                                    UiUtils.startMultiTxActivity(this, Uri.parse(url));
                                     return;
                                 case "multicreate":
-                                    UiUtils.startMultiCreateActivity(this, uri);
+                                    UiUtils.startMultiCreateActivity(this, Uri.parse(url));
                                     return;
                                 case "identity":
                                     UiUtils.startAuthorActivity(this, url);
