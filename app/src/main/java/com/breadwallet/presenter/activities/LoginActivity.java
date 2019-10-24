@@ -130,7 +130,7 @@ public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgroun
     protected void onResume() {
         super.onResume();
 
-        mPinDigitViews.setup(mKeyboard, this);
+        if(mPinDigitViews != null) mPinDigitViews.setup(mKeyboard, this);
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -144,7 +144,7 @@ public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgroun
     @Override
     protected void onPause() {
         super.onPause();
-        mPinDigitViews.cleanUp();
+        if(mPinDigitViews != null) mPinDigitViews.cleanUp();
     }
 
     @Override
