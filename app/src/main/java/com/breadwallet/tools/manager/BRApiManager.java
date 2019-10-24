@@ -170,7 +170,7 @@ public class BRApiManager {
         for (final BaseWalletManager w : list) {
             //only update stuff for non erc20 for now, API endpoint BUG
             if (w.getIso().equalsIgnoreCase("BTC") || w.getIso().equalsIgnoreCase("BCH")
-                    || w.getIso().equalsIgnoreCase("ETH")) {
+                    || w.getIso().equalsIgnoreCase("ETH") || w.getIso().equalsIgnoreCase("ELA")) {
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {

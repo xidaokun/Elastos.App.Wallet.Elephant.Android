@@ -28,9 +28,11 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
+import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.platform.APIClient;
 
 import org.json.JSONObject;
@@ -154,6 +156,12 @@ public class ElaNodeActivity extends BRActivity {
         if (success) {
             BRSharedPrefs.putElaNode(ElaNodeActivity.this, ElaDataSource.ELA_NODE_KEY, node.trim());
             wipeData();
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    WalletElaManager.getInstance(ElaNodeActivity.this).updateFee(ElaNodeActivity.this);
+                }
+            });
         }
         mCurrentNode.setText(node);
         mConnectStatus.setText(success?getString(R.string.NodeSelector_connected) : getString(R.string.NodeSelector_connect_error));

@@ -93,7 +93,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 //    hw-ela-api-test.elastos.org
 //    https://api-wallet-ela-testnet.elastos.org/api/1/currHeight
 //    https://api-wallet-did-testnet.elastos.org/api/1/currHeight
-    public static final String ELA_NODE = /*"api-wallet-ela.elastos.org"*/ "node3.elaphant.app";
+    public static final String ELA_NODE = /*"api-wallet-ela.elastos.org"*/ "node1.elaphant.app";
 
     private static ElaDataSource mInstance;
 
@@ -858,7 +858,7 @@ public class ElaDataSource implements BRDataSourceInterface {
     }
 
     public synchronized String sendElaRawTx(final List<BRElaTransaction> transactions){
-
+        if(transactions==null || transactions.size()<=0) return null;
         String result = null;
         try {
             String url = getUrl("sendRawTx");
@@ -926,6 +926,19 @@ public class ElaDataSource implements BRDataSourceInterface {
         return result;
     }
 
+    public long getNodeFee() {
+        long result = 0;
+        try {
+            String url = getUrl("fee");
+            String tmp = urlGET(url);
+            JSONObject jsonObject = new JSONObject(tmp);
+            result = jsonObject.getLong("result");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
 
     public void getProducers(){
         try {
