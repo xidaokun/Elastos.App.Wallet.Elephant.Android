@@ -28,7 +28,7 @@ public class StringUtils {
 
     public static boolean isDownloadCapsule(String url){
         if (isNullOrEmpty(url)) return false;
-        String regEx = "^(elaphant)\\://.+\\.capsule$";
+        String regEx = "^(elaphant|elastos|elapp:http|elapp:https)\\://.+\\.capsule$";
         Pattern p = Pattern.compile(regEx);
         Matcher matcher = p.matcher(url.toLowerCase());
         return matcher.matches();

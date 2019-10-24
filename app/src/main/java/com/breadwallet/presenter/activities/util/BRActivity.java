@@ -304,14 +304,14 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                                     UiUtils.startVoteActivity(this, url);
                                     return;
                                 default:
-                                    if(StringUtils.isDownloadCapsule(url)) {
-                                        mHomeActivity.showAndDownloadCapsule(url);
-                                    }
+                                    mHomeActivity.showAndDownloadCapsule(url);
                                     break;
                             }
                         } else {
                             mHomeActivity.showAndDownloadCapsule(url);
                         }
+                    } else {
+                        mHomeActivity.showAndDownloadCapsule(url);
                     }
                 }
                 break;

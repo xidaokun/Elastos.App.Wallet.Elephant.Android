@@ -324,21 +324,27 @@ public class MultiSignTxActivity extends BRActivity {
     }
 
     private Uri readTxFromFile(Uri uri) {
+        InputStream in = null;
+        BufferedReader reader = null;
         try {
-            InputStream in = getContentResolver().openInputStream(uri);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            in = getContentResolver().openInputStream(uri);
+            reader = new BufferedReader(new InputStreamReader(in));
             StringBuilder sb = new StringBuilder();
             String line = null;
             while ((line = reader.readLine()) != null) {
                 sb.append(line).append("\n");
             }
-            reader.close();
-            in.close();
             return Uri.parse(sb.toString());
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } finally {
+            try {
+                if(reader != null) reader.close();
+                if(in != null) in.close();
+            } catch (Exception e) {
+
+            }
+
         }
 
         return null;
