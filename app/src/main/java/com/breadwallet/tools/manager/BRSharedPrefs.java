@@ -405,6 +405,7 @@ public class BRSharedPrefs {
 
     //if the user prefers all in crypto units, not fiat currencies
     public static boolean isAuthorAuto(Context activity, String did) {
+        if(StringUtil.isNullOrEmpty(did)) return false;
         SharedPreferences prefs = activity.getSharedPreferences(UiUtils.getCacheProviderName(activity, PREFS_NAME), Context.MODE_PRIVATE);
         return prefs.getBoolean(did, false);
     }
