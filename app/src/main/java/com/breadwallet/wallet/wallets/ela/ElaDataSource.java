@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.BRDataSourceInterface;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
@@ -37,7 +36,6 @@ import com.breadwallet.wallet.wallets.ela.response.history.TxHistory;
 import com.elastos.jni.Utility;
 import com.elastos.jni.utils.HexUtils;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.platform.APIClient;
 
@@ -93,7 +91,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 //    hw-ela-api-test.elastos.org
 //    https://api-wallet-ela-testnet.elastos.org/api/1/currHeight
 //    https://api-wallet-did-testnet.elastos.org/api/1/currHeight
-    public static final String ELA_NODE = /*"api-wallet-ela.elastos.org"*/ "node1.elaphant.app";
+    public static final String ELA_NODE = /*"api-wallet-ela.elastos.org"*/ "node3.elaphant.app";
 
     private static ElaDataSource mInstance;
 
@@ -645,7 +643,6 @@ public class ElaDataSource implements BRDataSourceInterface {
 
             multiHistoryTransactionEntity.clear();
             multiElaTransaction.clear();
-            long checkAmount = 0;
             for(int i=0; i< res.Transactions.size(); i++) {
                 if(!StringUtil.isNullOrEmpty(memo)) res.Transactions.get(i).Memo = new Meno("text", memo).toString();
 
@@ -690,7 +687,6 @@ public class ElaDataSource implements BRDataSourceInterface {
                     ElaOutput output = outputs.get(h);
                     String address = output.address;
                     if(!StringUtil.isNullOrEmpty(address) && address.equals(outputsAddress)){
-                        checkAmount += output.amount;
                         historyTransactionEntity.amount = new BigDecimal(output.amount).longValue();
                     }
                 }
@@ -698,7 +694,6 @@ public class ElaDataSource implements BRDataSourceInterface {
                 multiElaTransaction.add(brElaTransaction);
                 multiHistoryTransactionEntity.add(historyTransactionEntity);
             }
-            if(checkAmount != amount) return null;
         } catch (Exception e) {
             if(mActivity!=null) toast(mActivity.getResources().getString(R.string.SendTransacton_failed));
             e.printStackTrace();
