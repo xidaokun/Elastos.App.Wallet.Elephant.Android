@@ -304,7 +304,11 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                                     UiUtils.startVoteActivity(this, url);
                                     return;
                                 default:
-                                    mHomeActivity.showAndDownloadCapsule(url);
+                                    if(mHomeActivity != null) {
+                                        mHomeActivity.showAndDownloadCapsule(url);
+                                    } else {
+                                        UiUtils.startBreadActivity(this, true);
+                                    }
                                     break;
                             }
                         } else {

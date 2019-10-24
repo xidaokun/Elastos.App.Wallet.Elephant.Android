@@ -129,10 +129,10 @@ public class UriFactory {
             }
 
             if(url.contains("elastos://")){
-                url = url.split("elastos://")[1];
+                url = "elastos://" + url.split("elastos://")[1];
                 result.put(SCHEME_KEY, "elastos");
             } else if(url.contains("elaphant")){
-                url = url.split("elaphant://")[1];
+                url = "elaphant://" + url.split("elaphant://")[1];
                 result.put(SCHEME_KEY, "elaphant");
             }
 
