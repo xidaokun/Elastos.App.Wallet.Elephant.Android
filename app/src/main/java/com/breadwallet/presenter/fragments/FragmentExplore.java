@@ -683,12 +683,15 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     }
 
     private File mDownloadDir = null;
+    private File mDownloadCacheDir = null;
 
     private void initDownloader() {
         try {
             mDownloadDir = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule_download");
             if (!mDownloadDir.exists()) mDownloadDir.mkdirs();
 
+            mDownloadCacheDir = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule");
+            if (!mDownloadCacheDir.exists()) mDownloadCacheDir.mkdirs();
 //            FileDownloadConfiguration.Builder builder = new FileDownloadConfiguration.Builder(getContext());
 //            builder.configFileDownloadDir(mDownloadDir);
 //            builder.configDownloadTaskSize(3);
@@ -802,14 +805,9 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
     private void refreshApps() {
         try {
             File downloadPath = new File(mDownloadDir, mDoloadFileName);
-            boolean log1 = downloadPath.exists();
-            Log.d("capsule_download", "log1:"+log1);
-            File outPath = new File(getContext().getExternalCacheDir().getAbsoluteFile(), "capsule/" + mDoloadFileName);
-            boolean log2 = outPath.exists();
-            Log.d("capsule_download", "log2:"+log2);
+            File outPath = new File(mDownloadCacheDir, mDoloadFileName);
+            deleteFile(outPath);
             decompression(downloadPath.getAbsolutePath(), outPath.getAbsolutePath());
-
-//            logFile(mDoloadFileName, outPath);
 
             List<String> ret = new ArrayList();
             findAppJsonPath(outPath, ret);
