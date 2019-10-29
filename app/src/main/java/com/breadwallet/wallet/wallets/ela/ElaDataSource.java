@@ -125,16 +125,16 @@ public class ElaDataSource implements BRDataSourceInterface {
         return mInstance;
     }
 
+    public String getUrlByVersion(String api, String version) {
+        String node = BRSharedPrefs.getElaNode(mContext, ELA_NODE_KEY);
+        if(StringUtil.isNullOrEmpty(node)) node = ELA_NODE;
+        return new StringBuilder("https://").append(node).append("/api/").append(version).append("/").append(api).toString();
+    }
+
     public String getUrl(String api){
         String node = BRSharedPrefs.getElaNode(mContext, ELA_NODE_KEY);
         if(StringUtil.isNullOrEmpty(node)) node = ELA_NODE;
         return new StringBuilder("https://").append(node).append("/api/1/").append(api).toString();
-    }
-
-    public String getUrlWithVersion(String api) {
-        String node = BRSharedPrefs.getElaNode(mContext, ELA_NODE_KEY);
-        if(StringUtil.isNullOrEmpty(node)) node = ELA_NODE;
-        return new StringBuilder("https://").append(node).append("/api/v1/").append(api).toString();
     }
 
     private final String[] allColumns = {
@@ -354,7 +354,7 @@ public class ElaDataSource implements BRDataSourceInterface {
     public String getRewardAddress(){
         String rewardAddress = null;
         try {
-            String url = getUrlWithVersion("node/reward/address");
+            String url = getUrlByVersion("node/reward/address", "v1");
             String result = urlGET(url);
             JSONObject object = new JSONObject(result);
             rewardAddress = object.getString("result");
@@ -370,7 +370,7 @@ public class ElaDataSource implements BRDataSourceInterface {
         if(address==null || address.isEmpty()) return null;
         String balance = null;
         try {
-            String url = getUrl("balance/"+address);
+            String url = getUrlByVersion("balance/"+address, "1");
             String result = urlGET(url);
             JSONObject object = new JSONObject(result);
             balance = object.getString("result");
@@ -396,7 +396,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             ProducerTxid producerTxid = new ProducerTxid();
             producerTxid.txid = mVoteTxid;
             String json = new Gson().toJson(producerTxid);
-            String url = getUrl("dpos/transaction/producer");
+            String url = getUrlByVersion("dpos/transaction/producer", "1");
             String result = urlPost(url, json);
             multiTxProducerEntity = new Gson().fromJson(result, MultiTxProducerEntity.class);
         } catch (Exception e) {
@@ -413,7 +413,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             producerTxid.txid = new ArrayList<>();
             producerTxid.txid.add(txid);
             String json = new Gson().toJson(producerTxid);
-            String url = getUrl("dpos/transaction/producer");
+            String url = getUrlByVersion("dpos/transaction/producer", "1");
             String result = urlPost(url, json);
             Log.i("test", "test");
         } catch (Exception e) {
@@ -426,7 +426,7 @@ public class ElaDataSource implements BRDataSourceInterface {
         if(StringUtil.isNullOrEmpty(address)) return;
         mVoteTxid.clear();
         try {
-            String url = getUrl("history/"+address +"?pageNum=1&pageSize="+ONE_PAGE_SIZE+"&order=desc");
+            String url = getUrlByVersion("history/"+address +"?pageNum=1&pageSize="+ONE_PAGE_SIZE+"&order=desc", "1");
             Log.i(TAG, "history url:"+url);
             String result = urlGET(url);
             JSONObject jsonObject = new JSONObject(result);
@@ -470,7 +470,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             if(StringUtil.isNullOrEmpty(address)) return;
             mVoteTxid.clear();
             try {
-                String url = getUrl("history/"+address +"?pageNum="+pageNumber+"&pageSize="+ONE_PAGE_SIZE+"&order=desc");
+                String url = getUrlByVersion("history/"+address +"?pageNum="+pageNumber+"&pageSize="+ONE_PAGE_SIZE+"&order=desc", "1");
                 Log.i(TAG, "history url:"+url);
                 String result = urlGET(url);
                 JSONObject jsonObject = new JSONObject(result);
@@ -517,7 +517,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             int currentPageNumber = BRSharedPrefs.getCurrentHistoryPageNumber(mContext);
             int range = BRSharedPrefs.getHistoryRange(mContext);
             int pageNumber = currentPageNumber+range;
-            String url = getUrl("history/"+address +"?pageNum="+pageNumber+"&pageSize="+ONE_PAGE_SIZE+"&order=desc");
+            String url = getUrlByVersion("history/"+address +"?pageNum="+pageNumber+"&pageSize="+ONE_PAGE_SIZE+"&order=desc", "1");
             Log.i(TAG, "history url:"+url);
             String result = urlGET(url);
             JSONObject jsonObject = new JSONObject(result);
@@ -607,7 +607,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 
         if(mActivity!=null) toast(mActivity.getResources().getString(R.string.SendTransacton_sending));
         try {
-            String url = getUrl("createVoteTx");
+            String url = getUrlByVersion("createVoteTx", "1");
             Log.i(TAG, "create tx url:"+url);
             CreateTx tx = new CreateTx();
             tx.inputs.add(inputAddress);
@@ -840,7 +840,7 @@ public class ElaDataSource implements BRDataSourceInterface {
     }
 
     public String getPublicKeyByAddress(String address){
-        String url = getUrl("pubkey/"+address);
+        String url = getUrlByVersion("pubkey/"+address, "1");
         try {
             String result = urlGET(url);
             JSONObject object = new JSONObject(result);
@@ -856,7 +856,7 @@ public class ElaDataSource implements BRDataSourceInterface {
         if(transactions==null || transactions.size()<=0) return null;
         String result = null;
         try {
-            String url = getUrl("sendRawTx");
+            String url = getUrlByVersion("sendRawTx", "1");
             Log.i(TAG, "send raw url:"+url);
             List<String> rawTransactions = new ArrayList<>();
             for(int i=0; i<transactions.size(); i++) {
@@ -899,7 +899,7 @@ public class ElaDataSource implements BRDataSourceInterface {
     public synchronized String sendSerializedRawTx(final String rawTransaction) {
         String result = null;
         try {
-            String url = getUrl("sendRawTx");
+            String url = getUrlByVersion("sendRawTx", "1");
             Log.i(TAG, "send raw url:"+url);
             String json = "{"+"\"data\"" + ":" + "\"" + rawTransaction + "\"" +"}";
             Log.i(TAG, "rawTransaction:"+rawTransaction);
@@ -924,7 +924,7 @@ public class ElaDataSource implements BRDataSourceInterface {
     public long getNodeFee() {
         long result = 0;
         try {
-            String url = getUrl("fee");
+            String url = getUrlByVersion("fee", "1");
             String tmp = urlGET(url);
             JSONObject jsonObject = new JSONObject(tmp);
             result = jsonObject.getLong("result");
@@ -937,7 +937,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 
     public void getProducers(){
         try {
-            String jsonRes = urlGET(getUrl("dpos/rank/height/9999999999999999"));
+            String jsonRes = urlGET(getUrlByVersion("dpos/rank/height/9999999999999999", "1"));
             if(!StringUtil.isNullOrEmpty(jsonRes) && jsonRes.contains("result")) {
                 ProducersEntity producersEntity = new Gson().fromJson(jsonRes, ProducersEntity.class);
                 List list = producersEntity.result;
