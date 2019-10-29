@@ -401,7 +401,7 @@ public class UiUtils {
         if (from == null) {
             return;
         }
-        Class toStart = auth ? LoginActivity.class : HomeActivity.class;
+        Class toStart = auth ? LoginActivity.class : WalletActivity.class;
 
         Intent intent = new Intent(from, toStart);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);

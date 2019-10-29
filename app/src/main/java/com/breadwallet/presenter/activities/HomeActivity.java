@@ -120,16 +120,16 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
         InternetManager.registerConnectionReceiver(this, this);
 
-        String mnemonic = getMn();
-        if(StringUtil.isNullOrEmpty(mnemonic)) {
-            finish();
-            return;
-        }
-
         Intent intent = getIntent();
         if (intent != null) {
             String action = intent.getAction();
             if (!StringUtil.isNullOrEmpty(action) && action.equals(Intent.ACTION_VIEW)) {
+                String mnemonic = getMn();
+                if(StringUtil.isNullOrEmpty(mnemonic)) {
+                    finish();
+                    return;
+                }
+
                 Uri uri = intent.getData();
                 Log.i(TAG, "server mUri: " + uri.toString());
                 String dowloadUrl = uri.toString();
