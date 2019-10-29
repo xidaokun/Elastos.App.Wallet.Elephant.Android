@@ -1,5 +1,7 @@
 package com.breadwallet.presenter.activities;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -115,7 +117,27 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 //        boolean iscrash = getIntent().getBooleanExtra("crash", false);
 //        Log.i(TAG, "iscrash:" + iscrash);
 //        if (iscrash) navigation.setSelectedItemId(R.id.navigation_home);
+
         InternetManager.registerConnectionReceiver(this, this);
+
+        String mnemonic = getMn();
+        if(StringUtil.isNullOrEmpty(mnemonic)) {
+            finish();
+            return;
+        }
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            String action = intent.getAction();
+            if (!StringUtil.isNullOrEmpty(action) && action.equals(Intent.ACTION_VIEW)) {
+                Uri uri = intent.getData();
+                Log.i(TAG, "server mUri: " + uri.toString());
+                String dowloadUrl = uri.toString();
+                if(!StringUtil.isNullOrEmpty(dowloadUrl)) {
+                    showAndDownloadCapsule(dowloadUrl);
+                }
+            }
+        }
     }
 
     @Override

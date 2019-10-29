@@ -883,7 +883,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             }
             List<String> historyTransactions = new Gson().fromJson(result, new TypeToken<List<String>>() {
             }.getType());
-            if(multiHistoryTransactionEntity.size() != historyTransactions.size()) return null;
+//            if(multiHistoryTransactionEntity.size() != historyTransactions.size()) return null;
             for(int i=0; i<historyTransactions.size(); i++) {
                 multiHistoryTransactionEntity.get(i).txReversed = historyTransactions.get(i);
             }
