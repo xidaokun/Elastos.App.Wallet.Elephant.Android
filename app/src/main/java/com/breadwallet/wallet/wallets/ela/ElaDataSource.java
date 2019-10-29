@@ -91,7 +91,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 //    hw-ela-api-test.elastos.org
 //    https://api-wallet-ela-testnet.elastos.org/api/1/currHeight
 //    https://api-wallet-did-testnet.elastos.org/api/1/currHeight
-    public static final String ELA_NODE = /*"api-wallet-ela.elastos.org"*/ "node3.elaphant.app";
+    public static final String ELA_NODE =  "node1.elaphant.app";
 
     private static ElaDataSource mInstance;
 
@@ -775,7 +775,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 
                 if(outputAddress.equals(inputAddress)){
 
-                    if(output.address == nodeAddress){
+                    if(output.address.equals(nodeAddress)){
 
                         if(output.amount+elaTransaction.Fee != elaTransaction.Total_Node_Fee) {
                             return false;
