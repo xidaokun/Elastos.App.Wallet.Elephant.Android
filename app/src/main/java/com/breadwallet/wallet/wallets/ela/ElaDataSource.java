@@ -91,7 +91,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 //    hw-ela-api-test.elastos.org
 //    https://api-wallet-ela-testnet.elastos.org/api/1/currHeight
 //    https://api-wallet-did-testnet.elastos.org/api/1/currHeight
-    public static final String ELA_NODE =  "node1.elaphant.app";
+    public static final String ELA_NODE =  "node1.elaphant.app" /*"dev.elapp.org"*/;
 
     private static ElaDataSource mInstance;
 
@@ -656,8 +656,9 @@ public class ElaDataSource implements BRDataSourceInterface {
 
                 if(null!=payload && payload.size()>0){
                     List<ElaOutput> outputsR = res.Transactions.get(i).Outputs;
-                    if(outputsR.size() > 1) {
-                        ElaOutput output = outputsR.get(1);
+                    String lastOutPutAddress = outputsR.get(outputsR.size()-1).address;
+                    if(!StringUtil.isNullOrEmpty(lastOutPutAddress)) {
+                        ElaOutput output = outputsR.get(outputsR.size()-1);
                         Payload tmp = new Payload();
                         tmp.candidatePublicKeys = payload;
                         output.payload = tmp;
