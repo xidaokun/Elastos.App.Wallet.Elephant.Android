@@ -641,6 +641,10 @@ public class ElaDataSource implements BRDataSourceInterface {
 //                res.Transactions.get(0).Memo = memoStr;
 //            }
 
+            if(res.Transactions.size() > 1) {
+                if(mActivity!=null) toast(mActivity.getResources().getString(R.string.utxo_too_much_hint));
+            }
+
             multiHistoryTransactionEntity.clear();
             multiElaTransaction.clear();
             for(int i=0; i< res.Transactions.size(); i++) {

@@ -275,7 +275,7 @@ public class BRApiManager {
         //initialize the TimerTask's job
         initializeTimerTask(context);
 
-        timer.schedule(timerTask, 1000, 60000);
+        timer.schedule(timerTask, 1000, 5 * 60 * 1000);
     }
 
     public void stopTimerTask() {
