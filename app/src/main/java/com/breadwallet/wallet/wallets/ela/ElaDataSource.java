@@ -426,7 +426,7 @@ public class ElaDataSource implements BRDataSourceInterface {
         if(StringUtil.isNullOrEmpty(address)) return;
         mVoteTxid.clear();
         try {
-            String url = getUrlByVersion("history/"+address +"?pageNum=1&pageSize="+ONE_PAGE_SIZE+"&order=desc", "1");
+            String url = getUrlByVersion("history/"+address +"?pageNum=1&pageSize="+ONE_PAGE_SIZE+"&order=desc", "v2");
             Log.i(TAG, "history url:"+url);
             String result = urlGET(url);
             JSONObject jsonObject = new JSONObject(result);
@@ -470,7 +470,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             if(StringUtil.isNullOrEmpty(address)) return;
             mVoteTxid.clear();
             try {
-                String url = getUrlByVersion("history/"+address +"?pageNum="+pageNumber+"&pageSize="+ONE_PAGE_SIZE+"&order=desc", "1");
+                String url = getUrlByVersion("history/"+address +"?pageNum="+pageNumber+"&pageSize="+ONE_PAGE_SIZE+"&order=desc", "v2");
                 Log.i(TAG, "history url:"+url);
                 String result = urlGET(url);
                 JSONObject jsonObject = new JSONObject(result);
@@ -517,7 +517,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             int currentPageNumber = BRSharedPrefs.getCurrentHistoryPageNumber(mContext);
             int range = BRSharedPrefs.getHistoryRange(mContext);
             int pageNumber = currentPageNumber+range;
-            String url = getUrlByVersion("history/"+address +"?pageNum="+pageNumber+"&pageSize="+ONE_PAGE_SIZE+"&order=desc", "1");
+            String url = getUrlByVersion("history/"+address +"?pageNum="+pageNumber+"&pageSize="+ONE_PAGE_SIZE+"&order=desc", "v2");
             Log.i(TAG, "history url:"+url);
             String result = urlGET(url);
             JSONObject jsonObject = new JSONObject(result);
@@ -682,12 +682,17 @@ public class ElaDataSource implements BRDataSourceInterface {
                 historyTransactionEntity.blockHeight = 0;
                 historyTransactionEntity.hash = new byte[1];
                 historyTransactionEntity.txSize = 0;
-                historyTransactionEntity.amount = amount;
                 historyTransactionEntity.balanceAfterTx = 0;
                 historyTransactionEntity.timeStamp = System.currentTimeMillis()/1000;
                 historyTransactionEntity.isValid = true;
                 historyTransactionEntity.isVote = (payload!=null && payload.size()>0);
                 historyTransactionEntity.memo = memo;
+
+                ElaOutput output = outputs.get(0);
+                String address = output.address;
+                if(!StringUtil.isNullOrEmpty(address) && address.equals(outputsAddress)){
+                    historyTransactionEntity.amount = new BigDecimal(output.amount).longValue();
+                }
 
                 multiElaTransaction.add(brElaTransaction);
                 multiHistoryTransactionEntity.add(historyTransactionEntity);
