@@ -87,7 +87,9 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     private WalletManagerHelper mWalletManagerHelper;
 
-    public BigDecimal ELA_FEE = new BigDecimal(4860).divide(ONE_ELA_TO_SALA, 8, BRConstants.ROUNDING_MODE);
+    public BigDecimal SALA_FEE = new BigDecimal(4860);
+
+    public BigDecimal ELA_FEE = SALA_FEE.divide(ONE_ELA_TO_SALA, 8, BRConstants.ROUNDING_MODE);
 
     protected String mPrivateKey;
 
@@ -102,7 +104,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         return mInstance;
     }
 
-    private WalletElaManager(Context context, BRCoreMasterPubKey masterPubKey,
+    private WalletElaManager(final Context context, BRCoreMasterPubKey masterPubKey,
                              BRCoreChainParams chainParams,
                              double earliestPeerTime) {
         super(masterPubKey, chainParams, 0);
@@ -113,8 +115,6 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         mSettingsConfig = new WalletSettingsConfiguration(context, getIso(), SettingsUtil.getElastosSettings(mContext), new ArrayList<BigDecimal>(0));
 
         mWalletManagerHelper = new WalletManagerHelper();
-
-
     }
 
 
@@ -342,6 +342,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public void updateFee(Context app) {
         long fee = ElaDataSource.getInstance(app).getNodeFee();
+        SALA_FEE = new BigDecimal(fee);
         ELA_FEE = new BigDecimal(fee).divide(ONE_ELA_TO_SALA, 8, BRConstants.ROUNDING_MODE);
     }
 

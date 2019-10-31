@@ -674,23 +674,16 @@ public class ElaDataSource implements BRDataSourceInterface {
                 historyTransactionEntity.fromAddress = inputAddress;
                 historyTransactionEntity.toAddress = outputsAddress;
                 historyTransactionEntity.isReceived = false;
-                historyTransactionEntity.fee = new BigDecimal("4860").longValue();
+                historyTransactionEntity.fee = WalletElaManager.getInstance(mContext).SALA_FEE.longValue();
                 historyTransactionEntity.blockHeight = 0;
                 historyTransactionEntity.hash = new byte[1];
                 historyTransactionEntity.txSize = 0;
+                historyTransactionEntity.amount = amount;
                 historyTransactionEntity.balanceAfterTx = 0;
                 historyTransactionEntity.timeStamp = System.currentTimeMillis()/1000;
                 historyTransactionEntity.isValid = true;
                 historyTransactionEntity.isVote = (payload!=null && payload.size()>0);
                 historyTransactionEntity.memo = memo;
-
-                for(int h=0; h<outputs.size(); h++) {
-                    ElaOutput output = outputs.get(h);
-                    String address = output.address;
-                    if(!StringUtil.isNullOrEmpty(address) && address.equals(outputsAddress)){
-                        historyTransactionEntity.amount = new BigDecimal(output.amount).longValue();
-                    }
-                }
 
                 multiElaTransaction.add(brElaTransaction);
                 multiHistoryTransactionEntity.add(historyTransactionEntity);

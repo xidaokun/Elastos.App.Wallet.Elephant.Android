@@ -62,6 +62,7 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
+import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -740,7 +741,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
             String amountStr = mAmountEdit.getText().toString();
             BigDecimal rawAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) || amountStr.equalsIgnoreCase(".") ? "0" : amountStr);
-            BigDecimal totalAmount = rawAmount.multiply(new BigDecimal(100000000)).add(new BigDecimal(4860));
+            BigDecimal totalAmount = rawAmount.multiply(new BigDecimal(100000000)).add(WalletElaManager.getInstance(getContext()).ELA_FEE);
             BigDecimal balance = BRSharedPrefs.getCachedBalance(getContext(), "ELA").multiply(new BigDecimal(100000000));
             String candidatesStr = BRSharedPrefs.getCandidate(getContext());
             if(balance.compareTo(new BigDecimal(100000000))>0 &&
