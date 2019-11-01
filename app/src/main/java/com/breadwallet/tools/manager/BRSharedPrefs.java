@@ -837,4 +837,51 @@ public class BRSharedPrefs {
         return prefs.getBoolean("useFingerprint", false);
     }
 
+    public static void putRedPacketDeleteStatue(Context context, boolean delete) {
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("isRedPacketDelete", delete);
+        editor.apply();
+    }
+
+    public static void putElaNewsDeleteStatue(Context context, boolean delete) {
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("isElaNewsDelete", delete);
+        editor.apply();
+    }
+
+    public static void putElappDeleteStatue(Context context, boolean delete) {
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("isElappDelete", delete);
+        editor.apply();
+    }
+
+    public static void putVoteDeleteStatue(Context context, boolean delete) {
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("isVoteDelete", delete);
+        editor.apply();
+    }
+
+    public static boolean isRedPacketDelete(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        return prefs.getBoolean("isRedPacketDelete", false);
+    }
+
+    public static boolean isElaNewsDelete(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        return prefs.getBoolean("isElaNewsDelete", false);
+    }
+
+    public static boolean isElappDelete(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        return prefs.getBoolean("isElappDelete", false);
+    }
+
+    public static boolean isVoteDelete(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        return prefs.getBoolean("isVoteDelete", false);
+    }
 }
