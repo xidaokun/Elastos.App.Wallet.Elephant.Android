@@ -320,9 +320,9 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
 
             for (MyAppItem item : apps) {
                 if (item.appId.equals(BRConstants.REA_PACKAGE_ID)) hasRedPackage = true;
-                if (item.appId.equals(BRConstants.DPOS_VOTE_ID) || BRSharedPrefs.isVoteDelete(getContext())) hasDposVote = true;
-                if (item.appId.equals(BRConstants.ELA_NEWS_ID) || BRSharedPrefs.isElaNewsDelete(getContext())) hasElaNews = true;
-                if (item.appId.equals(BRConstants.ELA_APPS_ID) || BRSharedPrefs.isElappDelete(getContext())) hasElapp = true;
+                if (item.appId.equals(BRConstants.DPOS_VOTE_ID)) hasDposVote = true;
+                if (item.appId.equals(BRConstants.ELA_NEWS_ID)) hasElaNews = true;
+                if (item.appId.equals(BRConstants.ELA_APPS_ID)) hasElapp = true;
             }
 
             boolean isRedPackageDelete = BRSharedPrefs.isRedPacketDelete(getContext());

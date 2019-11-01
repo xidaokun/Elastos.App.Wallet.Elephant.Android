@@ -50,7 +50,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
 
     public static BRSQLiteHelper getInstance(Context context) {
         DATABASE_NAME = UiUtils.getCacheProviderName(context, DATABASE_NAME);
-        if (instance == null) instance = new BRSQLiteHelper(context);
+        instance = new BRSQLiteHelper(context);
         return instance;
     }
 
