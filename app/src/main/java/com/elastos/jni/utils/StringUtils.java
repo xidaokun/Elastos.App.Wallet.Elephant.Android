@@ -38,6 +38,6 @@ public class StringUtils {
         if(StringUtil.isNullOrEmpty(url) || StringUtils.isNullOrEmpty(protocol)) return null;
         Uri uri = Uri.parse(url);
         String scheme = uri.getScheme();
-        return url.replace(scheme, protocol);
+        return url.replace(scheme+"://", protocol+"://");
     }
 }
