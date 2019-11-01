@@ -401,11 +401,24 @@ public class UiUtils {
         if (from == null) {
             return;
         }
-        Class toStart = auth ? LoginActivity.class : WalletActivity.class;
+        Class toStart = auth ? LoginActivity.class : HomeActivity.class;
 
         Intent intent = new Intent(from, toStart);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        from.startActivity(intent);
+    }
+
+    public static void startBreadActivity(Activity from, boolean auth, String url) {
+        if (from == null) {
+            return;
+        }
+        Class toStart = auth ? LoginActivity.class : HomeActivity.class;
+
+        Intent intent = new Intent(from, toStart);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("url", url);
         from.startActivity(intent);
     }
 

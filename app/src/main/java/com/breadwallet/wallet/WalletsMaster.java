@@ -26,6 +26,7 @@ import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Bip39Reader;
+import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.TrustedNode;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -452,4 +453,27 @@ public class WalletsMaster {
         }
     }
 
+    public void startTheWalletIfExists(final Activity app, String url) {
+        final WalletsMaster m = WalletsMaster.getInstance(app);
+        if (!m.isPasscodeEnabled(app)) {
+            //Device passcode/password should be enabled for the app to work
+            BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
+                    app.getString(R.string.Prompts_NoScreenLock_body_android),
+                    app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            app.finish();
+                        }
+                    }, null, new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            app.finish();
+                        }
+                    }, 0);
+        } else {
+            if (!m.noWallet(app)) {
+                UiUtils.startBreadActivity(app, StringUtil.isNullOrEmpty(url)?true:false, url);
+            }
+        }
+    }
 }

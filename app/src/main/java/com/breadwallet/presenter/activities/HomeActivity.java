@@ -94,50 +94,24 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
         didIsOnchain();
         mHomeActivity = this;
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            String dowloadUrl = intent.getStringExtra("url");
+            if (!StringUtil.isNullOrEmpty(dowloadUrl)) {
+                showAndDownloadCapsule(dowloadUrl);
+            }
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        //TODO externel share
-//        Intent intent = getIntent();
-//        Uri uri = intent.getData();
-//        String externelPath = null;
-//        if(null != uri){
-//            externelPath = Uri.decode(uri.getEncodedPath());
-//        }
-//        if(!StringUtil.isNullOrEmpty(externelPath)){
-//            String fileOutPath = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
-//            mExploreFragment.handleExternalCapsule(externelPath, fileOutPath);
-//            showFragment(mExploreFragment);
-//            navigation.setSelectedItemId(R.id.navigation_explore);
-//        }
-
 //        boolean iscrash = getIntent().getBooleanExtra("crash", false);
 //        Log.i(TAG, "iscrash:" + iscrash);
 //        if (iscrash) navigation.setSelectedItemId(R.id.navigation_home);
 
         InternetManager.registerConnectionReceiver(this, this);
-
-        Intent intent = getIntent();
-        if (intent != null) {
-            String action = intent.getAction();
-            if (!StringUtil.isNullOrEmpty(action) && action.equals(Intent.ACTION_VIEW)) {
-                String mnemonic = getMn();
-                if(StringUtil.isNullOrEmpty(mnemonic)) {
-                    finish();
-                    return;
-                }
-
-                Uri uri = intent.getData();
-                Log.i(TAG, "server mUri: " + uri.toString());
-                String dowloadUrl = uri.toString();
-                if(!StringUtil.isNullOrEmpty(dowloadUrl)) {
-                    showAndDownloadCapsule(dowloadUrl);
-                }
-            }
-        }
     }
 
     @Override
