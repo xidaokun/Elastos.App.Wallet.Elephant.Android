@@ -189,6 +189,7 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
                 || BRBitId.isBitId(text)
                 || text.contains("redpacket")
                 || text.contains("elaphant")
+                || text.contains("elsphant")
                 || text.contains("https")
                 || text.contains("http")
                 || text.contains("MultiQrContent")) {
@@ -202,7 +203,7 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
                     try {
                         cameraGuide.setImageResource(R.drawable.cameraguide_red);
                         lastUpdated = System.currentTimeMillis();
-                        descriptionText.setText("Not a valid " + WalletsMaster.getInstance(app).getCurrentWallet(app).getName() + " address");
+                        descriptionText.setText("Not a valid address or scheme" );
                     } finally {
                         handlingCode = false;
                     }

@@ -1170,4 +1170,6 @@
     <string name="multi_wallet_format_date">MMMM d, yyyy</string>
     <string name="multi_wallet_phares_not_backup">Recovery phrase not backed up</string>
     <string name="multi_wallet_already_current">Already the current mnemonic</string>
+    <string name="utxo_too_much_hint">In order to manage a large volume of UTXOs, your transaction will be split into multiple transactions. Please refer to the transaction history for further detail.</string>
+
 </resources>

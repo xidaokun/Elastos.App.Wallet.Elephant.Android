@@ -63,8 +63,7 @@ public final class BRConstants {
      */
     public static final int SCANNER_REQUEST = 201;
     public static final int REQUEST_IMAGE_CAPTURE = 203;
-    public static final int SCANNER_DID_REQUEST = 204;
-    public static final int ADD_APP_URL_REQUEST = 205;
+    public static final int SCANNER_DID_OR_ADD_REQUEST = 204;
 
     public static final String CANARY_STRING = "canary";
 
@@ -137,7 +136,7 @@ public final class BRConstants {
      *
      */
 
-    public static final String URL_PRIVACY_POLICY = "https://elephantwallet.app/privacy-policy/";
+    public static final String URL_PRIVACY_POLICY = "https://elaphant.app/privacy-policy/";
     public static final String URL_TWITTER = "https://twitter.com/breadapp";
     public static final String URL_REDDIT = "https://reddit.com/r/breadwallet/";
     public static final String URL_BLOG  = "http://t.me/elastoswalletelephant";

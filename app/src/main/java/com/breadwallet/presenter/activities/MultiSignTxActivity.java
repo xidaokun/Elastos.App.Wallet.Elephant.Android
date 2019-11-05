@@ -28,8 +28,8 @@ import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaAttribute;
-import com.breadwallet.wallet.wallets.ela.response.create.ElaTransactionRes;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaTransaction;
+import com.breadwallet.wallet.wallets.ela.response.create.ElaTransactionRes;
 import com.elastos.jni.AuthorizeManager;
 import com.elastos.jni.Utility;
 import com.elastos.jni.utils.StringUtils;
@@ -324,21 +324,27 @@ public class MultiSignTxActivity extends BRActivity {
     }
 
     private Uri readTxFromFile(Uri uri) {
+        InputStream in = null;
+        BufferedReader reader = null;
         try {
-            InputStream in = getContentResolver().openInputStream(uri);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            in = getContentResolver().openInputStream(uri);
+            reader = new BufferedReader(new InputStreamReader(in));
             StringBuilder sb = new StringBuilder();
             String line = null;
             while ((line = reader.readLine()) != null) {
                 sb.append(line).append("\n");
             }
-            reader.close();
-            in.close();
             return Uri.parse(sb.toString());
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } finally {
+            try {
+                if(reader != null) reader.close();
+                if(in != null) in.close();
+            } catch (Exception e) {
+
+            }
+
         }
 
         return null;

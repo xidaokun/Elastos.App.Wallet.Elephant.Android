@@ -24,7 +24,7 @@ package com.breadwallet.wallet.wallets.ela.response.create;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class ElaUTXOInputs {
+public class ElaUTXOInput {
     public String address;
     public String txid;
     public int index;

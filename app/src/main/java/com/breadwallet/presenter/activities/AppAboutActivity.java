@@ -67,6 +67,11 @@ public class AppAboutActivity extends BaseSettingsActivity {
                 mName.setText(myAppItem.name_en);
                 mDesc.setText(myAppItem.shortDesc_en);
             }
+            if(StringUtil.isNullOrEmpty(myAppItem.name_zh_CN) && StringUtil.isNullOrEmpty(myAppItem.name_en))
+                mName.setText(myAppItem.name);
+            if(StringUtil.isNullOrEmpty(myAppItem.shortDesc_zh_CN) && StringUtil.isNullOrEmpty(myAppItem.shortDesc_en))
+                mDesc.setText(myAppItem.shortDesc);
+
             mDid.setText(String.format(getString(R.string.explore_about_developer), myAppItem.did));
             Bitmap bitmap = null;
             if(!StringUtil.isNullOrEmpty(myAppItem.icon)){
@@ -120,10 +125,14 @@ public class AppAboutActivity extends BaseSettingsActivity {
 
             AppAboutItem shortdescItem = new AppAboutItem();
             shortdescItem.setTitle(getString(R.string.mini_app_shortdesc));
-            if(!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")){
-                shortdescItem.setContent(myAppItem.shortDesc_zh_CN);
+            if(StringUtil.isNullOrEmpty(myAppItem.shortDesc_zh_CN) && StringUtil.isNullOrEmpty(myAppItem.shortDesc_en)) {
+                shortdescItem.setContent(myAppItem.shortDesc);
             } else {
-                shortdescItem.setContent(myAppItem.shortDesc_en);
+                if(!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")){
+                    shortdescItem.setContent(myAppItem.shortDesc_zh_CN);
+                } else {
+                    shortdescItem.setContent(myAppItem.shortDesc_en);
+                }
             }
             appAboutItems.add(shortdescItem);
 

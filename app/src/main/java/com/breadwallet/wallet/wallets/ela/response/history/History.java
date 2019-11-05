@@ -37,5 +37,6 @@ public class History {
     public String Memo;
     public List<String> Inputs;
     public List<String> Outputs;
-
+    public long NodeOutputIndex;
+    public long NodeFee;
 }

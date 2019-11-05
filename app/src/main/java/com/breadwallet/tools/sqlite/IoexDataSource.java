@@ -11,15 +11,15 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.wallets.ela.BRElaTransaction;
 import com.breadwallet.wallet.wallets.ela.data.HistoryTransactionEntity;
 import com.breadwallet.wallet.wallets.ela.request.CreateTx;
 import com.breadwallet.wallet.wallets.ela.request.Outputs;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaTransactionRes;
-import com.breadwallet.wallet.wallets.ela.response.create.ElaUTXOInputs;
+import com.breadwallet.wallet.wallets.ela.response.create.ElaUTXOInput;
 import com.breadwallet.wallet.wallets.ela.response.create.Meno;
 import com.breadwallet.wallet.wallets.ela.response.history.History;
 import com.breadwallet.wallet.wallets.ela.response.history.TxHistory;
+import com.breadwallet.wallet.wallets.ioex.BRIoexTransaction;
 import com.breadwallet.wallet.wallets.ioex.WalletIoexManager;
 import com.google.gson.Gson;
 import com.platform.APIClient;
@@ -94,9 +94,9 @@ public class IoexDataSource implements BRDataSourceInterface {
     }
 
     HistoryTransactionEntity historyTransactionEntity = new HistoryTransactionEntity();
-    public synchronized BRElaTransaction createTx(final String inputAddress, final String outputsAddress, final long amount, String memo){
+    public synchronized BRIoexTransaction createTx(final String inputAddress, final String outputsAddress, final long amount, String memo){
         if(StringUtil.isNullOrEmpty(inputAddress) || StringUtil.isNullOrEmpty(outputsAddress)) return null;
-        BRElaTransaction brElaTransaction = null;
+        BRIoexTransaction brIoexTransaction = null;
 //        if(mActivity!=null) toast(mActivity.getResources().getString(R.string.SendTransacton_sending));
         try {
             String url = getUrl("/api/1/ioex/createTx");
@@ -118,17 +118,17 @@ public class IoexDataSource implements BRDataSourceInterface {
             ElaTransactionRes res = new Gson().fromJson(tranactions, ElaTransactionRes.class);
             if(!StringUtil.isNullOrEmpty(memo)) res.Transactions.get(0).Memo = new Meno("text", memo).toString();
 
-            List<ElaUTXOInputs> inputs = res.Transactions.get(0).UTXOInputs;
+            List<ElaUTXOInput> inputs = res.Transactions.get(0).UTXOInputs;
             for(int i=0; i<inputs.size(); i++){
-                ElaUTXOInputs utxoInputs = inputs.get(i);
+                ElaUTXOInput utxoInputs = inputs.get(i);
                 utxoInputs.privateKey  = WalletIoexManager.getInstance(mContext).getPrivateKey();
             }
 
             String transactionJson =new Gson().toJson(res);
 
-            brElaTransaction = new BRElaTransaction();
-            brElaTransaction.setTx(transactionJson);
-            brElaTransaction.setTxId(inputs.get(0).txid);
+            brIoexTransaction = new BRIoexTransaction();
+            brIoexTransaction.setTx(transactionJson);
+            brIoexTransaction.setTxId(inputs.get(0).txid);
 
             historyTransactionEntity.txReversed = inputs.get(0).txid;
             historyTransactionEntity.fromAddress = inputAddress;
@@ -149,7 +149,7 @@ public class IoexDataSource implements BRDataSourceInterface {
             e.printStackTrace();
         }
 
-        return brElaTransaction;
+        return brIoexTransaction;
     }
 
     public synchronized String sendIoexRawTx(final String transaction){

@@ -50,20 +50,22 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
 
     public static BRSQLiteHelper getInstance(Context context) {
         DATABASE_NAME = UiUtils.getCacheProviderName(context, DATABASE_NAME);
-        if (instance == null) instance = new BRSQLiteHelper(context);
+        instance = new BRSQLiteHelper(context);
         return instance;
     }
 
     public static String DATABASE_NAME = "breadwallet.db";
-    private static final int DATABASE_VERSION = 19;
+    private static final int DATABASE_VERSION = 20;
 
     public static final String ADD_APPS_TABLE_NAME = "addAppTable";
+    public static final String ADD_APPS_NAME = "name";
     public static final String ADD_APPS_NAME_EN = "name_en";
     public static final String ADD_APPS_NAME_ZH_CN = "name_zh_cn";
     public static final String ADD_APPS_APP_ID = "app_id";
     public static final String ADD_APPS_DID = "did";
     public static final String ADD_APPS_PUBLICKEY = "publicKey";
     public static final String ADD_APPS_ICON = "icon";
+    public static final String ADD_APPS_SHORTDESC = "shortDesc";
     public static final String ADD_APPS_SHORTDESC_EN = "shortDesc_en";
     public static final String ADD_APPS_SHORTDESC_ZH_CN = "shortDesc_zh_CN";
     public static final String ADD_APPS_LONGDESC_EN = "longDesc_en";
@@ -77,12 +79,14 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String ADD_APPS_VERSION = "version";
     public static final String ADD_APPS_INDEX = "appIndex";
     private static final String ADD_APPS_DATABASE_CREATE = "create table if not exists " + ADD_APPS_TABLE_NAME + " (" +
+            ADD_APPS_NAME + " text, " +
             ADD_APPS_NAME_EN + " text, " +
             ADD_APPS_NAME_ZH_CN + " text, " +
             ADD_APPS_APP_ID + " text primary key , " +
             ADD_APPS_DID + " text, " +
             ADD_APPS_PUBLICKEY + " text, " +
             ADD_APPS_ICON + " text, " +
+            ADD_APPS_SHORTDESC + " text, " +
             ADD_APPS_SHORTDESC_EN + " text, " +
             ADD_APPS_SHORTDESC_ZH_CN + " text, " +
             ADD_APPS_LONGDESC_EN + " text, " +
@@ -374,7 +378,9 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        Log.d(TAG, "oldVersion:"+oldVersion+" newVersion:"+newVersion);
+        if(newVersion==20) {
+            db.execSQL("DROP TABLE IF EXISTS " + ADD_APPS_TABLE_NAME);
+        }
 
         if(newVersion == 19){
             db.execSQL("DROP TABLE IF EXISTS " + ELA_TX_TABLE_NAME);

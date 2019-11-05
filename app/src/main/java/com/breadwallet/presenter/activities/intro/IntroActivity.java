@@ -4,6 +4,7 @@ package com.breadwallet.presenter.activities.intro;
 import android.content.Intent;
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
+import android.net.Uri;
 import android.os.Bundle;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
@@ -69,6 +70,18 @@ public class IntroActivity extends BRActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            String action = intent.getAction();
+            if (!StringUtil.isNullOrEmpty(action) && action.equals(Intent.ACTION_VIEW)) {
+                Uri uri = intent.getData();
+                PostAuth.getInstance().onCanaryCheck(IntroActivity.this, false, uri.toString());
+                finish();
+                return;
+            }
+        }
+
         setContentView(R.layout.activity_intro);
         mNewWalletButton = findViewById(R.id.button_new_wallet);
         mRecoverWalletButton = findViewById(R.id.button_recover_wallet);

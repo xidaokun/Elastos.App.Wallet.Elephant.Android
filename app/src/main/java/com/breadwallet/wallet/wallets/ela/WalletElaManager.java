@@ -87,6 +87,10 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     private WalletManagerHelper mWalletManagerHelper;
 
+    public BigDecimal SALA_FEE = new BigDecimal(4860);
+
+    public BigDecimal ELA_FEE = SALA_FEE.divide(ONE_ELA_TO_SALA, 8, BRConstants.ROUNDING_MODE);
+
     protected String mPrivateKey;
 
     private static Context mContext;
@@ -100,7 +104,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         return mInstance;
     }
 
-    private WalletElaManager(Context context, BRCoreMasterPubKey masterPubKey,
+    private WalletElaManager(final Context context, BRCoreMasterPubKey masterPubKey,
                              BRCoreChainParams chainParams,
                              double earliestPeerTime) {
         super(masterPubKey, chainParams, 0);
@@ -173,9 +177,9 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         Log.i(TAG, "signAndPublishTransaction");
         try {
             if(tx == null) return new byte[1];
-            BRElaTransaction raw = tx.getElaTx();
-            if(raw == null) return new byte[1];
-            String rawTxTxid = ElaDataSource.getInstance(mContext).sendElaRawTx(raw.getTx());
+            List<BRElaTransaction> transactions = tx.getElaTx();
+            if(transactions == null) return new byte[1];
+            String rawTxTxid = ElaDataSource.getInstance(mContext).sendElaRawTx(transactions);
 
             if(StringUtil.isNullOrEmpty(rawTxTxid)) return new byte[1];
             TxManager.getInstance().updateTxList(mContext);
@@ -290,8 +294,6 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         return new CryptoTransaction[0];
     }
 
-    private static final BigDecimal ELA_FEE = new BigDecimal(4860).divide(ONE_ELA_TO_SALA, 8, BRConstants.ROUNDING_MODE);
-
     @Override
     public BigDecimal getTxFee(CryptoTransaction tx) {
         Log.i(TAG, "getTxFee");
@@ -339,7 +341,9 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public void updateFee(Context app) {
-
+        long fee = ElaDataSource.getInstance(app).getNodeFee();
+        SALA_FEE = new BigDecimal(fee);
+        ELA_FEE = new BigDecimal(fee).divide(ONE_ELA_TO_SALA, 8, BRConstants.ROUNDING_MODE);
     }
 
     @Override
@@ -449,7 +453,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public CryptoTransaction createTransaction(BigDecimal amount, String address, String meno) {
         Log.i(TAG, "createTransaction");
-        BRElaTransaction brElaTransaction = null;
+        List<BRElaTransaction> brElaTransactions = null;
         boolean autoVote = BRSharedPrefs.getAutoVote(mContext);
         String candidatesStr = BRSharedPrefs.getCandidate(mContext);
         Log.d("posvote", "autoVote:"+autoVote);
@@ -460,12 +464,12 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
             } else {
                 candidates = Utils.spliteByComma(candidatesStr);
             }
-            brElaTransaction = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno, candidates);
+            brElaTransactions = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno, candidates);
         } else {
-            brElaTransaction = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno);
+            brElaTransactions = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno);
         }
 
-        return new CryptoTransaction(brElaTransaction);
+        return new CryptoTransaction(brElaTransactions);
     }
 
     @Override

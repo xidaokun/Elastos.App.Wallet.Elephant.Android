@@ -131,7 +131,7 @@ public class FragmentSetting extends Fragment {
         rootView.findViewById(R.id.back_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UiUtils.openScanner(getActivity(), BRConstants.SCANNER_DID_REQUEST);
+                UiUtils.openScanner(getActivity(), BRConstants.SCANNER_DID_OR_ADD_REQUEST);
             }
         });
         rootView.findViewById(R.id.did_copy).setOnClickListener(new View.OnClickListener() {

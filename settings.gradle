@@ -1,1 +1,1 @@
-include ':app', ':ElastosSdkKeypair', ':ElastosSdkWallet'
+include ':app', ':ElastosSdkWallet', ':ElastosSdkKeypair'

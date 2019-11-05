@@ -35,6 +35,8 @@ import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
+import com.elastos.jni.UriFactory;
+import com.elastos.jni.utils.StringUtils;
 import com.platform.HTTPServer;
 import com.platform.tools.BRBitId;
 
@@ -66,6 +68,7 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
     private static final String TAG = BRActivity.class.getName();
     public static final Point screenParametersPoint = new Point();
     private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null : BreadApp.getBreadContext().getApplicationContext().getPackageName();
+    protected HomeActivity mHomeActivity;
 
     static {
         try {
@@ -271,35 +274,48 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                 }
                 break;
 
-            case BRConstants.SCANNER_DID_REQUEST:
+            case BRConstants.SCANNER_DID_OR_ADD_REQUEST:
                 if (resultCode == Activity.RESULT_OK) {
-                    final String mUri = data.getStringExtra("result");
-                    if(StringUtil.isNullOrEmpty(mUri)) return;
+                    String url = data.getStringExtra("result");
+                    if(StringUtil.isNullOrEmpty(url)) return;
 
-                    Uri uri = Uri.parse(mUri);
+                    UriFactory uri = new UriFactory(url);
                     String scheme = uri.getScheme();
                     String host = uri.getHost();
-                    if (scheme != null && scheme.equals("elaphant") && host != null) {
-                        switch (host) {
-                            case "multitx":
-                                UiUtils.startMultiTxActivity(this, uri);
-                                return;
-                            case "multicreate":
-                                UiUtils.startMultiCreateActivity(this, uri);
-                                return;
-                            default:
-                                break;
+                    if (!StringUtils.isNullOrEmpty(scheme) && !StringUtils.isNullOrEmpty(host)) {
+                        if(scheme.equals("elaphant") || scheme.equals("elastos")) {
+                            switch (host) {
+                                case "multitx":
+                                    UiUtils.startMultiTxActivity(this, Uri.parse(url));
+                                    return;
+                                case "multicreate":
+                                    UiUtils.startMultiCreateActivity(this, Uri.parse(url));
+                                    return;
+                                case "identity":
+                                    UiUtils.startAuthorActivity(this, url);
+                                    return;
+                                case "elapay":
+                                    UiUtils.startWalletActivity(this, url);
+                                    return;
+                                case "sign":
+                                    UiUtils.startSignActivity(this, url);
+                                    return;
+                                case "eladposvote":
+                                    UiUtils.startVoteActivity(this, url);
+                                    return;
+                                default:
+                                    if(mHomeActivity != null) {
+                                        mHomeActivity.showAndDownloadCapsule(url);
+                                    } else {
+                                        UiUtils.startBreadActivity(this, true);
+                                    }
+                                    break;
+                            }
+                        } else {
+                            mHomeActivity.showAndDownloadCapsule(url);
                         }
-                    }
-
-                    if(mUri.contains("identity")) {
-                        UiUtils.startAuthorActivity(this, mUri);
-                    } else if(mUri.contains("elapay")) {
-                        UiUtils.startWalletActivity(this, mUri);
-                    } else if(mUri.contains("sign")){
-                        UiUtils.startSignActivity(this, mUri);
-                    } else if(mUri.contains("eladposvote")){
-                        UiUtils.startVoteActivity(this, mUri);
+                    } else {
+                        mHomeActivity.showAndDownloadCapsule(url);
                     }
                 }
                 break;

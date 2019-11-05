@@ -54,7 +54,9 @@ public class ManageWalletsActivity extends BaseSettingsActivity implements OnSta
 
         final ArrayList<TokenItem> tokenItems = new ArrayList<>();
 
-        mTokens = KVStoreManager.getInstance().getTokenListMetaData(ManageWalletsActivity.this).enabledCurrencies;
+        TokenListMetaData tokenListMetaData = KVStoreManager.getInstance().getTokenListMetaData(ManageWalletsActivity.this);
+
+        mTokens = (tokenListMetaData!=null) ? tokenListMetaData.enabledCurrencies : new ArrayList<TokenListMetaData.TokenInfo>();
 
         for (int i = 0; i < mTokens.size(); i++) {
 

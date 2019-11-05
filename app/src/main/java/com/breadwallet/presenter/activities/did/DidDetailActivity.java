@@ -72,7 +72,7 @@ public class DidDetailActivity extends BaseSettingsActivity {
         mAuthorCbox = findViewById(R.id.auto_checkbox);
         mAppIcon = findViewById(R.id.app_icon);
         mAuthInfoLv = findViewById(R.id.author_info_detail_list);
-        boolean isAuto = BRSharedPrefs.isAuthorAuto(this, mAuthorInfo.getDid());
+        boolean isAuto = BRSharedPrefs.isAuthorAuto(this, mAuthorInfo!=null ?mAuthorInfo.getDid():null);
         mAuthorCbox.setChecked(isAuto);
 
         mAuthorCbox.setText(String.format(getString(R.string.Author_Auto_Check), mAuthorInfo.getAppName()));

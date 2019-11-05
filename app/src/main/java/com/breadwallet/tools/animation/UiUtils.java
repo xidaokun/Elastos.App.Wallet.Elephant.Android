@@ -35,7 +35,6 @@ import com.breadwallet.presenter.activities.AddAppsActivity;
 import com.breadwallet.presenter.activities.AppAboutActivity;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.EsignHistoryActivity;
-import com.breadwallet.presenter.activities.ExploreActivity;
 import com.breadwallet.presenter.activities.ExploreWebActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.LoginActivity;
@@ -402,19 +401,24 @@ public class UiUtils {
         if (from == null) {
             return;
         }
-        Class toStart = auth ? LoginActivity.class : WalletActivity.class;
-
-        // If this is a first launch(new wallet), ensure that we are starting on the Home Screen
-        if (toStart.equals(WalletActivity.class)) {
-
-            if (BRSharedPrefs.isNewWallet(from)) {
-                toStart = HomeActivity.class;
-            }
-        }
+        Class toStart = auth ? LoginActivity.class : HomeActivity.class;
 
         Intent intent = new Intent(from, toStart);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        from.startActivity(intent);
+    }
+
+    public static void startBreadActivity(Activity from, boolean auth, String url) {
+        if (from == null) {
+            return;
+        }
+        Class toStart = auth ? LoginActivity.class : HomeActivity.class;
+
+        Intent intent = new Intent(from, toStart);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("url", url);
         from.startActivity(intent);
     }
 
@@ -449,12 +453,6 @@ public class UiUtils {
     public static void startWebActivity(Activity activity, String url) {
         Intent intent = new Intent(activity, WebViewActivity.class);
         intent.putExtra(BRConstants.EXTRA_URL, url);
-        activity.startActivity(intent);
-        activity.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
-    }
-
-    public static void startExploreActivity(Activity activity) {
-        Intent intent = new Intent(activity, ExploreActivity.class);
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
     }

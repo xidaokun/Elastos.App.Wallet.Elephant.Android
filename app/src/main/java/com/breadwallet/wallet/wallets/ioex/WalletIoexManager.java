@@ -148,7 +148,7 @@ public class WalletIoexManager extends BRCoreWalletManager implements BaseWallet
         Log.i(TAG, "signAndPublishTransaction");
         try {
             if(tx == null) return new byte[1];
-            BRElaTransaction raw = tx.getElaTx();
+            BRIoexTransaction raw = tx.getIoexTx();
             if(raw == null) return new byte[1];
             String rawTxTxid = IoexDataSource.getInstance(mContext).sendIoexRawTx(raw.getTx());
 
@@ -408,7 +408,7 @@ public class WalletIoexManager extends BRCoreWalletManager implements BaseWallet
     @Override
     public CryptoTransaction createTransaction(BigDecimal amount, String address, String meno) {
         Log.i(TAG, "createTransaction");
-        BRElaTransaction brElaTransaction = IoexDataSource.getInstance(mContext).createTx(getAddress(), address, amount.multiply(ONE_IOEX_TO_SATOSHI).longValue(), meno);
+        BRIoexTransaction brElaTransaction = IoexDataSource.getInstance(mContext).createTx(getAddress(), address, amount.multiply(ONE_IOEX_TO_SATOSHI).longValue(), meno);
 
         return new CryptoTransaction(brElaTransaction);
     }

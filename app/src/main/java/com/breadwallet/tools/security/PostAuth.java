@@ -372,6 +372,61 @@ public class PostAuth {
         this.mPaymentProtocolTx = tx;
     }
 
+
+    public void onCanaryCheck(final Activity activity, boolean authAsked, String url){
+        String canary = null;
+        try {
+            canary = BRKeyStore.getCanary(activity, BRConstants.CANARY_REQUEST_CODE);
+        } catch (UserNotAuthenticatedException e) {
+            if (authAsked) {
+                Log.e(TAG, "onCanaryCheck: WARNING!!!! LOOP");
+                mAuthLoopBugHappened = true;
+            }
+            return;
+        }
+
+        byte[] phrase;
+        try {
+            phrase = BRKeyStore.getPhrase(activity, BRConstants.CANARY_REQUEST_CODE);
+        } catch (UserNotAuthenticatedException e) {
+            if (authAsked) {
+                Log.e(TAG, "onCanaryCheck: WARNING!!!! LOOP");
+                mAuthLoopBugHappened = true;
+            }
+            return;
+        }
+
+        if (canary == null || !canary.equalsIgnoreCase(BRConstants.CANARY_STRING)) {
+            String strPhrase = new String((phrase == null) ? new byte[0] : phrase);
+            if (strPhrase.isEmpty()) {
+                WalletsMaster m = WalletsMaster.getInstance(activity);
+                m.wipePartOfKeyStore(activity);
+                m.wipeWalletButKeystore(activity);
+            } else {
+                Log.e(TAG, "onCanaryCheck: Canary wasn't there, but the phrase persists, adding canary to keystore.");
+                try {
+                    BRKeyStore.putCanary(BRConstants.CANARY_STRING, activity, 0);
+                } catch (UserNotAuthenticatedException e) {
+                    if (authAsked) {
+                        Log.e(TAG, "onCanaryCheck: WARNING!!!! LOOP");
+                        mAuthLoopBugHappened = true;
+                    }
+                    return;
+                }
+            }
+        }
+        // add to phrase list
+        if (phrase != null) {
+            byte[] seed = BRCoreKey.getSeedFromPhrase(phrase);
+            byte[] authKey = BRCoreKey.getAuthPrivKeyForAPI(seed);
+            BRCoreMasterPubKey mpk = new BRCoreMasterPubKey(phrase, true);
+
+            saveToPhraseList(activity, phrase, authKey, mpk.serialize(), UiUtils.getDefaultWalletName(activity));
+        }
+
+        WalletsMaster.getInstance(activity).startTheWalletIfExists(activity, url);
+    }
+
     public void onCanaryCheck(final Activity activity, boolean authAsked) {
         String canary = null;
         try {
