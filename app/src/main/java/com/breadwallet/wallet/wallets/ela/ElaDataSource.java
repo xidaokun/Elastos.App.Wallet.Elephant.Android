@@ -768,7 +768,7 @@ public class ElaDataSource implements BRDataSourceInterface {
                 nodeAddress = ElastosKeypair.getAddress(elaTransaction.Postmark.pub);
                 String rewardAddress = getRewardAddress();
                 if(!StringUtil.isNullOrEmpty(nodeAddress) && !nodeAddress.equals(rewardAddress)) {
-                    return true;
+                    return false;
                 }
             }
 
