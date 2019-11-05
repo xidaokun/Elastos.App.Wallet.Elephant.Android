@@ -276,7 +276,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 dposVoteStatus.value.equals("normal")) {
             Log.d(TAG, "copy dposvote");
             mDoloadFileName = "vote.capsule";
-            mDoloadUrl = "http://elaphant.net/vote.capsule";
+            mDoloadUrl = "https://dposvote.elaphant.app/vote.capsule";
             copyCapsuleToDownloadCache(getContext(), mDownloadDir.getAbsolutePath(), mDoloadFileName);
             refreshApps();
         }
@@ -376,7 +376,15 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         mAboutPopLayout.setVisibility(View.VISIBLE);
         if (null != mAboutShowListener) mAboutShowListener.hide();
         mAboutAppItem = item;
-        mAboutAboutView.setText(String.format(getString(R.string.explore_pop_about), mAboutAppItem.name_en));
+
+        String languageCode = Locale.getDefault().getLanguage();
+        if(!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")){
+            mAboutAboutView.setText(String.format(getString(R.string.explore_pop_about), mAboutAppItem.name_zh_CN));
+        } else {
+            mAboutAboutView.setText(String.format(getString(R.string.explore_pop_about), mAboutAppItem.name_en));
+        }
+        if(StringUtil.isNullOrEmpty(mAboutAppItem.name_zh_CN) && StringUtil.isNullOrEmpty(mAboutAppItem.name_en))
+            mAboutAboutView.setText(mAboutAppItem.name);
     }
 
     @Override
