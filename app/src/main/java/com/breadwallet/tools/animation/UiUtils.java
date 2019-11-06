@@ -540,9 +540,9 @@ public class UiUtils {
         String url = null;
         if (!StringUtil.isNullOrEmpty(WalletActivity.mReturnUrl)) { //call return url
             if (WalletActivity.mReturnUrl.contains("?")) {
-                url = WalletActivity.mReturnUrl + "&TXID=" + txid + "&OrderID=" + WalletActivity.mOrderId;
+                url = WalletActivity.mReturnUrl + "&TXID=" + Uri.encode(txid) + "&OrderID=" + Uri.encode(WalletActivity.mOrderId);
             } else {
-                url = WalletActivity.mReturnUrl + "?TXID=" + txid + "&OrderID=" + WalletActivity.mOrderId;
+                url = WalletActivity.mReturnUrl + "?TXID=" + Uri.encode(txid) + "&OrderID=" + Uri.encode(WalletActivity.mOrderId);
             }
 
             String addAppIds = BRSharedPrefs.getAddedAppId(context);
