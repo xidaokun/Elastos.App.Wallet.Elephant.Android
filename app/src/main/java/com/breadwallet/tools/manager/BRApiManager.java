@@ -17,6 +17,7 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
+import com.breadwallet.wallet.wallets.side.ElaSideEthereumWalletManager;
 import com.elastos.jni.utils.HexUtils;
 import com.platform.APIClient;
 
@@ -113,6 +114,15 @@ public class BRApiManager {
                         tmp.code = tmpObj.getString("code");
                         tmp.rate = Float.valueOf(tmpObj.getString("rate"));
                         tmp.iso = walletManager.getIso();
+
+//                        if(tmp.code.equalsIgnoreCase("ETH")) {
+//                            CurrencyEntity elaEthEntity = new CurrencyEntity();
+//                            elaEthEntity.name = ElaSideEthereumWalletManager.ETH_SCHEME;
+//                            elaEthEntity.code = ElaSideEthereumWalletManager.getInstance(context).getIso();
+//                            elaEthEntity.rate = Float.valueOf(tmpObj.getString("rate"));
+//                            elaEthEntity.iso = ElaSideEthereumWalletManager.getInstance(context).getIso();
+//                            set.add(elaEthEntity);
+//                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -249,6 +259,12 @@ public class BRApiManager {
                 String name = json.getString("name");
                 String rate = json.getString("price_btc");
                 String iso = json.getString("symbol");
+
+                if(iso.equalsIgnoreCase("eth")) {
+                    ElaSideEthereumWalletManager elaSideEthereumWalletManager = ElaSideEthereumWalletManager.getInstance(context);
+                    CurrencyEntity elaEthEnt = new CurrencyEntity(code, elaSideEthereumWalletManager.getName(), Float.valueOf(rate), elaSideEthereumWalletManager.getIso());
+                    tmp.add(elaEthEnt);
+                }
 
                 CurrencyEntity ent = new CurrencyEntity(code, name, Float.valueOf(rate), iso);
                 tmp.add(ent);
