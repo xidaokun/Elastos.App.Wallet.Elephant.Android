@@ -85,6 +85,8 @@ public class ManageWalletsActivity extends BaseSettingsActivity implements OnSta
                 tokenItem = new TokenItem(null, "BCH", "Bitcoin Cash", null);
             else if (tokenSymbol.equalsIgnoreCase("eth"))
                 tokenItem = new TokenItem(null, "ETH", "Ethereum", null);
+            else if(tokenSymbol.equalsIgnoreCase("ela_eth"))
+                tokenItem = new TokenItem(null, "ELA_ETH", "ElaEthereum", null);
             else if(tokenSymbol.equalsIgnoreCase("ela"))
                 tokenItem = new TokenItem(null, "ELA", "Elastos", null);
             else if(tokenSymbol.equalsIgnoreCase("ioex"))

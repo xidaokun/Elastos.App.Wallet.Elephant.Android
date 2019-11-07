@@ -8,14 +8,11 @@ import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
-import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
-import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BREventManager;
-import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.manager.SendManager;
 import com.breadwallet.tools.threads.ImportPrivKeyTask;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -25,15 +22,12 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
-import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**

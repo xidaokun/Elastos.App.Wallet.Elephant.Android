@@ -17,8 +17,6 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
-import com.breadwallet.wallet.wallets.ela.WalletElaManager;
-import com.breadwallet.wallet.wallets.ioex.WalletIoexManager;
 import com.elastos.jni.utils.HexUtils;
 import com.platform.APIClient;
 
@@ -170,7 +168,7 @@ public class BRApiManager {
         for (final BaseWalletManager w : list) {
             //only update stuff for non erc20 for now, API endpoint BUG
             if (w.getIso().equalsIgnoreCase("BTC") || w.getIso().equalsIgnoreCase("BCH")
-                    || w.getIso().equalsIgnoreCase("ETH")) {
+                    || w.getIso().equalsIgnoreCase("ETH") || w.getIso().equalsIgnoreCase("ELA_ETH")) {
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {
