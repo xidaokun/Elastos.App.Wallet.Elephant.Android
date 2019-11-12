@@ -135,4 +135,27 @@ public class JsonRpcHelper {
         }
 
     }
+
+    @WorkerThread
+    public static void makeRpcRequest2(Context app, String url, JSONObject payload, JsonRpcRequestListener listener) {
+        final MediaType JSON
+                = MediaType.parse("application/json; charset=utf-8");
+
+        RequestBody requestBody = RequestBody.create(JSON, payload.toString());
+
+        Request request = new Request.Builder()
+                .url(url)
+                .header("Content-Type", "application/json; charset=utf-8")
+                .header("Accept", "application/json")
+                .post(requestBody).build();
+
+
+        APIClient.BRResponse resp = APIClient.getInstance(app).sendRequest(request, true);
+        String responseString = resp.getBodyText();
+
+        if (listener != null) {
+            listener.onRpcRequestCompleted(responseString);
+        }
+
+    }
 }

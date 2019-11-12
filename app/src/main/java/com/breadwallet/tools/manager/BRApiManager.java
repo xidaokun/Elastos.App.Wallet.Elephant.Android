@@ -262,8 +262,10 @@ public class BRApiManager {
 
                 if(iso.equalsIgnoreCase("eth")) {
                     ElaSideEthereumWalletManager elaSideEthereumWalletManager = ElaSideEthereumWalletManager.getInstance(context);
-                    CurrencyEntity elaEthEnt = new CurrencyEntity(code, elaSideEthereumWalletManager.getName(), Float.valueOf(rate), elaSideEthereumWalletManager.getIso());
-                    tmp.add(elaEthEnt);
+                    if(null != elaSideEthereumWalletManager) {
+                        CurrencyEntity elaEthEnt = new CurrencyEntity(code, elaSideEthereumWalletManager.getName(), Float.valueOf(rate), elaSideEthereumWalletManager.getIso());
+                        tmp.add(elaEthEnt);
+                    }
                 }
 
                 CurrencyEntity ent = new CurrencyEntity(code, name, Float.valueOf(rate), iso);
@@ -289,7 +291,7 @@ public class BRApiManager {
         //initialize the TimerTask's job
         initializeTimerTask(context);
 
-        timer.schedule(timerTask, 1000, 5 * 60 * 1000);
+        timer.schedule(timerTask, 1000, 1 * 60 * 1000);
     }
 
     public void stopTimerTask() {
