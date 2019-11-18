@@ -178,7 +178,7 @@ public class BRApiManager {
         for (final BaseWalletManager w : list) {
             //only update stuff for non erc20 for now, API endpoint BUG
             if (w.getIso().equalsIgnoreCase("BTC") || w.getIso().equalsIgnoreCase("BCH")
-                    || w.getIso().equalsIgnoreCase("ETH") || w.getIso().equalsIgnoreCase("ELA_ETH")) {
+                    || w.getIso().equalsIgnoreCase("ETH") || w.getIso().equalsIgnoreCase("ELA-ESC")) {
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {
@@ -260,7 +260,7 @@ public class BRApiManager {
                 String rate = json.getString("price_btc");
                 String iso = json.getString("symbol");
 
-                if(iso.equalsIgnoreCase("eth")) {
+                if(iso.equalsIgnoreCase("ela")) {
                     ElaSideEthereumWalletManager elaSideEthereumWalletManager = ElaSideEthereumWalletManager.getInstance(context);
                     if(null != elaSideEthereumWalletManager) {
                         CurrencyEntity elaEthEnt = new CurrencyEntity(code, elaSideEthereumWalletManager.getName(), Float.valueOf(rate), elaSideEthereumWalletManager.getIso());

@@ -115,7 +115,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
             if (!iso.equalsIgnoreCase("BTC")
                     && !iso.equalsIgnoreCase("BCH")
                     && !iso.equalsIgnoreCase("ETH")
-                    && !iso.equalsIgnoreCase("ELA_ETH")
+                    && !iso.equalsIgnoreCase("ELA-ESC")
                     && !iso.equalsIgnoreCase("ELA")
                     && !iso.equalsIgnoreCase("IOEX"))
                 BRReportsManager.reportBug(new NullPointerException("getTokenWalletByIso: address is null for: " + iso));
