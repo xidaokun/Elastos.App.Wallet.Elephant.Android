@@ -657,7 +657,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String ethRpcUrl = "https://api-eth.elaphant.app/api/1/eth/wrap";
+                final String ethRpcUrl = /*JsonRpcHelper.getEthereumRpcUrl()*/"https://api-eth.elaphant.app/api/1/eth/wrap";
                 final JSONObject payload = new JSONObject();
                 final JSONArray params = new JSONArray();
 
@@ -672,7 +672,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
                     e.printStackTrace();
                 }
 
-                JsonRpcHelper.makeRpcRequest(BreadApp.getBreadContext(), ethRpcUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
+                JsonRpcHelper.makeRpcRequest2(BreadApp.getBreadContext(), ethRpcUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         try {
@@ -939,7 +939,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String ethRpcUrl = "https://api-eth.elaphant.app/api/1/eth/history";
+                final String ethRpcUrl = /*JsonRpcHelper.createEthereumTransactionsUrl(address)*/"https://api-eth.elaphant.app/api/1/eth/history";
 
                 final JSONObject payload = new JSONObject();
                 try {

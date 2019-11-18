@@ -50,16 +50,19 @@ public class BREthereumTransaction extends BREthereumLightNode.ReferenceWithDefa
         return node.get().jniTransactionIsSubmitted(identifier);
     }
 
+    public String sourceAddress;
     public String getSourceAddress () {
-        return node.get().jniTransactionSourceAddress(identifier);
+        return sourceAddress = node.get().jniTransactionSourceAddress(identifier);
     }
 
+    public String targetAddress;
     public String getTargetAddress () {
-        return node.get().jniTransactionTargetAddress(identifier);
+        return targetAddress = node.get().jniTransactionTargetAddress(identifier);
     }
 
+    public String hash;
     public String getHash () {
-        return node.get().jniTransactionGetHash (identifier);
+        return hash = node.get().jniTransactionGetHash (identifier);
     }
 
     //
@@ -69,9 +72,10 @@ public class BREthereumTransaction extends BREthereumLightNode.ReferenceWithDefa
         return getAmount(defaultUnit);
     }
 
+    public String amount;
     public String getAmount(BREthereumAmount.Unit unit) {
         validUnitOrException(unit);
-        return node.get().jniTransactionGetAmount(identifier, unit.jniValue);
+        return amount = node.get().jniTransactionGetAmount(identifier, unit.jniValue);
     }
 
     /**
@@ -108,6 +112,7 @@ public class BREthereumTransaction extends BREthereumLightNode.ReferenceWithDefa
      *
      * @return in GWEI
      */
+    public String fee;
     public String getFee () {
         return getFee(BREthereumAmount.Unit.ETHER_GWEI);
     }
@@ -120,7 +125,7 @@ public class BREthereumTransaction extends BREthereumLightNode.ReferenceWithDefa
      */
     public String getFee (BREthereumAmount.Unit unit) {
         assert (!unit.isTokenUnit());
-        return node.get().jniTransactionGetFee(identifier, unit.jniValue);
+        return fee = node.get().jniTransactionGetFee(identifier, unit.jniValue);
     }
 
     /**
@@ -157,8 +162,9 @@ public class BREthereumTransaction extends BREthereumLightNode.ReferenceWithDefa
      *
      * @return in GWEI
      */
+    public String gasPrice;
     public String getGasPrice () {
-        return getGasPrice(BREthereumAmount.Unit.ETHER_GWEI);
+        return gasPrice = getGasPrice(BREthereumAmount.Unit.ETHER_GWEI);
     }
 
     /**
@@ -169,7 +175,7 @@ public class BREthereumTransaction extends BREthereumLightNode.ReferenceWithDefa
      */
     public String getGasPrice (BREthereumAmount.Unit unit) {
         assert (!unit.isTokenUnit());
-        return node.get().jniTransactionGetGasPrice(identifier, unit.jniValue);
+        return gasPrice = node.get().jniTransactionGetGasPrice(identifier, unit.jniValue);
     }
 
     /**
@@ -177,8 +183,9 @@ public class BREthereumTransaction extends BREthereumLightNode.ReferenceWithDefa
      *
      * @return in `gas`
      */
+    public long gasLimit;
     public long getGasLimit () {
-        return node.get().jniTransactionGetGasLimit(identifier);
+        return gasLimit = node.get().jniTransactionGetGasLimit(identifier);
     }
 
     /**
@@ -186,29 +193,34 @@ public class BREthereumTransaction extends BREthereumLightNode.ReferenceWithDefa
      *
      * @return in `gas`
      */
+    public long gasUsed;
     public long getGasUsed () {
-        return node.get().jniTransactionGetGasUsed(identifier);
+        return gasUsed = node.get().jniTransactionGetGasUsed(identifier);
     }
 
     //
     // Nonce
     //
+    public long nonce;
     public long getNonce () {
-        return node.get().jniTransactionGetNonce(identifier);
+        return nonce = node.get().jniTransactionGetNonce(identifier);
     }
 
     //
     // Block Number, Timestamp
     //
+    public long blockNumber;
     public long getBlockNumber () {
-        return node.get().jniTransactionGetBlockNumber(identifier);
+        return blockNumber = node.get().jniTransactionGetBlockNumber(identifier);
     }
 
+    public long blockTimestamp;
     public long getBlockTimestamp () {
-        return node.get().jniTransactionGetBlockTimestamp(identifier);
+        return blockTimestamp = node.get().jniTransactionGetBlockTimestamp(identifier);
     }
 
+    public long blockConfirmations;
     public long getBlockConfirmations () {
-        return node.get().jniTransactionGetBlockConfirmations(identifier);
+        return blockConfirmations = node.get().jniTransactionGetBlockConfirmations(identifier);
     }
 }

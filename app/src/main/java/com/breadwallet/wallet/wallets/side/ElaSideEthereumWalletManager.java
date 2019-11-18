@@ -56,7 +56,7 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
 
 public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager implements  BREthereumLightNode.Client,
         BREthereumLightNode.Listener {
-    private static final String TAG = WalletEthManager.class.getSimpleName();
+    private static final String TAG = ElaSideEthereumWalletManager.class.getSimpleName();
 
     private CryptoTransaction mWatchedTransaction;
     private OnHashUpdated mWatchListener;
@@ -678,7 +678,7 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String ethUrl = JsonRpcHelper.getEthereumRpcUrl();
+                final String ethUrl = /*JsonRpcHelper.getEthereumRpcUrl()*/"https://api-wallet-eth.elastos.org/api/1/eth/wrap";
                 Log.d(TAG, "Making rpc request to -> " + ethUrl);
 
                 final JSONObject payload = new JSONObject();
@@ -692,7 +692,7 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
                     e.printStackTrace();
                 }
 
-                JsonRpcHelper.makeRpcRequest(BreadApp.getBreadContext(), ethUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
+                JsonRpcHelper.makeRpcRequest3(BreadApp.getBreadContext(), ethUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         try {
@@ -723,7 +723,7 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String ethUrl = JsonRpcHelper.getEthereumRpcUrl();
+                final String ethUrl = /*JsonRpcHelper.getEthereumRpcUrl()*/"https://api-wallet-eth.elastos.org/api/1/eth/wrap";
                 Log.d(TAG, "Making rpc request to -> " + ethUrl);
 
                 final JSONObject payload = new JSONObject();
@@ -769,83 +769,83 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
             return;
         }
 
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                final JSONObject payload = new JSONObject();
-                final JSONArray params = new JSONArray();
-
-                try {
-                    payload.put(JsonRpcHelper.JSONRPC, "2.0");
-                    payload.put(JsonRpcHelper.METHOD, JsonRpcHelper.ETH_BALANCE);
-                    params.put(rawTransaction);
-                    params.put(JsonRpcHelper.LATEST);
-                    payload.put(JsonRpcHelper.PARAMS, params);
-                    payload.put(JsonRpcHelper.ID, rid);
-
-                    ElaSideEthDataSource.getInstance(BreadApp.getBreadContext()).sendRawTransaction(rawTransaction, rid, new JsonRpcHelper.JsonRpcRequestListener() {
-                        @Override
-                        public void onRpcRequestCompleted(String jsonResult) {
-                            String txHash = null;
-                            int errCode = 0;
-                            String errMessage = "";
-                            if (!Utils.isNullOrEmpty(jsonResult)) {
-                                try {
-                                    JSONObject responseObject = new JSONObject(jsonResult);
-                                    Log.d(TAG, "onRpcRequestCompleted: " + responseObject);
-                                    if (responseObject.has(JsonRpcHelper.RESULT)) {
-                                        txHash = responseObject.getString(JsonRpcHelper.RESULT);
-                                        Log.d(TAG, "onRpcRequestCompleted: " + txHash);
-                                        node.announceSubmitTransaction(wid, tid, txHash, rid);
-                                    } else if (responseObject.has(JsonRpcHelper.ERROR)) {
-                                        JSONObject errObj = responseObject.getJSONObject(JsonRpcHelper.ERROR);
-                                        errCode = errObj.getInt(JsonRpcHelper.CODE);
-                                        errMessage = errObj.getString(JsonRpcHelper.MESSAGE);
-                                    }
-
-                                    final String finalTxHash = txHash;
-                                    final String finalErrMessage = errMessage;
-                                    final int finalErrCode = errCode;
-                                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            final Context app = BreadApp.getBreadContext();
-                                            if (app != null && app instanceof Activity) {
-                                                if (!Utils.isNullOrEmpty(finalTxHash)) {
-                                                    PostAuth.stampMetaData(app, finalTxHash.getBytes());
-                                                    UiUtils.showBreadSignal((Activity) app, app.getString(R.string.Alerts_sendSuccess),
-                                                            app.getString(R.string.Alerts_sendSuccessSubheader), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
-                                                                @Override
-                                                                public void onComplete() {
-                                                                    UiUtils.killAllFragments((Activity) app);
-                                                                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                                                                        @Override
-                                                                        public void run() {
-                                                                            mWallet.updateBalance();
-                                                                        }
-                                                                    });
-                                                                }
-                                                            });
-                                                } else {
-                                                    String message = String.format(Locale.getDefault(), "(%d) %s", finalErrCode, finalErrMessage);
-                                                    BRDialog.showSimpleDialog(app, app.getString(R.string.WipeWallet_failedTitle), message);
-                                                }
-                                            } else {
-                                                Log.e(TAG, "submitTransaction: app is null or not an activity");
-                                            }
-                                        }
-                                    });
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+//        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                final JSONObject payload = new JSONObject();
+//                final JSONArray params = new JSONArray();
+//
+//                try {
+//                    payload.put(JsonRpcHelper.JSONRPC, "2.0");
+//                    payload.put(JsonRpcHelper.METHOD, JsonRpcHelper.ETH_BALANCE);
+//                    params.put(rawTransaction);
+//                    params.put(JsonRpcHelper.LATEST);
+//                    payload.put(JsonRpcHelper.PARAMS, params);
+//                    payload.put(JsonRpcHelper.ID, rid);
+//
+//                    ElaSideEthDataSource.getInstance(BreadApp.getBreadContext()).sendRawTransaction(rawTransaction, rid, new JsonRpcHelper.JsonRpcRequestListener() {
+//                        @Override
+//                        public void onRpcRequestCompleted(String jsonResult) {
+//                            String txHash = null;
+//                            int errCode = 0;
+//                            String errMessage = "";
+//                            if (!Utils.isNullOrEmpty(jsonResult)) {
+//                                try {
+//                                    JSONObject responseObject = new JSONObject(jsonResult);
+//                                    Log.d(TAG, "onRpcRequestCompleted: " + responseObject);
+//                                    if (responseObject.has(JsonRpcHelper.RESULT)) {
+//                                        txHash = responseObject.getString(JsonRpcHelper.RESULT);
+//                                        Log.d(TAG, "onRpcRequestCompleted: " + txHash);
+//                                        node.announceSubmitTransaction(wid, tid, txHash, rid);
+//                                    } else if (responseObject.has(JsonRpcHelper.ERROR)) {
+//                                        JSONObject errObj = responseObject.getJSONObject(JsonRpcHelper.ERROR);
+//                                        errCode = errObj.getInt(JsonRpcHelper.CODE);
+//                                        errMessage = errObj.getString(JsonRpcHelper.MESSAGE);
+//                                    }
+//
+//                                    final String finalTxHash = txHash;
+//                                    final String finalErrMessage = errMessage;
+//                                    final int finalErrCode = errCode;
+//                                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            final Context app = BreadApp.getBreadContext();
+//                                            if (app != null && app instanceof Activity) {
+//                                                if (!Utils.isNullOrEmpty(finalTxHash)) {
+//                                                    PostAuth.stampMetaData(app, finalTxHash.getBytes());
+//                                                    UiUtils.showBreadSignal((Activity) app, app.getString(R.string.Alerts_sendSuccess),
+//                                                            app.getString(R.string.Alerts_sendSuccessSubheader), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
+//                                                                @Override
+//                                                                public void onComplete() {
+//                                                                    UiUtils.killAllFragments((Activity) app);
+//                                                                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//                                                                        @Override
+//                                                                        public void run() {
+//                                                                            mWallet.updateBalance();
+//                                                                        }
+//                                                                    });
+//                                                                }
+//                                                            });
+//                                                } else {
+//                                                    String message = String.format(Locale.getDefault(), "(%d) %s", finalErrCode, finalErrMessage);
+//                                                    BRDialog.showSimpleDialog(app, app.getString(R.string.WipeWallet_failedTitle), message);
+//                                                }
+//                                            } else {
+//                                                Log.e(TAG, "submitTransaction: app is null or not an activity");
+//                                            }
+//                                        }
+//                                    });
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//                        }
+//                    });
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
 
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
@@ -1110,7 +1110,9 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String ethRpcUtl = JsonRpcHelper.createLogsUrl(address, contract, event);
+                String host = "api-wallet-eth.elastos.org";
+                String url = "/api/1/eth/getLogs";
+                final String ethRpcUtl = /*JsonRpcHelper.createLogsUrl(address, contract, event)*/JsonRpcHelper.createElaEthLogsUrl(host, url, event, address);
                 Log.d(TAG, "getLogs: " + ethRpcUtl);
                 final JSONObject payload = new JSONObject();
                 try {
@@ -1173,7 +1175,7 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String eth_url = JsonRpcHelper.getEthereumRpcUrl();
+                final String eth_url = /*JsonRpcHelper.getEthereumRpcUrl()*/"https://api-wallet-eth.elastos.org/api/1/eth/wrap";
                 Log.d(TAG, "Making rpc request to -> " + eth_url);
 
                 final JSONObject payload = new JSONObject();
@@ -1338,7 +1340,7 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String ethUrl = JsonRpcHelper.getEthereumRpcUrl();
+                final String ethUrl = /*JsonRpcHelper.getEthereumRpcUrl()*/"https://api-wallet-eth.elastos.org/api/1/eth/wrap";
                 Log.d(TAG, "Making rpc request to -> " + ethUrl);
 
                 final JSONObject payload = new JSONObject();
@@ -1355,7 +1357,7 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
                     e.printStackTrace();
                 }
 
-                JsonRpcHelper.makeRpcRequest(BreadApp.getBreadContext(), ethUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
+                JsonRpcHelper.makeRpcRequest3(BreadApp.getBreadContext(), ethUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         try {
@@ -1364,7 +1366,7 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
                             if (responseObject.has(JsonRpcHelper.RESULT)) {
                                 String nonce = responseObject.getString(JsonRpcHelper.RESULT);
                                 Log.d(TAG, "onRpcRequestCompleted: getNonce: " + nonce);
-                                node.announceNonce(address, nonce, rid);
+                                node.announceNonce(address, nonce/*"0x000000000000000001"*/, rid);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();

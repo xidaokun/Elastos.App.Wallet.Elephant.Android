@@ -57,6 +57,7 @@ import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.breadwallet.wallet.wallets.ioex.WalletIoexManager;
+import com.breadwallet.wallet.wallets.side.ElaSideEthereumWalletManager;
 import com.elastos.jni.AuthorizeManager;
 import com.elastos.jni.Constants;
 import com.elastos.jni.UriFactory;
@@ -394,6 +395,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             @Override
             public void run() {
                 WalletEthManager.getInstance(WalletActivity.this).estimateGasPrice();
+                ElaSideEthereumWalletManager.getInstance(WalletActivity.this).estimateGasPrice();
                 wallet.refreshCachedBalance(WalletActivity.this);
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
