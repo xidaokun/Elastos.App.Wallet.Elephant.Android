@@ -59,12 +59,11 @@ public class TokenListMetaData {
             this.enabledCurrencies.add(new TokenInfo("BTC", false, null));
 //            this.enabledCurrencies.add(new TokenInfo("BCH", false, null));
             this.enabledCurrencies.add(new TokenInfo("ETH", false, null));
-            this.enabledCurrencies.add(new TokenInfo("ETH", false, null));
-            this.enabledCurrencies.add(new TokenInfo("ELA-ESC", false, null));
         }
         if (this.hiddenCurrencies == null) {
             this.hiddenCurrencies = new ArrayList<>();
             this.hiddenCurrencies.add(new TokenInfo("BCH", false, null));
+            this.hiddenCurrencies.add(new TokenInfo("ELA-ESC", false, null));
         }
     }
 

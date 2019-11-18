@@ -69,12 +69,15 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
             final TokenItem item = mTokens.get(position);
             String currencyCode = item.symbol.toLowerCase();
 
-            if (currencyCode.equals("1st")) {
-                currencyCode = "first";
-            }
-
             String iconResourceName = currencyCode;
-            int iconResourceId = mContext.getResources().getIdentifier(currencyCode, BRConstants.DRAWABLE, mContext.getPackageName());
+            int iconResourceId = 0;
+            if(currencyCode.equalsIgnoreCase("1st")) {
+                iconResourceId = mContext.getResources().getIdentifier("first", BRConstants.DRAWABLE, mContext.getPackageName());
+            } else if(currencyCode.equalsIgnoreCase("ela-esc")) {
+                iconResourceId = mContext.getResources().getIdentifier("ela_esc", BRConstants.DRAWABLE, mContext.getPackageName());
+            } else {
+                iconResourceId = mContext.getResources().getIdentifier(currencyCode, BRConstants.DRAWABLE, mContext.getPackageName());
+            }
 
             holder.tokenName.setText(mTokens.get(position).name);
             holder.tokenTicker.setText(mTokens.get(position).symbol);

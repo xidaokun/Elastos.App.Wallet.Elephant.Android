@@ -672,7 +672,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
                     e.printStackTrace();
                 }
 
-                JsonRpcHelper.makeRpcRequest2(BreadApp.getBreadContext(), ethRpcUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
+                JsonRpcHelper.makeRpcRequest(BreadApp.getBreadContext(), ethRpcUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         try {
