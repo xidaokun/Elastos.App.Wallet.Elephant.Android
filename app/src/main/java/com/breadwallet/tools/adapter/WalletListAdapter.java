@@ -89,7 +89,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         // Set wallet fields
         holder.mWalletName.setText(currencyCode);
         holder.mIso.setText(name);
-        holder.mWalletBalanceFiat.setText(cryptoBalance.replace(wallet.getIso(), ""));
+        holder.mWalletBalanceFiat.setText(cryptoBalance.replace(wallet.getIso().equalsIgnoreCase("ELA-ESC")?"ELA":wallet.getIso(), ""));
         holder.mWalletBalanceCurrency.setText(fiatBalance);
         holder.mWalletBalanceCurrency.setVisibility(!item.mShowSyncProgress ? View.VISIBLE : View.INVISIBLE);
         holder.mSyncingProgressBar.setVisibility(item.mShowSyncProgress ? View.VISIBLE : View.INVISIBLE);
