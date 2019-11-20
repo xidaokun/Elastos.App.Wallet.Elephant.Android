@@ -346,7 +346,10 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
         String tmpAmount = mAmountBuilder.toString();
         mAmountEdit.setText(tmpAmount);
         mCurrencyCodeText.setText(CurrencyUtils.getSymbolByIso(getActivity(), mSelectedCurrencyCode));
-        mCurrencyCodeButton.setText(String.format("%s(%s)", mSelectedCurrencyCode, CurrencyUtils.getSymbolByIso(getActivity(), mSelectedCurrencyCode)));
+        mCurrencyCodeButton.setText(String.format("%s(%s)",
+                mSelectedCurrencyCode.equalsIgnoreCase("ELA-ESC")?"ELA":mSelectedCurrencyCode,
+                CurrencyUtils.getSymbolByIso(getActivity(),
+                        mSelectedCurrencyCode.equalsIgnoreCase("ELA-ESC")?"ELA":mSelectedCurrencyCode)));
 
     }
 
