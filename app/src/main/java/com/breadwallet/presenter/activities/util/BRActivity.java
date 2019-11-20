@@ -68,7 +68,7 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
     private static final String TAG = BRActivity.class.getName();
     public static final Point screenParametersPoint = new Point();
     private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null : BreadApp.getBreadContext().getApplicationContext().getPackageName();
-    protected HomeActivity mHomeActivity;
+    protected static HomeActivity mHomeActivity;
 
     static {
         try {
