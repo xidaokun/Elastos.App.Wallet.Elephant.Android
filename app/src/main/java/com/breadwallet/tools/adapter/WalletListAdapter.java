@@ -87,7 +87,11 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         String cryptoBalance = CurrencyUtils.getFormattedAmount(mContext, wallet.getIso(), wallet.getCachedBalance(mContext));
 
         // Set wallet fields
-        holder.mWalletName.setText(currencyCode);
+        if(currencyCode.equalsIgnoreCase("ela-esc")) {
+            holder.mWalletName.setText("ELA/ETHSC");
+        } else {
+            holder.mWalletName.setText(currencyCode);
+        }
         holder.mIso.setText(name);
         holder.mWalletBalanceFiat.setText(cryptoBalance.replace(wallet.getIso().equalsIgnoreCase("ELA-ESC")?"ELA":wallet.getIso(), ""));
         holder.mWalletBalanceCurrency.setText(fiatBalance);

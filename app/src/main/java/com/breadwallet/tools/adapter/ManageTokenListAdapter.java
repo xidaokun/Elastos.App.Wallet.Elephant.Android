@@ -79,7 +79,12 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
                 iconResourceId = mContext.getResources().getIdentifier(currencyCode, BRConstants.DRAWABLE, mContext.getPackageName());
             }
 
-            holder.tokenName.setText(mTokens.get(position).name);
+            if(currencyCode.equalsIgnoreCase("ela-esc")) {
+                holder.tokenName.setText("ELA/ETHSC");
+            } else {
+                holder.tokenName.setText(mTokens.get(position).name);
+            }
+
             holder.tokenTicker.setText(mTokens.get(position).symbol);
 
             Typeface typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/CircularPro-Book.otf");
