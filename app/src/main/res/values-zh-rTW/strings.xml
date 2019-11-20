@@ -1044,7 +1044,7 @@
     <string name="vote_title">投票</string>
     <string name="vote_nodes_count">你正在向%1$d個節點投票(最多36個)</string>
     <string name="vote_balance">%1$s ELA</string>
-    <string name="vote_hint">投票只需要很少的手續費:0.0000486 ELA</string>
+    <string name="vote_hint">投票只需要很少的手續費:%1$s ELA</string>
     <string name="vote_hint2">投票結束后，您可以隨時使用ELA，但您的投票將被取消。</string>
     <string name="pin_author_vote">授權投票</string>
     <string name="vote_cancel_btn_txt">取消</string>
@@ -1164,5 +1164,7 @@
     <string name="multi_wallet_format_date">MM月d日, yyyy</string>
     <string name="multi_wallet_phares_not_backup">還未備份助記詞</string>
     <string name="multi_wallet_already_current">已經是當前助記詞</string>
+
+    <string name="send_memo_hint">Memo資訊會上鏈</string>
 
 </resources>

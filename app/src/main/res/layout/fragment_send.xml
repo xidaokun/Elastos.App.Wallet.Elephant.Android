@@ -386,7 +386,7 @@
             android:layout_marginStart="16dp"
             android:background="@android:color/transparent"
             android:maxLength="256"
-            android:hint="@string/Send.descriptionLabel"/>
+            android:hint="@string/send_memo_hint"/>
 
         <View
             android:id="@+id/separator4"

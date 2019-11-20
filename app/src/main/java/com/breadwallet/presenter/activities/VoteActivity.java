@@ -23,6 +23,7 @@ import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.vote.ProducerEntity;
@@ -52,6 +53,7 @@ public class VoteActivity extends BaseSettingsActivity {
     private ListView mVoteNodeLv;
     private TextView mVotePasteTv;
     private BaseTextView mNodeListTitle;
+    private BaseTextView mFeeHintTv;
 
     private LoadingDialog mLoadingDialog;
 
@@ -85,7 +87,6 @@ public class VoteActivity extends BaseSettingsActivity {
         findView();
         initListener();
         initData();
-
     }
 
 
@@ -98,6 +99,7 @@ public class VoteActivity extends BaseSettingsActivity {
         mCancleBtn = findViewById(R.id.vote_cancle_btn);
         mConfirmBtn = findViewById(R.id.vote_confirm_btn);
         mVoteNodeLv = findViewById(R.id.vote_node_lv);
+        mFeeHintTv = findViewById(R.id.vote_text_hint1);
         mLoadingDialog = new LoadingDialog(this, R.style.progressDialog);
         mLoadingDialog.setCanceledOnTouchOutside(false);
     }
@@ -287,7 +289,23 @@ public class VoteActivity extends BaseSettingsActivity {
         mAdapter = new VoteNodeAdapter(this, mProducers);
         mVoteNodeLv.setAdapter(mAdapter);
 
-
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    long fee = ElaDataSource.getInstance(VoteActivity.this).getNodeFee();
+                    final String feeStr = new BigDecimal(fee).divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE).toString();
+                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            mFeeHintTv.setText(String.format(getString(R.string.vote_hint), feeStr));
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private void dismissDialog() {

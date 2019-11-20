@@ -1043,7 +1043,7 @@
     <string name="vote_title">投票</string>
     <string name="vote_nodes_count">你正在向%1$d个节点投票(最多36个)</string>
     <string name="vote_balance">%1$s ELA</string>
-    <string name="vote_hint">投票只需要很少的手续费:0.0000486 ELA</string>
+    <string name="vote_hint">投票只需要很少的手续费:%1$s ELA</string>
     <string name="vote_hint2">投票结束后，您可以随时使用ELA，但您的投票将被取消。</string>
     <string name="pin_author_vote">授权投票</string>
     <string name="vote_cancel_btn_txt">取消</string>
@@ -1164,4 +1164,6 @@
     <string name="multi_wallet_phares_not_backup">还未备份助记词</string>
     <string name="multi_wallet_already_current">已经是当前助记词</string>
     <string name="utxo_too_much_hint">由于UTXO过多，您的交易将被拆分成多笔，请注意查看交易记录。</string>
+
+    <string name="send_memo_hint">Memo信息会上链</string>
 </resources>
