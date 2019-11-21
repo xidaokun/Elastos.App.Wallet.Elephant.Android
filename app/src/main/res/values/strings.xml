@@ -980,6 +980,7 @@
     <string name="Did.Public.Key">Public key</string>
     <string name="Did.Btc.Address">BTC address</string>
     <string name="Did.Eth.Address">ETH address</string>
+    <string name="Did.Ethsc.Address">ELA-ETHSC address</string>
     <string name="Did.Bch.Address">BCH address</string>
     <string name="Did.Usd.Address">USDT address</string>
     <string name="Did.Ela.Address">ELA address</string>

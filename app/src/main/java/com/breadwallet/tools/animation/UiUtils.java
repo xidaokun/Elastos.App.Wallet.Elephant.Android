@@ -514,9 +514,14 @@ public class UiUtils {
     }
 
     public static void callbackDataNeedSign(Activity activity, String backurl, CallbackEntity entity) {
-        if (entity == null || StringUtil.isNullOrEmpty(backurl)) return;
-        String params = new Gson().toJson(entity);
-        String ret = DidDataSource.getInstance(activity).urlPost(backurl, params);
+        try {
+            if (entity == null || StringUtil.isNullOrEmpty(backurl)) return;
+            String params = new Gson().toJson(entity);
+            String ret = DidDataSource.getInstance(activity).urlPost(backurl, params);
+        } catch (Exception e) {
+            Toast.makeText(activity, "callback error", Toast.LENGTH_SHORT);
+            e.printStackTrace();
+        }
     }
 
     public static void toast(final Activity activity, final String message) {
@@ -564,6 +569,7 @@ public class UiUtils {
                 ElaDataSource.getInstance(context).urlPost(WalletActivity.mCallbackUrl, new Gson().toJson(elapayEntity));
             }
         } catch (Exception e) {
+            Toast.makeText(context, "callback error", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }

@@ -87,13 +87,13 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         String cryptoBalance = CurrencyUtils.getFormattedAmount(mContext, wallet.getIso(), wallet.getCachedBalance(mContext));
 
         // Set wallet fields
-        if(currencyCode.equalsIgnoreCase("ela-esc")) {
+        if(currencyCode.equalsIgnoreCase("ELA-ETHSC")) {
             holder.mWalletName.setText("ELA/ETHSC");
         } else {
             holder.mWalletName.setText(currencyCode);
         }
         holder.mIso.setText(name);
-        holder.mWalletBalanceFiat.setText(cryptoBalance.replace(wallet.getIso().equalsIgnoreCase("ELA-ESC")?"ELA":wallet.getIso(), ""));
+        holder.mWalletBalanceFiat.setText(cryptoBalance.replace(wallet.getIso().equalsIgnoreCase("ELA-ETHSC")?"ELA":wallet.getIso(), ""));
         holder.mWalletBalanceCurrency.setText(fiatBalance);
         holder.mWalletBalanceCurrency.setVisibility(!item.mShowSyncProgress ? View.VISIBLE : View.INVISIBLE);
         holder.mSyncingProgressBar.setVisibility(item.mShowSyncProgress ? View.VISIBLE : View.INVISIBLE);
@@ -110,7 +110,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         int iconResourceId = 0;
         if(currencyCode.equalsIgnoreCase("1st")){
             iconResourceId = mContext.getResources().getIdentifier("first", BRConstants.DRAWABLE, mContext.getPackageName());
-        } if(currencyCode.equalsIgnoreCase("ela-esc")) {
+        } if(currencyCode.equalsIgnoreCase("ELA-ETHSC")) {
             iconResourceId = mContext.getResources().getIdentifier("ela_esc", BRConstants.DRAWABLE, mContext.getPackageName());
         } else {
             iconResourceId = mContext.getResources().getIdentifier(currencyCode.toLowerCase(), BRConstants.DRAWABLE, mContext.getPackageName());

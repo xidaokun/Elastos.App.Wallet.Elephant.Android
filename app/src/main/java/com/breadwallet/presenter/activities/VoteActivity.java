@@ -171,12 +171,17 @@ public class VoteActivity extends BaseSettingsActivity {
     }
 
     private void callBackUrl(String txid){
-        if(StringUtil.isNullOrEmpty(txid)) return;
-        String backurl = uriFactory.getCallbackUrl();
-        if(StringUtil.isNullOrEmpty(backurl)) return;
-        VoteEntity txEntity = new VoteEntity();
-        txEntity.TXID = txid;
-        String ret = DidDataSource.getInstance(this).urlPost(backurl, new Gson().toJson(txEntity));
+        try {
+            if(StringUtil.isNullOrEmpty(txid)) return;
+            String backurl = uriFactory.getCallbackUrl();
+            if(StringUtil.isNullOrEmpty(backurl)) return;
+            VoteEntity txEntity = new VoteEntity();
+            txEntity.TXID = txid;
+            String ret = DidDataSource.getInstance(this).urlPost(backurl, new Gson().toJson(txEntity));
+        } catch (Exception e) {
+            Toast.makeText(VoteActivity.this, "callback error", Toast.LENGTH_SHORT);
+            e.printStackTrace();
+        }
     }
 
     private void sendTx(){

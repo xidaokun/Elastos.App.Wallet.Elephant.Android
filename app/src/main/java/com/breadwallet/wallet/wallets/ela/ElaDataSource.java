@@ -1068,7 +1068,7 @@ public class ElaDataSource implements BRDataSourceInterface {
     }
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    public String urlPost(String url, String json) throws IOException {
+    public String urlPost(String url, String json) throws Exception {
         RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
                 .url(url)
@@ -1078,7 +1078,7 @@ public class ElaDataSource implements BRDataSourceInterface {
         if (response.isSuccessful()) {
             return response.body().string();
         } else {
-            throw new IOException("Unexpected code " + response);
+            throw new Exception("Unexpected code " + response);
         }
     }
 

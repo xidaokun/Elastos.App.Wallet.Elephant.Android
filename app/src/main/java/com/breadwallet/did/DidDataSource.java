@@ -172,25 +172,18 @@ public class DidDataSource implements BRDataSourceInterface {
     }
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    public synchronized String urlPost(String url, String json) {
-        int code;
-        try {
-            RequestBody body = RequestBody.create(JSON, json);
-            Request request = new Request.Builder()
-                    .url(url)
-                    .post(body)
-                    .build();
-            Response response = APIClient.elaClient.newCall(request).execute();
-            code = response.code();
-            if (response.isSuccessful()) {
-                return response.body().string();
-            } else {
-                return "err code:" + code;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    public synchronized String urlPost(String url, String json) throws Exception{
+        RequestBody body = RequestBody.create(JSON, json);
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+        Response response = APIClient.elaClient.newCall(request).execute();
+        if (response.isSuccessful()) {
+            return response.body().string();
+        } else {
+            throw new Exception("Unexpected code " +  response);
         }
-        return null;
     }
 
     public void callReturnUrl(String url){

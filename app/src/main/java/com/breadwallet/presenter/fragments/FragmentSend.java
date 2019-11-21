@@ -954,7 +954,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         BigDecimal mCurrentBalance = wm.getCachedBalance(app);
         if (!mIsAmountLabelShown)
             mCurrencyCode.setText(CurrencyUtils.getSymbolByIso(app, mSelectedCurrencyCode));
-        mCurrencyCodeButton.setText(mFromElapay? wm.getIso(): (mSelectedCurrencyCode.equalsIgnoreCase("ELA-ESC")?"ELA":mSelectedCurrencyCode) );
+        mCurrencyCodeButton.setText(mFromElapay? wm.getIso(): (mSelectedCurrencyCode.equalsIgnoreCase("ELA-ETHSC")?"ELA":mSelectedCurrencyCode) );
 
         //is the chosen ISO a crypto (could be also a fiat currency)
         boolean isIsoCrypto = WalletsMaster.getInstance(app).isIsoCrypto(app, mSelectedCurrencyCode);
@@ -1191,7 +1191,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             }
         }
         if(!Utils.isNullOrEmpty(code) && null!=mCurrencyCodeButton){
-            mCurrencyCodeButton.setText(mFromElapay? wm.getIso(): (code.equalsIgnoreCase("ELA-ESC")?"ELA":code));
+            mCurrencyCodeButton.setText(mFromElapay? wm.getIso(): (code.equalsIgnoreCase("ELA-ETHSC")?"ELA":code));
         }
         if (!Utils.isNullOrEmpty(address)) {
             mViewModel.setAddress(address);
