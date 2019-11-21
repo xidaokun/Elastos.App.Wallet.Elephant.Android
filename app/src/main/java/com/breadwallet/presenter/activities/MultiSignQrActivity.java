@@ -13,11 +13,13 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
@@ -39,6 +41,7 @@ public class MultiSignQrActivity extends BRActivity {
     private ImageView mQRCodeIv;
     private Bitmap mBitmap = null;
     private ArrayList<Bitmap> mBitmaps;
+    private TextView mTxidCopyTv;
 
     private String mTransaction;
     private String mTxid;
@@ -100,6 +103,7 @@ public class MultiSignQrActivity extends BRActivity {
                 onBackPressed();
             }
         });
+        mTxidCopyTv = findViewById(R.id.txid_copy_tv);
 
         TextView shareJson = findViewById(R.id.multisign_qr_share_json);
         TextView passOrSent = findViewById(R.id.multisign_pass_or_sent);
@@ -107,10 +111,13 @@ public class MultiSignQrActivity extends BRActivity {
         if (!StringUtil.isNullOrEmpty(mTxid)) {
             mQRCodeIv.setVisibility(View.INVISIBLE);
             shareJson.setVisibility(View.INVISIBLE);
+            mTxidCopyTv.setVisibility(View.VISIBLE);
+            mTxidCopyTv.setText(String.format(getString(R.string.txid_copy_hint), mTxid));
             passOrSent.setText(R.string.multisign_send_succeeded);
         } else if (StringUtil.isNullOrEmpty(mTransaction)) {
             mQRCodeIv.setVisibility(View.INVISIBLE);
             shareJson.setVisibility(View.INVISIBLE);
+            mTxidCopyTv.setVisibility(View.GONE);
             passOrSent.setVisibility(View.INVISIBLE);
         } else {
             shareJson.setOnClickListener(new View.OnClickListener() {
@@ -122,6 +129,16 @@ public class MultiSignQrActivity extends BRActivity {
 
             passOrSent.setText(R.string.multisign_pass_next);
         }
+
+        mTxidCopyTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!StringUtil.isNullOrEmpty(mTxid)) {
+                    BRClipboardManager.putClipboard(MultiSignQrActivity.this, mTxid);
+                    Toast.makeText(MultiSignQrActivity.this, getString(R.string.Receive_copied), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private String getUrl() throws UnsupportedEncodingException {

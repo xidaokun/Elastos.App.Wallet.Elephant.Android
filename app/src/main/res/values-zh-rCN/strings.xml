@@ -1168,4 +1168,6 @@
 
     <string name="send_memo_hint">Memo信息会上链</string>
     <string name="Clear_cache_title">清除缓存</string>
+
+    <string name="txid_copy_hint">txid:%1$s拷贝</string>
 </resources>

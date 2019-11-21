@@ -1168,5 +1168,6 @@
 
     <string name="send_memo_hint">Memo資訊會上鏈</string>
     <string name="Clear_cache_title">清除緩存</string>
+    <string name="txid_copy_hint">txid:%1$s拷貝</string>
 
 </resources>

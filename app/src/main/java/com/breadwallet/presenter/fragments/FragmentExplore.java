@@ -675,8 +675,8 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         }
 
         boolean isValid = StringUtils.isUrl(url);
-        if (!isValid && isAdded()) {
-            Toast.makeText(getContext(), getString(R.string.mini_app_invalid_url), Toast.LENGTH_SHORT).show();
+        if (!isValid) {
+            if(isAdded())Toast.makeText(getContext(), getString(R.string.mini_app_invalid_url), Toast.LENGTH_SHORT).show();
             return;
         }
 
