@@ -1173,5 +1173,5 @@
     <string name="utxo_too_much_hint">In order to manage a large volume of UTXOs, your transaction will be split into multiple transactions. Please refer to the transaction history for further detail.</string>
 
     <string name="send_memo_hint">Memo will be recorded on the blockchain</string>
-
+    <string name="Clear_cache_title">Clear Cache</string>
 </resources>

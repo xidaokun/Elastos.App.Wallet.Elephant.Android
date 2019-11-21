@@ -147,6 +147,13 @@ public final class SettingsUtil {
             }
         }, false, R.drawable.ic_upgrade));
 
+        settingsItems.add(new BRSettingsItem(activity.getString(R.string.Clear_cache_title), "", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UiUtils.clearCache(activity);
+            }
+        }, false, R.drawable.ic_clear_cache));
+
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.About_title), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {

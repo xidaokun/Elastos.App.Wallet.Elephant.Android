@@ -68,6 +68,7 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.FileHelper;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -611,19 +612,19 @@ public class UiUtils {
         context.startActivity(Intent.createChooser(textIntent, "Share"));
     }
 
-    public static void restartApp(Activity activity) {
+    public static void restartApp(Context context) {
         // sleep 500ms for saving phrase list
         try {
             Thread.sleep(200);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        PackageManager packageManager = activity.getPackageManager();
-        Intent intent = packageManager.getLaunchIntentForPackage(activity.getPackageName());
+        PackageManager packageManager = context.getPackageManager();
+        Intent intent = packageManager.getLaunchIntentForPackage(context.getPackageName());
         assert intent != null;
         ComponentName componentName = intent.getComponent();
         Intent mainIntent = Intent.makeRestartActivityTask(componentName);
-        activity.startActivity(mainIntent);
+        context.startActivity(mainIntent);
         Runtime.getRuntime().exit(0);
     }
 
@@ -668,6 +669,19 @@ public class UiUtils {
         BRSharedPrefs.PREFS_NAME = "profile_" + hash;
     }
 
+    public static boolean isSingleWallet(Context context, byte[] phrase){
+        File databasePath = new File(context.getFilesDir().getParent(), "databases");
+        File sharedPrefsPath = new File(context.getFilesDir().getParent(), "shared_prefs");
+
+        String hash = UiUtils.getSha256(phrase);
+
+        if(!new File(databasePath, hash + ".db").exists() && !new File(sharedPrefsPath, "profile_" + hash + ".xml").exists()) {
+            return true;
+        }
+
+        return false;
+    }
+
     public static String getCacheProviderName(Context context, String name) {
         if(StringUtil.isNullOrEmpty(name)) return null;
         String hash = BRSharedPrefs.getSingleWalletHash(context);
@@ -682,16 +696,20 @@ public class UiUtils {
         return name;
     }
 
-    public static boolean isSingleWallet(Context context, byte[] phrase){
+    public static void clearCache(Context context) {
         File databasePath = new File(context.getFilesDir().getParent(), "databases");
         File sharedPrefsPath = new File(context.getFilesDir().getParent(), "shared_prefs");
 
-        String hash = UiUtils.getSha256(phrase);
-
-        if(!new File(databasePath, hash + ".db").exists() && !new File(sharedPrefsPath, "profile_" + hash + ".xml").exists()) {
-            return true;
+        FileHelper.deleteFile(databasePath);
+        File[] files = sharedPrefsPath.listFiles();
+        for (int i = 0; i < files.length; i++) {
+            File f = files[i];
+            String name = f.getName();
+            if(!StringUtil.isNullOrEmpty(name) && !name.equals("keyStorePrefs.xml")) {
+                BRSharedPrefs.clearAllPrefs(context, name.replace(".xml", ""));
+            }
         }
 
-        return false;
+        restartApp(context);
     }
 }

@@ -1166,4 +1166,5 @@
     <string name="utxo_too_much_hint">由于UTXO过多，您的交易将被拆分成多笔，请注意查看交易记录。</string>
 
     <string name="send_memo_hint">Memo信息会上链</string>
+    <string name="Clear_cache_title">清除缓存</string>
 </resources>

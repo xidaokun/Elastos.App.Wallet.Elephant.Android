@@ -564,6 +564,12 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
+    public static void clearAllPrefs(Context context, String name) {
+        SharedPreferences.Editor editor = context.getSharedPreferences(UiUtils.getCacheProviderName(context, name), Context.MODE_PRIVATE).edit();
+        editor.clear();
+        editor.apply();
+    }
+
     public static boolean getShowNotification(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
         return settingsToGet.getBoolean("showNotification", false);

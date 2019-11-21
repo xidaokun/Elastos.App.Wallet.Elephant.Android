@@ -38,6 +38,7 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.ProfileDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.FileHelper;
 import com.breadwallet.tools.util.StringUtil;
 import com.elastos.jni.Utility;
 import com.elastos.jni.utils.StringUtils;
@@ -51,7 +52,6 @@ import org.elastos.sdk.wallet.Identity;
 import org.elastos.sdk.wallet.IdentityManager;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,8 +60,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -159,7 +157,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                     for (MyAppItem app : mRemoveApp) {
                         ProfileDataSource.getInstance(getContext()).deleteAppItem(app.appId);
                         upAppStatus(app.appId, "deleted");
-                        deleteFile(new File(app.path));
+                        FileHelper.deleteFile(new File(app.path));
                     }
                     BRSharedPrefs.putAddedAppId(getContext(), new Gson().toJson(mAppIds));
                     break;
@@ -633,69 +631,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         }
     }
 
-    public void handleExternalCapsule(String fileInputPath, String fileOutputPath) {
-        if (StringUtil.isNullOrEmpty(fileOutputPath)) return;
-        InputStream inputStream = null;
-        OutputStream outputStream = null;
-        try {
-            File capsuleFile = new File(fileOutputPath, "share.capsule");
-            if (capsuleFile.exists()) {
-                capsuleFile.delete();
-            }
-            outputStream = new FileOutputStream(capsuleFile);
-            inputStream = new FileInputStream(new File(fileInputPath));
-            byte[] buffer = new byte[1024];
-            int length = inputStream.read(buffer);
-            while (length > 0) {
-                outputStream.write(buffer, 0, length);
-                length = inputStream.read(buffer);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                outputStream.flush();
-                inputStream.close();
-                outputStream.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void backupCapsule(File downloadFile, File fileOutputPath, String capsuleName) throws IOException {
-        if (null == downloadFile
-                || null == fileOutputPath
-                || StringUtil.isNullOrEmpty(capsuleName)) return;
-        if (!fileOutputPath.exists()) fileOutputPath.mkdirs();
-        File backupFile = new File(fileOutputPath, capsuleName);
-        if (backupFile.exists()) backupFile.delete();
-
-        InputStream inputStream = null;
-        OutputStream outputStream = null;
-        try {
-            inputStream = new FileInputStream(downloadFile);
-            outputStream = new FileOutputStream(backupFile);
-            byte[] buffer = new byte[1024];
-            int length = inputStream.read(buffer);
-            while (length > 0) {
-                outputStream.write(buffer, 0, length);
-                length = inputStream.read(buffer);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                outputStream.flush();
-                inputStream.close();
-                outputStream.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     private File mDownloadDir = null;
     private File mDownloadCacheDir = null;
 
@@ -821,14 +756,14 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         try {
             File downloadPath = new File(mDownloadDir, mDoloadFileName);
             File outPath = new File(mDownloadCacheDir, mDoloadFileName);
-            deleteFile(outPath);
-            decompression(downloadPath.getAbsolutePath(), outPath.getAbsolutePath());
+            FileHelper.deleteFile(outPath);
+            FileHelper.decompression(downloadPath.getAbsolutePath(), outPath.getAbsolutePath());
 
             List<String> ret = new ArrayList();
-            findAppJsonPath(outPath, ret);
+            FileHelper.findAppJsonPath(outPath, ret);
             if (ret.size() <= 0) return;
             Log.d("capsule_download", "parse capsule success");
-            String json = getJsonFromCapsule(new File(ret.get(0), "app.json"));
+            String json = FileHelper.getJsonFromCapsule(new File(ret.get(0), "app.json"));
             MyAppItem item = new Gson().fromJson(json, MyAppItem.class);
             if (item == null) return;
 
@@ -873,22 +808,9 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
                 upAppStatus(item.appId, "normal");
 //                                upUserAppInfo(mAppIds);
             }
-            deleteFile(downloadPath);
+            FileHelper.deleteFile(downloadPath);
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    private void deleteFile(File file) {
-        if (file.isDirectory()) {
-            File[] files = file.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                File f = files[i];
-                deleteFile(f);
-            }
-            file.delete();
-        } else if (file.exists()) {
-            file.delete();
         }
     }
 
@@ -970,26 +892,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         return null;
     }
 
-    private void upUserAppInfo(List<UserAppInfo> appIds) {
-        String ids = new Gson().toJson(appIds);
-        String path = mDidStr + "/Apps";
-        String data = getKeyVale(path, ids);
-        String info = mDid.signInfo(mSeed, data, false);
-        if (StringUtil.isNullOrEmpty(info)) return;
-        ProfileDataSource.getInstance(getContext()).upchainSync(info);
-    }
-
-    private UserAppInfo getUserAppInfo() {
-        String path = mDidStr + "/Apps";
-        if (null == mDid) return null;
-        mDid.syncInfo();
-        String appIds = mDid.getInfo(path, false, mSeed);
-        if (!StringUtil.isNullOrEmpty(appIds)) {
-            return new Gson().fromJson(appIds, UserAppInfo.class);
-        }
-        return null;
-    }
-
     private String getMn() {
         byte[] phrase = null;
         try {
@@ -1024,105 +926,12 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
         }
     }
 
-    private String getJsonFromCapsule(File filePath) {
-        FileInputStream inputStream;
-        StringBuilder sb = new StringBuilder();
-        try {
-            inputStream = new FileInputStream(filePath);
-            byte buffer[] = new byte[1024];
-            int len;
-            while ((len = inputStream.read(buffer)) > 0) {
-                sb.append(new String(buffer, 0, len));
-            }
-            inputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return sb.toString();
-    }
-
-    private void decompression(String srcPath, String outPath) throws Exception {
-        unZipFolder(srcPath, outPath);
-    }
-
-    private void findAppJsonPath(File path, List<String> ret) {
-        if (null == path) return;
-        File[] files = path.listFiles();
-        for (File file : files) {
-            if (file.isDirectory()) {
-                findAppJsonPath(file, ret);
-                Log.d(TAG, " findAppJsonPath directory name:" + file.getName());
-            } else {
-                String name = file.getName();
-                if (name.equals("app.json")) {
-                    Log.d(TAG, " findAppJsonPath file name:" + file.getAbsolutePath());
-                    ret.add(file.getParent());
-                    return;
-                }
-            }
-        }
-    }
-
-    private void logFile(String flag, File path) {
-        Log.d(TAG, "<-----------------------------" + path.getAbsolutePath() + " start------------------------------>");
-        File[] files = path.listFiles();
-        if (files == null) return;
-        for (File file : files) {
-            if (file.isDirectory()) {
-                logFile(file.getName(), file);
-                Log.d(TAG, flag + " fileName:" + file.getAbsolutePath());
-            } else {
-                String name = file.getName();
-                Log.d(TAG, flag + " fileName:" + file.getAbsolutePath());
-            }
-        }
-        Log.d(TAG, "<-----------------------------" + path.getAbsolutePath() + " end------------------------------>");
-        Log.d(TAG, "\n\n");
-    }
-
-    public static void unZipFolder(String zipFileString, String outPathString) throws Exception {
-        ZipInputStream inZip = new ZipInputStream(new FileInputStream(zipFileString));
-        ZipEntry zipEntry;
-        String szName = "";
-        while ((zipEntry = inZip.getNextEntry()) != null) {
-            szName = zipEntry.getName();
-            if (zipEntry.isDirectory()) {
-                szName = szName.substring(0, szName.length() - 1);
-                File folder = new File(outPathString + File.separator + szName);
-                folder.mkdirs();
-            } else {
-                File file = new File(outPathString + File.separator + szName);
-                if (!file.exists()) {
-                    file.getParentFile().mkdirs();
-                    file.createNewFile();
-                }
-                FileOutputStream out = new FileOutputStream(file);
-                int len;
-                byte[] buffer = new byte[1024];
-                while ((len = inZip.read(buffer)) != -1) {
-                    out.write(buffer, 0, len);
-                    out.flush();
-                }
-                out.close();
-            }
-        }
-        inZip.close();
-    }
-
     private void showDialog() {
         mHandler.sendEmptyMessageDelayed(SHOW_LOADING, 50);
     }
 
     private void dialogDismiss() {
         mHandler.sendEmptyMessage(DISMISS_LOADING);
-    }
-
-    private void messageToast(final String message) {
-        if (StringUtil.isNullOrEmpty(message)) return;
-        Message msg = new Message();
-        msg.what = TOAST_MESSAGE;
-        msg.obj = message;
-        mHandler.sendMessage(msg);
     }
 
     public void hideAboutView() {
