@@ -948,6 +948,9 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         String stringAmount = mViewModel.getAmount();
         setAmount();
         BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
+        if(wm.getIso().equalsIgnoreCase("ELA")) {
+            mCommentEdit.setHint(R.string.send_memo_hint);
+        }
         String balanceString;
         if (mSelectedCurrencyCode == null)
             mSelectedCurrencyCode = wm.getIso();

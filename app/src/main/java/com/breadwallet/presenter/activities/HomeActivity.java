@@ -231,7 +231,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
     public void showAndDownloadCapsule(String url) {
         if(mExploreFragment!=null && !StringUtil.isNullOrEmpty(url)){
-            boolean isValid = StringUtils.isUrl(url);
+            boolean isValid = StringUtils.isDownloadCapsule(url);
             if (!isValid) {
                 Toast.makeText(this, getString(R.string.mini_app_invalid_url), Toast.LENGTH_SHORT).show();
                 return;

@@ -949,6 +949,7 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
 
+
                         if (!Utils.isNullOrEmpty(jsonResult)) {
                             try {
                                 // Convert response into JsonArray of transactions
