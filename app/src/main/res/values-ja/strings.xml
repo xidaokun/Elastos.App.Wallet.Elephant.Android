@@ -504,7 +504,7 @@
   <!-- Send money amount label -->
   <string name="Send.amountLabel">金額</string>
   <!-- Balance: $4.00 -->
-  <string name="Send.balance">残高: %1$s</string>
+  <string name="Send.balance">残高 %1$s</string>
   <!-- Instructions how to allow the camera access for the app -->
   <string name="Send.cameraUnavailabeMessage.android">「設定」 &gt; 「アプリ」 &gt; 「ブレッド」 &gt; 「許可」でカメラへのアクセスを許可してください</string>
   <!-- Permission required to access camera -->
@@ -524,7 +524,7 @@
   <!-- "(you) can't send (to your)self" -->
   <string name="Send.ethSendSelf">自分に送金することはできません。</string>
   <!-- Network Fee: $0.01 -->
-  <string name="Send.fee">ネットワーク手数料: %1$s</string>
+  <string name="Send.fee">ネットワーク手数料 %1$s</string>
   <!-- Payee identity not certified alert title. -->
   <string name="Send.identityNotCertified">受取人の本人確認が行われていません。</string>
   <!-- Insufficient funds error -->

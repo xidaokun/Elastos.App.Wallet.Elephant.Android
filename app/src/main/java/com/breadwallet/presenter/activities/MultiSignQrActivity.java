@@ -42,6 +42,7 @@ public class MultiSignQrActivity extends BRActivity {
     private Bitmap mBitmap = null;
     private ArrayList<Bitmap> mBitmaps;
     private TextView mTxidCopyTv;
+    private TextView mTxidCopyBtn;
 
     private String mTransaction;
     private String mTxid;
@@ -103,7 +104,8 @@ public class MultiSignQrActivity extends BRActivity {
                 onBackPressed();
             }
         });
-        mTxidCopyTv = findViewById(R.id.txid_copy_tv);
+        mTxidCopyTv = findViewById(R.id.txid_tv);
+        mTxidCopyBtn = findViewById(R.id.txid_copy_tv);
 
         TextView shareJson = findViewById(R.id.multisign_qr_share_json);
         TextView passOrSent = findViewById(R.id.multisign_pass_or_sent);
@@ -133,12 +135,23 @@ public class MultiSignQrActivity extends BRActivity {
         mTxidCopyTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!StringUtil.isNullOrEmpty(mTxid)) {
-                    BRClipboardManager.putClipboard(MultiSignQrActivity.this, mTxid);
-                    Toast.makeText(MultiSignQrActivity.this, getString(R.string.Receive_copied), Toast.LENGTH_SHORT).show();
-                }
+                copyToClipboard(mTxid);
             }
         });
+
+        mTxidCopyBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                copyToClipboard(mTxid);
+            }
+        });
+    }
+
+    private void copyToClipboard(String content) {
+        if(!StringUtil.isNullOrEmpty(content)) {
+            BRClipboardManager.putClipboard(MultiSignQrActivity.this, content);
+            Toast.makeText(MultiSignQrActivity.this, getString(R.string.Receive_copied), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private String getUrl() throws UnsupportedEncodingException {

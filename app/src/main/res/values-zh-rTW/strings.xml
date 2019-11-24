@@ -510,7 +510,7 @@
     <!-- Send money amount label -->
     <string name="Send.amountLabel">金額</string>
     <!-- Balance: $4.00 -->
-    <string name="Send.balance">餘額：%1$s</string>
+    <string name="Send.balance">餘額 %1$s</string>
     <!-- Instructions how to allow the camera access for the app -->
     <string name="Send.cameraUnavailabeMessage.android">到「設定」 &gt; 「應用程式」 &gt; 「Elephant」 &gt; 「權限」允許相機存取</string>
     <!-- Permission required to access camera -->
@@ -530,7 +530,7 @@
     <!-- "(you) can't send (to your)self" -->
     <string name="Send.ethSendSelf">無法寄給自己</string>
     <!-- Network Fee: $0.01 -->
-    <string name="Send.fee">網路費：%1$s</string>
+    <string name="Send.fee">網路費 %1$s</string>
     <!-- Payee identity not certified alert title. -->
     <string name="Send.identityNotCertified">收款人身分未經認證。</string>
     <!-- Insufficient funds error -->
@@ -1168,6 +1168,7 @@
 
     <string name="send_memo_hint">Memo資訊會上鏈</string>
     <string name="Clear_cache_title">清除緩存</string>
-    <string name="txid_copy_hint">txid:%1$s拷貝</string>
+    <string name="txid_copy_hint">txid:%1$s</string>
+    <string name="txid_copy_tv">拷貝</string>
 
 </resources>

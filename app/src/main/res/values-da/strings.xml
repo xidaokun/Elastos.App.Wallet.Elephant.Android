@@ -504,7 +504,7 @@
   <!-- Send money amount label -->
   <string name="Send.amountLabel">Beløb</string>
   <!-- Balance: $4.00 -->
-  <string name="Send.balance">Balance: %1$s</string>
+  <string name="Send.balance">Balance %1$s</string>
   <!-- Instructions how to allow the camera access for the app -->
   <string name="Send.cameraUnavailabeMessage.android">Tillad adgang under \"Indstillinger\" &gt; \"Apps\" &gt; \"Elephant\" &gt; \"Tilladelser\"</string>
   <!-- Permission required to access camera -->
@@ -524,7 +524,7 @@
   <!-- "(you) can't send (to your)self" -->
   <string name="Send.ethSendSelf">Kan ikke sende til dig selv.</string>
   <!-- Network Fee: $0.01 -->
-  <string name="Send.fee">Netværksafgift: %1$s</string>
+  <string name="Send.fee">Netværksafgift %1$s</string>
   <!-- Payee identity not certified alert title. -->
   <string name="Send.identityNotCertified">Betalingsmodtagerens identitet er ikke bekræftet.</string>
   <!-- Insufficient funds error -->

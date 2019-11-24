@@ -66,8 +66,8 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
     //1ETH = 1000000000000000000 WEI
     public static final String ETHER_WEI = "1000000000000000000";
     //Max amount in ether
-    public static final String MAX_ETH = "90000000";
-    private final BigDecimal MAX_WEI = new BigDecimal(MAX_ETH).multiply(new BigDecimal(ETHER_WEI)); // 90m ETH * 18 (WEI)
+    public static final String MAX_ETH = "10000000000";
+    private final BigDecimal MAX_WEI = new BigDecimal(MAX_ETH);
     private final BigDecimal ONE_ETH = new BigDecimal(ETHER_WEI);
     private static final String NAME = "Elastos evm sidechain";
 

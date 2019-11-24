@@ -311,7 +311,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         callbackData.ETHAddress = (ethAddressItem!=null)?ethAddressItem.getValue(this)[0] : null;
         if((ethAddressItem!=null) && ethAddressItem.isChecked()) sb.append(AuthorInfoItem.ETH_ADDRESS).append(",");
 
-        callbackData.ETHSCAddress = (ethEscAddressItem !=null)? ethEscAddressItem.getValue(this)[0] : null;
+        callbackData.ELAETHSCAddress = (ethEscAddressItem !=null)? ethEscAddressItem.getValue(this)[0] : null;
         if((ethEscAddressItem !=null) && ethEscAddressItem.isChecked()) sb.append(AuthorInfoItem.ETHSC_ADDRESS).append(",");
 
         callbackData.BCHAddress = (bchAddressItem!=null)?bchAddressItem.getValue(this)[0] : null;

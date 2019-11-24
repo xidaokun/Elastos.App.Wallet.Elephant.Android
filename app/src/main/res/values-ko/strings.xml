@@ -504,7 +504,7 @@
   <!-- Send money amount label -->
   <string name="Send.amountLabel">금액</string>
   <!-- Balance: $4.00 -->
-  <string name="Send.balance">잔액: %1$s</string>
+  <string name="Send.balance">잔액 %1$s</string>
   <!-- Instructions how to allow the camera access for the app -->
   <string name="Send.cameraUnavailabeMessage.android">\"설정\" &gt; \"앱\" &gt; \"Elephant\" &gt; \"허용\"에서 카메라 접속을 허용해 주세요</string>
   <!-- Permission required to access camera -->
@@ -524,7 +524,7 @@
   <!-- "(you) can't send (to your)self" -->
   <string name="Send.ethSendSelf">자신에게는 보낼 수 없습니다.</string>
   <!-- Network Fee: $0.01 -->
-  <string name="Send.fee">네트워크 비용: %1$s</string>
+  <string name="Send.fee">네트워크 비용 %1$s</string>
   <!-- Payee identity not certified alert title. -->
   <string name="Send.identityNotCertified">인증되지 않은 수취인입니다.</string>
   <!-- Insufficient funds error -->

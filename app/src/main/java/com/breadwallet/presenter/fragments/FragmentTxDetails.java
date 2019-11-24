@@ -279,7 +279,11 @@ public class FragmentTxDetails extends DialogFragment {
                 BigDecimal rawFee = mTransaction.getFee();
                 //meaning ETH
                 if (ethTx != null && !isErc20) {
-                    mGasPrice.setText(String.format("%s %s", new BigDecimal(ethTx.getGasPrice(BREthereumAmount.Unit.ETHER_GWEI)).stripTrailingZeros().toPlainString(), "gwei"));
+                    if(cryptoIso.equalsIgnoreCase("ELA-ETHSC")) {
+                        mGasPrice.setText(String.format("%s %s", new BigDecimal(ethTx.getGasPrice(BREthereumAmount.Unit.ETHER_ETHER)).stripTrailingZeros().toPlainString(), "ELA"));
+                    } else {
+                        mGasPrice.setText(String.format("%s %s", new BigDecimal(ethTx.getGasPrice(BREthereumAmount.Unit.ETHER_GWEI)).stripTrailingZeros().toPlainString(), "gwei"));
+                    }
                     mGasLimit.setText(new BigDecimal(ethTx.getGasLimit()).toPlainString());
                     long gas = ethTx.isConfirmed() ? ethTx.getGasUsed() : ethTx.getGasLimit();
                     rawFee = new BigDecimal(gas).multiply(new BigDecimal(ethTx.getGasPrice(walletManager.getUnit())));

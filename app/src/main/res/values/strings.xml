@@ -512,7 +512,7 @@
     <!-- Send money amount label -->
     <string name="Send.amountLabel">Amount</string>
     <!-- Balance: $4.00 -->
-    <string name="Send.balance">Balance: %1$s</string>
+    <string name="Send.balance">Balance %1$s</string>
     <!-- Instructions how to allow the camera access for the app -->
     <string name="Send.cameraUnavailabeMessage.android">Allow camera access in \"Settings\" &gt; \"Apps\" &gt; \"Elephant\" &gt; \"Permissions\"</string>
     <!-- Permission required to access camera -->
@@ -1176,4 +1176,5 @@
     <string name="send_memo_hint">Memo will be recorded on the blockchain</string>
     <string name="Clear_cache_title">Clear Cache</string>
     <string name="txid_copy_hint">txid:%1$s Copy</string>
+    <string name="txid_copy_tv">Copy</string>
 </resources>
