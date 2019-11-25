@@ -1175,6 +1175,10 @@
 
     <string name="send_memo_hint">Memo will be recorded on the blockchain</string>
     <string name="Clear_cache_title">Clear Cache</string>
-    <string name="txid_copy_hint">txid:%1$s Copy</string>
+    <string name="txid_copy_hint">txid:%1$s</string>
     <string name="txid_copy_tv">Copy</string>
+
+    <string name="clear_cache_message">Are you sure to clear the cache?</string>
+    <string name="clear_cache_positive_btn">Confirm</string>
+    <string name="clear_cache_negative_btn">Cancel</string>
 </resources>

@@ -87,6 +87,8 @@
         android:paddingTop="26dp"
         android:scrollbars="vertical"
         android:textColor="#222222"
+        android:paddingBottom="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"/>
 
 </android.support.constraint.ConstraintLayout>

@@ -1171,4 +1171,7 @@
     <string name="txid_copy_hint">txid:%1$s</string>
     <string name="txid_copy_tv">拷貝</string>
 
+    <string name="clear_cache_message">确认清除缓存吗？</string>
+    <string name="clear_cache_positive_btn">确定</string>
+    <string name="clear_cache_negative_btn">取消</string>
 </resources>

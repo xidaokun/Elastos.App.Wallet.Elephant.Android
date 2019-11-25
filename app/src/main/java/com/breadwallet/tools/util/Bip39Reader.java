@@ -165,6 +165,6 @@ public class Bip39Reader {
         if(!StringUtil.isNullOrEmpty(script)) {
             return script.toLowerCase().contains("hant") ? "tr" : "zh";
         }
-        return "tr";
+        return "zh";
     }
 }

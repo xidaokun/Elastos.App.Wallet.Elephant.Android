@@ -354,7 +354,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                     UiUtils.callbackDataNeedSign(DidAuthorizeActivity.this, backurl, entity);
                     UiUtils.returnDataNeedSign(DidAuthorizeActivity.this, returnUrl, Data, Sign, appId, target);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    showCallbackError();
                 } finally {
                     dialogDismiss();
                     finish();
@@ -369,6 +369,16 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
             public void run() {
                 if (!isFinishing())
                     mLoadingDialog.dismiss();
+            }
+        });
+    }
+
+    private void showCallbackError() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (!isFinishing())
+                    Toast.makeText(DidAuthorizeActivity.this, "callback error", Toast.LENGTH_SHORT).show();
             }
         });
     }

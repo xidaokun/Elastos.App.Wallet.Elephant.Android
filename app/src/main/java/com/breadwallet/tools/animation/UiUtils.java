@@ -63,10 +63,12 @@ import com.breadwallet.presenter.fragments.FragmentSupport;
 import com.breadwallet.presenter.fragments.FragmentTxDetails;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.crypto.CryptoHelper;
+import com.breadwallet.tools.manager.BRPublicSharedPrefs;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.FileHelper;
 import com.breadwallet.tools.util.StringUtil;
@@ -79,6 +81,7 @@ import com.google.gson.Gson;
 import com.platform.sqlite.PlatformSqliteHelper;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -519,8 +522,7 @@ public class UiUtils {
             String params = new Gson().toJson(entity);
             String ret = DidDataSource.getInstance(activity).urlPost(backurl, params);
         } catch (Exception e) {
-            Toast.makeText(activity, "callback error", Toast.LENGTH_SHORT);
-            e.printStackTrace();
+            throw new IllegalArgumentException(e.getMessage());
         }
     }
 
@@ -528,14 +530,23 @@ public class UiUtils {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
+                if(null!=activity && !activity.isFinishing()) Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    public static void payReturnData(Context context, String txid) {
+    public static void payReturnData(final Context context, String txid) {
         payReturn(context, txid);
-        payCallback(context, txid);
+        try {
+            payCallback(context, txid);
+        } catch (Exception e) {
+            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context, "callback error", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
         WalletActivity.mCallbackUrl = null;
         WalletActivity.mReturnUrl = null;
         WalletActivity.mAppId = null;
@@ -560,17 +571,12 @@ public class UiUtils {
         }
     }
 
-    private static void payCallback(Context context, String txid) {
-        try {
-            if (!StringUtil.isNullOrEmpty(WalletActivity.mCallbackUrl)) { //call back url
-                ElapayEntity elapayEntity = new ElapayEntity();
-                elapayEntity.OrderID = WalletActivity.mOrderId;
-                elapayEntity.TXID = txid;
-                ElaDataSource.getInstance(context).urlPost(WalletActivity.mCallbackUrl, new Gson().toJson(elapayEntity));
-            }
-        } catch (Exception e) {
-            Toast.makeText(context, "callback error", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
+    private static void payCallback(Context context, String txid) throws Exception{
+        if (!StringUtil.isNullOrEmpty(WalletActivity.mCallbackUrl)) { //call back url
+            ElapayEntity elapayEntity = new ElapayEntity();
+            elapayEntity.OrderID = WalletActivity.mOrderId;
+            elapayEntity.TXID = txid;
+            ElaDataSource.getInstance(context).urlPost(WalletActivity.mCallbackUrl, new Gson().toJson(elapayEntity));
         }
     }
 
@@ -704,17 +710,24 @@ public class UiUtils {
 
     public static void clearCache(Context context) {
         File databasePath = new File(context.getFilesDir().getParent(), "databases");
-        File sharedPrefsPath = new File(context.getFilesDir().getParent(), "shared_prefs");
-
-        FileHelper.deleteFile(databasePath);
-        File[] files = sharedPrefsPath.listFiles();
-        for (int i = 0; i < files.length; i++) {
-            File f = files[i];
-            String name = f.getName();
-            if(!StringUtil.isNullOrEmpty(name) && !name.equals("keyStorePrefs.xml")) {
-                BRSharedPrefs.clearAllPrefs(context, name.replace(".xml", ""));
-            }
-        }
+//        File sharedPrefsPath = new File(context.getFilesDir().getParent(), "shared_prefs");
+//
+//        FileHelper.deleteFile(databasePath);
+//        File[] files = sharedPrefsPath.listFiles();
+//        for (int i = 0; i < files.length; i++) {
+//            File f = files[i];
+//            String name = f.getName();
+//            if(!StringUtil.isNullOrEmpty(name) && !name.equals("keyStorePrefs.xml")) {
+//                BRSharedPrefs.clearAllPrefs(context, name.replace(".xml", ""));
+//            }
+//        }
+        String databaseName = getCacheProviderName(context, BRSQLiteHelper.DATABASE_NAME);
+        String platformDbName = getCacheProviderName(context, PlatformSqliteHelper.DATABASE_NAME);
+        FileHelper.deleteFile(new File(databasePath, databaseName));
+        FileHelper.deleteFile(new File(databasePath, platformDbName));
+        BRSharedPrefs.clearAllPrefs(context);
+        BRPublicSharedPrefs.putUseFingerprint(context, false);
+        BRKeyStore.putSpendLimit(context, new BigDecimal(1000000.00000000), "BTC");
 
         restartApp(context);
     }
