@@ -342,7 +342,7 @@ public class CryptoUriParser {
                 builder = builder.appendQueryParameter("amount", amount.toPlainString());
             } else if(iso.equalsIgnoreCase("ELA")) {
                 builder = builder.appendQueryParameter("amount", cryptoAmount.toPlainString());
-            } else if(iso.equalsIgnoreCase("ELA-ETHSC")){
+            } else if(iso.equalsIgnoreCase("ELAETHSC")){
                 BigDecimal ethAmount = cryptoAmount.divide(new BigDecimal(ElaSideEthereumWalletManager.ETHER_WEI), 8, BRConstants.ROUNDING_MODE);
                 builder = builder.appendQueryParameter("amount", ethAmount.toPlainString());
             } else {

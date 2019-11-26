@@ -196,7 +196,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
             infos.add(ethAddressItem);
         }
 
-        if(requestInfo.contains("ELA-ETHSC".toLowerCase())) {
+        if(requestInfo.contains("ELAETHSCAddress".toLowerCase())) {
             ethEscAddressItem = new AuthorInfoItem(AuthorInfoItem.ETHSC_ADDRESS, getString(R.string.Did_Ethsc_Address), "check");
             infos.add(ethEscAddressItem);
         }

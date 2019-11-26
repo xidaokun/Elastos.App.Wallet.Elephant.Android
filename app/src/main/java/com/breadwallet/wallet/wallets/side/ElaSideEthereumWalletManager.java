@@ -61,7 +61,7 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
     private CryptoTransaction mWatchedTransaction;
     private OnHashUpdated mWatchListener;
 
-    private static final String ISO = "ELA-ETHSC";
+    private static final String ISO = "ELAETHSC";
     public static final String ETH_SCHEME = "Elastos evm sidechain";
     //1ETH = 1000000000000000000 WEI
     public static final String ETHER_WEI = "1000000000000000000";

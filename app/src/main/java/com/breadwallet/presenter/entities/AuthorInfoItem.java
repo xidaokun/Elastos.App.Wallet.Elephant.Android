@@ -15,7 +15,7 @@ public class AuthorInfoItem {
     public static final String IOEX_ADDRESS = "IOEXAddress";
     public static final String BTC_ADDRESS = "BTCAddress";
     public static final String ETH_ADDRESS = "ETHAddress";
-    public static final String ETHSC_ADDRESS = "ELA-ETHSCAddress";
+    public static final String ETHSC_ADDRESS = "ELAETHSCAddress";
     public static final String BCH_ADDRESS = "BCHAddress";
     public static final String USDT_ADDRESS = "USDTAddress";
     public static final String PHONE_NUMBER = "PhoneNumber";

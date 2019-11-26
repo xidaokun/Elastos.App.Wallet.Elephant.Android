@@ -313,8 +313,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         String fiatBalance = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), wm.getFiatBalance(this));
         String cryptoBalance = CurrencyUtils.getFormattedAmount(this, wm.getIso(), wm.getCachedBalance(this), wm.getUiConfiguration().getMaxDecimalPlacesForUi());
 
-        mCurrencyTitle.setText(wm.getIso().equalsIgnoreCase("ELA-ETHSC")?"ELA/ETHSC":wm.getIso());
-        mCurrencyPriceUsd.setText(String.format("%s / %s", fiatExchangeRate, wm.getIso().equalsIgnoreCase("ELA-ETHSC")?"ELA":wm.getIso()));
+        mCurrencyTitle.setText(wm.getIso().equalsIgnoreCase("ELAETHSC")?"ELA/ETHSC":wm.getIso());
+        mCurrencyPriceUsd.setText(String.format("%s / %s", fiatExchangeRate, wm.getIso().equalsIgnoreCase("ELAETHSC")?"ELA":wm.getIso()));
         mBalancePrimary.setText(fiatBalance);
         mBalanceSecondary.setText(cryptoBalance.replace(wm.getIso(), ""));
 
