@@ -42,6 +42,14 @@ public class AuthorizeManager {
         return false;
     }
 
+    public static boolean verify(Context context, String PK, String source, String signed) {
+        if(StringUtils.isNullOrEmpty(PK)
+                || StringUtils.isNullOrEmpty(signed) || StringUtils.isNullOrEmpty(source)) return false;
+
+        boolean isValid = Utility.getInstance(context).verify(PK, source.getBytes(), HexUtils.hexToByteArray(signed));
+        return isValid;
+    }
+
     public static void startWalletActivity(Context context, String extra, String toActivity){
         startWalletActivity(context, extra, null, toActivity);
     }
