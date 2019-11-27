@@ -449,7 +449,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                         mAppId = factory.getAppID();
                         mOrderId = factory.getOrderID();
                         Log.i(TAG, "walletActivity1 did:"+did+" appName:"+appName+" appId:"+appId+" PK: "+PK);
-                        boolean isValide = AuthorizeManager.verify(WalletActivity.this, PK, appName, appId);
+                        boolean isValide = AuthorizeManager.verify(WalletActivity.this, did, PK, appName, appId);
                         Log.i(TAG, "walletActivity1 isValide: "+isValide);
                         if(!isValide) return;
                         BaseWalletManager wm = WalletsMaster.getInstance(WalletActivity.this).getCurrentWallet(WalletActivity.this);
