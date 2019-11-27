@@ -975,6 +975,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         BigDecimal isoBalance = isIsoCrypto ? wm.getCryptoForSmallestCrypto(app, mCurrentBalance) : wm.getFiatForSmallestCrypto(app, mCurrentBalance, null);
         if (isoBalance == null) isoBalance = BigDecimal.ZERO;
 
+        String tmp = mAddressEdit.getText().toString();
         BigDecimal rawFee = wm.getEstimatedFee(cryptoAmount, mAddressEdit.getText().toString());
 
         //get the fee for iso (dollars, bits, BTC..)
@@ -1098,8 +1099,24 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             }
             if(!Utils.isNullOrEmpty(mViewModel.getAmount())){
                 mAmountEdit.setText(mViewModel.getAmount());
+                updateText();
                 hideVoteCheckView();
             }
+
+//            BaseWalletManager wm = WalletsMaster.getInstance(getContext()).getCurrentWallet(getContext());
+//            boolean isWalletErc20 = WalletsMaster.getInstance(getContext()).isIsoErc20(getContext(), wm.getIso());
+//            boolean isIsoCrypto = WalletsMaster.getInstance(getContext()).isIsoCrypto(getContext(), mSelectedCurrencyCode);
+//
+//
+//            String amountStr = mViewModel.getAmount();
+//            BigDecimal rawAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) || amountStr.equalsIgnoreCase(".") ? "0" : amountStr);
+//
+//            if(isWalletErc20) wm = WalletEthManager.getInstance(getContext());
+//            BigDecimal cryptoAmount = isIsoCrypto ? wm.getSmallestCryptoForCrypto(getActivity(), rawAmount) : wm.getSmallestCryptoForFiat(getActivity(), rawAmount);
+//            BigDecimal rawFee = wm.getEstimatedFee(cryptoAmount, mAddressEdit.getText().toString());
+//            BigDecimal isoFee = isIsoCrypto ? rawFee : wm.getFiatForSmallestCrypto(getContext(), rawFee, null);
+//            String formattedFee = CurrencyUtils.getFormattedAmount(getContext(), mSelectedCurrencyCode, isoFee);
+//            mFeeText.setText(String.format(getString(R.string.Send_fee), formattedFee));
         }
     }
 
