@@ -157,10 +157,8 @@ public class BreadApp extends Application {
         ProcessLifecycleOwner.get().getLifecycle().addObserver(mObserver);
 
         Beta.upgradeDialogLayoutId = R.layout.upgrade_layout;
-        Beta.strUpgradeDialogCancelBtn = "Next time";
-        Beta.strUpgradeDialogUpgradeBtn = "Update";
+        UpgradeHandler.initString();
         Bugly.init(getApplicationContext(), BuildConfig.UPGRADE_TESTNET? "8b437eefc0":"8a9b0190e0", false);
-
         cacheVersionCode();
     }
 
