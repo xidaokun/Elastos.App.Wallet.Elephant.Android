@@ -31,6 +31,7 @@ import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Bip39Reader;
+import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -798,6 +799,7 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
                                 Log.d(TAG, "onRpcRequestCompleted: " + responseObject);
                                 if (responseObject.has(JsonRpcHelper.RESULT)) {
                                     txHash = responseObject.getString(JsonRpcHelper.RESULT);
+                                    if(!StringUtil.isNullOrEmpty(txHash)) UiUtils.payReturnData(BreadApp.getBreadContext(), new String(txHash));
                                     Log.d(TAG, "onRpcRequestCompleted: " + txHash);
                                     node.announceSubmitTransaction(wid, tid, txHash, rid);
                                 } else if (responseObject.has(JsonRpcHelper.ERROR)) {

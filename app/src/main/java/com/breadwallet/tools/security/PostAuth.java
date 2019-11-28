@@ -269,7 +269,11 @@ public class PostAuth {
                         return;
                     }
                     final byte[] txHash = mWalletManager.signAndPublishTransaction(tx, rawPhrase);
-                    if(txHash!=null && txHash.length>1)    UiUtils.payReturnData(activity, new String(txHash));
+                    if((mWalletManager.getIso().equalsIgnoreCase("ELA")
+                            || mWalletManager.getIso().equalsIgnoreCase("IOEX"))
+                            && txHash!=null
+                            && txHash.length>1)
+                        UiUtils.payReturnData(activity, new String(txHash));
 
                     txMetaData = new TxMetaData();
                     txMetaData.comment = mCryptoRequest.message;

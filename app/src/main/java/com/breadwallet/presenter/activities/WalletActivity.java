@@ -139,7 +139,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 UriFactory factory = new UriFactory();
                 factory.parse(mUri);
                 String coinName = factory.getCoinName();
-                boolean isHidden = KVStoreManager.getInstance().getTokenListMetaData(this).isCurrencyHidden(coinName);
+                boolean isHidden = /*KVStoreManager.getInstance().getTokenListMetaData(this).isCurrencyHidden(coinName)*/false;
                 if(StringUtil.isNullOrEmpty(coinName) || isHidden) {
                     finish();
                     return;
