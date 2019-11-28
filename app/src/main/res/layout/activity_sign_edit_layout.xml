@@ -80,11 +80,11 @@
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/content_detail"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:visibility="gone"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
-        android:paddingTop="26dp"
+        android:paddingTop="60dp"
         android:scrollbars="vertical"
         android:textColor="#222222"
         android:paddingBottom="40dp"

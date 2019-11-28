@@ -85,8 +85,13 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <category android:name="android.intent.category.DEFAULT"/>
-                <data android:pathPattern=".*\\.capsule"
-                    android:host="*" />
+                <data android:host="*"/>
+                <data android:pathPattern=".*\\.capsule"/>
+                <data android:pathPattern=".*\\.capsule"/>
+                <data android:pathPattern=".*\\..*\\.capsule"/>
+                <data android:pathPattern=".*\\..*\\..*\\.capsule"/>
+                <data android:pathPattern=".*\\..*\\..*\\..*\\.capsule"/>
+
                 <data android:scheme="elaphant" />
             </intent-filter>
         </activity>
