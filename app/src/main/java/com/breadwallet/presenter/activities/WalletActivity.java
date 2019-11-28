@@ -62,6 +62,8 @@ import com.elastos.jni.AuthorizeManager;
 import com.elastos.jni.Constants;
 import com.elastos.jni.UriFactory;
 import com.platform.HTTPServer;
+import com.platform.tools.KVStoreManager;
+
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -137,7 +139,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 UriFactory factory = new UriFactory();
                 factory.parse(mUri);
                 String coinName = factory.getCoinName();
-                if(StringUtil.isNullOrEmpty(coinName)) {
+                boolean isHidden = KVStoreManager.getInstance().getTokenListMetaData(this).isCurrencyHidden(coinName);
+                if(StringUtil.isNullOrEmpty(coinName) || isHidden) {
                     finish();
                     return;
                 }

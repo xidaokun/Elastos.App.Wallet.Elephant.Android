@@ -1,10 +1,8 @@
 package com.breadwallet.presenter.activities;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -236,7 +234,7 @@ public class ExploreWebActivity extends BRActivity {
             UiUtils.startVoteActivity(ExploreWebActivity.this, url);
         } else if(url.contains("elaphant") && url.contains("sign")) {
             UiUtils.startSignActivity(ExploreWebActivity.this, url);
-        } else if(mHomeActivity!=null && StringUtils.isDownloadCapsule(url)) {
+        } else if(mHomeActivity!=null && StringUtils.isElaphantCapsule(url)) {
             mHomeActivity.showAndDownloadCapsule(url);
             finish();
         } else {

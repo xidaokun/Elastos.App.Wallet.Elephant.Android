@@ -28,6 +28,7 @@ import android.view.WindowManager;
 import android.view.animation.OvershootInterpolator;
 import android.widget.Toast;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.did.CallbackEntity;
 import com.breadwallet.did.DidDataSource;
@@ -543,7 +544,7 @@ public class UiUtils {
             BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(context, "callback error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BreadApp.getBreadContext(), "callback error", Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -709,6 +710,11 @@ public class UiUtils {
     }
 
     public static void clearCache(Context context) {
+        boolean hasWroteDown = BRSharedPrefs.getPhraseWroteDown(context);
+
+        File webviewPath = new File(context.getFilesDir().getParent(), "app_webview");
+        FileHelper.deleteFile(webviewPath);
+
         File databasePath = new File(context.getFilesDir().getParent(), "databases");
 //        File sharedPrefsPath = new File(context.getFilesDir().getParent(), "shared_prefs");
 //
@@ -728,6 +734,8 @@ public class UiUtils {
         BRSharedPrefs.clearAllPrefs(context);
         BRPublicSharedPrefs.putUseFingerprint(context, false);
         BRKeyStore.putSpendLimit(context, new BigDecimal(1000000.00000000), "BTC");
+
+        BRSharedPrefs.putPhraseWroteDown(context, hasWroteDown);
 
         restartApp(context);
     }

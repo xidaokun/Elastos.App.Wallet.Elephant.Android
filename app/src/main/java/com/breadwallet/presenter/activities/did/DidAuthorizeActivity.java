@@ -377,8 +377,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (!isFinishing())
-                    Toast.makeText(DidAuthorizeActivity.this, "callback error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "callback error", Toast.LENGTH_SHORT).show();
             }
         });
     }

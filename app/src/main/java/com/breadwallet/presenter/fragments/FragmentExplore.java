@@ -668,13 +668,13 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Ex
             }
         }
 
-        if (StringUtils.isDownloadCapsule(url)) {
+        if (StringUtils.isElaphantCapsule(url)) {
             downloadCapsule(StringUtils.replaceElsProtocol(url, "http"));
             downloadCapsule(StringUtils.replaceElsProtocol(url, "https"));
             return;
         }
 
-        boolean isValid = StringUtils.isUrl(url);
+        boolean isValid = StringUtils.isHttpCapsule(url);
         if (!isValid) {
             if(isAdded())Toast.makeText(getContext(), getString(R.string.mini_app_invalid_url), Toast.LENGTH_SHORT).show();
             return;

@@ -1,7 +1,6 @@
 package com.breadwallet.presenter.activities;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -231,7 +230,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
     public void showAndDownloadCapsule(String url) {
         if(mExploreFragment!=null && !StringUtil.isNullOrEmpty(url)){
-            boolean isValid = StringUtils.isDownloadCapsule(url);
+            boolean isValid = StringUtils.isElaphantCapsule(url) || StringUtils.isHttpCapsule(url);
             if (!isValid) {
                 Toast.makeText(this, getString(R.string.mini_app_invalid_url), Toast.LENGTH_SHORT).show();
                 return;
