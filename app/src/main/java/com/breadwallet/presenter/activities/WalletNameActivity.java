@@ -28,6 +28,7 @@ public class WalletNameActivity extends BRActivity {
 
     public static final String WALLET_NAME = "wallet.name";
     public static final String WALLET_NAME_PAGE_TYPE = "wallet.name_page_type";
+    public static final String WALLET_SELECTED = "wallet.selected";
 
     public static final int WALLET_NAME_TYPE_RENAME = 0;
     public static final int WALLET_NAME_TYPE_NEW = 1;
@@ -56,10 +57,13 @@ public class WalletNameActivity extends BRActivity {
         initView();
     }
 
+    boolean mIsSelected = false;
     private void initView() {
         Intent intent = getIntent();
         mType = intent.getIntExtra(WALLET_NAME_PAGE_TYPE, WALLET_NAME_TYPE_RENAME);
+        mIsSelected = intent.getBooleanExtra(WALLET_SELECTED, false);
         String defaultName = intent.getStringExtra(WALLET_NAME);
+
 
         TextView save = findViewById(R.id.save_button);
         if (mType == WALLET_NAME_TYPE_RENAME) {
@@ -128,20 +132,21 @@ public class WalletNameActivity extends BRActivity {
             return;
         }
 
-        BRPublicSharedPrefs.putCurrentWalletName(this, name);
-
         switch (mType) {
             case WALLET_NAME_TYPE_RENAME:
+                if(mIsSelected) BRPublicSharedPrefs.putCurrentWalletName(this, name);
                 Intent intent = new Intent();
                 intent.putExtra(WALLET_NAME, name);
                 setResult(Activity.RESULT_OK, intent);
                 finish();
                 break;
             case WALLET_NAME_TYPE_NEW:
+                BRPublicSharedPrefs.putCurrentWalletName(this, name);
                 PostAuth.getInstance().onCreateWalletAuth(WalletNameActivity.this, false,
                         getIntent().getBooleanExtra(IntroActivity.INTRO_REENTER, false), name);
                 break;
             case WALLET_NAME_TYPE_RECOVER:
+                BRPublicSharedPrefs.putCurrentWalletName(this, name);
                 Intent recoverIntent = new Intent(WalletNameActivity.this, RecoverActivity.class);
                 recoverIntent.putExtra(IntroActivity.INTRO_REENTER, getIntent().getBooleanExtra(IntroActivity.INTRO_REENTER, false));
                 recoverIntent.putExtra(WALLET_NAME, name);

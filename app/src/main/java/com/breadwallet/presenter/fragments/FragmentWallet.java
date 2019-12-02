@@ -73,7 +73,9 @@ public class FragmentWallet extends Fragment implements RatesDataSource.OnDataCh
     @Override
     public void onResume() {
         super.onResume();
-        long start = System.currentTimeMillis();
+
+        String walletName = BRPublicSharedPrefs.getCurrentWalletName(BreadApp.getBreadContext());
+        mTitleTv.setText(StringUtil.isNullOrEmpty(walletName)?getString(R.string.My_wallet_title):walletName);
 
         showNextPromptIfNeeded();
 
@@ -136,9 +138,6 @@ public class FragmentWallet extends Fragment implements RatesDataSource.OnDataCh
                 getActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         });
-
-        String walletName = BRPublicSharedPrefs.getCurrentWalletName(BreadApp.getBreadContext());
-        mTitleTv.setText(StringUtil.isNullOrEmpty(walletName)?getString(R.string.My_wallet_title):walletName);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false) {
             @Override
