@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
@@ -27,12 +28,14 @@ import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.tools.adapter.WalletListAdapter;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.BREventManager;
+import com.breadwallet.tools.manager.BRPublicSharedPrefs;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.PromptManager;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
@@ -57,6 +60,7 @@ public class FragmentWallet extends Fragment implements RatesDataSource.OnDataCh
     private CardView mPromptCard;
 
     private View mAddWallet;
+    private TextView mTitleTv;
 
     @Nullable
     @Override
@@ -120,6 +124,7 @@ public class FragmentWallet extends Fragment implements RatesDataSource.OnDataCh
         mPromptDescription = rootView.findViewById(R.id.prompt_description);
         mPromptContinue = rootView.findViewById(R.id.continue_button);
         mPromptDismiss = rootView.findViewById(R.id.dismiss_button);
+        mTitleTv = rootView.findViewById(R.id.title);
 
         mAddWallet = rootView.findViewById(R.id.add_wallets);
 
@@ -132,6 +137,8 @@ public class FragmentWallet extends Fragment implements RatesDataSource.OnDataCh
             }
         });
 
+        String walletName = BRPublicSharedPrefs.getRecoverWalletName(BreadApp.getBreadContext());
+        mTitleTv.setText(StringUtil.isNullOrEmpty(walletName)?getString(R.string.My_wallet_title):walletName);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false) {
             @Override
