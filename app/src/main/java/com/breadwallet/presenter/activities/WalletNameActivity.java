@@ -19,6 +19,7 @@ import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BREdit;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.manager.BRPublicSharedPrefs;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.StringUtil;
 
@@ -126,6 +127,8 @@ public class WalletNameActivity extends BRActivity {
             UiUtils.toast(getApplicationContext(), R.string.multi_wallet_name_required);
             return;
         }
+
+        BRPublicSharedPrefs.putCurrentWalletName(this, name);
 
         switch (mType) {
             case WALLET_NAME_TYPE_RENAME:

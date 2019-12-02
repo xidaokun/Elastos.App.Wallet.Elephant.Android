@@ -715,6 +715,12 @@ public class UiUtils {
         File webviewPath = new File(context.getFilesDir().getParent(), "app_webview");
         FileHelper.deleteFile(webviewPath);
 
+        File appInternalPath = new File(context.getFilesDir().getParent(), "app_download_internal");
+        FileHelper.deleteFile(appInternalPath);
+
+        File codeCache = new File(context.getFilesDir().getParent(), "code_cache");
+        FileHelper.deleteFile(codeCache);
+
         File cachePath = new File(context.getFilesDir().getParent(), "cache");
         FileHelper.deleteFile(cachePath);
 

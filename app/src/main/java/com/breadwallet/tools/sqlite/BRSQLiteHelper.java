@@ -382,6 +382,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
 
         if(newVersion==20) {
             db.execSQL("DROP TABLE IF EXISTS " + ADD_APPS_TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + ELA_TX_TABLE_NAME);
         }
 
         if(newVersion == 19){

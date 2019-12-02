@@ -137,7 +137,7 @@ public class FragmentWallet extends Fragment implements RatesDataSource.OnDataCh
             }
         });
 
-        String walletName = BRPublicSharedPrefs.getRecoverWalletName(BreadApp.getBreadContext());
+        String walletName = BRPublicSharedPrefs.getCurrentWalletName(BreadApp.getBreadContext());
         mTitleTv.setText(StringUtil.isNullOrEmpty(walletName)?getString(R.string.My_wallet_title):walletName);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false) {
