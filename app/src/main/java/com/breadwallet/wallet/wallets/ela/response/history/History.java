@@ -39,4 +39,5 @@ public class History {
     public List<String> Outputs;
     public long NodeOutputIndex;
     public long NodeFee;
+    public String Status;
 }

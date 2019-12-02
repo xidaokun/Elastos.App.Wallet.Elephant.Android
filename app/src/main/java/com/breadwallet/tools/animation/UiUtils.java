@@ -715,6 +715,9 @@ public class UiUtils {
         File webviewPath = new File(context.getFilesDir().getParent(), "app_webview");
         FileHelper.deleteFile(webviewPath);
 
+        File cachePath = new File(context.getFilesDir().getParent(), "cache");
+        FileHelper.deleteFile(cachePath);
+
         File databasePath = new File(context.getFilesDir().getParent(), "databases");
 //        File sharedPrefsPath = new File(context.getFilesDir().getParent(), "shared_prefs");
 //

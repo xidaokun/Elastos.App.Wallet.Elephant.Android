@@ -152,7 +152,8 @@ public class ElaDataSource implements BRDataSourceInterface {
             BRSQLiteHelper.ELA_COLUMN_MENO,
             BRSQLiteHelper.ELA_COLUMN_ISVALID,
             BRSQLiteHelper.ELA_COLUMN_ISVOTE,
-            BRSQLiteHelper.ELA_COLUMN_PAGENUMBER
+            BRSQLiteHelper.ELA_COLUMN_PAGENUMBER,
+            BRSQLiteHelper.ELA_COLUMN_STATUS
     };
 
     public void deleteElaTable(){
@@ -211,6 +212,7 @@ public class ElaDataSource implements BRDataSourceInterface {
                 value.put(BRSQLiteHelper.ELA_COLUMN_ISVALID, entity.isValid?1:0);
                 value.put(BRSQLiteHelper.ELA_COLUMN_ISVOTE, entity.isVote?1:0);
                 value.put(BRSQLiteHelper.ELA_COLUMN_PAGENUMBER, entity.pageNumber);
+                value.put(BRSQLiteHelper.ELA_COLUMN_STATUS, entity.status);
 
                 long l = database.insertWithOnConflict(BRSQLiteHelper.ELA_TX_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
                 Log.i(TAG, "l:"+l);
@@ -337,7 +339,8 @@ public class ElaDataSource implements BRDataSourceInterface {
                 cursor.getString(11),
                 cursor.getInt(12)==1,
                 cursor.getInt(13)==1,
-                cursor.getInt(14));
+                cursor.getInt(14),
+                cursor.getString(15));
     }
 
     private void toast(final String message){
@@ -454,6 +457,7 @@ public class ElaDataSource implements BRDataSourceInterface {
                 historyTransactionEntity.pageNumber = 1;
                 historyTransactionEntity.timeStamp = new BigDecimal(history.CreateTime).longValue();
                 historyTransactionEntity.memo = getMeno(history.Memo);
+                historyTransactionEntity.status=  history.Status;
                 elaTransactionEntities.add(historyTransactionEntity);
                 if(historyTransactionEntity.isVote) mVoteTxid.add(history.Txid);
             }
@@ -498,6 +502,7 @@ public class ElaDataSource implements BRDataSourceInterface {
                     historyTransactionEntity.pageNumber = 1;
                     historyTransactionEntity.timeStamp = new BigDecimal(history.CreateTime).longValue();
                     historyTransactionEntity.memo = getMeno(history.Memo);
+                    historyTransactionEntity.status=  history.Status;
                     elaTransactionEntities.add(historyTransactionEntity);
                     if(historyTransactionEntity.isVote) mVoteTxid.add(history.Txid);
                 }
@@ -553,6 +558,7 @@ public class ElaDataSource implements BRDataSourceInterface {
                 historyTransactionEntity.pageNumber = pageNumber;
                 historyTransactionEntity.timeStamp = new BigDecimal(history.CreateTime).longValue();
                 historyTransactionEntity.memo = getMeno(history.Memo);
+                historyTransactionEntity.status=  history.Status;
                 elaTransactionEntities.add(historyTransactionEntity);
                 if(historyTransactionEntity.isVote) mVoteTxid.add(history.Txid);
             }
@@ -687,6 +693,7 @@ public class ElaDataSource implements BRDataSourceInterface {
                 historyTransactionEntity.isValid = true;
                 historyTransactionEntity.isVote = (payload!=null && payload.size()>0);
                 historyTransactionEntity.memo = memo;
+                historyTransactionEntity.status=  "pending";
 
                 ElaOutput output = outputs.get(0);
                 String address = output.address;

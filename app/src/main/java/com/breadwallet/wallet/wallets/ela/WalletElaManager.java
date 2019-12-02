@@ -388,7 +388,8 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
                         ,entity.txSize
                          ,amount
                         , entity.isValid
-                        ,entity.isVote);
+                        ,entity.isVote
+                        , entity.status);
                 txUiHolder.memo = entity.memo;
                 uiTxs.add(txUiHolder);
             }
