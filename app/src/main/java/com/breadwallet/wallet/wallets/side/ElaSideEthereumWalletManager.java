@@ -70,7 +70,7 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
     public static final String MAX_ETH = "10000000000";
     private final BigDecimal MAX_WEI = new BigDecimal(MAX_ETH);
     private final BigDecimal ONE_ETH = new BigDecimal(ETHER_WEI);
-    private static final String NAME = "Elastos evm sidechain";
+    private static final String NAME = "ETHSC sidechain";
 
     private static ElaSideEthereumWalletManager mInstance;
 

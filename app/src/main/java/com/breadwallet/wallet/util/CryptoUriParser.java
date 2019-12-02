@@ -124,6 +124,8 @@ public class CryptoUriParser {
 
         BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
 
+        if(wm == null) return null;
+
         if (scheme == null) {
             scheme = wm.getScheme();
 //            obj.iso = wm.getIso();

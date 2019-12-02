@@ -67,6 +67,7 @@ import com.platform.tools.KVStoreManager;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 /**
  * Created by byfieldj on 1/16/18.
@@ -139,12 +140,27 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 UriFactory factory = new UriFactory();
                 factory.parse(mUri);
                 String coinName = factory.getCoinName();
-                boolean isHidden = /*KVStoreManager.getInstance().getTokenListMetaData(this).isCurrencyHidden(coinName)*/false;
-                if(StringUtil.isNullOrEmpty(coinName) || isHidden) {
+                if(StringUtil.isNullOrEmpty(coinName)) {
+                    Toast.makeText(this, getString(R.string.elapay_request_params_error), Toast.LENGTH_SHORT).show();
                     finish();
                     return;
                 }
-                if(coinName.toLowerCase().contains("usdt")) coinName = "USDT";
+                if(coinName.equalsIgnoreCase("USDT-ERC20")) {
+                    if(coinName.toLowerCase().contains("usdt")) coinName = "USDT";
+                } else {
+                    BaseWalletManager wm = WalletsMaster.getInstance(this).getWalletByIso(this, coinName);
+                    if(null==wm || coinName.equalsIgnoreCase("usdt")) {
+                        Toast.makeText(this, getString(R.string.elapay_request_params_error), Toast.LENGTH_SHORT).show();
+                        finish();
+                        return;
+                    }
+                    boolean isHidden = KVStoreManager.getInstance().getTokenListMetaData(this).isCurrencyHidden(coinName);
+                    if(isHidden) {
+                        Toast.makeText(this, getString(R.string.elapay_request_params_error), Toast.LENGTH_SHORT).show();
+                        finish();
+                        return;
+                    }
+                }
                 BRSharedPrefs.putCurrentWalletIso(BreadApp.mContext, coinName);
             }
         }
@@ -278,7 +294,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         setPriceTags(cryptoPreferred, false);
 
     }
-
 
     private void startSyncLoggerIfNeeded() {
         if (Utils.isEmulatorOrDebug(this) && RUN_LOGGER) {

@@ -1181,4 +1181,6 @@
     <string name="clear_cache_message">Are you sure to clear the cache?</string>
     <string name="clear_cache_positive_btn">Confirm</string>
     <string name="clear_cache_negative_btn">Cancel</string>
+
+    <string name="elapay_request_params_error">Request parameter error</string>
 </resources>

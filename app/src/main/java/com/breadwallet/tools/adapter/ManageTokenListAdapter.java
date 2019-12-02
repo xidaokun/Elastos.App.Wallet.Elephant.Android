@@ -73,8 +73,6 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
             int iconResourceId = 0;
             if(currencyCode.equalsIgnoreCase("1st")) {
                 iconResourceId = mContext.getResources().getIdentifier("first", BRConstants.DRAWABLE, mContext.getPackageName());
-            } else if(currencyCode.equalsIgnoreCase("ELAETHSC")) {
-                iconResourceId = mContext.getResources().getIdentifier("ela_esc", BRConstants.DRAWABLE, mContext.getPackageName());
             } else {
                 iconResourceId = mContext.getResources().getIdentifier(currencyCode, BRConstants.DRAWABLE, mContext.getPackageName());
             }

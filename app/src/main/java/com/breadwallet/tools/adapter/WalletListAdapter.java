@@ -110,8 +110,6 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         int iconResourceId = 0;
         if(currencyCode.equalsIgnoreCase("1st")){
             iconResourceId = mContext.getResources().getIdentifier("first", BRConstants.DRAWABLE, mContext.getPackageName());
-        } if(currencyCode.equalsIgnoreCase("ELAETHSC")) {
-            iconResourceId = mContext.getResources().getIdentifier("ela_esc", BRConstants.DRAWABLE, mContext.getPackageName());
         } else {
             iconResourceId = mContext.getResources().getIdentifier(currencyCode.toLowerCase(), BRConstants.DRAWABLE, mContext.getPackageName());
         }

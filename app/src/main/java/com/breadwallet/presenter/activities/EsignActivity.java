@@ -128,6 +128,10 @@ public class EsignActivity extends BaseSettingsActivity {
         mIsSigning = true;
         try {
             String mn = getMn();
+            if(StringUtil.isNullOrEmpty(mn)) {
+                finish();
+                return;
+            }
             String pk = Utility.getInstance(this).getSinglePrivateKey(mn);
             String source = mSignEdt.getText().toString();
             if (StringUtil.isNullOrEmpty(mn)
