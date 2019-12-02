@@ -84,7 +84,7 @@
         android:visibility="gone"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
-        android:paddingTop="60dp"
+        android:layout_marginTop="60dp"
         android:scrollbars="vertical"
         android:textColor="#222222"
         android:paddingBottom="40dp"
