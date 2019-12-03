@@ -190,7 +190,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 
                 ContentValues value = new ContentValues();
                 value.put(BRSQLiteHelper.ELA_COLUMN_ISRECEIVED, entity.isReceived? 1:0);
-                value.put(BRSQLiteHelper.ELA_COLUMN_TIMESTAMP, entity.timeStamp==0?System.currentTimeMillis()/1000:entity.timeStamp);
+                value.put(BRSQLiteHelper.ELA_COLUMN_TIMESTAMP, entity.status.equalsIgnoreCase("pending")?System.currentTimeMillis()/1000:entity.timeStamp);
                 value.put(BRSQLiteHelper.ELA_COLUMN_BLOCKHEIGHT, entity.blockHeight);
                 value.put(BRSQLiteHelper.ELA_COLUMN_HASH, entity.hash);
                 value.put(BRSQLiteHelper.ELA_COLUMN_TXREVERSED, entity.txReversed);
