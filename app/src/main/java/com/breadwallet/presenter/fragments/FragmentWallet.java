@@ -28,19 +28,22 @@ import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.tools.adapter.WalletListAdapter;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.BREventManager;
-import com.breadwallet.tools.manager.BRPublicSharedPrefs;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.PromptManager;
+import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.security.PhraseInfo;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
-import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public class FragmentWallet extends Fragment implements RatesDataSource.OnDataChanged{
@@ -73,9 +76,18 @@ public class FragmentWallet extends Fragment implements RatesDataSource.OnDataCh
     @Override
     public void onResume() {
         super.onResume();
-
-        String walletName = BRPublicSharedPrefs.getCurrentWalletName(BreadApp.getBreadContext());
-        mTitleTv.setText(StringUtil.isNullOrEmpty(walletName)?getString(R.string.My_wallet_title):walletName);
+        try {
+            List<PhraseInfo> list = BRKeyStore.getPhraseInfoList(getContext(), BRConstants.GET_PHRASE_LIST_REQUEST_CODE);
+            byte[] phrase = BRKeyStore.getPhrase(getContext(), 0);
+            for (PhraseInfo info : list) {
+                if (Arrays.equals(info.phrase, phrase)) {
+                    info.selected = true;
+                    mTitleTv.setText(info.alias);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         showNextPromptIfNeeded();
 

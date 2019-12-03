@@ -19,7 +19,6 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.adapter.PhraseAdapter;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
-import com.breadwallet.tools.manager.BRPublicSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PhraseInfo;
 import com.breadwallet.tools.util.BRConstants;
@@ -138,7 +137,6 @@ public class PhraseListActivity extends BRActivity implements PhraseAdapter.Wall
         if (!UiUtils.isClickAllowed()) return;
         final PhraseInfo info = mAdapter.getItem(position);
         assert info != null;
-        BRPublicSharedPrefs.putCurrentWalletName(this, info.alias);
         recoverTo(info);
     }
 

@@ -19,7 +19,6 @@ import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BREdit;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.tools.animation.UiUtils;
-import com.breadwallet.tools.manager.BRPublicSharedPrefs;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.StringUtil;
 
@@ -134,19 +133,16 @@ public class WalletNameActivity extends BRActivity {
 
         switch (mType) {
             case WALLET_NAME_TYPE_RENAME:
-                if(mIsSelected) BRPublicSharedPrefs.putCurrentWalletName(this, name);
                 Intent intent = new Intent();
                 intent.putExtra(WALLET_NAME, name);
                 setResult(Activity.RESULT_OK, intent);
                 finish();
                 break;
             case WALLET_NAME_TYPE_NEW:
-                BRPublicSharedPrefs.putCurrentWalletName(this, name);
                 PostAuth.getInstance().onCreateWalletAuth(WalletNameActivity.this, false,
                         getIntent().getBooleanExtra(IntroActivity.INTRO_REENTER, false), name);
                 break;
             case WALLET_NAME_TYPE_RECOVER:
-                BRPublicSharedPrefs.putCurrentWalletName(this, name);
                 Intent recoverIntent = new Intent(WalletNameActivity.this, RecoverActivity.class);
                 recoverIntent.putExtra(IntroActivity.INTRO_REENTER, getIntent().getBooleanExtra(IntroActivity.INTRO_REENTER, false));
                 recoverIntent.putExtra(WALLET_NAME, name);

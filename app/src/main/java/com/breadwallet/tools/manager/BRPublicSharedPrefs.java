@@ -55,16 +55,4 @@ public class BRPublicSharedPrefs {
         editor.putString("recoverWalletName", walletName);
         editor.apply();
     }
-
-    public static String getCurrentWalletName(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getString("currentWalletName", "");
-    }
-
-    public static void putCurrentWalletName(Context context, String walletName) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("currentWalletName", walletName);
-        editor.apply();
-    }
 }
