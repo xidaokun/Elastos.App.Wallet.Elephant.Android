@@ -177,14 +177,6 @@ public class ElaDataSource implements BRDataSourceInterface {
         }
     }
 
-
-    public void cacheSingleTx(HistoryTransactionEntity entity){
-        List<HistoryTransactionEntity> entities = new ArrayList<>();
-        entities.clear();
-        entities.add(entity);
-        cacheMultTx(entities);
-    }
-
     public synchronized void cacheMultTx(List<HistoryTransactionEntity> elaTransactionEntities){
         if(elaTransactionEntities == null) return;
 //        Cursor cursor = null;
@@ -198,7 +190,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 
                 ContentValues value = new ContentValues();
                 value.put(BRSQLiteHelper.ELA_COLUMN_ISRECEIVED, entity.isReceived? 1:0);
-                value.put(BRSQLiteHelper.ELA_COLUMN_TIMESTAMP, entity.timeStamp);
+                value.put(BRSQLiteHelper.ELA_COLUMN_TIMESTAMP, entity.timeStamp==0?System.currentTimeMillis()/1000:entity.timeStamp);
                 value.put(BRSQLiteHelper.ELA_COLUMN_BLOCKHEIGHT, entity.blockHeight);
                 value.put(BRSQLiteHelper.ELA_COLUMN_HASH, entity.hash);
                 value.put(BRSQLiteHelper.ELA_COLUMN_TXREVERSED, entity.txReversed);
@@ -409,27 +401,12 @@ public class ElaDataSource implements BRDataSourceInterface {
         cacheMultiTxProducer(multiTxProducerEntity.result);
     }
 
-    //TODO test
-    public void getProducerByTxid(String txid){
-        try {
-            ProducerTxid producerTxid = new ProducerTxid();
-            producerTxid.txid = new ArrayList<>();
-            producerTxid.txid.add(txid);
-            String json = new Gson().toJson(producerTxid);
-            String url = getUrlByVersion("dpos/transaction/producer", "1");
-            String result = urlPost(url, json);
-            Log.i("test", "test");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public List<String> mVoteTxid = new ArrayList<>();
     public void refreshHistory(String address){
         if(StringUtil.isNullOrEmpty(address)) return;
         mVoteTxid.clear();
         try {
-            String url = getUrlByVersion("history/"+address +"?pageNum=1&pageSize="+ONE_PAGE_SIZE+"&order=desc", "v2");
+            String url = getUrlByVersion("history/"+address +"?pageNum=1&pageSize="+ONE_PAGE_SIZE+"&order=desc", "v3");
             Log.i(TAG, "history url:"+url);
             String result = urlGET(url);
             JSONObject jsonObject = new JSONObject(result);
@@ -474,7 +451,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             if(StringUtil.isNullOrEmpty(address)) return;
             mVoteTxid.clear();
             try {
-                String url = getUrlByVersion("history/"+address +"?pageNum="+pageNumber+"&pageSize="+ONE_PAGE_SIZE+"&order=desc", "v2");
+                String url = getUrlByVersion("history/"+address +"?pageNum="+pageNumber+"&pageSize="+ONE_PAGE_SIZE+"&order=desc", "v3");
                 Log.i(TAG, "history url:"+url);
                 String result = urlGET(url);
                 JSONObject jsonObject = new JSONObject(result);
@@ -522,7 +499,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             int currentPageNumber = BRSharedPrefs.getCurrentHistoryPageNumber(mContext);
             int range = BRSharedPrefs.getHistoryRange(mContext);
             int pageNumber = currentPageNumber+range;
-            String url = getUrlByVersion("history/"+address +"?pageNum="+pageNumber+"&pageSize="+ONE_PAGE_SIZE+"&order=desc", "v2");
+            String url = getUrlByVersion("history/"+address +"?pageNum="+pageNumber+"&pageSize="+ONE_PAGE_SIZE+"&order=desc", "v3");
             Log.i(TAG, "history url:"+url);
             String result = urlGET(url);
             JSONObject jsonObject = new JSONObject(result);

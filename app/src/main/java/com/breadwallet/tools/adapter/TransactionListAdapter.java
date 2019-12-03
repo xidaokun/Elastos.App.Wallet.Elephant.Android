@@ -346,7 +346,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
         if (wm.getIso().equalsIgnoreCase("ELA") || wm.getIso().equalsIgnoreCase("IOEX")) {
             String status = item.getStatus();
-            if (level==0 || StringUtil.isNullOrEmpty(status) || status.equalsIgnoreCase("confirmed")) {
+            if (level==0 && status.equalsIgnoreCase("confirmed")) {
                 convertView.transactionStatus.setText(!received ? sentTo : receivedVia);
                 convertView.transactionStatus.setTextColor(mContext.getColor(!received ? R.color.tx_send_color : R.color.transaction_amount_received_color));
             } else {
