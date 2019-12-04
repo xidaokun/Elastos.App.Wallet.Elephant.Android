@@ -574,7 +574,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 
     private boolean isVote(String type){
         if(!StringUtil.isNullOrEmpty(type)){
-            if(type.equals("Vote")) return true;
+            if(type.equalsIgnoreCase("Vote")) return true;
         }
         return false;
     }
