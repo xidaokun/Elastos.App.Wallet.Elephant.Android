@@ -9,8 +9,8 @@ android {
         applicationId = 'com.elastos.wallet'
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 90
-        versionName "1.6.1"
+        versionCode 82
+        versionName "1.7.0"
         multiDexEnabled true
 
         // Similar to other properties in the defaultConfig block,
