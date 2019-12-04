@@ -512,7 +512,7 @@
     <!-- Send money amount label -->
     <string name="Send.amountLabel">Amount</string>
     <!-- Balance: $4.00 -->
-    <string name="Send.balance">Balance: %1$s</string>
+    <string name="Send.balance">Balance %1$s</string>
     <!-- Instructions how to allow the camera access for the app -->
     <string name="Send.cameraUnavailabeMessage.android">Allow camera access in \"Settings\" &gt; \"Apps\" &gt; \"Elephant\" &gt; \"Permissions\"</string>
     <!-- Permission required to access camera -->
@@ -980,6 +980,7 @@
     <string name="Did.Public.Key">Public key</string>
     <string name="Did.Btc.Address">BTC address</string>
     <string name="Did.Eth.Address">ETH address</string>
+    <string name="Did.Ethsc.Address">ELAETHSC address</string>
     <string name="Did.Bch.Address">BCH address</string>
     <string name="Did.Usd.Address">USDT address</string>
     <string name="Did.Ela.Address">ELA address</string>
@@ -1007,6 +1008,7 @@
     <string name="Did.Detail.Btc.Address">- BTC address</string>
     <string name="Did.Detail.Bch.Address">- BCH address</string>
     <string name="Did.Detail.Eth.Address">- ETH address</string>
+    <string name="Did.Detail.ELAETHSC.Address">- ELAETHSC address</string>
     <string name="Did.Detail.Ioex.Address">- IOEX address</string>
     <string name="Did.Detail.Email">- Email</string>
     <string name="Did.Detail.Phone.Number">- Phone number</string>
@@ -1050,7 +1052,7 @@
     <string name="vote_nodes_count">You are going to vote %1$d nodes(36 max)</string>
     <string name="vote_balance">%1$s ELA</string>
     <string name="vote_wallet_balance_title">Wallet Balance:</string>
-    <string name="vote_hint">You only need to pay a little transaction fee: 0.0000486 ELA</string>
+    <string name="vote_hint">You only need to pay a little transaction fee: %1$s ELA</string>
     <string name="vote_hint2">You can spend your ELA anytime after vote while your votes will be revoked.</string>
     <string name="pin_author_vote">Authorize Vote</string>
     <string name="vote_cancel_btn_txt">Cancel</string>
@@ -1172,4 +1174,14 @@
     <string name="multi_wallet_already_current">Already the current mnemonic</string>
     <string name="utxo_too_much_hint">In order to manage a large volume of UTXOs, your transaction will be split into multiple transactions. Please refer to the transaction history for further detail.</string>
 
+    <string name="send_memo_hint">Memo will be recorded on the blockchain</string>
+    <string name="Clear_cache_title">Clear Cache</string>
+    <string name="txid_copy_hint">txid:%1$s</string>
+    <string name="txid_copy_tv">Copy</string>
+
+    <string name="clear_cache_message">Are you sure to clear the cache?</string>
+    <string name="clear_cache_positive_btn">Confirm</string>
+    <string name="clear_cache_negative_btn">Cancel</string>
+
+    <string name="elapay_request_params_error">Request parameter error</string>
 </resources>

@@ -71,7 +71,7 @@ public class CurrencyUtils {
             currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
             currencyFormat.setMaximumFractionDigits(8);
             currencyFormat.setMinimumFractionDigits(0);
-            return String.format("%s %s", currencyFormat.format(amount), iso.toUpperCase());
+            return String.format("%s %s", currencyFormat.format(amount), iso.equalsIgnoreCase("ELAETHSC")?"ELA":iso.toUpperCase());
         } else {
             try {
                 Currency currency = Currency.getInstance(iso);

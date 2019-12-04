@@ -564,6 +564,12 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
+    public static void clearAllPrefs(Context context, String name) {
+        SharedPreferences.Editor editor = context.getSharedPreferences(UiUtils.getCacheProviderName(context, name), Context.MODE_PRIVATE).edit();
+        editor.clear();
+        editor.apply();
+    }
+
     public static boolean getShowNotification(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
         return settingsToGet.getBoolean("showNotification", false);
@@ -883,5 +889,17 @@ public class BRSharedPrefs {
     public static boolean isVoteDelete(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
         return prefs.getBoolean("isVoteDelete", false);
+    }
+
+    public static void putEthHost(Context context, String url) {
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("ethHost", url);
+        editor.apply();
+    }
+
+    public static String getEthHost(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        return prefs.getString("ethHost", "api-wallet-eth.elastos.org");
     }
 }

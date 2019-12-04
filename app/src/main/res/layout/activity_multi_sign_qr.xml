@@ -68,6 +68,31 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
+    <TextView
+        android:id="@+id/txid_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/black_333333"
+        android:textSize="16sp"
+        android:visibility="gone"
+        android:gravity="center_horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/multisign_pass_or_sent"/>
+
+    <com.breadwallet.presenter.customviews.BRButton
+        android:id="@+id/txid_copy_btn"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="@string/txid_copy_tv"
+        android:textSize="16sp"
+        app:buttonType="8"
+        app:isBreadButton="true"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txid_tv"/>
+
     <ImageView
         android:id="@+id/multisign_qr_iv"
         android:layout_width="match_parent"

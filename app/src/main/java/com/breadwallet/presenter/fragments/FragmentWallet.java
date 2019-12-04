@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
@@ -30,14 +31,19 @@ import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.PromptManager;
+import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.security.PhraseInfo;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public class FragmentWallet extends Fragment implements RatesDataSource.OnDataChanged{
@@ -57,6 +63,7 @@ public class FragmentWallet extends Fragment implements RatesDataSource.OnDataCh
     private CardView mPromptCard;
 
     private View mAddWallet;
+    private TextView mTitleTv;
 
     @Nullable
     @Override
@@ -69,7 +76,18 @@ public class FragmentWallet extends Fragment implements RatesDataSource.OnDataCh
     @Override
     public void onResume() {
         super.onResume();
-        long start = System.currentTimeMillis();
+        try {
+            List<PhraseInfo> list = BRKeyStore.getPhraseInfoList(getContext(), BRConstants.GET_PHRASE_LIST_REQUEST_CODE);
+            byte[] phrase = BRKeyStore.getPhrase(getContext(), 0);
+            for (PhraseInfo info : list) {
+                if (Arrays.equals(info.phrase, phrase)) {
+                    info.selected = true;
+                    mTitleTv.setText(info.alias);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         showNextPromptIfNeeded();
 
@@ -120,6 +138,7 @@ public class FragmentWallet extends Fragment implements RatesDataSource.OnDataCh
         mPromptDescription = rootView.findViewById(R.id.prompt_description);
         mPromptContinue = rootView.findViewById(R.id.continue_button);
         mPromptDismiss = rootView.findViewById(R.id.dismiss_button);
+        mTitleTv = rootView.findViewById(R.id.title);
 
         mAddWallet = rootView.findViewById(R.id.add_wallets);
 
@@ -131,7 +150,6 @@ public class FragmentWallet extends Fragment implements RatesDataSource.OnDataCh
                 getActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         });
-
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false) {
             @Override

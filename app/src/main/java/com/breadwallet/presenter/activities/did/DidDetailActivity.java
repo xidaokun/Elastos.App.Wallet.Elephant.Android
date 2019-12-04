@@ -109,6 +109,9 @@ public class DidDetailActivity extends BaseSettingsActivity {
             if(requestInfo.contains("ETHAddress".toLowerCase())){
                 infoSb.add(getString(R.string.Did_Detail_Eth_Address));
             }
+            if(requestInfo.contains("ELAETHSCAddress".toLowerCase())){
+                infoSb.add(getString(R.string.Did_Detail_ELAETHSC_Address));
+            }
             if(requestInfo.contains("BCHAddress".toLowerCase())){
                 infoSb.add(getString(R.string.Did_Detail_Bch_Address));
             }

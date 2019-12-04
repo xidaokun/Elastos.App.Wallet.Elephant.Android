@@ -15,7 +15,7 @@ public class StringUtils {
     }
 
 
-    public static boolean isUrl(String url) {
+    public static boolean isHttpCapsule(String url) {
         if (isNullOrEmpty(url)) {
             return false;
         }
@@ -26,7 +26,7 @@ public class StringUtils {
         return matcher.matches();
     }
 
-    public static boolean isDownloadCapsule(String url){
+    public static boolean isElaphantCapsule(String url){
         if (isNullOrEmpty(url)) return false;
         String regEx = "^(elaphant|elastos|elapp:http|elapp:https)\\://.+\\.capsule$";
         Pattern p = Pattern.compile(regEx);

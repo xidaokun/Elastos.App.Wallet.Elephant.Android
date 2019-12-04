@@ -253,6 +253,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String ELA_COLUMN_ISVALID ="isValid";
     public static final String ELA_COLUMN_ISVOTE ="isVote";
     public static final String ELA_COLUMN_PAGENUMBER = "pageNumber";
+    public static final String ELA_COLUMN_STATUS = "status";
 
     private static final String ELA_TX_DATABASE_CREATE = "create table if not exists " + ELA_TX_TABLE_NAME + " (" +
             ELA_COLUMN_ID + " integer, " +
@@ -270,7 +271,8 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             ELA_COLUMN_MENO + " text, " +
             ELA_COLUMN_ISVALID + " interger, " +
             ELA_COLUMN_ISVOTE + " interger, " +
-            ELA_COLUMN_PAGENUMBER +" integer);";
+            ELA_COLUMN_PAGENUMBER + " interger, " +
+            ELA_COLUMN_STATUS +" text);";
 
     /**
      * MerkleBlock table
@@ -380,6 +382,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
 
         if(newVersion==20) {
             db.execSQL("DROP TABLE IF EXISTS " + ADD_APPS_TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + ELA_TX_TABLE_NAME);
         }
 
         if(newVersion == 19){

@@ -1,4 +1,4 @@
-package com.breadwallet.wallet.wallets.ethereum;
+package com.breadwallet.wallet.wallets.side;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,17 +10,17 @@ import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.ethereum.BREthereumAmount;
+import com.breadwallet.core.ethereum.BREthereumBlock;
 import com.breadwallet.core.ethereum.BREthereumLightNode;
 import com.breadwallet.core.ethereum.BREthereumNetwork;
 import com.breadwallet.core.ethereum.BREthereumToken;
 import com.breadwallet.core.ethereum.BREthereumTransaction;
-import com.breadwallet.core.ethereum.BREthereumBlock;
 import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
-import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -40,8 +40,9 @@ import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.util.JsonRpcHelper;
 import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
-
 import com.breadwallet.wallet.wallets.WalletManagerHelper;
+import com.breadwallet.wallet.wallets.ethereum.BaseEthereumWalletManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,48 +55,24 @@ import java.util.Locale;
 
 import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
 
-/**
- * BreadWallet
- * <p/>
- * Created by Mihail Gutan on <mihail@breadwallet.com> 3/21/18.
- * Copyright (c) 2018 breadwallet LLC
- * <p/>
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * <p/>
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * <p/>
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-public class WalletEthManager extends BaseEthereumWalletManager implements  BREthereumLightNode.Client,
+public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager implements  BREthereumLightNode.Client,
         BREthereumLightNode.Listener {
-    private static final String TAG = WalletEthManager.class.getSimpleName();
+    private static final String TAG = ElaSideEthereumWalletManager.class.getSimpleName();
 
     private CryptoTransaction mWatchedTransaction;
     private OnHashUpdated mWatchListener;
 
-    private static final String ISO = "ETH";
-    public static final String ETH_SCHEME = "ethereum";
+    private static final String ISO = "ELAETHSC";
+    public static final String ETH_SCHEME = "Elastos evm sidechain";
     //1ETH = 1000000000000000000 WEI
     public static final String ETHER_WEI = "1000000000000000000";
     //Max amount in ether
-    public static final String MAX_ETH = "90000000";
-    private final BigDecimal MAX_WEI = new BigDecimal(MAX_ETH).multiply(new BigDecimal(ETHER_WEI)); // 90m ETH * 18 (WEI)
+    public static final String MAX_ETH = "10000000000";
+    private final BigDecimal MAX_WEI = new BigDecimal(MAX_ETH);
     private final BigDecimal ONE_ETH = new BigDecimal(ETHER_WEI);
-    private static final String NAME = "Ethereum";
+    private static final String NAME = "ETHSC sidechain";
 
-    private static WalletEthManager mInstance;
+    private static ElaSideEthereumWalletManager mInstance;
 
     private WalletUiConfiguration mUiConfig;
     private WalletSettingsConfiguration mSettingsConfig;
@@ -103,7 +80,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
     private BREthereumWallet mWallet;
     public BREthereumLightNode node;
 
-    private WalletEthManager(final Context app, byte[] ethPubKey, BREthereumNetwork network) {
+    private ElaSideEthereumWalletManager(final Context app, byte[] ethPubKey, BREthereumNetwork network) {
         mUiConfig = new WalletUiConfiguration("#5e6fa5", null,
                 true, WalletManagerHelper.MAX_DECIMAL_PLACES_FOR_UI);
         mSettingsConfig = new WalletSettingsConfiguration();
@@ -166,7 +143,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
         node.connect();
     }
 
-    public static synchronized WalletEthManager getInstance(Context app) {
+    public static synchronized ElaSideEthereumWalletManager getInstance(Context app) {
         if (mInstance == null) {
             byte[] rawPubKey = BRKeyStore.getMasterPublicKey(app);
             if (Utils.isNullOrEmpty(rawPubKey)) {
@@ -180,7 +157,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
                     return null;
                 }
             }
-            mInstance = new WalletEthManager(app, ethPubKey, BuildConfig.BITCOIN_TESTNET ? BREthereumNetwork.testnet : BREthereumNetwork.mainnet);
+            mInstance = new ElaSideEthereumWalletManager(app, ethPubKey, BuildConfig.BITCOIN_TESTNET ? BREthereumNetwork.testnet : BREthereumNetwork.mainnet);
 
         }
         return mInstance;
@@ -634,7 +611,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
         return fiatAmount.divide(new BigDecimal(ethBtcRate.rate).multiply(new BigDecimal(btcRate.rate)), 8, BRConstants.ROUNDING_MODE);
     }
 
-
     /**
      * The JSON RPC callbacks
      * Implement JSON RPC methods synchronously
@@ -644,11 +620,13 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
     public void getBalance(final int wid, final String address, final int rid) {
         Log.i("eth_balance", "address:"+address);
         BREthereumWallet wallet = this.node.getWalletByIdentifier(wid);
-        BREthereumToken token = wallet.getToken();
-        if (null == token)
-            getEtherBalance(wallet, wid, address, rid);
-        else
-            getTokenBalance(wallet, wid, token.getAddress(), address, rid);
+
+        getEtherBalance(wallet, wid, address, rid);
+//        BREthereumToken token = wallet.getToken();
+//        if (null == token)
+//            getEtherBalance(wallet, wid, address, rid);
+//        else
+//            getTokenBalance(wallet, wid, token.getAddress(), address, rid);
     }
 
     protected void getEtherBalance(final BREthereumWallet wallet, final int wid, final String address, final int rid) {
@@ -658,7 +636,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String ethRpcUrl = /*JsonRpcHelper.getEthereumRpcUrl()*/"https://api-eth.elaphant.app/api/1/eth/wrap";
                 final JSONObject payload = new JSONObject();
                 final JSONArray params = new JSONArray();
 
@@ -673,73 +650,21 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
                     e.printStackTrace();
                 }
 
-                JsonRpcHelper.makeRpcRequest(BreadApp.getBreadContext(), ethRpcUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
+                ElaSideEthDataSource.getInstance(BreadApp.getBreadContext()).getBalance(address, rid, new JsonRpcHelper.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         try {
                             if (!Utils.isNullOrEmpty(jsonResult)) {
-
-                                JSONObject responseObject = new JSONObject(jsonResult);
-                                Log.d(TAG, "getBalance response -> " + responseObject.toString());
-
-                                if (responseObject.has(JsonRpcHelper.RESULT)) {
-                                    String balance = responseObject.getString(JsonRpcHelper.RESULT);
-                                    node.announceBalance(wid, balance, rid);
-                                }
-                            } else {
-                                Log.e(TAG, "onRpcRequestCompleted: jsonResult is null");
-                            }
-                        } catch (JSONException je) {
-                            je.printStackTrace();
-                        }
-
-                    }
-                });
-            }
-        });
-    }
-
-    protected void getTokenBalance(final BREthereumWallet wallet, final int wid,
-                                   final String contractAddress,
-                                   final String address,
-                                   final int rid) {
-        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
-            Log.e(TAG, "getTokenBalance: App in background!");
-            return;
-        }
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-
-                String ethRpcUrl = JsonRpcHelper.createTokenTransactionsUrl(address, contractAddress);
-
-
-                final JSONObject payload = new JSONObject();
-                try {
-                    payload.put(JsonRpcHelper.ID, String.valueOf(rid));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                JsonRpcHelper.makeRpcRequest(BreadApp.getBreadContext(), ethRpcUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
-                    @Override
-                    public void onRpcRequestCompleted(String jsonResult) {
-                        try {
-                            if (!Utils.isNullOrEmpty(jsonResult) && jsonResult.contains(JsonRpcHelper.RESULT)) {
                                 JSONObject responseObject = new JSONObject(jsonResult);
 
                                 if (responseObject.has(JsonRpcHelper.RESULT)) {
                                     String balance = responseObject.getString(JsonRpcHelper.RESULT);
                                     node.announceBalance(wid, balance, rid);
-
-                                } else {
-                                    Log.e(TAG, "onRpcRequestCompleted: Response does not contain the key 'result'.");
                                 }
                             }
                         } catch (JSONException je) {
                             je.printStackTrace();
                         }
-
                     }
                 });
             }
@@ -754,7 +679,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String ethUrl = JsonRpcHelper.getEthereumRpcUrl();
+                final String ethUrl = /*JsonRpcHelper.getEthereumRpcUrl()*/"https://api-wallet-eth.elastos.org/api/1/eth/wrap";
                 Log.d(TAG, "Making rpc request to -> " + ethUrl);
 
                 final JSONObject payload = new JSONObject();
@@ -768,7 +693,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
                     e.printStackTrace();
                 }
 
-                JsonRpcHelper.makeRpcRequest(BreadApp.getBreadContext(), ethUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
+                JsonRpcHelper.makeRpcRequest3(BreadApp.getBreadContext(), ethUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         try {
@@ -799,7 +724,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String ethUrl = JsonRpcHelper.getEthereumRpcUrl();
+                final String ethUrl = /*JsonRpcHelper.getEthereumRpcUrl()*/"https://api-wallet-eth.elastos.org/api/1/eth/wrap";
                 Log.d(TAG, "Making rpc request to -> " + ethUrl);
 
                 final JSONObject payload = new JSONObject();
@@ -844,18 +769,11 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
         if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
             return;
         }
-        if (Utils.isEmulatorOrDebug(BreadApp.getBreadContext())) {
-            Log.e(TAG, "submitTransaction: wid:" + wid);
-            Log.e(TAG, "submitTransaction: tid:" + tid);
-            Log.e(TAG, "submitTransaction: rawTransaction:" + rawTransaction);
-            Log.e(TAG, "submitTransaction: rid:" + rid);
-        }
 
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String eth_url = JsonRpcHelper.getEthereumRpcUrl();
-                Log.d(TAG, "Making rpc request to -> " + eth_url);
+                final String eth_url = "https://api-wallet-eth.elastos.org/api/1/eth/wrap";
 
                 JSONObject payload = new JSONObject();
                 JSONArray params = new JSONArray();
@@ -941,7 +859,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String ethRpcUrl = /*JsonRpcHelper.createEthereumTransactionsUrl(address)*/"https://api-eth.elaphant.app/api/1/eth/history";
+                final String ethRpcUrl = "https://api-wallet-eth.elastos.org/api/1/eth/history";
 
                 final JSONObject payload = new JSONObject();
                 try {
@@ -954,6 +872,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
                 JsonRpcHelper.makeRpcRequest(BreadApp.getBreadContext(), ethRpcUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
+
 
                         if (!Utils.isNullOrEmpty(jsonResult)) {
                             try {
@@ -1116,7 +1035,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String ethRpcUtl = JsonRpcHelper.createLogsUrl(address, contract, event);
+                String host = "api-wallet-eth.elastos.org";
+                String url = "/api/1/eth/getLogs";
+                final String ethRpcUtl = /*JsonRpcHelper.createLogsUrl(address, contract, event)*/JsonRpcHelper.createElaEthLogsUrl(host, url, event, address);
                 Log.d(TAG, "getLogs: " + ethRpcUtl);
                 final JSONObject payload = new JSONObject();
                 try {
@@ -1179,7 +1100,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String eth_url = JsonRpcHelper.getEthereumRpcUrl();
+                final String eth_url = /*JsonRpcHelper.getEthereumRpcUrl()*/"https://api-wallet-eth.elastos.org/api/1/eth/wrap";
                 Log.d(TAG, "Making rpc request to -> " + eth_url);
 
                 final JSONObject payload = new JSONObject();
@@ -1344,7 +1265,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String ethUrl = JsonRpcHelper.getEthereumRpcUrl();
+                final String ethUrl = /*JsonRpcHelper.getEthereumRpcUrl()*/"https://api-wallet-eth.elastos.org/api/1/eth/wrap";
                 Log.d(TAG, "Making rpc request to -> " + ethUrl);
 
                 final JSONObject payload = new JSONObject();
@@ -1361,7 +1282,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
                     e.printStackTrace();
                 }
 
-                JsonRpcHelper.makeRpcRequest(BreadApp.getBreadContext(), ethUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
+                JsonRpcHelper.makeRpcRequest3(BreadApp.getBreadContext(), ethUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         try {
@@ -1370,7 +1291,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
                             if (responseObject.has(JsonRpcHelper.RESULT)) {
                                 String nonce = responseObject.getString(JsonRpcHelper.RESULT);
                                 Log.d(TAG, "onRpcRequestCompleted: getNonce: " + nonce);
-                                node.announceNonce(address, nonce, rid);
+                                node.announceNonce(address, nonce/*"0x000000000000000001"*/, rid);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -1427,6 +1348,5 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
             }
         }
     }
-
 
 }

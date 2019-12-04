@@ -3,6 +3,7 @@ package com.breadwallet.presenter.activities.sign;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageButton;
@@ -39,6 +40,7 @@ public class SignaureEditActivity extends BRActivity {
         mContentLayout = findViewById(R.id.content_detail);
         mLimitEdt = findViewById(R.id.add_limitation_edt);
         mContentTv = findViewById(R.id.content_detail);
+        mContentTv.setMovementMethod(ScrollingMovementMethod.getInstance());
         mCloseTv = findViewById(R.id.close_button);
         mBackBtn = findViewById(R.id.sign_back_button);
         mTitleTv = findViewById(R.id.title);

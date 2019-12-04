@@ -159,6 +159,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
     AuthorInfoItem elaAddressItem;
     AuthorInfoItem btcAddressItem;
     AuthorInfoItem ethAddressItem;
+    AuthorInfoItem ethEscAddressItem;
     AuthorInfoItem bchAddressItem;
     AuthorInfoItem usdtAddressItem;
     AuthorInfoItem phoneNumberItem;
@@ -193,6 +194,11 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         if(requestInfo.contains("ETHAddress".toLowerCase())){
             ethAddressItem = new AuthorInfoItem(AuthorInfoItem.ETH_ADDRESS, getString(R.string.Did_Eth_Address), "check");
             infos.add(ethAddressItem);
+        }
+
+        if(requestInfo.contains("ELAETHSCAddress".toLowerCase())) {
+            ethEscAddressItem = new AuthorInfoItem(AuthorInfoItem.ETHSC_ADDRESS, getString(R.string.Did_Ethsc_Address), "check");
+            infos.add(ethEscAddressItem);
         }
 
         if(requestInfo.contains("BCHAddress".toLowerCase())){
@@ -305,6 +311,9 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         callbackData.ETHAddress = (ethAddressItem!=null)?ethAddressItem.getValue(this)[0] : null;
         if((ethAddressItem!=null) && ethAddressItem.isChecked()) sb.append(AuthorInfoItem.ETH_ADDRESS).append(",");
 
+        callbackData.ELAETHSCAddress = (ethEscAddressItem !=null)? ethEscAddressItem.getValue(this)[0] : null;
+        if((ethEscAddressItem !=null) && ethEscAddressItem.isChecked()) sb.append(AuthorInfoItem.ETHSC_ADDRESS).append(",");
+
         callbackData.BCHAddress = (bchAddressItem!=null)?bchAddressItem.getValue(this)[0] : null;
         if((bchAddressItem!=null) && bchAddressItem.isChecked()) sb.append(AuthorInfoItem.BCH_ADDRESS).append(",");
 
@@ -345,7 +354,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
                     UiUtils.callbackDataNeedSign(DidAuthorizeActivity.this, backurl, entity);
                     UiUtils.returnDataNeedSign(DidAuthorizeActivity.this, returnUrl, Data, Sign, appId, target);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    showCallbackError();
                 } finally {
                     dialogDismiss();
                     finish();
@@ -360,6 +369,15 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
             public void run() {
                 if (!isFinishing())
                     mLoadingDialog.dismiss();
+            }
+        });
+    }
+
+    private void showCallbackError() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), "callback error", Toast.LENGTH_SHORT).show();
             }
         });
     }

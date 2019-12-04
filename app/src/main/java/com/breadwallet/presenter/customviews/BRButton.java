@@ -182,7 +182,7 @@ public class BRButton extends Button {
             modifiedHeight = height - height / 4 - 5;
             bRect.set(5, 5, modifiedWidth, modifiedHeight + 5);
             canvas.drawRoundRect(bRect, ROUND_PIXELS, ROUND_PIXELS, bPaint);
-            if (type == 2 || type == 3)
+            if (type == 2 || type == 3 || type == 8)
                 canvas.drawRoundRect(bRect, ROUND_PIXELS, ROUND_PIXELS, bPaintStroke);
         }
         super.onDraw(canvas);
@@ -255,6 +255,16 @@ public class BRButton extends Button {
             bPaint.setColor(getContext().getColor(buttonColorValue.resourceId));
             bPaint.setStyle(Paint.Style.FILL);
         }
+
+        else if (type == 8) {
+            bPaintStroke.setColor(getContext().getColor(R.color.multi_sign_copy_color));
+            bPaintStroke.setStyle(Paint.Style.STROKE);
+            bPaintStroke.setStrokeWidth(Utils.getPixelsFromDps(getContext(), 1));
+            setTextColor(getContext().getColor(R.color.multi_sign_copy_color));
+            bPaint.setColor(getContext().getColor(R.color.button_secondary));
+            bPaint.setStyle(Paint.Style.FILL);
+        }
+
         invalidate();
     }
 

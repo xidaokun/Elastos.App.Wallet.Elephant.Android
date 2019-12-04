@@ -148,6 +148,7 @@ public class PhraseListActivity extends BRActivity implements PhraseAdapter.Wall
         Intent intent = new Intent(PhraseListActivity.this, WalletNameActivity.class);
         intent.putExtra(WalletNameActivity.WALLET_NAME_PAGE_TYPE, WalletNameActivity.WALLET_NAME_TYPE_RENAME);
         intent.putExtra(WalletNameActivity.WALLET_NAME, mAdapter.getItem(position).alias);
+        intent.putExtra(WalletNameActivity.WALLET_SELECTED, mAdapter.getItem(position).selected);
         startActivityForResult(intent, WalletNameActivity.REQUEST_WALLET_RENAME);
     }
 

@@ -270,10 +270,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             }
         }
 
-        if (wm.getIso().equalsIgnoreCase("ELA")) {
-            commentString = item.memo == null ? "" : item.memo;
-        }
-
         boolean received = item.isReceived();
         int amountColor = received ? R.color.transaction_amount_received_color : R.color.total_assets_usd_color;
 
@@ -349,7 +345,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             convertView.transactionStatus.setTextColor(mContext.getColor(!received ? R.color.total_assets_usd_color : R.color.transaction_amount_received_color));
         }
         if (wm.getIso().equalsIgnoreCase("ELA") || wm.getIso().equalsIgnoreCase("IOEX")) {
-            if (level == 0) {
+            String status = item.getStatus();
+            if (level==0 && status.equalsIgnoreCase("confirmed")) {
                 convertView.transactionStatus.setText(!received ? sentTo : receivedVia);
                 convertView.transactionStatus.setTextColor(mContext.getColor(!received ? R.color.tx_send_color : R.color.transaction_amount_received_color));
             } else {

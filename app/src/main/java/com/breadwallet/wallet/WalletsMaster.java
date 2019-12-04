@@ -22,7 +22,6 @@ import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PhraseInfo;
-import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Bip39Reader;
@@ -37,13 +36,12 @@ import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 import com.breadwallet.wallet.wallets.ioex.WalletIoexManager;
+import com.breadwallet.wallet.wallets.side.ElaSideEthereumWalletManager;
 import com.platform.entities.TokenListMetaData;
 import com.platform.entities.WalletInfo;
-import com.platform.sqlite.PlatformSqliteHelper;
 import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
@@ -108,6 +106,7 @@ public class WalletsMaster {
             enabled.add(new TokenListMetaData.TokenInfo("USDT", true, "0xdAC17F958D2ee523a2206206994597C13D831ec7"));
             enabled.add(new TokenListMetaData.TokenInfo("ELA", false, null));
             enabled.add(new TokenListMetaData.TokenInfo("ETH", false, null));
+            enabled.add(new TokenListMetaData.TokenInfo("ELAETHSC", false, null));
             enabled.add(new TokenListMetaData.TokenInfo("BGX", true, "0xbf3f09e4eba5f7805e5fac0ee09fd6ee8eebe4cb"));
             enabled.add(new TokenListMetaData.TokenInfo("HSC", true, "0x2bba3cf6de6058cc1b4457ce00deb359e2703d7f"));
             enabled.add(new TokenListMetaData.TokenInfo("BCH", false, null));
@@ -138,6 +137,8 @@ public class WalletsMaster {
             } else if (enabled.symbol.equalsIgnoreCase("ETH") && !isHidden) {
                 //ETH wallet
                 mWallets.add(ethWallet);
+            } else if(enabled.symbol.equalsIgnoreCase("ELAETHSC") && !isHidden) {
+                mWallets.add(ElaSideEthereumWalletManager.getInstance(app));
             } else {
                 //add ERC20 wallet
                 WalletTokenManager tokenWallet = WalletTokenManager.getTokenWalletByIso(app, ethWallet, enabled.symbol);
@@ -170,6 +171,8 @@ public class WalletsMaster {
             return WalletBchManager.getInstance(app);
         if (iso.equalsIgnoreCase("ETH"))
             return WalletEthManager.getInstance(app);
+        if(iso.equalsIgnoreCase("ELAETHSC"))
+            return ElaSideEthereumWalletManager.getInstance(app);
         if (isIsoErc20(app, iso)) {
             return WalletTokenManager.getTokenWalletByIso(app, WalletEthManager.getInstance(app), iso);
         }

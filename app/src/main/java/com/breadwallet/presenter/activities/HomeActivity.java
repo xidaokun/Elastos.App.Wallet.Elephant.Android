@@ -1,7 +1,6 @@
 package com.breadwallet.presenter.activities;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -12,6 +11,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
@@ -25,6 +25,7 @@ import com.breadwallet.tools.sqlite.ProfileDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.StringUtil;
 import com.elastos.jni.Utility;
+import com.elastos.jni.utils.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -228,7 +229,12 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     }
 
     public void showAndDownloadCapsule(String url) {
-        if(mExploreFragment != null){
+        if(mExploreFragment!=null && !StringUtil.isNullOrEmpty(url)){
+            boolean isValid = StringUtils.isElaphantCapsule(url) || StringUtils.isHttpCapsule(url);
+            if (!isValid) {
+                Toast.makeText(this, getString(R.string.mini_app_invalid_url), Toast.LENGTH_SHORT).show();
+                return;
+            }
             showFragment(mExploreFragment);
             mExploreFragment.downloadCapsule(url);
             navigation.setSelectedItemId(R.id.navigation_explore);

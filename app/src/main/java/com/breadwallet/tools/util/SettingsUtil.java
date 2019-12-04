@@ -24,6 +24,7 @@ import com.breadwallet.presenter.activities.settings.SyncBlockchainActivity;
 import com.breadwallet.presenter.activities.settings.UnlinkActivity;
 import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
+import com.breadwallet.tools.animation.ElaphantDialog;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
@@ -146,6 +147,29 @@ public final class SettingsUtil {
                 Beta.checkUpgrade(true, false);
             }
         }, false, R.drawable.ic_upgrade));
+
+        settingsItems.add(new BRSettingsItem(activity.getString(R.string.Clear_cache_title), "", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final ElaphantDialog elaphantDialog = new ElaphantDialog(activity);
+                elaphantDialog.setMessageStr(activity.getString(R.string.clear_cache_message));
+                elaphantDialog.setPositiveStr(activity.getString(R.string.clear_cache_positive_btn));
+                elaphantDialog.setNegativeStr(activity.getString(R.string.clear_cache_negative_btn));
+                elaphantDialog.setPositiveListener(new ElaphantDialog.OnPositiveClickListener() {
+                    @Override
+                    public void onClick() {
+                        UiUtils.clearCache(activity);
+                    }
+                });
+                elaphantDialog.setNegativeListener(new ElaphantDialog.OnNegativeClickListener() {
+                    @Override
+                    public void onClick() {
+                        elaphantDialog.dismiss();
+                    }
+                });
+                elaphantDialog.show();
+            }
+        }, false, R.drawable.ic_clear_cache));
 
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.About_title), "", new View.OnClickListener() {
             @Override

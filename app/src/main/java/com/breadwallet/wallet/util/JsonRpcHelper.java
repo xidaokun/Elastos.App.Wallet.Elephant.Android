@@ -2,16 +2,23 @@ package com.breadwallet.wallet.util;
 
 import android.content.Context;
 import android.support.annotation.WorkerThread;
+import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
+import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map;
+
 import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * BreadWallet
@@ -113,6 +120,18 @@ public class JsonRpcHelper {
                 + "&topic2=" + address;
     }
 
+    ///api/1/eth/getLogs?fromBlock=0&toBlock=latest&topic0=0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359&topic1=0x000000000000000000000000e418a0e203f36cb843079f6ebf0b367e48774ac1&topic1_2_opr=or&topic2=0x000000000000000000000000829bd824b016326a401d083b33d092293333a830
+    public static String createElaEthLogsUrl(String host, String url, String event, String address) {
+        return "https://"
+                + host
+                + url
+                + "?fromBlock=0&toBlock=latest&"
+                + "&topic0=" + event
+                + "&topic1=" + address
+                + "&topic1_2_opr=or"
+                + "&topic2=" + address;
+    }
+
     @WorkerThread
     public static void makeRpcRequest(Context app, String url, JSONObject payload, JsonRpcRequestListener listener) {
         final MediaType JSON
@@ -134,5 +153,106 @@ public class JsonRpcHelper {
             listener.onRpcRequestCompleted(responseString);
         }
 
+    }
+
+    @WorkerThread
+    public static void makeRpcRequest2(Context app, String url, JSONObject payload, JsonRpcRequestListener listener) {
+//        final MediaType JSON
+//                = MediaType.parse("application/json; charset=utf-8");
+//
+//        RequestBody requestBody = RequestBody.create(JSON, payload.toString());
+//
+//        Request request = new Request.Builder()
+//                .url(url)
+//                .header("Content-Type", "application/json; charset=utf-8")
+//                .header("Accept", "application/json")
+//                .post(requestBody).build();
+//
+//
+//        APIClient.BRResponse resp = APIClient.getInstance(app).sendRequest(request, true);
+//        String responseString = resp.getBodyText();
+//
+//        if (listener != null) {
+//            listener.onRpcRequestCompleted(responseString);
+//        }
+
+//        try {
+//            String responseString = urlPost(url, payload.toString());
+//            if (listener != null) {
+//                listener.onRpcRequestCompleted(responseString);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+        try {
+            String tmp = urlGET(app, "https://api-eth.elaphant.app/api/1/eth/token/balance?address=0x289B44672d8499A51130d65d2087A151c4e45966&contractaddress=0xa8cac329f783edac931815c5466e283d48c9d7f7");
+            Log.d("test", "test");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @WorkerThread
+    public static void makeRpcRequest3(Context app, String url, JSONObject payload, JsonRpcRequestListener listener) {
+        final MediaType JSON
+                = MediaType.parse("application/json; charset=utf-8");
+
+        RequestBody requestBody = RequestBody.create(JSON, payload.toString());
+
+        Request request = new Request.Builder()
+                .url(url)
+                .header("Content-Type", "application/json; charset=utf-8")
+                .header("Accept", "application/json")
+                .post(requestBody).build();
+
+
+        APIClient.BRResponse resp = APIClient.getInstance(app).sendRequest(request, true);
+        String responseString = resp.getBodyText();
+
+        if (listener != null) {
+            listener.onRpcRequestCompleted(responseString);
+        }
+
+    }
+
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    public static String urlPost(String url, String json) throws IOException {
+        RequestBody body = RequestBody.create(JSON, json);
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+        Response response = APIClient.elaClient.newCall(request).execute();
+        if (response.isSuccessful()) {
+            return response.body().string();
+        } else {
+            throw new IOException("Unexpected code " + response);
+        }
+    }
+
+    public static String urlGET(Context app, String myURL) throws IOException {
+        Map<String, String> headers = BreadApp.getBreadHeaders();
+
+        Request.Builder builder = new Request.Builder()
+                .url(myURL)
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
+                .header("User-agent", Utils.getAgentString(app, "android/HttpURLConnection"))
+                .get();
+        Iterator it = headers.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            builder.header((String) pair.getKey(), (String) pair.getValue());
+        }
+
+        Request request = builder.build();
+        Response response = APIClient.elaClient.newCall(request).execute();
+
+        if (response.isSuccessful()) {
+            return response.body().string();
+        } else {
+            throw new IOException("Unexpected code " + response);
+        }
     }
 }

@@ -503,7 +503,7 @@
   <!-- Send money amount label -->
   <string name="Send.amountLabel">Bedrag</string>
   <!-- Balance: $4.00 -->
-  <string name="Send.balance">Balans: %1$s</string>
+  <string name="Send.balance">Balans %1$s</string>
   <!-- Instructions how to allow the camera access for the app -->
   <string name="Send.cameraUnavailabeMessage.android">Sta cameratoegang toe via \"Instellingen\" &gt; \"Apps\" &gt; \"Elephant\" &gt; \"Toestemmingen\"</string>
   <!-- Permission required to access camera -->

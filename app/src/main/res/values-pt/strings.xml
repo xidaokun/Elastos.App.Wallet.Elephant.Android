@@ -503,7 +503,7 @@
   <!-- Send money amount label -->
   <string name="Send.amountLabel">Quantia</string>
   <!-- Balance: $4.00 -->
-  <string name="Send.balance">Saldo: %1$s</string>
+  <string name="Send.balance">Saldo %1$s</string>
   <!-- Instructions how to allow the camera access for the app -->
   <string name="Send.cameraUnavailabeMessage.android">Permita o acesso à câmara em \"Definições\" &gt; \"Aplicações\" &gt; \"Elephant\" &gt; \"Permissões\"</string>
   <!-- Permission required to access camera -->
@@ -523,7 +523,7 @@
   <!-- "(you) can't send (to your)self" -->
   <string name="Send.ethSendSelf">Não é possível enviar ao próprio.</string>
   <!-- Network Fee: $0.01 -->
-  <string name="Send.fee">Taxa de rede: %1$s</string>
+  <string name="Send.fee">Taxa de rede %1$s</string>
   <!-- Payee identity not certified alert title. -->
   <string name="Send.identityNotCertified">A identidade do beneficiário não está certificada.</string>
   <!-- Insufficient funds error -->

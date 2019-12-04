@@ -162,6 +162,9 @@ public class Bip39Reader {
     public static String getChineseString() {
         String script = Locale.getDefault().getScript();
         //ISO 15824. Hans	501	Han (Simplified variant)，Hant 502	Han (Traditional variant)
-        return "Hans".equals(script) ? "zh" : "tr";
+        if(!StringUtil.isNullOrEmpty(script)) {
+            return script.toLowerCase().contains("hant") ? "tr" : "zh";
+        }
+        return "zh";
     }
 }

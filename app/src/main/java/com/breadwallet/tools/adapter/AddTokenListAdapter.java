@@ -62,12 +62,15 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
         TokenItem item = mTokens.get(position);
         String currencyCode = item.symbol.toLowerCase();
 
-        if (currencyCode.equals("1st")) {
-            currencyCode = "first";
+        String iconResourceName = currencyCode;
+
+        int iconResourceId = 0;
+        if(currencyCode.equalsIgnoreCase("1st")){
+            iconResourceId = mContext.getResources().getIdentifier("first", BRConstants.DRAWABLE, mContext.getPackageName());
+        } else {
+            iconResourceId = mContext.getResources().getIdentifier(currencyCode, BRConstants.DRAWABLE, mContext.getPackageName());
         }
 
-        String iconResourceName = currencyCode;
-        int iconResourceId = mContext.getResources().getIdentifier(currencyCode, BRConstants.DRAWABLE, mContext.getPackageName());
 
         BaseWalletManager wallet = WalletsMaster.getInstance(mContext).getWalletByIso(mContext, item.symbol);
         if(null == wallet) {

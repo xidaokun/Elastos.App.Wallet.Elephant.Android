@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.did.DidDataSource;
@@ -194,9 +195,14 @@ public class MultiSignCreateActivity extends BRActivity {
             @Override
             public void run() {
                 if (!StringUtil.isNullOrEmpty(mCallbackUrl)) {
-                    String body = "{\"Data\":\"" + dataStr.replace("\"", "\\\"") + "\", \"Sign\":\"" + sign + "\"}";
-                    Log.d(TAG, "post body: " + body);
-                    DidDataSource.getInstance(MultiSignCreateActivity.this).urlPost(mCallbackUrl, body);
+                    try {
+                        String body = "{\"Data\":\"" + dataStr.replace("\"", "\\\"") + "\", \"Sign\":\"" + sign + "\"}";
+                        Log.d(TAG, "post body: " + body);
+                        DidDataSource.getInstance(MultiSignCreateActivity.this).urlPost(mCallbackUrl, body);
+                    } catch (Exception e) {
+                        Toast.makeText(MultiSignCreateActivity.this, "callback error", Toast.LENGTH_SHORT);
+                        e.printStackTrace();
+                    }
                 }
 
                 UiUtils.returnDataNeedSign(MultiSignCreateActivity.this, mReturnUrl, dataStr, sign, mAppID, "");

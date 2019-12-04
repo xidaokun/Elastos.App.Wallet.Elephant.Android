@@ -39,7 +39,7 @@ public class PlatformSqliteHelper extends SQLiteOpenHelper {
     private static PlatformSqliteHelper instance;
 
     public static String DATABASE_NAME = "platform.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     public static synchronized PlatformSqliteHelper getInstance(Context context) {
 

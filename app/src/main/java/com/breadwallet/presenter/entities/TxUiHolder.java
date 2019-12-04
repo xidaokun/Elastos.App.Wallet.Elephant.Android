@@ -51,13 +51,24 @@ public class TxUiHolder {
     private boolean isReceived;
     private boolean isVote;
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    private String status;
+
     //todo refactor this useless class
     public TxUiHolder(Object transaction, boolean isReceived, long timeStamp, int blockHeight, byte[] hash, String txReversed,
                       BigDecimal fee,  String to, String from,
-                      BigDecimal balanceAfterTx, int txSize, BigDecimal amount, boolean isValid, boolean isVote){
+                      BigDecimal balanceAfterTx, int txSize, BigDecimal amount, boolean isValid, boolean isVote, String status){
         this(transaction, isReceived, timeStamp, blockHeight, hash, txReversed, fee, to, from,
                 balanceAfterTx, txSize, amount, isValid);
         this.isVote = isVote;
+        this.status = status;
     }
 
     public TxUiHolder(Object transaction, boolean isReceived, long timeStamp, int blockHeight, byte[] hash, String txReversed,

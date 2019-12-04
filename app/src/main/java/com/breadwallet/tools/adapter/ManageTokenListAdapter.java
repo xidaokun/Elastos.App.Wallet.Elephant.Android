@@ -69,14 +69,20 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
             final TokenItem item = mTokens.get(position);
             String currencyCode = item.symbol.toLowerCase();
 
-            if (currencyCode.equals("1st")) {
-                currencyCode = "first";
+            String iconResourceName = currencyCode;
+            int iconResourceId = 0;
+            if(currencyCode.equalsIgnoreCase("1st")) {
+                iconResourceId = mContext.getResources().getIdentifier("first", BRConstants.DRAWABLE, mContext.getPackageName());
+            } else {
+                iconResourceId = mContext.getResources().getIdentifier(currencyCode, BRConstants.DRAWABLE, mContext.getPackageName());
             }
 
-            String iconResourceName = currencyCode;
-            int iconResourceId = mContext.getResources().getIdentifier(currencyCode, BRConstants.DRAWABLE, mContext.getPackageName());
+            if(currencyCode.equalsIgnoreCase("ELAETHSC")) {
+                holder.tokenName.setText("ELA/ETHSC");
+            } else {
+                holder.tokenName.setText(mTokens.get(position).name);
+            }
 
-            holder.tokenName.setText(mTokens.get(position).name);
             holder.tokenTicker.setText(mTokens.get(position).symbol);
 
             Typeface typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/CircularPro-Book.otf");

@@ -105,7 +105,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="8dp"
                     android:layout_marginStart="4dp"
-                    android:layout_toEndOf="@id/iso_text"
+                    android:paddingLeft="16dp"
                     android:background="@android:color/transparent"
                     android:clickable="false"
                     android:cursorVisible="false"

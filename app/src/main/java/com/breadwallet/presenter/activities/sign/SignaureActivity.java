@@ -200,7 +200,12 @@ public class SignaureActivity extends BRActivity {
                     UiUtils.callbackDataNeedSign(SignaureActivity.this, backurl, entity);
                     UiUtils.returnDataNeedSign(SignaureActivity.this, returnUrl, Data, Sign, appId, target);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "callback error", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 } finally {
                     dialogDismiss();
                     finish();

@@ -17,8 +17,7 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
-import com.breadwallet.wallet.wallets.ela.WalletElaManager;
-import com.breadwallet.wallet.wallets.ioex.WalletIoexManager;
+import com.breadwallet.wallet.wallets.side.ElaSideEthereumWalletManager;
 import com.elastos.jni.utils.HexUtils;
 import com.platform.APIClient;
 
@@ -115,6 +114,15 @@ public class BRApiManager {
                         tmp.code = tmpObj.getString("code");
                         tmp.rate = Float.valueOf(tmpObj.getString("rate"));
                         tmp.iso = walletManager.getIso();
+
+//                        if(tmp.code.equalsIgnoreCase("ETH")) {
+//                            CurrencyEntity elaEthEntity = new CurrencyEntity();
+//                            elaEthEntity.name = ElaSideEthereumWalletManager.ETH_SCHEME;
+//                            elaEthEntity.code = ElaSideEthereumWalletManager.getInstance(context).getIso();
+//                            elaEthEntity.rate = Float.valueOf(tmpObj.getString("rate"));
+//                            elaEthEntity.iso = ElaSideEthereumWalletManager.getInstance(context).getIso();
+//                            set.add(elaEthEntity);
+//                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -252,6 +260,14 @@ public class BRApiManager {
                 String rate = json.getString("price_btc");
                 String iso = json.getString("symbol");
 
+                if(iso.equalsIgnoreCase("ela")) {
+                    ElaSideEthereumWalletManager elaSideEthereumWalletManager = ElaSideEthereumWalletManager.getInstance(context);
+                    if(null != elaSideEthereumWalletManager) {
+                        CurrencyEntity elaEthEnt = new CurrencyEntity(code, elaSideEthereumWalletManager.getName(), Float.valueOf(rate), elaSideEthereumWalletManager.getIso());
+                        tmp.add(elaEthEnt);
+                    }
+                }
+
                 CurrencyEntity ent = new CurrencyEntity(code, name, Float.valueOf(rate), iso);
                 tmp.add(ent);
 
@@ -275,7 +291,7 @@ public class BRApiManager {
         //initialize the TimerTask's job
         initializeTimerTask(context);
 
-        timer.schedule(timerTask, 1000, 5 * 60 * 1000);
+        timer.schedule(timerTask, 1000, 1 * 60 * 1000);
     }
 
     public void stopTimerTask() {

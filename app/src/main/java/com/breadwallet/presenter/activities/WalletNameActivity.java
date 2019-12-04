@@ -27,6 +27,7 @@ public class WalletNameActivity extends BRActivity {
 
     public static final String WALLET_NAME = "wallet.name";
     public static final String WALLET_NAME_PAGE_TYPE = "wallet.name_page_type";
+    public static final String WALLET_SELECTED = "wallet.selected";
 
     public static final int WALLET_NAME_TYPE_RENAME = 0;
     public static final int WALLET_NAME_TYPE_NEW = 1;
@@ -55,10 +56,13 @@ public class WalletNameActivity extends BRActivity {
         initView();
     }
 
+    boolean mIsSelected = false;
     private void initView() {
         Intent intent = getIntent();
         mType = intent.getIntExtra(WALLET_NAME_PAGE_TYPE, WALLET_NAME_TYPE_RENAME);
+        mIsSelected = intent.getBooleanExtra(WALLET_SELECTED, false);
         String defaultName = intent.getStringExtra(WALLET_NAME);
+
 
         TextView save = findViewById(R.id.save_button);
         if (mType == WALLET_NAME_TYPE_RENAME) {

@@ -121,6 +121,7 @@
     <color name="spend_limit_list_divider_color_dark">#b3c0c8</color>
     <color name="unlink_header_start">#97B5ED</color>
     <color name="unlink_header_end">#779DE6</color>
+    <color name="multi_sign_copy_color">#27C981</color>
 
     <color name="black_333333">#333333</color>
     <color name="black_999999">#999999</color>

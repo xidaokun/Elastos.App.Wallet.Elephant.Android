@@ -63,6 +63,7 @@ public class TokenListMetaData {
         if (this.hiddenCurrencies == null) {
             this.hiddenCurrencies = new ArrayList<>();
             this.hiddenCurrencies.add(new TokenInfo("BCH", false, null));
+            this.hiddenCurrencies.add(new TokenInfo("ELAETHSC", false, null));
         }
     }
 

@@ -524,7 +524,7 @@
   <!-- "(you) can't send (to your)self" -->
   <string name="Send.ethSendSelf">Sie können nichts an sich selbst versenden.</string>
   <!-- Network Fee: $0.01 -->
-  <string name="Send.fee">Netzwerkgebühr: %1$s</string>
+  <string name="Send.fee">Netzwerkgebühr %1$s</string>
   <!-- Payee identity not certified alert title. -->
   <string name="Send.identityNotCertified">die Identität des Zahlungsempfängers ist nicht bestätigt.</string>
   <!-- Insufficient funds error -->

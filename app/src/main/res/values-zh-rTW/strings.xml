@@ -510,7 +510,7 @@
     <!-- Send money amount label -->
     <string name="Send.amountLabel">金額</string>
     <!-- Balance: $4.00 -->
-    <string name="Send.balance">餘額：%1$s</string>
+    <string name="Send.balance">餘額 %1$s</string>
     <!-- Instructions how to allow the camera access for the app -->
     <string name="Send.cameraUnavailabeMessage.android">到「設定」 &gt; 「應用程式」 &gt; 「Elephant」 &gt; 「權限」允許相機存取</string>
     <!-- Permission required to access camera -->
@@ -530,7 +530,7 @@
     <!-- "(you) can't send (to your)self" -->
     <string name="Send.ethSendSelf">無法寄給自己</string>
     <!-- Network Fee: $0.01 -->
-    <string name="Send.fee">網路費：%1$s</string>
+    <string name="Send.fee">網路費 %1$s</string>
     <!-- Payee identity not certified alert title. -->
     <string name="Send.identityNotCertified">收款人身分未經認證。</string>
     <!-- Insufficient funds error -->
@@ -974,6 +974,7 @@
     <string name="Did.Btc.Address">比特幣地址</string>
     <string name="Did.Eth.Address">以太坊地址</string>
     <string name="Did.Bch.Address">比特現金地址</string>
+    <string name="Did.Ethsc.Address">ELAETHSC地址</string>
     <string name="Did.Usd.Address">USDT地址</string>
     <string name="Did.Ela.Address">ELA地址</string>
     <string name="Did.PhoneNumber">手機號</string>
@@ -1003,6 +1004,7 @@
     <string name="Did.Detail.Btc.Address">- 比特幣地址</string>
     <string name="Did.Detail.Bch.Address">- 比特現金地址</string>
     <string name="Did.Detail.Eth.Address">- 以太坊地址</string>
+    <string name="Did.Detail.ELAETHSC.Address">- ELAETHSC地址</string>
     <string name="Did.Detail.Ioex.Address">- IOEX地址</string>
     <string name="Did.Detail.Email">- 邮箱</string>
     <string name="Did.Detail.Phone.Number">- 手机号</string>
@@ -1044,7 +1046,7 @@
     <string name="vote_title">投票</string>
     <string name="vote_nodes_count">你正在向%1$d個節點投票(最多36個)</string>
     <string name="vote_balance">%1$s ELA</string>
-    <string name="vote_hint">投票只需要很少的手續費:0.0000486 ELA</string>
+    <string name="vote_hint">投票只需要很少的手續費:%1$s ELA</string>
     <string name="vote_hint2">投票結束后，您可以隨時使用ELA，但您的投票將被取消。</string>
     <string name="pin_author_vote">授權投票</string>
     <string name="vote_cancel_btn_txt">取消</string>
@@ -1165,4 +1167,13 @@
     <string name="multi_wallet_phares_not_backup">還未備份助記詞</string>
     <string name="multi_wallet_already_current">已經是當前助記詞</string>
 
+    <string name="send_memo_hint">Memo資訊會上鏈</string>
+    <string name="Clear_cache_title">清除緩存</string>
+    <string name="txid_copy_hint">txid:%1$s</string>
+    <string name="txid_copy_tv">拷貝</string>
+
+    <string name="clear_cache_message">确认清除缓存吗？</string>
+    <string name="clear_cache_positive_btn">确定</string>
+    <string name="clear_cache_negative_btn">取消</string>
+    <string name="elapay_request_params_error">請求參數錯誤</string>
 </resources>

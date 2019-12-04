@@ -157,44 +157,8 @@ public class BreadApp extends Application {
         ProcessLifecycleOwner.get().getLifecycle().addObserver(mObserver);
 
         Beta.upgradeDialogLayoutId = R.layout.upgrade_layout;
-        Beta.upgradeDialogLifecycleListener = new UILifecycleListener<UpgradeInfo>(){
-
-            @Override
-            public void onCreate(Context context, View view, UpgradeInfo upgradeInfo) {
-                TextView cancelBtn = view.findViewWithTag("beta_cancel_button");
-                TextView upgradeBtn = view.findViewWithTag("beta_confirm_button");
-
-                cancelBtn.setText("Next time");
-                upgradeBtn.setText("Upgrade");
-            }
-
-            @Override
-            public void onStart(Context context, View view, UpgradeInfo upgradeInfo) {
-
-            }
-
-            @Override
-            public void onResume(Context context, View view, UpgradeInfo upgradeInfo) {
-
-            }
-
-            @Override
-            public void onPause(Context context, View view, UpgradeInfo upgradeInfo) {
-
-            }
-
-            @Override
-            public void onStop(Context context, View view, UpgradeInfo upgradeInfo) {
-
-            }
-
-            @Override
-            public void onDestroy(Context context, View view, UpgradeInfo upgradeInfo) {
-
-            }
-        };
+        UpgradeHandler.initString();
         Bugly.init(getApplicationContext(), BuildConfig.UPGRADE_TESTNET? "8b437eefc0":"8a9b0190e0", false);
-
         cacheVersionCode();
     }
 
