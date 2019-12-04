@@ -344,9 +344,20 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             convertView.transactionStatus.setText(!received ? sendingTo : receivingVia);
             convertView.transactionStatus.setTextColor(mContext.getColor(!received ? R.color.total_assets_usd_color : R.color.transaction_amount_received_color));
         }
-        if (wm.getIso().equalsIgnoreCase("ELA") || wm.getIso().equalsIgnoreCase("IOEX")) {
+        if (wm.getIso().equalsIgnoreCase("ELA")) {
             String status = item.getStatus();
-            if (level==0 && status.equalsIgnoreCase("confirmed")) {
+            if (level==0 && !StringUtil.isNullOrEmpty(status) && status.equalsIgnoreCase("confirmed")) {
+                convertView.transactionStatus.setText(!received ? sentTo : receivedVia);
+                convertView.transactionStatus.setTextColor(mContext.getColor(!received ? R.color.tx_send_color : R.color.transaction_amount_received_color));
+            } else {
+                convertView.transactionStatus.setText(!received ? sendingTo : receivingVia);
+                convertView.transactionIcon.setBackgroundResource(!received ? R.drawable.ellipse_sending : R.drawable.ellipse_receive);
+                convertView.transactionStatus.setTextColor(mContext.getColor(!received ? R.color.total_assets_usd_color : R.color.transaction_amount_received_color));
+            }
+        }
+
+        if(wm.getIso().equalsIgnoreCase("IOEX")){
+            if (level==0) {
                 convertView.transactionStatus.setText(!received ? sentTo : receivedVia);
                 convertView.transactionStatus.setTextColor(mContext.getColor(!received ? R.color.tx_send_color : R.color.transaction_amount_received_color));
             } else {

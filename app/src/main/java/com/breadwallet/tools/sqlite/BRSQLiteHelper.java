@@ -55,7 +55,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     }
 
     public static String DATABASE_NAME = "breadwallet.db";
-    private static final int DATABASE_VERSION = 20;
+    private static final int DATABASE_VERSION = 21;
 
     public static final String ADD_APPS_TABLE_NAME = "addAppTable";
     public static final String ADD_APPS_NAME = "name";
@@ -379,13 +379,12 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-        if(newVersion==20) {
+        if(oldVersion==20) {
             db.execSQL("DROP TABLE IF EXISTS " + ADD_APPS_TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + ELA_TX_TABLE_NAME);
         }
 
-        if(newVersion == 19){
+        if(oldVersion == 18){
             db.execSQL("DROP TABLE IF EXISTS " + ELA_TX_TABLE_NAME);
             db.execSQL(ELA_TX_DATABASE_CREATE);
             db.execSQL(ADD_APPS_DATABASE_CREATE);

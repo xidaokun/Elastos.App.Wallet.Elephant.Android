@@ -20,6 +20,7 @@ import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.SettingsUtil;
 import com.breadwallet.tools.util.StringUtil;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
@@ -139,8 +140,8 @@ public class WalletIoexManager extends BRCoreWalletManager implements BaseWallet
 
     @Override
     public boolean isAddressValid(String address) {
-        Log.i(TAG, "isAddressValid");
-        return true;
+        return !Utils.isNullOrEmpty(address) && (address.startsWith(IOEX_ADDRESS_PREFIX)
+                || address.startsWith("8"));
     }
 
     @Override
