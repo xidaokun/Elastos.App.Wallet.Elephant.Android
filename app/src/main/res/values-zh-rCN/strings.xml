@@ -1177,4 +1177,6 @@
     <string name="clear_cache_negative_btn">取消</string>
 
     <string name="elapay_request_params_error">请求参数错误</string>
+
+    <string name="My.explore.chat">聊天</string>
 </resources>

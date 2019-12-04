@@ -1,8 +1,11 @@
 package com.breadwallet.presenter.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.internal.BottomNavigationItemView;
+import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,10 +14,12 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.presenter.fragments.FragmentChat;
 import com.breadwallet.presenter.fragments.FragmentExplore;
 import com.breadwallet.presenter.fragments.FragmentSetting;
 import com.breadwallet.presenter.fragments.FragmentWallet;
@@ -35,6 +40,7 @@ import org.elastos.sdk.wallet.DidManager;
 import org.elastos.sdk.wallet.Identity;
 import org.elastos.sdk.wallet.IdentityManager;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +54,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
     private static final String TAG = HomeActivity.class.getSimpleName() + "_test";
     private FragmentWallet mWalletFragment;
+    private FragmentChat mChatFragment;
     private Fragment mSettingFragment;
     private FragmentExplore mExploreFragment;
     private FragmentManager mFragmentManager;
@@ -64,7 +71,9 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                     return true;
                 case R.id.navigation_explore:
                     showFragment(mExploreFragment);
-//                    UiUtils.startExploreActivity(HomeActivity.this);
+                    return true;
+                case R.id.navigation_chat:
+                    showFragment(mChatFragment);
                     return true;
                 case R.id.navigation_notifications:
                     showFragment(mSettingFragment);
@@ -82,9 +91,12 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+        disableShiftingMode(navigation);
+
         mFragmentManager = getSupportFragmentManager();
         mWalletFragment = FragmentWallet.newInstance("Wallet");
         mExploreFragment = FragmentExplore.newInstance("Explore");
+        mChatFragment = FragmentChat.newInstance("Chat");
         mSettingFragment = FragmentSetting.newInstance("Setting");
 
         mExploreFragment.setAboutShowListener(this);
@@ -251,5 +263,61 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     protected void onDestroy() {
         super.onDestroy();
         mHomeActivity = null;
+    }
+
+    @SuppressLint("RestrictedApi")
+    public static void disableShiftingMode(BottomNavigationView view) {
+        try {
+            BottomNavigationMenuView mMenuView = (BottomNavigationMenuView) view.getChildAt(0);
+            Field mShiftingModeField = BottomNavigationMenuView.class.getDeclaredField("mShiftingMode");
+            mShiftingModeField.setAccessible(true);
+            mShiftingModeField.set(mMenuView, false);
+            for (int i = 0; i < mMenuView.getChildCount(); i++) {
+                BottomNavigationItemView itemView = (BottomNavigationItemView) mMenuView.getChildAt(i);
+                itemView.setShiftingMode(false);
+                itemView.setChecked(itemView.getItemData().isChecked());
+            }
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @SuppressLint("RestrictedApi")
+    public static void disableItemScale(BottomNavigationView view) {
+        try {
+            BottomNavigationMenuView menuView = (BottomNavigationMenuView) view.getChildAt(0);
+
+            Field mLargeLabelField = BottomNavigationItemView.class.getDeclaredField("mLargeLabel");
+            Field mSmallLabelField = BottomNavigationItemView.class.getDeclaredField("mSmallLabel");
+            Field mShiftAmountField = BottomNavigationItemView.class.getDeclaredField("mShiftAmount");
+            Field mScaleUpFactorField = BottomNavigationItemView.class.getDeclaredField("mScaleUpFactor");
+            Field mScaleDownFactorField = BottomNavigationItemView.class.getDeclaredField("mScaleDownFactor");
+
+            mSmallLabelField.setAccessible(true);
+            mLargeLabelField.setAccessible(true);
+            mShiftAmountField.setAccessible(true);
+            mScaleUpFactorField.setAccessible(true);
+            mScaleDownFactorField.setAccessible(true);
+
+
+            final float fontScale = view.getResources().getDisplayMetrics().scaledDensity;
+
+            for (int i = 0; i < menuView.getChildCount(); i++) {
+                BottomNavigationItemView itemView = (BottomNavigationItemView) menuView.getChildAt(i);
+
+                TextView lagerObj = (TextView) mLargeLabelField.get(itemView);
+                TextView smallObj = (TextView) mSmallLabelField.get(itemView);
+                lagerObj.setTextSize(smallObj.getTextSize() / fontScale + 0.5f);
+
+
+                mShiftAmountField.set(itemView, 0);
+                mScaleUpFactorField.set(itemView, 1f);
+                mScaleDownFactorField.set(itemView, 1f);
+
+                itemView.setChecked(itemView.getItemData().isChecked());
+            }
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 }

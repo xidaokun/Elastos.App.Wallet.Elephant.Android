@@ -1183,4 +1183,6 @@
     <string name="clear_cache_negative_btn">Cancel</string>
 
     <string name="elapay_request_params_error">Request parameter error</string>
+
+    <string name="My.explore.chat">Chat</string>
 </resources>
