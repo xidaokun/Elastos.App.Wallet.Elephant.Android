@@ -117,4 +117,9 @@
     <declare-styleable name="ConstraintHeightListView">
         <attr name="maxHeight" format="dimension"></attr>
     </declare-styleable>
+
+    <style name="tabText" parent="TextAppearance.AppCompat">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">14sp</item>
+    </style>
 </resources>

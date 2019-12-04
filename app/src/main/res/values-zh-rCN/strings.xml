@@ -1179,4 +1179,6 @@
     <string name="elapay_request_params_error">请求参数错误</string>
 
     <string name="My.chat.title">聊天</string>
+    <string name="My.chat.tab.message.title">信息</string>
+    <string name="My.chat.tab.friends.title">通讯录</string>
 </resources>

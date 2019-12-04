@@ -1185,4 +1185,6 @@
     <string name="elapay_request_params_error">Request parameter error</string>
 
     <string name="My.chat.title">Chat</string>
+    <string name="My.chat.tab.message.title">MESSAGES</string>
+    <string name="My.chat.tab.friends.title">FRIENDS</string>
 </resources>

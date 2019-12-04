@@ -10,9 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.adapter.ChatPagerAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FragmentChat extends Fragment {
-    private static final String TAG = FragmentExplore.class.getSimpleName() + "_log";
+    private static final String TAG = FragmentChat.class.getSimpleName() + "_log";
 
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
@@ -36,7 +40,10 @@ public class FragmentChat extends Fragment {
     private void initView(View view) {
         mTabLayout = view.findViewById(R.id.tab_layout);
         mViewPager = view.findViewById(R.id.viewpager);
-
+        List<BaseFragmentChat> fragments = new ArrayList<>();
+        fragments.add(FragmentChatFriends.newInstance(getContext().getString(R.string.My_chat_tab_friends_title)));
+        fragments.add(FragmentChatMessage.newInstance(getContext().getString(R.string.My_chat_tab_message_title)));
+        mViewPager.setAdapter(new ChatPagerAdapter(getActivity().getSupportFragmentManager(), fragments));
         mTabLayout.setupWithViewPager(mViewPager);
     }
 

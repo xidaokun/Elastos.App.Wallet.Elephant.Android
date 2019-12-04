@@ -24,20 +24,28 @@
         android:layout_height="20dp"
         android:layout_marginTop="15dp"
         android:layout_marginRight="20dp"
-        android:background="@drawable/ic_explore_add"
+        android:background="@drawable/ic_chat_add"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:background="@color/primary_background"
-        app:tabSelectedTextColor="#ffffff"
-        app:tabIndicatorColor="#ff00ff"
-        app:tabTextColor="#000000"
-        app:tabIndicatorHeight="5dp"
+        android:layout_height="60dp"
+        android:background="@null"
+        android:textStyle="bold"
+        app:tabSelectedTextColor="#333333"
+        app:tabIndicatorColor="#333333"
+        app:tabTextColor="#cccccc"
+        app:tabIndicatorHeight="2dp"
+        app:tabBackground="@null"
+        app:tabTextAppearance="@style/tabText"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginTop="15dp"
         app:tabMode="fixed"/>
 
     <android.support.v4.view.ViewPager
