@@ -1178,5 +1178,5 @@
 
     <string name="elapay_request_params_error">请求参数错误</string>
 
-    <string name="My.explore.chat">聊天</string>
+    <string name="My.chat.title">聊天</string>
 </resources>
