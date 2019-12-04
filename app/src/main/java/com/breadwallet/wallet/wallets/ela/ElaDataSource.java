@@ -566,8 +566,8 @@ public class ElaDataSource implements BRDataSourceInterface {
     //true is receive
     private boolean isReceived(String type){
         if(StringUtil.isNullOrEmpty(type)) return false;
-        if(type.equals("spend")) return false;
-        if(type.equals("income")) return true;
+        if(type.equalsIgnoreCase("spend")) return false;
+        if(type.equalsIgnoreCase("income")) return true;
 
         return true;
     }

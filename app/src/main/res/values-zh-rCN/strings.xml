@@ -1002,6 +1002,7 @@
     <string name="Did.Detail.Btc.Address">- 比特币地址</string>
     <string name="Did.Detail.Bch.Address">- 比特现金地址</string>
     <string name="Did.Detail.Eth.Address">- 以太坊地址</string>
+    <string name="Did.Detail.ELAETHSC.Address">- ELAETHSC地址</string>
     <string name="Did.Detail.Ioex.Address">- IOEX地址</string>
     <string name="Did.Detail.Email">- 邮箱</string>
     <string name="Did.Detail.Phone.Number">- 手机号</string>
