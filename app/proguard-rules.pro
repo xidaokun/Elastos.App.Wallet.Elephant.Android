@@ -35,5 +35,6 @@
 -optimizations !code/simplification/arithmetic,!field/*,!class/merging/*,!code/allocation/variable
 
 -keepattributes *Annotation*
+-keep @**annotation** class * {*;}
 -keepattributes SourceFile,LineNumberTable
 -keep public class * extends java.lang.Exception
