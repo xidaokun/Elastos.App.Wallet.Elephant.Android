@@ -41,7 +41,7 @@ public class ChatMessageAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
         if (null == convertView) {
-            convertView = View.inflate(mContext, R.layout.chat_message_item, null);
+            convertView = View.inflate(mContext, R.layout.chat_friend_message_item, null);
             viewHolder = new ViewHolder();
             viewHolder.nameTv = convertView.findViewById(R.id.chat_item_name);
             viewHolder.msgTv = convertView.findViewById(R.id.chat_item_msg);

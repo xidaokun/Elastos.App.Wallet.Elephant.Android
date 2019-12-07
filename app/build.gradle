@@ -220,6 +220,7 @@ dependencies {
     implementation 'com.tencent.bugly:nativecrashreport:latest.release'
     implementation 'org.apache.shiro:shiro-crypto-hash:1.4.0'
     implementation 'com.belerweb:pinyin4j:2.5.1'
+    implementation 'com.github.promeg:tinypinyin:1.0.0'
     implementation project(':ElastosSdkKeypair')
     implementation project(':ElastosSdkWallet')
 }
