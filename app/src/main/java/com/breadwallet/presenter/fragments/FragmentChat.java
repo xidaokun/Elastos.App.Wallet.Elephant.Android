@@ -41,8 +41,8 @@ public class FragmentChat extends Fragment {
         mTabLayout = view.findViewById(R.id.tab_layout);
         mViewPager = view.findViewById(R.id.viewpager);
         List<BaseFragmentChat> fragments = new ArrayList<>();
-        fragments.add(FragmentChatFriends.newInstance(getContext().getString(R.string.My_chat_tab_friends_title)));
         fragments.add(FragmentChatMessage.newInstance(getContext().getString(R.string.My_chat_tab_message_title)));
+        fragments.add(FragmentChatFriends.newInstance(getContext().getString(R.string.My_chat_tab_friends_title)));
         mViewPager.setAdapter(new ChatPagerAdapter(getActivity().getSupportFragmentManager(), fragments));
         mTabLayout.setupWithViewPager(mViewPager);
     }
