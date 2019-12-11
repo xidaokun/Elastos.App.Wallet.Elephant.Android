@@ -221,6 +221,11 @@ dependencies {
     implementation 'org.apache.shiro:shiro-crypto-hash:1.4.0'
     implementation 'com.belerweb:pinyin4j:2.5.1'
     implementation 'com.github.promeg:tinypinyin:1.0.0'
+    implementation 'com.jakewharton:butterknife:7.0.1'
+    annotationProcessor 'com.jakewharton:butterknife:7.0.1'
+    implementation 'com.jude:easyrecyclerview:4.2.3'
+    implementation 'com.github.bumptech.glide:glide:3.7.0'
+    implementation 'org.greenrobot:eventbus:3.0.0'
     implementation project(':ElastosSdkKeypair')
     implementation project(':ElastosSdkWallet')
 }
