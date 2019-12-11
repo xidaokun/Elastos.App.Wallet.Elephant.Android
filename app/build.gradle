@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion = 28
@@ -228,6 +227,7 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.0.0'
     implementation project(':ElastosSdkKeypair')
     implementation project(':ElastosSdkWallet')
+    implementation project(path: ':momentlib')
 }
 
-apply plugin: 'com.google.gms.google-services'
+

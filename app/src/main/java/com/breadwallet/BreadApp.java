@@ -114,16 +114,6 @@ public class BreadApp extends Application {
             HOST = "stage2.breadwallet.com";
         }
 
-//        CrashHandler crashHandler = CrashHandler.getInstance();
-//        crashHandler.init(this);
-//        Thread.setDefaultUncaughtExceptionHandler(crashHandler);
-
-//        final Fabric fabric = new Fabric.Builder(this)
-//                .kits(new Crashlytics.Builder().disabled(BuildConfig.DEBUG).build())
-//                .debuggable(BuildConfig.DEBUG)// Enables Crashlytics debugger
-//                .build();
-//        Fabric.with(fabric);
-
         mContext = this;
 
         if (!Utils.isEmulatorOrDebug(this) && IS_ALPHA)

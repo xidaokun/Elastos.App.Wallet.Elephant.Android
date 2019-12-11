@@ -29,7 +29,6 @@ import com.breadwallet.tools.adapter.chat.ChatAdapter;
 import com.breadwallet.tools.adapter.chat.CommonFragmentPagerAdapter;
 import com.breadwallet.tools.util.Constants;
 import com.breadwallet.tools.util.GlobalOnItemClickListener;
-import com.breadwallet.tools.util.MediaManager;
 import com.jude.easyrecyclerview.EasyRecyclerView;
 
 import org.greenrobot.eventbus.EventBus;

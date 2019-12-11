@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.RoundImageView;
@@ -14,36 +13,41 @@ import com.breadwallet.presenter.entities.ContactEntity;
 
 import java.util.List;
 
-public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder>{
+public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHolder>{
 
-    protected Context mContext;
-    protected List<ContactEntity> mDatas;
-    protected LayoutInflater mInflater;
+    private Context mContext;
+    private List<ContactEntity> mDatas;
+    private LayoutInflater mInflater;
+    private OnItemClickListener mListener;
 
-    public ContactAdapter(Context context, List<ContactEntity> datas) {
+    public FriendsAdapter(Context context, List<ContactEntity> datas) {
         this.mContext = context;
         this.mDatas = datas;
         mInflater = LayoutInflater.from(mContext);
     }
 
-    public ContactAdapter setDatas(List<ContactEntity> datas) {
+    public FriendsAdapter setDatas(List<ContactEntity> datas) {
         mDatas = datas;
         return this;
     }
 
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.mListener = listener;
+    }
+
     @Override
-    public ContactAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public FriendsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new ViewHolder(mInflater.inflate(R.layout.chat_friend_contact_item, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(final ContactAdapter.ViewHolder holder, final int position) {
+    public void onBindViewHolder(final FriendsAdapter.ViewHolder holder, final int position) {
         final ContactEntity contactEntity = mDatas.get(position);
         holder.name.setText(contactEntity.getContact());
         holder.content.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, "pos:" + position, Toast.LENGTH_SHORT).show();
+                if(null != mListener) mListener.OnItemClick(v, position);
             }
         });
         holder.logo.setImageResource(R.drawable.btc);
@@ -65,5 +69,9 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
             name = itemView.findViewById(R.id.chat_contact_item_name);
             content = itemView.findViewById(R.id.content);
         }
+    }
+
+    public interface OnItemClickListener {
+        void OnItemClick(View view, int position);
     }
 }

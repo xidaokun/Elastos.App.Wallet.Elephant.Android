@@ -13,7 +13,8 @@ import com.breadwallet.presenter.customviews.DividerItemDecoration;
 import com.breadwallet.presenter.customviews.IndexBar;
 import com.breadwallet.presenter.customviews.SuspensionDecoration;
 import com.breadwallet.presenter.entities.ContactEntity;
-import com.breadwallet.tools.adapter.ContactAdapter;
+import com.breadwallet.tools.adapter.FriendsAdapter;
+import com.breadwallet.tools.animation.UiUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ public class FragmentChatFriends extends BaseFragmentChat {
 
     private RecyclerView mRecyclerView;
     private IndexBar mIndexBar;
-    private ContactAdapter mAdapter;
+    private FriendsAdapter mAdapter;
     private List<ContactEntity> mDatas = new ArrayList<>();
     private SuspensionDecoration mDecoration;
     private LinearLayoutManager mManager;
@@ -43,6 +44,7 @@ public class FragmentChatFriends extends BaseFragmentChat {
         initView(rootView);
         //mock data
         initDatas(getResources().getStringArray(R.array.provinces));
+        initListener();
         return rootView;
     }
 
@@ -55,10 +57,19 @@ public class FragmentChatFriends extends BaseFragmentChat {
                 .setNeedRealIndex(true)
                 .setmLayoutManager(mManager);
 
-        mAdapter = new ContactAdapter(getContext(), mDatas);
+        mAdapter = new FriendsAdapter(getContext(), mDatas);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addItemDecoration(mDecoration = new SuspensionDecoration(getContext(), mDatas));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST));
+    }
+
+    private void initListener() {
+        mAdapter.setOnItemClickListener(new FriendsAdapter.OnItemClickListener() {
+            @Override
+            public void OnItemClick(View view, int position) {
+                UiUtils.startMomentActivity(getContext());
+            }
+        });
     }
 
     private void initDatas(final String[] data) {

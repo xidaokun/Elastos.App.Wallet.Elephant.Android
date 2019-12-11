@@ -413,6 +413,26 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysVisible"/>
 
+
+        <activity
+            android:name="org.moment.lib.activity.MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            >
+            <!-- <intent-filter>
+                 <action android:name="android.intent.action.MAIN" />
+
+                 <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>-->
+        </activity>
+        <activity android:name="org.moment.lib.activity.ImagePagerActivity"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <meta-data
+            android:name="com.yiw.circledemo.MyGlideModule"
+            android:value="GlideModule" />
+
         <provider
             android:name=".presenter.provider.BuglyFileProvider"
             android:authorities="${applicationId}.fileProvider"
@@ -441,11 +461,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/share_capsule_path" />
         </provider>
-
- <!--       <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="8f7c58228ac371e49f7c5e8b1a94c4c0833986a1" />
--->
     </application>
 
 </manifest>
