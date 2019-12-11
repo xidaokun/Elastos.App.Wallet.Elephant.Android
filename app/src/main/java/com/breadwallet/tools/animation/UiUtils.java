@@ -45,6 +45,7 @@ import com.breadwallet.presenter.activities.VoteActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.WalletNameActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
+import com.breadwallet.presenter.activities.chat.ChatDetailActivity;
 import com.breadwallet.presenter.activities.did.DidAuthorizeActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
@@ -656,6 +657,11 @@ public class UiUtils {
         intent.putExtra(WalletNameActivity.WALLET_NAME_PAGE_TYPE, type);
         intent.putExtra(WalletNameActivity.WALLET_NAME, getDefaultWalletName(context));
         intent.putExtra(IntroActivity.INTRO_REENTER, reenter);
+        context.startActivity(intent);
+    }
+
+    public static void startChatDetailActivity(Context context) {
+        Intent intent = new Intent(context, ChatDetailActivity.class);
         context.startActivity(intent);
     }
 

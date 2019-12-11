@@ -74,7 +74,7 @@
             android:scaleType="centerCrop"
             android:src="@drawable/icon_chat_add" />
 
-        <com.rance.chatui.widget.StateButton
+        <com.breadwallet.presenter.customviews.StateButton
             android:id="@+id/emotion_send"
             android:layout_width="40dp"
             android:layout_height="30dp"
@@ -102,7 +102,7 @@
         android:orientation="vertical"
         android:visibility="gone">
 
-        <com.rance.chatui.widget.NoScrollViewPager
+        <com.breadwallet.presenter.customviews.NoScrollViewPager
             android:id="@+id/viewpager"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

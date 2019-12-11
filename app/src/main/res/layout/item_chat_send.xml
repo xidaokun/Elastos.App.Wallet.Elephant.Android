@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@id/chat_item_header">
 
-            <com.rance.chatui.widget.BubbleImageView
+            <com.breadwallet.presenter.customviews.BubbleImageView
                 android:id="@+id/chat_item_content_image"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
                 android:padding="@dimen/content_vertical_margin"
                 android:background="@drawable/chatto_bg_normal">
 
-                <com.rance.chatui.widget.GifTextView
+                <com.breadwallet.presenter.customviews.GifTextView
                     android:id="@+id/chat_item_content_text"
                     style="@style/text_subhead_black"
                     android:layout_marginRight="@dimen/content_horizontal_margin"

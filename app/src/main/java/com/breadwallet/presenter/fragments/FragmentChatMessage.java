@@ -1,14 +1,18 @@
 package com.breadwallet.presenter.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.chat.ChatDetailActivity;
 import com.breadwallet.presenter.entities.ChatMsgEntity;
 import com.breadwallet.tools.adapter.ChatMessageAdapter;
+import com.breadwallet.tools.animation.UiUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +33,7 @@ public class FragmentChatMessage extends BaseFragmentChat {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_chat_message, container, false);
         initView(rootView);
+        initListener();
         return rootView;
     }
 
@@ -86,5 +91,14 @@ public class FragmentChatMessage extends BaseFragmentChat {
 
         ChatMessageAdapter adapter = new ChatMessageAdapter(getContext(), entities);
         mListView.setAdapter(adapter);
+    }
+
+    private void initListener() {
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                UiUtils.startChatDetailActivity(getContext());
+            }
+        });
     }
 }

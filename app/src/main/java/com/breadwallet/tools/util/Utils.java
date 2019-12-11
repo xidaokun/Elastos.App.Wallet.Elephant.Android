@@ -19,6 +19,7 @@ import android.support.v4.app.ActivityCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -27,6 +28,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 
 import java.io.File;
@@ -159,6 +161,21 @@ public class Utils {
     public static int getPixelsFromDps(Context context, int dps) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dps * scale + 0.5f);
+    }
+
+    public static int getScreenWidth() {
+        DisplayMetrics curMetrics = BreadApp.getBreadContext().getResources().getDisplayMetrics();
+        return curMetrics.widthPixels;
+    }
+
+    public static int getScreenHeight() {
+        DisplayMetrics curMetrics = BreadApp.getBreadContext().getResources().getDisplayMetrics();
+        return curMetrics.heightPixels;
+    }
+
+    public static float getScreenDensity() {
+        DisplayMetrics curMetrics = BreadApp.getBreadContext().getResources().getDisplayMetrics();
+        return curMetrics.density;
     }
 
     public static int dp2px(Context context, float dps){

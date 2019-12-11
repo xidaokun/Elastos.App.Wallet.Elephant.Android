@@ -1,7 +1,7 @@
 package com.breadwallet.tools.util;
 
 public class Constants {
-    public static final String TAG = "rance";
+    public static final String TAG = "chat";
     /** 0x001-接受消息  0x002-发送消息**/
     public static final int CHAT_ITEM_TYPE_LEFT = 0x001;
     public static final int CHAT_ITEM_TYPE_RIGHT = 0x002;

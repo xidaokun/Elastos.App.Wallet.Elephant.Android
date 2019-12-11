@@ -405,6 +405,14 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysVisible"/>
 
+        <activity android:name=".presenter.activities.chat.ChatDetailActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysVisible"/>
+
+        <activity android:name=".presenter.activities.chat.FullImageActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysVisible"/>
+
         <provider
             android:name=".presenter.provider.BuglyFileProvider"
             android:authorities="${applicationId}.fileProvider"
