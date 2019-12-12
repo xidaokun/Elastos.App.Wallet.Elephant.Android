@@ -659,11 +659,6 @@ public class UiUtils {
         context.startActivity(intent);
     }
 
-    public static void startMomentActivity(Context context) {
-       /* Intent intent = new Intent(context, MainActivity.class);
-        context.startActivity(intent);*/
-    }
-
     public static String getDefaultWalletName(Activity context) {
         int count = BRKeyStore.getPhraseCount(context) + 1;
         return "Wallet #" + count;

@@ -1142,7 +1142,7 @@ public class BRKeyStore {
 //                    public void run() {
 //                        BRDialog.hideDialog();
 //                        BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-//                        UiUtils.showSupportFragment((FragmentActivity) app, BRConstants.FAQ_LOOP_BUG, wm);
+//                        ChatUiUtils.showSupportFragment((FragmentActivity) app, BRConstants.FAQ_LOOP_BUG, wm);
 //                    }
 //                });
 //

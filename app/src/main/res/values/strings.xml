@@ -970,6 +970,7 @@
     <string name="Did.Elastos.DID">Elastos DID</string>
     <string name="Did.Will.Get">%1$s will get your:</string>
     <string name="Author.Auto.Check">Auto authorize %1$s next time</string>
+    <string name="MenuButton.moment">My Moments</string>
     <string name="MenuButton.authorizations">Authorizations</string>
     <string name="Did.Authorized">Authorized</string>
     <string name="Did.Authorize">Authorize</string>

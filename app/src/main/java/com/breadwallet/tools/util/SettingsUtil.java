@@ -28,12 +28,13 @@ import com.breadwallet.tools.animation.ElaphantDialog;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.tencent.bugly.beta.Beta;
+
+
+import org.chat.lib.utils.ChatUiUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +85,13 @@ public final class SettingsUtil {
 
     public static List<BRSettingsItem> getMainSettings(final Activity activity) {
         List<BRSettingsItem> settingsItems = new ArrayList<>();
-        final BaseWalletManager walletManager = WalletsMaster.getInstance(activity).getCurrentWallet(activity);
+
+        settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_moment), "", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ChatUiUtils.startMomentActivity(activity);
+            }
+        }, false, R.drawable.ic_moment));
 
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_authorizations), "", new View.OnClickListener() {
             @Override
@@ -137,7 +144,7 @@ public final class SettingsUtil {
 //            @Override
 //            public void onClick(View v) {
 //                String url = "https://redpacket.elastos.org";
-//                UiUtils.openUrlByBrowser(activity, url);
+//                ChatUiUtils.openUrlByBrowser(activity, url);
 //            }
 //        }, false, R.drawable.ic_red_package));
 

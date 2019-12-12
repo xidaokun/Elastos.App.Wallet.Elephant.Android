@@ -963,6 +963,7 @@
     <string name="upgrade_cancel">下次</string>
 
     <string name="Did.Will.Get">%1$s 將要獲取您的:</string>
+    <string name="MenuButton.moment">我的動態</string>
     <string name="MenuButton.authorizations">授權</string>
     <string name="Did.Authorized">已授權</string>
     <string name="Did.Authorize">授權</string>
