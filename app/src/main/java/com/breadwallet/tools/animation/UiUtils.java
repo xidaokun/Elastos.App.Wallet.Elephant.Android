@@ -82,8 +82,6 @@ import com.elastos.jni.Constants;
 import com.google.gson.Gson;
 import com.platform.sqlite.PlatformSqliteHelper;
 
-import org.moment.lib.activity.MainActivity;
-
 import java.io.File;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
@@ -668,8 +666,8 @@ public class UiUtils {
     }
 
     public static void startMomentActivity(Context context) {
-        Intent intent = new Intent(context, MainActivity.class);
-        context.startActivity(intent);
+       /* Intent intent = new Intent(context, MainActivity.class);
+        context.startActivity(intent);*/
     }
 
     public static String getDefaultWalletName(Activity context) {

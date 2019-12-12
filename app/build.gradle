@@ -227,7 +227,6 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.0.0'
     implementation project(':ElastosSdkKeypair')
     implementation project(':ElastosSdkWallet')
-    implementation project(path: ':momentlib')
 }
 
 

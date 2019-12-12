@@ -1,1 +1,1 @@
-include ':app', ':ElastosSdkWallet', ':ElastosSdkKeypair', ':momentlib', ':qupai'
+include ':app', ':ElastosSdkWallet', ':ElastosSdkKeypair', ':momentlib', ':qupai', ':commonlib', ':chatlib'
