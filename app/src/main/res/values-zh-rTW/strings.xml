@@ -1175,8 +1175,4 @@
     <string name="clear_cache_positive_btn">确定</string>
     <string name="clear_cache_negative_btn">取消</string>
     <string name="elapay_request_params_error">請求參數錯誤</string>
-
-    <string name="My.chat.title">聊天</string>
-    <string name="My.chat.tab.message.title">信息</string>
-    <string name="My.chat.tab.friends.title">通讯录</string>
 </resources>

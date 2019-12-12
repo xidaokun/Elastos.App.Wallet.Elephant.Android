@@ -165,16 +165,4 @@
         <item>#000000</item>
         <item>#000000</item>
     </array>
-
-    <!-- chat 其它背景色或分割线相关 -->
-    <color name="bg_content">#f3f3f3</color>
-    <color name="divider_line">#d9d9d9</color>
-
-    <!-- chat 字体色 -->
-    <color name="text_title">#1b1b1b</color>
-    <color name="text_content">#818181</color>
-    <color name="text_sub">#919191</color>
-    <color name="text_hint">#c7c7c7</color>
-    <color name="text_black">#404040</color>
-
 </resources>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="app_name">聊天</string>
+    <string name="My_chat_tab_message_title">信息</string>
+    <string name="My_chat_tab_friends_title">通讯录</string>
+</resources>

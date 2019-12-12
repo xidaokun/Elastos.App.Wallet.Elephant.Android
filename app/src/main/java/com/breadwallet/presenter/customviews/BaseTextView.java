@@ -7,9 +7,9 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
-import com.breadwallet.R;
-import com.breadwallet.tools.manager.FontManager;
-import com.breadwallet.tools.util.Utils;
+import org.chat.lib.R;
+import org.chat.lib.utils.FontManager;
+import org.chat.lib.utils.Utils;
 
 /**
  * BreadWallet

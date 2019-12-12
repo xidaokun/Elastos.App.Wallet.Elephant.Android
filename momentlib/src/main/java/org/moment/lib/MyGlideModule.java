@@ -13,7 +13,7 @@ import java.io.File;
 public class MyGlideModule implements GlideModule {
 
     // 默认存放图片的路径
-    public final static String DEFAULT_SAVE_IMAGE_PATH = Environment.getExternalStorageDirectory() + File.separator + "CircleDemo" + File.separator + "Images"
+    public final static String DEFAULT_SAVE_IMAGE_PATH = Environment.getExternalStorageDirectory() + File.separator + "chatMoment" + File.separator + "Images"
             + File.separator;
 
     @Override

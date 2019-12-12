@@ -215,18 +215,13 @@ dependencies {
     implementation 'tools.fastlane:screengrab:1.1.0'
     implementation 'android.arch.lifecycle:extensions:1.1.1'
     implementation 'org.kie.modules:com-google-code-gson:6.5.0.Final'
-    implementation 'com.tencent.bugly:crashreport_upgrade:latest.release'
-    implementation 'com.tencent.bugly:nativecrashreport:latest.release'
     implementation 'org.apache.shiro:shiro-crypto-hash:1.4.0'
     implementation 'com.belerweb:pinyin4j:2.5.1'
-    implementation 'com.github.promeg:tinypinyin:1.0.0'
-    implementation 'com.jakewharton:butterknife:7.0.1'
-    annotationProcessor 'com.jakewharton:butterknife:7.0.1'
-    implementation 'com.jude:easyrecyclerview:4.2.3'
-    implementation 'com.github.bumptech.glide:glide:3.7.0'
-    implementation 'org.greenrobot:eventbus:3.0.0'
+    implementation 'com.tencent.bugly:crashreport_upgrade:latest.release'
+    implementation 'com.tencent.bugly:nativecrashreport:latest.release'
     implementation project(':ElastosSdkKeypair')
     implementation project(':ElastosSdkWallet')
+    implementation project(path: ':chatlib')
 }
 
 
