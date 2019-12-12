@@ -10,7 +10,7 @@ import android.text.style.ClickableSpan;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
-import org.moment.lib.MyApplication;
+import org.common.lib.BaseApplication;
 import org.moment.lib.R;
 
 public class CircleMovementMethod extends BaseMovementMethod {
@@ -36,8 +36,8 @@ public class CircleMovementMethod extends BaseMovementMethod {
     }
 
     public CircleMovementMethod(){
-        this.textViewBgColor = MyApplication.getContext().getResources().getColor(DEFAULT_COLOR_ID);
-        this.clickableSpanBgClor = MyApplication.getContext().getResources().getColor(DEFAULT_CLICKABLEA_COLOR_ID);
+        this.textViewBgColor = BaseApplication.getContext().getResources().getColor(DEFAULT_COLOR_ID);
+        this.clickableSpanBgClor = BaseApplication.getContext().getResources().getColor(DEFAULT_CLICKABLEA_COLOR_ID);
     }
 
     /**
@@ -46,7 +46,7 @@ public class CircleMovementMethod extends BaseMovementMethod {
      */
     public CircleMovementMethod(int clickableSpanBgClor){
         this.clickableSpanBgClor = clickableSpanBgClor;
-        this.textViewBgColor = MyApplication.getContext().getResources().getColor(DEFAULT_COLOR_ID);
+        this.textViewBgColor = BaseApplication.getContext().getResources().getColor(DEFAULT_COLOR_ID);
     }
 
     /**

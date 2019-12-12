@@ -36,6 +36,8 @@ import com.tencent.bugly.beta.Beta;
 import com.tencent.bugly.beta.UpgradeInfo;
 import com.tencent.bugly.beta.ui.UILifecycleListener;
 
+import org.common.lib.BaseApplication;
+
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -74,7 +76,7 @@ import java.util.regex.Pattern;
  * THE SOFTWARE.
  */
 
-public class BreadApp extends Application {
+public class BreadApp extends BaseApplication {
     private static final String TAG = BreadApp.class.getName();
     public static int DISPLAY_HEIGHT_PX;
     public static int DISPLAY_WIDTH_PX;

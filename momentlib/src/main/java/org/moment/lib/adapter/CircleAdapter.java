@@ -11,10 +11,10 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
-import org.moment.lib.MyApplication;
+import org.common.lib.BaseApplication;
 import org.moment.lib.R;
 import org.moment.lib.activity.ImagePagerActivity;
-import org.moment.lib.activity.MainActivity;
+import org.moment.lib.activity.MomentActivity;
 import org.moment.lib.adapter.viewholder.CircleViewHolder;
 import org.moment.lib.adapter.viewholder.ImageViewHolder;
 import org.moment.lib.adapter.viewholder.URLViewHolder;
@@ -161,7 +161,7 @@ public class CircleAdapter extends BaseRecycleViewAdapter {
                         public void onClick(int position) {
                             String userName = favortDatas.get(position).getUser().getName();
                             String userId = favortDatas.get(position).getUser().getId();
-                            Toast.makeText(MyApplication.getContext(), userName + " &id = " + userId, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(BaseApplication.getContext(), userName + " &id = " + userId, Toast.LENGTH_SHORT).show();
                         }
                     });
                     holder.praiseListView.setDatas(favortDatas);
@@ -260,7 +260,7 @@ public class CircleAdapter extends BaseRecycleViewAdapter {
                                     for(PhotoInfo photoInfo : photos){
                                         photoUrls.add(photoInfo.url);
                                     }
-                                    ImagePagerActivity.startImagePagerActivity(((MainActivity) context), photoUrls, position, imageSize);
+                                    ImagePagerActivity.startImagePagerActivity(((MomentActivity) context), photoUrls, position, imageSize);
 
 
                                 }

@@ -1,4 +1,4 @@
-package org.chat.lib.presenter;
+package com.breadwallet.presenter.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,6 +11,9 @@ import android.view.ViewGroup;
 
 import org.chat.lib.R;
 import org.chat.lib.adapter.ChatPagerAdapter;
+import org.chat.lib.presenter.BaseFragment;
+import org.chat.lib.presenter.FragmentChatFriends;
+import org.chat.lib.presenter.FragmentChatMessage;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -50,9 +50,9 @@ import java.util.List;
 import pub.devrel.easypermissions.EasyPermissions;
 
 
-public class MainActivity extends MomentBaseActivity implements CircleContract.View, EasyPermissions.PermissionCallbacks {
+public class MomentActivity extends MomentBaseActivity implements CircleContract.View, EasyPermissions.PermissionCallbacks {
 
-	protected static final String TAG = MainActivity.class.getSimpleName();
+	protected static final String TAG = MomentActivity.class.getSimpleName();
 	private CircleAdapter circleAdapter;
 	private LinearLayout edittextbody;
 	private EditText editText;
@@ -166,9 +166,9 @@ public class MainActivity extends MomentBaseActivity implements CircleContract.V
 			public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
 				super.onScrollStateChanged(recyclerView, newState);
 				if(newState == RecyclerView.SCROLL_STATE_IDLE){
-					Glide.with(MainActivity.this).resumeRequests();
+					Glide.with(MomentActivity.this).resumeRequests();
 				}else{
-					Glide.with(MainActivity.this).pauseRequests();
+					Glide.with(MomentActivity.this).pauseRequests();
 				}
 
 			}
@@ -188,7 +188,7 @@ public class MainActivity extends MomentBaseActivity implements CircleContract.V
 					//发布评论
 					String content =  editText.getText().toString().trim();
 					if(TextUtils.isEmpty(content)){
-						Toast.makeText(MainActivity.this, "评论内容不能为空...", Toast.LENGTH_SHORT).show();
+						Toast.makeText(MomentActivity.this, "评论内容不能为空...", Toast.LENGTH_SHORT).show();
 						return;
 					}
 					presenter.addComment(content, commentConfig);
@@ -214,9 +214,9 @@ public class MainActivity extends MomentBaseActivity implements CircleContract.V
         TextView textView = (TextView) titleBar.addAction(new TitleBar.TextAction("发布视频") {
             @Override
             public void performAction(View view) {
-                //Toast.makeText(MainActivity.this, "敬请期待...", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MomentActivity.this, "敬请期待...", Toast.LENGTH_SHORT).show();
 
-				QPManager.startRecordActivity(MainActivity.this);
+				QPManager.startRecordActivity(MomentActivity.this);
             }
         });
         textView.setTextColor(getResources().getColor(R.color.white));
@@ -477,7 +477,7 @@ public class MainActivity extends MomentBaseActivity implements CircleContract.V
                 @Override
                 public void uploadComplet(String videoUrl, String imageUrl, String message) {
                     uploadDialog.hide();
-                    Toast.makeText(MainActivity.this, "上传成功...", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MomentActivity.this, "上传成功...", Toast.LENGTH_LONG).show();
 
                     //将新拍摄的video刷新到列表中
                     circleAdapter.getDatas().add(0, DatasUtil.createVideoItem(videoFile, thum[0]));
@@ -490,7 +490,7 @@ public class MainActivity extends MomentBaseActivity implements CircleContract.V
                         @Override
                         public void run() {
                             uploadDialog.hide();
-                            Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+                            Toast.makeText(MomentActivity.this, message, Toast.LENGTH_LONG).show();
                         }
                     });
                 }
@@ -506,12 +506,12 @@ public class MainActivity extends MomentBaseActivity implements CircleContract.V
 			 * 上面的拷贝操作请自行实现，第一版本的copyVideoFile接口不再使用
 			 */
             /*QupaiService qupaiService = QupaiManager
-                    .getQupaiService(MainActivity.this);
+                    .getQupaiService(MomentActivity.this);
             qupaiService.deleteDraft(getApplicationContext(),data);*/
 
 		} else {
 			if (resultCode == RESULT_CANCELED) {
-				Toast.makeText(MainActivity.this, "RESULT_CANCELED", Toast.LENGTH_LONG).show();
+				Toast.makeText(MomentActivity.this, "RESULT_CANCELED", Toast.LENGTH_LONG).show();
 			}
 		}
 	}

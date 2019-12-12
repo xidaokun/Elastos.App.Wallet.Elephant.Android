@@ -15,7 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.moment.lib.MyApplication;
+import org.common.lib.BaseApplication;
 import org.moment.lib.R;
 import org.moment.lib.bean.CommentItem;
 import org.moment.lib.spannable.CircleMovementMethod;
@@ -32,7 +32,7 @@ public class CommentListView extends LinearLayout {
     private OnItemClickListener onItemClickListener;
     private OnItemLongClickListener onItemLongClickListener;
     private List<CommentItem> mDatas;
-    private LayoutInflater layoutInflater ;
+    private LayoutInflater layoutInflater;
 
     public OnItemClickListener getOnItemClickListener() {
         return onItemClickListener;
@@ -171,7 +171,7 @@ public class CommentListView extends LinearLayout {
         subjectSpanText.setSpan(new SpannableClickable(itemColor){
                                     @Override
                                     public void onClick(View widget) {
-                                        Toast.makeText(MyApplication.getContext(), textStr + " &id = " + id, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(BaseApplication.getContext(), textStr + " &id = " + id, Toast.LENGTH_SHORT).show();
                                     }
                                 }, 0, subjectSpanText.length(),
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);

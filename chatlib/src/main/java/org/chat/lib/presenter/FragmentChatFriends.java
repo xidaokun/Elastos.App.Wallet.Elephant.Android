@@ -1,5 +1,6 @@
 package org.chat.lib.presenter;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,7 @@ import org.chat.lib.entity.ContactEntity;
 import org.chat.lib.widget.DividerItemDecoration;
 import org.chat.lib.widget.IndexBar;
 import org.chat.lib.widget.SuspensionDecoration;
+import org.moment.lib.activity.MomentActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,8 +68,8 @@ public class FragmentChatFriends extends BaseFragment {
         mAdapter.setOnItemClickListener(new FriendsAdapter.OnItemClickListener() {
             @Override
             public void OnItemClick(View view, int position) {
-                //TODO xidaokun
-//                UiUtils.startMomentActivity(getContext());
+                Intent intent = new Intent(getContext(), MomentActivity.class);
+                startActivity(intent);
             }
         });
     }

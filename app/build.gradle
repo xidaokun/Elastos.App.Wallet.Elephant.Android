@@ -222,6 +222,7 @@ dependencies {
     implementation project(':ElastosSdkKeypair')
     implementation project(':ElastosSdkWallet')
     implementation project(path: ':chatlib')
+    implementation project(path: ':commonlib')
 }
 
 

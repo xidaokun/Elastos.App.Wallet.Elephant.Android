@@ -12,7 +12,7 @@ import android.text.style.ImageSpan;
 import android.util.AttributeSet;
 import android.view.View;
 
-import org.moment.lib.MyApplication;
+import org.common.lib.BaseApplication;
 import org.moment.lib.R;
 import org.moment.lib.bean.FavortItem;
 import org.moment.lib.spannable.CircleMovementMethod;
@@ -96,7 +96,7 @@ public class PraiseListView extends AppCompatTextView {
     private SpannableString setImageSpan(){
         String text = "  ";
         SpannableString imgSpanText = new SpannableString(text);
-        imgSpanText.setSpan(new ImageSpan(MyApplication.getContext(), R.drawable.icon_praise, DynamicDrawableSpan.ALIGN_BASELINE),
+        imgSpanText.setSpan(new ImageSpan(BaseApplication.getContext(), R.drawable.icon_praise, DynamicDrawableSpan.ALIGN_BASELINE),
                 0 , 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         return imgSpanText;
     }
