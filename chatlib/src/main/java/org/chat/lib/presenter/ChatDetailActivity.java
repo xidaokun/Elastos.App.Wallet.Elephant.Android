@@ -16,7 +16,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.jude.easyrecyclerview.EasyRecyclerView;
 import org.chat.lib.R;
 import org.chat.lib.adapter.ChatAdapter;
 import org.chat.lib.adapter.CommonFragmentPagerAdapter;
@@ -27,6 +26,7 @@ import org.chat.lib.utils.GlobalOnItemClickListener;
 import org.chat.lib.widget.EmotionInputDetector;
 import org.chat.lib.widget.NoScrollViewPager;
 import org.chat.lib.widget.StateButton;
+import org.easy.recycleview.EasyRecyclerView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;

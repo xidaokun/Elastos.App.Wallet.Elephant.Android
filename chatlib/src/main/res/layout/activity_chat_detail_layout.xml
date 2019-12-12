@@ -5,7 +5,7 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <com.jude.easyrecyclerview.EasyRecyclerView
+    <org.easy.recycleview.EasyRecyclerView
         android:id="@+id/chat_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"

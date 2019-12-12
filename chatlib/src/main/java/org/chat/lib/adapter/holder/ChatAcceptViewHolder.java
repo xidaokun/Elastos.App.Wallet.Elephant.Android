@@ -8,7 +8,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.jude.easyrecyclerview.adapter.BaseViewHolder;
 
 import org.chat.lib.R;
 import org.chat.lib.adapter.ChatAdapter;
@@ -16,6 +15,7 @@ import org.chat.lib.entity.MessageInfo;
 import org.chat.lib.utils.Utils;
 import org.chat.lib.widget.BubbleImageView;
 import org.chat.lib.widget.GifTextView;
+import org.easy.recycleview.adapter.BaseViewHolder;
 
 public class ChatAcceptViewHolder extends BaseViewHolder<MessageInfo> {
 

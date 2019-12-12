@@ -5,13 +5,12 @@ import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import com.jude.easyrecyclerview.adapter.BaseViewHolder;
-import com.jude.easyrecyclerview.adapter.RecyclerArrayAdapter;
-
 import org.chat.lib.adapter.holder.ChatAcceptViewHolder;
 import org.chat.lib.adapter.holder.ChatSendViewHolder;
 import org.chat.lib.entity.MessageInfo;
 import org.chat.lib.utils.Constants;
+import org.easy.recycleview.adapter.BaseViewHolder;
+import org.easy.recycleview.adapter.RecyclerArrayAdapter;
 
 
 public class ChatAdapter extends RecyclerArrayAdapter<MessageInfo> {

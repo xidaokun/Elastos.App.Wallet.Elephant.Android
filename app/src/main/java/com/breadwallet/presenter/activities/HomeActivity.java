@@ -274,7 +274,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             mShiftingModeField.set(mMenuView, false);
             for (int i = 0; i < mMenuView.getChildCount(); i++) {
                 BottomNavigationItemView itemView = (BottomNavigationItemView) mMenuView.getChildAt(i);
-                itemView.setShiftingMode(false);
+                itemView.setShifting(false);
                 itemView.setChecked(itemView.getItemData().isChecked());
             }
         } catch (NoSuchFieldException | IllegalAccessException e) {
