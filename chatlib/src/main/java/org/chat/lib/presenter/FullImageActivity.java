@@ -67,7 +67,7 @@ public class FullImageActivity extends Activity {
         final int top = fullImageInfo.getLocationY();
         final int width = fullImageInfo.getWidth();
         final int height = fullImageInfo.getHeight();
-        mBackground = new ColorDrawable(Color.BLACK);
+        mBackground = new ColorDrawable(Color.WHITE);
         fullLay.setBackground(mBackground);
         fullImage.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
@@ -94,10 +94,10 @@ public class FullImageActivity extends Activity {
         fullImage.setTranslationX(mLeft);
         fullImage.setTranslationY(mTop);
         fullImage.animate().scaleX(1).scaleY(1).translationX(0).translationY(0).
-                setDuration(500).setInterpolator(new DecelerateInterpolator()).start();
-        ObjectAnimator objectAnimator = ObjectAnimator.ofInt(mBackground, "alpha", 0, 255);
+                setDuration(300).setInterpolator(new DecelerateInterpolator()).start();
+        ObjectAnimator objectAnimator = ObjectAnimator.ofInt(mBackground, "alpha", 255, 255);
         objectAnimator.setInterpolator(new DecelerateInterpolator());
-        objectAnimator.setDuration(500);
+        objectAnimator.setDuration(300);
         objectAnimator.start();
     }
 
@@ -107,10 +107,10 @@ public class FullImageActivity extends Activity {
         fullImage.setPivotY(0);
         fullImage.animate().scaleX(mScaleX).scaleY(mScaleY).translationX(mLeft).translationY(mTop).
                 withEndAction(runnable).
-                setDuration(500).setInterpolator(new DecelerateInterpolator()).start();
-        ObjectAnimator objectAnimator = ObjectAnimator.ofInt(mBackground, "alpha", 255, 0);
+                setDuration(300).setInterpolator(new DecelerateInterpolator()).start();
+        ObjectAnimator objectAnimator = ObjectAnimator.ofInt(mBackground, "alpha", 255, 255);
         objectAnimator.setInterpolator(new DecelerateInterpolator());
-        objectAnimator.setDuration(500);
+        objectAnimator.setDuration(300);
         objectAnimator.start();
     }
 

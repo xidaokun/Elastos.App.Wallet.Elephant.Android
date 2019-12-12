@@ -3,7 +3,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:background="@color/bg_content"
     android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginLeft="10dp">
+
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="20dp"
+            android:layout_height="25dp"
+            android:layout_centerVertical="true"
+            android:background="@null"
+            android:src="@drawable/toolbar_back_arrow" />
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="16dp"
+            android:text="Elaphant生态组"
+            android:textColor="@color/black_333333"
+            android:textSize="20sp" />
+    </RelativeLayout>
 
     <org.easy.recycleview.EasyRecyclerView
         android:id="@+id/chat_list"
