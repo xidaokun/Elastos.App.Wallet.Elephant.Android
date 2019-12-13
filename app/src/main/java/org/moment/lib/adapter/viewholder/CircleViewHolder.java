@@ -32,38 +32,35 @@ public abstract class CircleViewHolder extends RecyclerView.ViewHolder implement
     public TextView timeTv;
     public TextView deleteBtn;
     public ImageView snsBtn;
-    /** 点赞列表*/
     public PraiseListView praiseListView;
 
     public LinearLayout digCommentBody;
     public View digLine;
 
-    /** 评论列表 */
     public CommentListView commentList;
-    // ===========================
     public SnsPopupWindow snsPopupWindow;
 
     public CircleViewHolder(View itemView, int viewType) {
         super(itemView);
         this.viewType = viewType;
 
-        ViewStub viewStub = (ViewStub) itemView.findViewById(R.id.viewStub);
+        ViewStub viewStub = itemView.findViewById(R.id.viewStub);
 
         initSubView(viewType, viewStub);
 
-        headIv = (ImageView) itemView.findViewById(R.id.headIv);
-        nameTv = (TextView) itemView.findViewById(R.id.nameTv);
+        headIv = itemView.findViewById(R.id.headIv);
+        nameTv = itemView.findViewById(R.id.nameTv);
         digLine = itemView.findViewById(R.id.lin_dig);
 
-        contentTv = (ExpandTextView) itemView.findViewById(R.id.contentTv);
-        urlTipTv = (TextView) itemView.findViewById(R.id.urlTipTv);
-        timeTv = (TextView) itemView.findViewById(R.id.timeTv);
-        deleteBtn = (TextView) itemView.findViewById(R.id.deleteBtn);
-        snsBtn = (ImageView) itemView.findViewById(R.id.snsBtn);
-        praiseListView = (PraiseListView) itemView.findViewById(R.id.praiseListView);
+        contentTv = itemView.findViewById(R.id.contentTv);
+        urlTipTv = itemView.findViewById(R.id.urlTipTv);
+        timeTv = itemView.findViewById(R.id.timeTv);
+        deleteBtn = itemView.findViewById(R.id.deleteBtn);
+        snsBtn = itemView.findViewById(R.id.snsBtn);
+        praiseListView = itemView.findViewById(R.id.praiseListView);
 
-        digCommentBody = (LinearLayout) itemView.findViewById(R.id.digCommentBody);
-        commentList = (CommentListView)itemView.findViewById(R.id.commentList);
+        digCommentBody = itemView.findViewById(R.id.digCommentBody);
+        commentList = itemView.findViewById(R.id.commentList);
 
         snsPopupWindow = new SnsPopupWindow(itemView.getContext());
 

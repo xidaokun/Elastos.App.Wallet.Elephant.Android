@@ -178,9 +178,9 @@ public class MomentActivity extends MomentBaseActivity implements CircleContract
 		circleAdapter.setCirclePresenter(presenter);
         recyclerView.setAdapter(circleAdapter);
 		
-		edittextbody = (LinearLayout) findViewById(R.id.editTextBodyLl);
-		editText = (EditText) findViewById(R.id.circleEt);
-		sendIv = (Button) findViewById(R.id.sendIv);
+		edittextbody = findViewById(R.id.editTextBodyLl);
+		editText = findViewById(R.id.circleEt);
+		sendIv = findViewById(R.id.sendIv);
 		sendIv.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {

@@ -4,22 +4,24 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#f6f6f6"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp"
     android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:visibility="gone">
 
     <EditText
         android:id="@+id/circleEt"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@null"
-        android:hint="说点什么..."
-        android:paddingLeft="10dp" />
+        android:layout_weight="1"
+        android:hint="说点什么..."/>
 
     <Button
         android:id="@+id/sendIv"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:contentDescription="@null"
-        android:background="@null"
-        android:src="@drawable/selector_send" />
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="4dp"
+        android:background="@drawable/selector_send"/>
 </LinearLayout>
