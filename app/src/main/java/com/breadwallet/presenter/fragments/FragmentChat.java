@@ -9,7 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.chat.lib.R;
+import com.breadwallet.R;
 import org.chat.lib.adapter.ChatPagerAdapter;
 import org.chat.lib.presenter.BaseFragment;
 import org.chat.lib.presenter.FragmentChatFriends;

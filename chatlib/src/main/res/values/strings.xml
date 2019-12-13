@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<resources>
-    <string name="app_name">chatLib</string>
-    <string name="My_chat_tab_message_title">MESSAGES</string>
-    <string name="My_chat_tab_friends_title">FRIENDS</string>
-</resources>

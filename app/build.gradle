@@ -221,8 +221,23 @@ dependencies {
     implementation 'com.tencent.bugly:nativecrashreport:latest.release'
     implementation project(':ElastosSdkKeypair')
     implementation project(':ElastosSdkWallet')
-    implementation project(path: ':chatlib')
     implementation project(path: ':commonlib')
+
+    implementation 'com.github.promeg:tinypinyin:1.0.0'
+    implementation 'org.greenrobot:eventbus:3.0.0'
+    implementation project(path: ':easyrecycleview')
+
+    implementation 'com.android.support:support-v4:23.2.0'
+    implementation 'com.github.chrisbanes:PhotoView:1.3.0'
+    implementation 'com.malinskiy:superrecyclerview:1.1.4'
+    implementation 'com.mikhaellopez:circularprogressbar:1.1.1'
+    implementation 'com.github.bumptech.glide:glide:3.7.0'
+    implementation ('com.github.bumptech.glide:okhttp3-integration:1.4.0'){
+        exclude group: 'glide-parent'
+    }
+
+    implementation 'pub.devrel:easypermissions:0.2.1'
+    implementation project(':qupai')
 }
 
 

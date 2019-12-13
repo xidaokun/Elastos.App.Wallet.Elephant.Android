@@ -986,7 +986,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
                                     }
                                 }
                                 if (ctx instanceof Activity && BRSharedPrefs.getShowNotification(ctx))
-                                    BRNotificationManager.sendNotification((Activity) ctx, R.drawable.notification_icon, ctx.getString(R.string.app_name), strToShow, 1);
+                                    BRNotificationManager.sendNotification((Activity) ctx, R.drawable.notification_icon, ctx.getString(R.string.chat_title_name), strToShow, 1);
                                 else
                                     Log.e(getTag(), "onTxAdded: ctx is not activity");
                             }
