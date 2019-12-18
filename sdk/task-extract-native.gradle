@@ -1,0 +1,74 @@
+android {
+  buildTypes.all {
+    def buildType = it.name.substring(0, 1).toUpperCase() + it.name.substring(1)
+
+    task("extractNative${buildType}") {
+      doLast {
+        //configurations.archives.each { File file ->  // 不能用archives，否则extractNative任务出错, gradle的bug？
+        configurations.compile.each { File file ->
+          for(item in project.ext.extractNativeMap) {
+            if(item.value) {
+              continue
+            }
+
+            if(file.name.startsWith(item.key) == true) {
+              item.value = file.path
+              return
+            }
+          }
+        }
+
+        project.ext.extractNativeMap.each{ key, value ->
+          key = key.replace('${buildType}', "${buildType}")
+          key = key.replace('${buildTypeLowerCase}', "${buildType.toLowerCase()}")
+          value = value.replace('${buildType}', "${buildType}")
+          value = value.replace('${buildTypeLowerCase}', "${buildType.toLowerCase()}")
+          if(!value
+          || new File(value).exists() == false) {
+            throw new GradleException("native library '$key' file(path=$value) is not found!")
+          }
+
+          def extract_from = value
+          def extract_to = new File("$project.buildDir/tmp/$key")
+          def extracted_flag = new File("${extract_to}", ".flag")
+          def last_modify = new File(extract_from).lastModified()
+          if(extracted_flag.exists() == true
+          && extracted_flag.text.equals(last_modify.toString()) == true) {
+            logger.warn("${extract_from} is latest.")
+          } else {
+            logger.warn("${extract_from} is changed, extract it.")
+            copy {
+              from(zipTree(extract_from))
+              into(extract_to)
+            }
+            extracted_flag.text = "${last_modify}"
+          }
+        }
+      }
+    }
+  }
+}
+
+afterEvaluate {
+  android{
+    buildTypes.all {
+      def buildType = it.name.substring(0, 1).toUpperCase() + it.name.substring(1)
+      def extraNativeTask = tasks.getByName("extractNative${buildType}")
+
+      if(project.ext.extractNativeRunBefore) {
+        project.ext.extractNativeRunBefore.each { item ->
+          item = item.replace('${buildType}', "${buildType}")
+          item = item.replace('${buildTypeLowerCase}', "${buildType.toLowerCase()}")
+          tasks.getByName(item).dependsOn extraNativeTask
+        }
+      }
+      if(project.ext.extractNativeRunAfter) {
+        project.ext.extractNativeRunAfter.each { item ->
+          item = item.replace('${buildType}', "${buildType}")
+          item = item.replace('${buildTypeLowerCase}', "${buildType.toLowerCase()}")
+          extraNativeTask.dependsOn item
+        }
+      }
+    }
+  }
+}
