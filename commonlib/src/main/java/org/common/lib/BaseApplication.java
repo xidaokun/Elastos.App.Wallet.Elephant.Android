@@ -11,7 +11,6 @@ public class BaseApplication extends Application {
         super.onCreate();
         mContext = getApplicationContext();
         //LeakCanary.install(this);
-//        QPManager.getInstance(getApplicationContext()).initRecord();
     }
 
     public static Context getContext(){

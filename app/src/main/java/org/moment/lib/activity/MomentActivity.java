@@ -206,17 +206,18 @@ public class MomentActivity extends MomentBaseActivity implements CircleContract
 
     private void initTitle() {
 
-        titleBar = (TitleBar) findViewById(R.id.main_title_bar);
-        titleBar.setTitle("朋友圈");
+        titleBar = findViewById(R.id.main_title_bar);
+        titleBar.setTitle("动态");
         titleBar.setTitleColor(getResources().getColor(R.color.white));
         titleBar.setBackgroundColor(getResources().getColor(R.color.title_bg));
 
-        TextView textView = (TextView) titleBar.addAction(new TitleBar.TextAction("发布视频") {
+        TextView textView = (TextView) titleBar.addAction(new TitleBar.TextAction("发布") {
             @Override
             public void performAction(View view) {
-                //Toast.makeText(MomentActivity.this, "敬请期待...", Toast.LENGTH_SHORT).show();
-
-				QPManager.startRecordActivity(MomentActivity.this);
+            	//TODO daokun.xi
+//				QPManager.startRecordActivity(MomentActivity.this);
+				Intent intent = new Intent(MomentActivity.this, PublishedActivity.class);
+				startActivity(intent);
             }
         });
         textView.setTextColor(getResources().getColor(R.color.white));

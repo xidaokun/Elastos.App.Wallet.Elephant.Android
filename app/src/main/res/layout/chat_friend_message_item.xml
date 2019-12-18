@@ -16,7 +16,7 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_marginLeft="15dp"
-            android:src="@mipmap/ic_launcher"
+            android:src="@drawable/icon_head"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

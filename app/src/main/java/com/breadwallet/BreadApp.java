@@ -2,7 +2,6 @@ package com.breadwallet;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.Application;
 import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Context;
 import android.content.IntentFilter;
@@ -14,9 +13,7 @@ import android.net.ConnectivityManager;
 import android.os.Build;
 import android.util.Log;
 import android.view.Display;
-import android.view.View;
 import android.view.WindowManager;
-import android.widget.TextView;
 
 import com.breadwallet.cache.UpgradeHandler;
 import com.breadwallet.presenter.activities.util.ApplicationLifecycleObserver;
@@ -33,13 +30,10 @@ import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
 import com.tencent.bugly.Bugly;
 import com.tencent.bugly.beta.Beta;
-import com.tencent.bugly.beta.UpgradeInfo;
-import com.tencent.bugly.beta.ui.UILifecycleListener;
 
 import org.common.lib.BaseApplication;
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;

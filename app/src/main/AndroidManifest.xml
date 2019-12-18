@@ -423,6 +423,22 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
 
+        <activity android:name="org.moment.lib.activity.TestPicActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name="org.moment.lib.activity.ImageGridActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name="org.moment.lib.activity.PhotoActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name="org.moment.lib.activity.PublishedActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
+
         <meta-data
             android:name="org.moment.lib.ChatMomentGlideModule"
             android:value="GlideModule" />
