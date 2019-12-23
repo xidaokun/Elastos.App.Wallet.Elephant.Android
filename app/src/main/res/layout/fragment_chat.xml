@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.breadwallet.presenter.customviews.BaseTextView
-        android:id="@+id/explore_add_tv"
+        android:id="@+id/chat_add_icon"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_marginTop="15dp"
@@ -53,4 +53,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/tab_layout"/>
+
+    <include
+        android:id="@+id/chat_add_pop_layout"
+        layout="@layout/chat_add_pop_layout"
+        android:visibility="gone" />
 </android.support.constraint.ConstraintLayout>

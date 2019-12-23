@@ -7,6 +7,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -30,6 +31,9 @@ public class FragmentChat extends Fragment {
 
     private PeerNode mPeerNode;
 
+    private View mAddFriendView;
+    private View mAddPopView;
+
     public static FragmentChat newInstance(String text) {
         FragmentChat f = new FragmentChat();
         Bundle b = new Bundle();
@@ -49,17 +53,36 @@ public class FragmentChat extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_chat, container, false);
         initView(rootView);
+        initListener();
         return rootView;
     }
 
     private void initView(View view) {
         mTabLayout = view.findViewById(R.id.tab_layout);
+        mAddFriendView = view.findViewById(R.id.chat_add_icon);
         mViewPager = view.findViewById(R.id.viewpager);
+        mAddPopView = view.findViewById(R.id.chat_add_pop_layout);
+        mAddPopView = view.findViewById(R.id.chat_add_pop_layout);
         List<BaseFragment> fragments = new ArrayList<>();
         fragments.add(FragmentChatMessage.newInstance(getContext().getString(R.string.My_chat_tab_message_title)));
         fragments.add(FragmentChatFriends.newInstance(getContext().getString(R.string.My_chat_tab_friends_title)));
         mViewPager.setAdapter(new ChatPagerAdapter(getActivity().getSupportFragmentManager(), fragments));
         mTabLayout.setupWithViewPager(mViewPager);
+    }
+
+    private void initListener() {
+        mAddPopView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
+        mAddFriendView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAddPopView.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     private void initPeerNode() {

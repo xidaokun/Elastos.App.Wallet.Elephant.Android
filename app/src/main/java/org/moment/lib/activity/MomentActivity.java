@@ -166,9 +166,9 @@ public class MomentActivity extends MomentBaseActivity implements CircleContract
 			public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
 				super.onScrollStateChanged(recyclerView, newState);
 				if(newState == RecyclerView.SCROLL_STATE_IDLE){
-					Glide.with(MomentActivity.this).resumeRequests();
+					if(!MomentActivity.this.isFinishing()) Glide.with(MomentActivity.this).resumeRequests();
 				}else{
-					Glide.with(MomentActivity.this).pauseRequests();
+					if(!MomentActivity.this.isFinishing()) Glide.with(MomentActivity.this).pauseRequests();
 				}
 
 			}

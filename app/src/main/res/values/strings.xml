@@ -1188,4 +1188,8 @@
     <string name="My_chat_title">Chat</string>
     <string name="My_chat_tab_message_title">MESSAFE</string>
     <string name="My_chat_tab_friends_title">FRIENDS</string>
+
+    <string name="My_chat_add_by_did">Add by DID</string>
+    <string name="My_chat_add_device">Add carrier device</string>
+    <string name="My_chat_join_group">Join a group</string>
 </resources>
