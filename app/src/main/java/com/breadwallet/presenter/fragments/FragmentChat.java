@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.fragments;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -12,6 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.util.StringUtil;
+
 import org.chat.lib.adapter.ChatPagerAdapter;
 import org.chat.lib.presenter.BaseFragment;
 import org.chat.lib.presenter.FragmentChatFriends;
@@ -23,7 +27,9 @@ import java.util.List;
 import app.elaphant.sdk.peernode.PeerNode;
 import app.elaphant.sdk.peernode.PeerNodeListener;
 
-public class FragmentChat extends Fragment {
+import static android.support.test.internal.runner.junit4.statement.UiThreadStatement.runOnUiThread;
+
+public class FragmentChat extends Fragment implements View.OnClickListener {
     private static final String TAG = FragmentChat.class.getSimpleName() + "_log";
 
     private ViewPager mViewPager;
@@ -33,6 +39,9 @@ public class FragmentChat extends Fragment {
 
     private View mAddFriendView;
     private View mAddPopView;
+    private View mAddDidView;
+    private View mAddDeviceView;
+    private View mJoinGroupView;
 
     public static FragmentChat newInstance(String text) {
         FragmentChat f = new FragmentChat();
@@ -62,7 +71,10 @@ public class FragmentChat extends Fragment {
         mAddFriendView = view.findViewById(R.id.chat_add_icon);
         mViewPager = view.findViewById(R.id.viewpager);
         mAddPopView = view.findViewById(R.id.chat_add_pop_layout);
-        mAddPopView = view.findViewById(R.id.chat_add_pop_layout);
+        mAddDidView = view.findViewById(R.id.chat_add_by_did);
+        mAddDeviceView = view.findViewById(R.id.chat_add_by_device);
+        mJoinGroupView = view.findViewById(R.id.chat_join_group);
+
         List<BaseFragment> fragments = new ArrayList<>();
         fragments.add(FragmentChatMessage.newInstance(getContext().getString(R.string.My_chat_tab_message_title)));
         fragments.add(FragmentChatFriends.newInstance(getContext().getString(R.string.My_chat_tab_friends_title)));
@@ -83,6 +95,9 @@ public class FragmentChat extends Fragment {
                 mAddPopView.setVisibility(View.VISIBLE);
             }
         });
+        mAddDidView.setOnClickListener(this);
+        mAddDeviceView.setOnClickListener(this);
+        mJoinGroupView.setOnClickListener(this);
     }
 
     private void initPeerNode() {
@@ -126,10 +141,37 @@ public class FragmentChat extends Fragment {
         mPeerNode.start();
     }
 
+    public void setValue(String value) {
+        if(StringUtil.isNullOrEmpty(value)) return;
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mViewPager.setCurrentItem(1);
+            }
+        });
+    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         mPeerNode.stop();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.chat_add_by_did:
+                UiUtils.startAddFriendActivity(getActivity());
+                break;
+            case R.id.chat_add_by_device:
+                UiUtils.startAddFriendActivity(getActivity());
+                break;
+            case R.id.chat_join_group:
+                UiUtils.startAddFriendActivity(getActivity());
+                break;
+            default:
+                break;
+        }
+        mAddPopView.setVisibility(View.GONE);
     }
 }

@@ -240,6 +240,12 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         }
     }
 
+    public void showChatFragment(String value) {
+        if(mChatFragment!=null && !StringUtil.isNullOrEmpty(value)) {
+            mChatFragment.setValue(value);
+        }
+    }
+
     public void showAndDownloadCapsule(String url) {
         if(mExploreFragment!=null && !StringUtil.isNullOrEmpty(url)){
             boolean isValid = StringUtils.isElaphantCapsule(url) || StringUtils.isHttpCapsule(url);

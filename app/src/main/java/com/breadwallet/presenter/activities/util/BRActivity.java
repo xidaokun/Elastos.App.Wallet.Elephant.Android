@@ -229,7 +229,10 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                                 e.printStackTrace();
                             }
                             String result = data.getStringExtra("result");
-                            if (CryptoUriParser.isCryptoUrl(BRActivity.this, result))
+                            String type = data.getStringExtra("type");
+                            if(!StringUtil.isNullOrEmpty(type)) {
+                                mHomeActivity.showChatFragment(result);
+                            } else if (CryptoUriParser.isCryptoUrl(BRActivity.this, result))
                                 CryptoUriParser.processRequest(BRActivity.this, result,
                                         WalletsMaster.getInstance(BRActivity.this).getCurrentWallet(BRActivity.this));
                             else if (BRBitId.isBitId(result))

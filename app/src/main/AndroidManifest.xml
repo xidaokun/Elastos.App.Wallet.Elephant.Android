@@ -439,6 +439,10 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
 
+        <activity android:name="org.chat.lib.presenter.AddFriendActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
+
         <meta-data
             android:name="org.moment.lib.ChatMomentGlideModule"
             android:value="GlideModule" />

@@ -81,6 +81,8 @@ import com.elastos.jni.Constants;
 import com.google.gson.Gson;
 import com.platform.sqlite.PlatformSqliteHelper;
 
+import org.chat.lib.presenter.AddFriendActivity;
+
 import java.io.File;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
@@ -483,6 +485,11 @@ public class UiUtils {
     public static void startAddAppsActivity(Activity activity, int requestCode) {
         Intent intent = new Intent(activity, AddAppsActivity.class);
         activity.startActivityForResult(intent, requestCode);
+    }
+
+    public static void startAddFriendActivity(Activity activity) {
+        Intent intent = new Intent(activity, AddFriendActivity.class);
+        activity.startActivityForResult(intent, BRConstants.SCANNER_REQUEST);
     }
 
     public static void startSignEditActivity(Activity activity, String from, String value, int requestCode) {
