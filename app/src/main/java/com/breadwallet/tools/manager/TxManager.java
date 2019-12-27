@@ -188,7 +188,7 @@ public class TxManager {
         /**
          * Disable predictive animations. There is a bug in RecyclerView which causes views that
          * are being reloaded to pull invalid ViewHolders from the internal recycler stack if the
-         * adapter size has decreased since the ViewHolder was recycled.
+         * adapter size has decreased since the NormalViewHolder was recycled.
          */
         @Override
         public boolean supportsPredictiveItemAnimations() {

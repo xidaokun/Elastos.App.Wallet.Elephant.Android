@@ -1,12 +1,12 @@
 package com.breadwallet.presenter.fragments;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,6 +20,9 @@ import org.chat.lib.adapter.ChatPagerAdapter;
 import org.chat.lib.presenter.BaseFragment;
 import org.chat.lib.presenter.FragmentChatFriends;
 import org.chat.lib.presenter.FragmentChatMessage;
+import org.elastos.sdk.elephantwallet.contact.Utils;
+import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
+import org.elastos.sdk.keypair.ElastosKeypair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +30,6 @@ import java.util.List;
 import app.elaphant.sdk.peernode.PeerNode;
 import app.elaphant.sdk.peernode.PeerNodeListener;
 
-import static android.support.test.internal.runner.junit4.statement.UiThreadStatement.runOnUiThread;
 
 public class FragmentChat extends Fragment implements View.OnClickListener {
     private static final String TAG = FragmentChat.class.getSimpleName() + "_log";
@@ -100,6 +102,9 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
         mJoinGroupView.setOnClickListener(this);
     }
 
+    private static final String mPrivateKey = "b8e923f4e5c5a3c704bcc02a90ee0e4fa34a5b8f0dd1de1be4eb2c37ffe8e3ea";
+    private static final String mPublicKey = "021e53dc2b8af1548175cba357ae321096065f8d49e3935607bc8844c157bb0859";
+
     private void initPeerNode() {
         mPeerNode = PeerNode.getInstance(getContext().getFilesDir().getAbsolutePath(),
                 Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID));
@@ -110,7 +115,7 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
                 byte[] response = null;
                 switch (request.type) {
                     case PublicKey:
-//                        response = mPublicKey.getBytes();
+                        response = mPublicKey.getBytes();
                         break;
                     case EncryptData:
                         response = request.data;
@@ -121,15 +126,15 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
                     case DidPropAppId:
                         break;
                     case DidAgentAuthHeader:
-//                        response = getAgentAuthHeader();
+                        response = getAgentAuthHeader();
                         break;
                     case SignData:
-//                        response = signData(request.data);
+                        response = signData(request.data);
                         break;
                     default:
                         throw new RuntimeException("Unprocessed request: " + request);
                 }
-                return new byte[0];
+                return response;
             }
 
             @Override
@@ -137,16 +142,46 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
 
             }
         });
-
-        mPeerNode.start();
     }
 
-    public void setValue(String value) {
+    private byte[] getAgentAuthHeader() {
+        String appid = "org.elastos.debug.didplugin";
+        String appkey = "b2gvzUM79yLhCbbGNWCuhSsGdqYhA7sS";
+        long timestamp = System.currentTimeMillis();
+        String auth = Utils.getMd5Sum(appkey + timestamp);
+        String headerValue = "id=" + appid + ";time=" + timestamp + ";auth=" + auth;
+        Log.i(TAG, "getAgentAuthHeader() headerValue=" + headerValue);
+
+        return headerValue.getBytes();
+    }
+
+    private byte[] signData(byte[] data) {
+
+        ElastosKeypair.Data originData = new ElastosKeypair.Data();
+        originData.buf = data;
+
+        ElastosKeypair.Data signedData = new ElastosKeypair.Data();
+
+        int signedSize = ElastosKeypair.sign(mPrivateKey, originData, originData.buf.length, signedData);
+        if(signedSize <= 0) {
+            return null;
+        }
+
+        return signedData.buf;
+    }
+
+    public void showFriendFragment(String value) {
         if(StringUtil.isNullOrEmpty(value)) return;
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mViewPager.setCurrentItem(1);
+
+                mPeerNode.start();
+
+                ContactInterface.UserInfo userInfo = mPeerNode.getUserInfo();
+
+                Log.d("test", "test");
             }
         });
     }
