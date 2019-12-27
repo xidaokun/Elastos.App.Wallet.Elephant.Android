@@ -2,6 +2,8 @@ package org.chat.lib.entity;
 
 public class ContactEntity extends BaseIndexPinyinBean {
     private String contact;
+    private String iconUrl;
+    private String tokenAddress;
     private boolean isTop;
 
     public ContactEntity() {
@@ -10,6 +12,23 @@ public class ContactEntity extends BaseIndexPinyinBean {
 
     public ContactEntity(String contact) {
         this.contact = contact;
+    }
+
+
+    public String getIconUrl() {
+        return iconUrl;
+    }
+
+    public void setIconUrl(String iconUrl) {
+        this.iconUrl = iconUrl;
+    }
+
+    public String getTokenAddress() {
+        return tokenAddress;
+    }
+
+    public void setTokenAddress(String tokenAddress) {
+        this.tokenAddress = tokenAddress;
     }
 
     public String getContact() {

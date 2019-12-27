@@ -50,7 +50,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         if(holder instanceof NormalViewHolder) {
             NormalViewHolder viewHolder = ((NormalViewHolder)holder);
-            final ContactEntity contactEntity = mDatas.get(position);
+            final ContactEntity contactEntity = mDatas.get(position-1);
             viewHolder.name.setText(contactEntity.getContact());
             viewHolder.content.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -64,7 +64,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemCount() {
-        return (mDatas==null)? 0: mDatas.size()+1;
+        return (mDatas==null)? 1: mDatas.size()+1;
     }
 
     @Override

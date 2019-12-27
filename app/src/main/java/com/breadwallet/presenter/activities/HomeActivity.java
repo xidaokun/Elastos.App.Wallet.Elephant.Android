@@ -3,6 +3,7 @@ package com.breadwallet.presenter.activities;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.internal.BottomNavigationItemView;
 import android.support.design.internal.BottomNavigationMenuView;
@@ -29,11 +30,14 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.ProfileDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.StringUtil;
+import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.elastos.jni.Utility;
 import com.elastos.jni.utils.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.elastos.sdk.elephantwallet.contact.Utils;
+import org.elastos.sdk.keypair.ElastosKeypair;
 import org.elastos.sdk.wallet.BlockChainNode;
 import org.elastos.sdk.wallet.Did;
 import org.elastos.sdk.wallet.DidManager;
@@ -43,6 +47,9 @@ import org.elastos.sdk.wallet.IdentityManager;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+
+import app.elaphant.sdk.peernode.PeerNode;
+import app.elaphant.sdk.peernode.PeerNodeListener;
 
 /**
  * Created by byfieldj on 1/17/18.
@@ -59,6 +66,11 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     private FragmentExplore mExploreFragment;
     private FragmentManager mFragmentManager;
     private BottomNavigationView navigation;
+
+    private PeerNode mPeerNode;
+
+    private String mPrivateKey /*= "b8e923f4e5c5a3c704bcc02a90ee0e4fa34a5b8f0dd1de1be4eb2c37ffe8e3ea"*/;
+    private String mPublicKey /*= "021e53dc2b8af1548175cba357ae321096065f8d49e3935607bc8844c157bb0859"*/;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -115,6 +127,86 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 showAndDownloadCapsule(dowloadUrl);
             }
         }
+
+        initPeerNode();
+    }
+
+    private void initPeerNode() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                mPrivateKey = WalletElaManager.getInstance(HomeActivity.this).getPrivateKey();
+                mPublicKey = WalletElaManager.getInstance(HomeActivity.this).getPublicKey();
+                mPeerNode = PeerNode.getInstance(getFilesDir().getAbsolutePath(),
+                        Settings.Secure.getString(HomeActivity.this.getContentResolver(), Settings.Secure.ANDROID_ID));
+                mPeerNode.setListener(new PeerNodeListener.Listener() {
+
+                    @Override
+                    public byte[] onAcquire(org.elastos.sdk.elephantwallet.contact.Contact.Listener.AcquireArgs request) {
+                        byte[] response = null;
+                        switch (request.type) {
+                            case PublicKey:
+                                if(StringUtil.isNullOrEmpty(mPublicKey))
+                                    Toast.makeText(HomeActivity.this, "mPublicKey is null", Toast.LENGTH_SHORT).show();
+                                response = mPublicKey.getBytes();
+                                break;
+                            case EncryptData:
+                                response = request.data;
+                                break;
+                            case DecryptData:
+                                response = request.data;
+                                break;
+                            case DidPropAppId:
+                                break;
+                            case DidAgentAuthHeader:
+                                response = getAgentAuthHeader();
+                                break;
+                            case SignData:
+                                response = signData(request.data);
+                                break;
+                            default:
+                                throw new RuntimeException("Unprocessed request: " + request);
+                        }
+                        return response;
+                    }
+
+                    @Override
+                    public void onError(int errCode, String errStr, String ext) {
+
+                    }
+                });
+
+                int ret = mPeerNode.start();
+            }
+        });
+    }
+
+    private byte[] getAgentAuthHeader() {
+        String appid = "org.elastos.debug.didplugin";
+        String appkey = "b2gvzUM79yLhCbbGNWCuhSsGdqYhA7sS";
+        long timestamp = System.currentTimeMillis();
+        String auth = Utils.getMd5Sum(appkey + timestamp);
+        String headerValue = "id=" + appid + ";time=" + timestamp + ";auth=" + auth;
+        Log.i(TAG, "getAgentAuthHeader() headerValue=" + headerValue);
+
+        return headerValue.getBytes();
+    }
+
+    private byte[] signData(byte[] data) {
+
+        ElastosKeypair.Data originData = new ElastosKeypair.Data();
+        originData.buf = data;
+
+        ElastosKeypair.Data signedData = new ElastosKeypair.Data();
+
+        if(StringUtil.isNullOrEmpty(mPrivateKey))
+            Toast.makeText(this, "mPrivateKey is null", Toast.LENGTH_SHORT).show();
+        int signedSize = ElastosKeypair.sign(mPrivateKey, originData, originData.buf.length, signedData);
+        if(signedSize <= 0) {
+            return null;
+        }
+
+        return signedData.buf;
     }
 
     @Override
@@ -242,7 +334,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
     public void showChatFragment(String value) {
         if(mChatFragment!=null && !StringUtil.isNullOrEmpty(value)) {
-            mChatFragment.showFriendFragment(value);
+            mChatFragment.selectFriendFragment(value);
         }
     }
 
