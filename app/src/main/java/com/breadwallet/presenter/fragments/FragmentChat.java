@@ -30,6 +30,8 @@ import java.util.List;
 import app.elaphant.sdk.peernode.PeerNode;
 import app.elaphant.sdk.peernode.PeerNodeListener;
 
+import static com.breadwallet.tools.listeners.SyncReceiver.app;
+
 
 public class FragmentChat extends Fragment implements View.OnClickListener {
     private static final String TAG = FragmentChat.class.getSimpleName() + "_log";
