@@ -1,33 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/content"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
-    android:gravity="center_vertical"
-    android:orientation="horizontal">
-
-    <org.chat.lib.widget.RoundImageView
-        android:id="@+id/chat_contact_item_logo"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="15dp"
-        android:src="@drawable/emotion_aiqing"/>
-
-    <TextView
-        android:id="@+id/chat_contact_item_name"
+    android:layout_height="wrap_content">
+    <RelativeLayout
+        android:id="@+id/content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:textColor="#cccccc"
-        android:layout_toRightOf="@+id/chat_contact_item_logo"
-        android:paddingLeft="15dp"/>
+        android:layout_height="70dp"
+        android:gravity="center_vertical">
+
+        <org.chat.lib.widget.RoundImageView
+            android:id="@+id/chat_contact_item_logo"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/emotion_aiqing" />
+
+        <TextView
+            android:id="@+id/chat_contact_item_name"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/chat_contact_item_logo"
+            android:gravity="center_vertical"
+            android:paddingLeft="15dp"
+            android:textColor="#cccccc" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="15dp"
+            android:background="#cccccc" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/chat_contact_send_token_view"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="50dp"
+        android:layout_below="@+id/content"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/chat_contact_item_send_token"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="#007aff"
+            android:text="Send Token"/>
+
+        <View
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="#cccccc"/>
+        
+        <TextView
+            android:id="@+id/chat_contact_item_send_message"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="#007aff"
+            android:text="Message"/>
+
+        <View
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="#cccccc"/>
+
+        <TextView
+            android:id="@+id/chat_contact_item_delete"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="#eb4d3d"
+            android:text="Delete"/>
+    </LinearLayout>
 
     <View
+        android:id="@+id/select_view_line"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
+        android:layout_alignParentBottom="true"
         android:layout_marginLeft="15dp"
-        android:background="#cccccc"
-        android:layout_alignParentBottom="true"/>
+        android:background="#cccccc" />
 </RelativeLayout>

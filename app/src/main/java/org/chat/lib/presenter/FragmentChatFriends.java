@@ -1,10 +1,10 @@
 package org.chat.lib.presenter;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
-import com.breadwallet.tools.util.StringUtil;
-import com.breadwallet.wallet.wallets.ela.WalletElaManager;
+import com.breadwallet.tools.util.BRConstants;
 
 import org.chat.lib.adapter.FriendsAdapter;
 import org.chat.lib.entity.ContactEntity;
@@ -21,15 +20,12 @@ import org.chat.lib.utils.ChatUiUtils;
 import org.chat.lib.widget.DividerItemDecoration;
 import org.chat.lib.widget.IndexBar;
 import org.chat.lib.widget.SuspensionDecoration;
-import org.elastos.sdk.elephantwallet.contact.Utils;
 import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
-import org.elastos.sdk.keypair.ElastosKeypair;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import app.elaphant.sdk.peernode.PeerNode;
-import app.elaphant.sdk.peernode.PeerNodeListener;
 
 public class FragmentChatFriends extends BaseFragment {
     private static final String TAG = FragmentChatFriends.class.getSimpleName() + "_log";
@@ -80,10 +76,46 @@ public class FragmentChatFriends extends BaseFragment {
     }
 
     private void initListener() {
-        mAdapter.setOnItemClickListener(new FriendsAdapter.OnItemClickListener() {
+        mAdapter.setOnClickListener(new FriendsAdapter.OnItemClickListener() {
             @Override
-            public void OnItemClick(View view, int position) {
-                ChatUiUtils.startMomentActivity(getContext());
+            public void onItemClick(View view, int position) {
+                Toast.makeText(getContext(), "onItemClick", Toast.LENGTH_SHORT).show();
+//                ChatUiUtils.startMomentActivity(getContext());
+            }
+
+            @Override
+            public void sendToken(View view, int position) {
+
+                Uri.Builder builder = new Uri.Builder();
+                builder.scheme("elaphant")
+                .authority("elapay")
+                .appendQueryParameter("AppID", BRConstants.ELAPHANT_APP_ID)
+                        .appendQueryParameter("PublicKey", BRConstants.ELAPHANT_APP_PUBLICKEY)
+                        .appendQueryParameter("Did", BRConstants.ELAPHANT_APP_DID)
+                        .appendQueryParameter("AppName", BRConstants.ELAPHANT_APP_NAME)
+                        .appendQueryParameter("ReceivingAddress", /*mDatas.get(position).getTokenAddress()*/"0x030e6FCfB4d3291E35215ccf1E2996F0435B82F3")
+                        .appendQueryParameter("Amount", "0")
+                        .appendQueryParameter("CoinName", "ELA");
+
+                String tmp = builder.build().toString();
+                Uri scheme = Uri.parse(tmp);
+                Intent intent = new Intent(Intent.ACTION_VIEW,scheme);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+
+            @Override
+            public void sendMessage(View view, int position) {
+                Intent intent = new Intent(getContext(), ChatDetailActivity.class);
+                getContext().startActivity(intent);
+            }
+
+            @Override
+            public void deleteFriends(View view, int position) {
+                //TODO daokun.xi
+//                mPeerNode.removeFriend(mDatas.get(position).getFriendCode());
+                mDatas.remove(position);
+                mAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -100,7 +132,7 @@ public class FragmentChatFriends extends BaseFragment {
                 contacts.clear();
                 for(ContactInterface.FriendInfo info : friendInfos) {
                     ContactEntity contactEntity = new ContactEntity();
-                    contactEntity.setContact(info.did);
+                    contactEntity.setContact(info.nickname);
                     contactEntity.setTokenAddress(info.elaAddress);
 
                     contacts.add(contactEntity);
@@ -120,27 +152,27 @@ public class FragmentChatFriends extends BaseFragment {
 
 
     private void initDatas(final String[] data) {
-//        getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                mDatas = new ArrayList<>();
-//                mDatas.add((ContactEntity) new ContactEntity("新的朋友").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
-//                mDatas.add((ContactEntity) new ContactEntity("群聊").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
-//                mDatas.add((ContactEntity) new ContactEntity("标签").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
-//                mDatas.add((ContactEntity) new ContactEntity("公众号").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
-//                for (int i = 0; i < data.length; i++) {
-//                    ContactEntity ContactEntity = new ContactEntity();
-//                    ContactEntity.setContact(data[i]);
-//                    mDatas.add(ContactEntity);
-//                }
-//                mAdapter.setDatas(mDatas);
-//                mAdapter.notifyDataSetChanged();
-//
-//                mIndexBar.setmSourceDatas(mDatas)
-//                        .invalidate();
-//                mDecoration.setmDatas(mDatas);
-//            }
-//        }, 500);
+        getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mDatas = new ArrayList<>();
+                mDatas.add((ContactEntity) new ContactEntity("新的朋友").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
+                mDatas.add((ContactEntity) new ContactEntity("群聊").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
+                mDatas.add((ContactEntity) new ContactEntity("标签").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
+                mDatas.add((ContactEntity) new ContactEntity("公众号").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
+                for (int i = 0; i < data.length; i++) {
+                    ContactEntity ContactEntity = new ContactEntity();
+                    ContactEntity.setContact(data[i]);
+                    mDatas.add(ContactEntity);
+                }
+                mAdapter.setDatas(mDatas);
+                mAdapter.notifyDataSetChanged();
+
+                mIndexBar.setmSourceDatas(mDatas)
+                        .invalidate();
+                mDecoration.setmDatas(mDatas);
+            }
+        }, 500);
     }
 
     @Override
