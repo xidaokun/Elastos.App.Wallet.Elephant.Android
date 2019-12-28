@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.StringUtil;
 
 import org.chat.lib.adapter.FriendsAdapter;
 import org.chat.lib.entity.ContactEntity;
@@ -86,6 +87,11 @@ public class FragmentChatFriends extends BaseFragment {
             @Override
             public void sendToken(View view, int position) {
 
+                String receivingAddress = mDatas.get(position).getTokenAddress();
+                if(StringUtil.isNullOrEmpty(receivingAddress)) {
+                    Toast.makeText(getContext(), "receiving address is empty", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Uri.Builder builder = new Uri.Builder();
                 builder.scheme("elaphant")
                 .authority("elapay")
@@ -93,7 +99,7 @@ public class FragmentChatFriends extends BaseFragment {
                         .appendQueryParameter("PublicKey", BRConstants.ELAPHANT_APP_PUBLICKEY)
                         .appendQueryParameter("Did", BRConstants.ELAPHANT_APP_DID)
                         .appendQueryParameter("AppName", BRConstants.ELAPHANT_APP_NAME)
-                        .appendQueryParameter("ReceivingAddress", /*mDatas.get(position).getTokenAddress()*/"0x030e6FCfB4d3291E35215ccf1E2996F0435B82F3")
+                        .appendQueryParameter("ReceivingAddress", receivingAddress)
                         .appendQueryParameter("Amount", "0")
                         .appendQueryParameter("CoinName", "ELA");
 
