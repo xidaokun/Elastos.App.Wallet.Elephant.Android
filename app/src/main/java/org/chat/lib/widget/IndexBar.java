@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.util.StringUtil;
 
 import org.chat.lib.entity.BaseIndexPinyinBean;
 
@@ -153,6 +154,7 @@ public class IndexBar extends View{
         String index;//每个要绘制的index内容
         for (int i = 0; i < mIndexDatas.size(); i++) {
             index = mIndexDatas.get(i);
+            if(null == index) return;
             mPaint.getTextBounds(index, 0, index.length(), indexBounds);//测量计算文字所在矩形，可以得到宽高
             measureWidth = Math.max(indexBounds.width(), measureWidth);//循环结束后，得到index的最大宽度
             measureHeight = Math.max(indexBounds.height(), measureHeight);//循环结束后，得到index的最大高度，然后*size
@@ -193,6 +195,7 @@ public class IndexBar extends View{
             index = mIndexDatas.get(i);
             Paint.FontMetrics fontMetrics = mPaint.getFontMetrics();//获得画笔的FontMetrics，用来计算baseLine。因为drawText的y坐标，代表的是绘制的文字的baseLine的位置
             int baseline = (int) ((mGapHeight - fontMetrics.bottom - fontMetrics.top) / 2);//计算出在每格index区域，竖直居中的baseLine值
+            if(StringUtil.isNullOrEmpty(index)) return;
             canvas.drawText(index, mWidth / 2 - mPaint.measureText(index) / 2, t + mGapHeight * i + baseline, mPaint);//调用drawText，居中显示绘制index
         }
     }

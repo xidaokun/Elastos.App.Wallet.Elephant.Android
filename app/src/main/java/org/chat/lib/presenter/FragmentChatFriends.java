@@ -112,8 +112,17 @@ public class FragmentChatFriends extends BaseFragment {
 
             @Override
             public void sendMessage(View view, int position) {
-                Intent intent = new Intent(getContext(), ChatDetailActivity.class);
-                getContext().startActivity(intent);
+                String friendCode = mDatas.get(position).getFriendCode();
+                if(!StringUtil.isNullOrEmpty(friendCode)) {
+                    ContactInterface.Status status = mPeerNode.getFriendStatus(friendCode);
+                    if(status == ContactInterface.Status.Online) {
+                        Intent intent = new Intent(getContext(), ChatDetailActivity.class);
+                        intent.putExtra("friendCode", friendCode);
+                        getContext().startActivity(intent);
+                        return;
+                    }
+                }
+                Toast.makeText(getContext(), "send Message failed", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -126,12 +135,16 @@ public class FragmentChatFriends extends BaseFragment {
         });
     }
 
-    public void addFriend(String value) {
+    public void addFriend(final String value) {
+        int ret = mPeerNode.addFriend(value, "");
+        refreshFriendView();
+    }
+
+    private void refreshFriendView() {
         getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
             @Override
             public void run() {
                 //TODO daokun.xi
-                int ret = mPeerNode.addFriend("iZmEF8QifH1tUXnqyqnS2KdhfqZ3aiXxYa", "");
                 List<ContactInterface.FriendInfo> friendInfos = mPeerNode.listFriendInfo();
                 if(null == friendInfos) return;
                 List<ContactEntity> contacts = new ArrayList<>();
@@ -140,9 +153,10 @@ public class FragmentChatFriends extends BaseFragment {
                     ContactEntity contactEntity = new ContactEntity();
                     contactEntity.setContact(info.nickname);
                     contactEntity.setTokenAddress(info.elaAddress);
-
+                    contactEntity.setFriendCode(info.humanCode);
                     contacts.add(contactEntity);
                 }
+
                 mDatas.clear();
                 mDatas.addAll(contacts);
 
@@ -156,29 +170,31 @@ public class FragmentChatFriends extends BaseFragment {
         }, 500);
     }
 
-
     private void initDatas(final String[] data) {
-        getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mDatas = new ArrayList<>();
-                mDatas.add((ContactEntity) new ContactEntity("新的朋友").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
-                mDatas.add((ContactEntity) new ContactEntity("群聊").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
-                mDatas.add((ContactEntity) new ContactEntity("标签").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
-                mDatas.add((ContactEntity) new ContactEntity("公众号").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
-                for (int i = 0; i < data.length; i++) {
-                    ContactEntity ContactEntity = new ContactEntity();
-                    ContactEntity.setContact(data[i]);
-                    mDatas.add(ContactEntity);
-                }
-                mAdapter.setDatas(mDatas);
-                mAdapter.notifyDataSetChanged();
 
-                mIndexBar.setmSourceDatas(mDatas)
-                        .invalidate();
-                mDecoration.setmDatas(mDatas);
-            }
-        }, 500);
+        refreshFriendView();
+
+//        getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                mDatas = new ArrayList<>();
+//                mDatas.add((ContactEntity) new ContactEntity("新的朋友").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
+//                mDatas.add((ContactEntity) new ContactEntity("群聊").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
+//                mDatas.add((ContactEntity) new ContactEntity("标签").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
+//                mDatas.add((ContactEntity) new ContactEntity("公众号").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
+//                for (int i = 0; i < data.length; i++) {
+//                    ContactEntity ContactEntity = new ContactEntity();
+//                    ContactEntity.setContact(data[i]);
+//                    mDatas.add(ContactEntity);
+//                }
+//                mAdapter.setDatas(mDatas);
+//                mAdapter.notifyDataSetChanged();
+//
+//                mIndexBar.setmSourceDatas(mDatas)
+//                        .invalidate();
+//                mDecoration.setmDatas(mDatas);
+//            }
+//        }, 500);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.chat.lib.widget;
 
+import com.breadwallet.tools.util.StringUtil;
 import com.github.promeg.pinyinhelper.Pinyin;
 
 import org.chat.lib.entity.BaseIndexPinyinBean;
@@ -20,6 +21,7 @@ public class IndexBarDataHelperImpl implements IIndexBarDataHelper {
             StringBuilder pySb = new StringBuilder();
             if (indexPinyinBean.isNeedToPinyin()) {
                 String target = indexPinyinBean.getTarget();
+                if(target == null) return this;
                 for (int i1 = 0; i1 < target.length(); i1++) {
                     pySb.append(Pinyin.toPinyin(target.charAt(i1)).toUpperCase());
                 }
@@ -39,6 +41,8 @@ public class IndexBarDataHelperImpl implements IIndexBarDataHelper {
         for (int i = 0; i < size; i++) {
             BaseIndexPinyinBean indexPinyinBean = datas.get(i);
             if (indexPinyinBean.isNeedToPinyin()) {
+                String baseIndex = indexPinyinBean.getBaseIndexPinyin();
+                if(StringUtil.isNullOrEmpty(baseIndex)) return this;
                 String tagString = indexPinyinBean.getBaseIndexPinyin().toString().substring(0, 1);
                 if (tagString.matches("[A-Z]")) {
                     indexPinyinBean.setBaseIndexTag(tagString);

@@ -12,6 +12,8 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.breadwallet.tools.util.StringUtil;
+
 import org.chat.lib.entity.ISuspensionInterface;
 
 import java.util.List;
@@ -131,6 +133,8 @@ public class SuspensionDecoration extends RecyclerView.ItemDecoration {
         Paint.FontMetricsInt fontMetrics = mPaint.getFontMetricsInt();
         int baseline = (getMeasuredHeight() - fontMetrics.bottom + fontMetrics.top) / 2 - fontMetrics.top;*/
 
+        String tag = mDatas.get(position).getSuspensionTag();
+        if(StringUtil.isNullOrEmpty(tag)) return;
         mPaint.getTextBounds(mDatas.get(position).getSuspensionTag(), 0, mDatas.get(position).getSuspensionTag().length(), mBounds);
         c.drawText(mDatas.get(position).getSuspensionTag(), child.getPaddingLeft(), child.getTop() - params.topMargin - (mTitleHeight / 2 - mBounds.height() / 2), mPaint);
     }
@@ -169,6 +173,7 @@ public class SuspensionDecoration extends RecyclerView.ItemDecoration {
         mPaint.setColor(COLOR_TITLE_BG);
         c.drawRect(parent.getPaddingLeft(), parent.getPaddingTop(), parent.getRight() - parent.getPaddingRight(), parent.getPaddingTop() + mTitleHeight, mPaint);
         mPaint.setColor(COLOR_TITLE_FONT);
+        if(StringUtil.isNullOrEmpty(tag)) return;
         mPaint.getTextBounds(tag, 0, tag.length(), mBounds);
         c.drawText(tag, child.getPaddingLeft(),
                 parent.getPaddingTop() + mTitleHeight - (mTitleHeight / 2 - mBounds.height() / 2),

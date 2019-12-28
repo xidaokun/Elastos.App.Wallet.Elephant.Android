@@ -68,6 +68,8 @@ public class ChatDetailActivity extends FragmentActivity {
     private LinearLayoutManager layoutManager;
     private List<MessageInfo> messageInfos;
 
+    private String mFriendCode;
+
     int animationRes = 0;
     int res = 0;
     AnimationDrawable animationDrawable = null;
@@ -77,6 +79,7 @@ public class ChatDetailActivity extends FragmentActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_detail_layout);
+        mFriendCode = getIntent().getStringExtra("friendCode");
         initView();
         EventBus.getDefault().register(this);
         initWidget();
