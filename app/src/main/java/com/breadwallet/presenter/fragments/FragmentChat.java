@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import com.breadwallet.R;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.util.StringUtil;
-import com.bumptech.glide.load.model.ImageVideoWrapper;
 
 import org.chat.lib.adapter.ChatPagerAdapter;
 import org.chat.lib.presenter.BaseFragment;

@@ -487,9 +487,41 @@ public class UiUtils {
         activity.startActivityForResult(intent, requestCode);
     }
 
-    public static void startAddFriendActivity(Activity activity) {
-        Intent intent = new Intent(activity, AddFriendActivity.class);
-        activity.startActivityForResult(intent, BRConstants.SCANNER_REQUEST);
+    public static void startAddFriendActivity(Activity app) {
+        try {
+            if (app == null) {
+                return;
+            }
+
+            // Check if the camera permission is granted
+            if (ContextCompat.checkSelfPermission(app,
+                    Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Should we show an explanation?
+                if (ActivityCompat.shouldShowRequestPermissionRationale(app,
+                        Manifest.permission.CAMERA)) {
+                    BRDialog.showCustomDialog(app, app.getString(R.string.Send_cameraUnavailabeTitle_android),
+                            app.getString(R.string.Send_cameraUnavailabeMessage_android), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                                @Override
+                                public void onClick(BRDialogView brDialogView) {
+                                    brDialogView.dismiss();
+                                }
+                            }, null, null, 0);
+                } else {
+                    // No explanation needed, we can request the permission.
+                    ActivityCompat.requestPermissions(app,
+                            new String[]{Manifest.permission.CAMERA},
+                            BRConstants.CAMERA_REQUEST_ID);
+                }
+            } else {
+
+                Intent intent = new Intent(app, AddFriendActivity.class);
+                app.startActivityForResult(intent, BRConstants.SCANNER_REQUEST);
+                app.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void startSignEditActivity(Activity activity, String from, String value, int requestCode) {

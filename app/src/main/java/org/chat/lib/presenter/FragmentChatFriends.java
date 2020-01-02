@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +59,7 @@ public class FragmentChatFriends extends BaseFragment {
         initDatas(getResources().getStringArray(R.array.provinces));
         initListener();
         mPeerNode = PeerNode.getInstance();
+
         return rootView;
     }
 
@@ -112,7 +114,7 @@ public class FragmentChatFriends extends BaseFragment {
 
             @Override
             public void sendMessage(View view, int position) {
-                String friendCode = mDatas.get(position).getFriendCode();
+                String friendCode = mDatas.get(position-1).getFriendCode();
                 if(!StringUtil.isNullOrEmpty(friendCode)) {
                     ContactInterface.Status status = mPeerNode.getFriendStatus(friendCode);
                     if(status == ContactInterface.Status.Online) {
@@ -151,7 +153,7 @@ public class FragmentChatFriends extends BaseFragment {
                 contacts.clear();
                 for(ContactInterface.FriendInfo info : friendInfos) {
                     ContactEntity contactEntity = new ContactEntity();
-                    contactEntity.setContact(info.nickname);
+                    contactEntity.setContact(/*info.nickname*/info.did);
                     contactEntity.setTokenAddress(info.elaAddress);
                     contactEntity.setFriendCode(info.humanCode);
                     contacts.add(contactEntity);

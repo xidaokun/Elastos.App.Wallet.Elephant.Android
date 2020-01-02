@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.qrcode.QRCodeReaderView;
@@ -30,7 +31,7 @@ import org.chat.lib.widget.BaseTextView;
 
 import java.security.NoSuchAlgorithmException;
 
-public class AddFriendActivity extends Activity implements ActivityCompat.OnRequestPermissionsResultCallback, QRCodeReaderView.OnQRCodeReadListener{
+public class AddFriendActivity extends BRActivity implements ActivityCompat.OnRequestPermissionsResultCallback, QRCodeReaderView.OnQRCodeReadListener{
 
     private static final String TAG = AddFriendActivity.class.getName();
     private ImageView cameraGuide;
