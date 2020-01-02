@@ -34,6 +34,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import app.elaphant.sdk.peernode.PeerNode;
+
 public class ChatDetailActivity extends FragmentActivity {
 
     EasyRecyclerView chatList;
@@ -70,6 +72,8 @@ public class ChatDetailActivity extends FragmentActivity {
 
     private String mFriendCode;
 
+    private PeerNode mPeerNode;
+
     int animationRes = 0;
     int res = 0;
     AnimationDrawable animationDrawable = null;
@@ -80,6 +84,7 @@ public class ChatDetailActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_detail_layout);
         mFriendCode = getIntent().getStringExtra("friendCode");
+        mPeerNode = PeerNode.getInstance();
         initView();
         EventBus.getDefault().register(this);
         initWidget();

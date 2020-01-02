@@ -38,6 +38,7 @@ public class ChatEmotionFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (rootView == null) {
             rootView = inflater.inflate(R.layout.fragment_chat_emotion, container, false);
+            initView(rootView);
             initWidget();
         }
         return rootView;
@@ -66,14 +67,7 @@ public class ChatEmotionFragment extends BaseFragment {
         initEmotion();
     }
 
-    /**
-     * 初始化表情面板
-     * 思路：获取表情的总数，按每行存放7个表情，动态计算出每个表情所占的宽度大小（包含间距），
-     *      而每个表情的高与宽应该是相等的，这里我们约定只存放3行
-     *      每个面板最多存放7*3=21个表情，再减去一个删除键，即每个面板包含20个表情
-     *      根据表情总数，循环创建多个容量为20的List，存放表情，对于大小不满20进行特殊
-     *      处理即可。
-     */
+
     private void initEmotion() {
         // 获取屏幕宽度
         int screenWidth = Utils.getScreenWidth(getContext());
@@ -115,9 +109,7 @@ public class ChatEmotionFragment extends BaseFragment {
 
     }
 
-    /**
-     * 创建显示表情的GridView
-     */
+
     private GridView createEmotionGridView(List<String> emotionNames, int gvWidth, int padding, int itemWidth, int gvHeight) {
         // 创建GridView
         GridView gv = new GridView(getActivity());

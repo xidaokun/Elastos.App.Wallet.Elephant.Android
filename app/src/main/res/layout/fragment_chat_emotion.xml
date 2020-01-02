@@ -18,7 +18,7 @@
             />
     </LinearLayout>
 
-    <com.breadwallet.presenter.customviews.IndicatorView
+    <org.chat.lib.widget.IndicatorView
         android:id="@+id/fragment_chat_group"
         android:layout_width="match_parent"
         android:layout_height="30dp"
