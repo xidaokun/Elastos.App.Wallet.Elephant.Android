@@ -27,13 +27,16 @@ import org.chat.lib.widget.EmotionInputDetector;
 import org.chat.lib.widget.NoScrollViewPager;
 import org.chat.lib.widget.StateButton;
 import org.easy.recycleview.EasyRecyclerView;
+import org.elastos.sdk.elephantwallet.contact.Contact;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.moment.lib.node.CarrierPeerNode;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import app.elaphant.sdk.peernode.Connector;
 import app.elaphant.sdk.peernode.PeerNode;
 
 public class ChatDetailActivity extends FragmentActivity {
@@ -47,6 +50,10 @@ public class ChatDetailActivity extends FragmentActivity {
     StateButton emotionSend;
     NoScrollViewPager viewpager;
     RelativeLayout emotionLayout;
+
+    PeerNode mPeerNode;
+
+    private Connector mConnector = null;
 
     private void initView() {
         chatList = findViewById(R.id.chat_list);
@@ -71,9 +78,6 @@ public class ChatDetailActivity extends FragmentActivity {
     private List<MessageInfo> messageInfos;
 
     private String mFriendCode;
-
-    private PeerNode mPeerNode;
-
     int animationRes = 0;
     int res = 0;
     AnimationDrawable animationDrawable = null;
@@ -233,29 +237,35 @@ public class ChatDetailActivity extends FragmentActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void MessageEventBus(final MessageInfo messageInfo) {
-        messageInfo.setHeader("https://xidaokun.github.io/im_girl.png");
-        messageInfo.setType(Constants.CHAT_ITEM_TYPE_RIGHT);
-        messageInfo.setSendState(Constants.CHAT_ITEM_SENDING);
+
+//        messageInfo.setHeader("https://xidaokun.github.io/im_girl.png");
+//        messageInfo.setType(Constants.CHAT_ITEM_TYPE_RIGHT);
+//        messageInfo.setSendState(Constants.CHAT_ITEM_SENDING);
+//        messageInfos.add(messageInfo);
+//        chatAdapter.add(messageInfo);
+//        chatList.scrollToPosition(chatAdapter.getCount() - 1);
+//        new Handler().postDelayed(new Runnable() {
+//            public void run() {
+//                messageInfo.setSendState(Constants.CHAT_ITEM_SEND_SUCCESS);
+//                chatAdapter.notifyDataSetChanged();
+//            }
+//        }, 2000);
+//        new Handler().postDelayed(new Runnable() {
+//            public void run() {
+//                MessageInfo message = new MessageInfo();
+//                message.setContent("mock message reply");
+//                message.setType(Constants.CHAT_ITEM_TYPE_LEFT);
+//                message.setHeader("https://xidaokun.github.io/im_boy.png");
+//                messageInfos.add(message);
+//                chatAdapter.add(message);
+//                chatList.scrollToPosition(chatAdapter.getCount() - 1);
+//            }
+//        }, 3000);
+
+
         messageInfos.add(messageInfo);
         chatAdapter.add(messageInfo);
         chatList.scrollToPosition(chatAdapter.getCount() - 1);
-        new Handler().postDelayed(new Runnable() {
-            public void run() {
-                messageInfo.setSendState(Constants.CHAT_ITEM_SEND_SUCCESS);
-                chatAdapter.notifyDataSetChanged();
-            }
-        }, 2000);
-        new Handler().postDelayed(new Runnable() {
-            public void run() {
-                MessageInfo message = new MessageInfo();
-                message.setContent("mock message reply");
-                message.setType(Constants.CHAT_ITEM_TYPE_LEFT);
-                message.setHeader("https://xidaokun.github.io/im_boy.png");
-                messageInfos.add(message);
-                chatAdapter.add(message);
-                chatList.scrollToPosition(chatAdapter.getCount() - 1);
-            }
-        }, 3000);
     }
 
     @Override

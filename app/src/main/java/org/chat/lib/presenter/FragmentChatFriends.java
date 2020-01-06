@@ -13,21 +13,31 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 
 import org.chat.lib.adapter.FriendsAdapter;
 import org.chat.lib.entity.ContactEntity;
+import org.chat.lib.entity.MessageInfo;
 import org.chat.lib.utils.ChatUiUtils;
+import org.chat.lib.utils.Constants;
 import org.chat.lib.widget.DividerItemDecoration;
 import org.chat.lib.widget.IndexBar;
 import org.chat.lib.widget.SuspensionDecoration;
+import org.elastos.sdk.elephantwallet.contact.Contact;
 import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
+import org.greenrobot.eventbus.EventBus;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.moment.lib.node.CarrierPeerNode;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import app.elaphant.sdk.peernode.Connector;
 import app.elaphant.sdk.peernode.PeerNode;
+import app.elaphant.sdk.peernode.PeerNodeListener;
 
 public class FragmentChatFriends extends BaseFragment {
     private static final String TAG = FragmentChatFriends.class.getSimpleName() + "_log";
@@ -41,8 +51,6 @@ public class FragmentChatFriends extends BaseFragment {
     private SuspensionDecoration mDecoration;
     private LinearLayoutManager mManager;
     private TextView mSideHintTv;
-
-    private PeerNode mPeerNode;
 
     public static FragmentChatFriends newInstance(String title) {
         FragmentChatFriends f = new FragmentChatFriends();
@@ -58,8 +66,6 @@ public class FragmentChatFriends extends BaseFragment {
         //mock data
         initDatas(getResources().getStringArray(R.array.provinces));
         initListener();
-        mPeerNode = PeerNode.getInstance();
-
         return rootView;
     }
 
@@ -90,14 +96,14 @@ public class FragmentChatFriends extends BaseFragment {
             public void sendToken(View view, int position) {
 
                 String receivingAddress = mDatas.get(position).getTokenAddress();
-                if(StringUtil.isNullOrEmpty(receivingAddress)) {
+                if (StringUtil.isNullOrEmpty(receivingAddress)) {
                     Toast.makeText(getContext(), "receiving address is empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 Uri.Builder builder = new Uri.Builder();
                 builder.scheme("elaphant")
-                .authority("elapay")
-                .appendQueryParameter("AppID", BRConstants.ELAPHANT_APP_ID)
+                        .authority("elapay")
+                        .appendQueryParameter("AppID", BRConstants.ELAPHANT_APP_ID)
                         .appendQueryParameter("PublicKey", BRConstants.ELAPHANT_APP_PUBLICKEY)
                         .appendQueryParameter("Did", BRConstants.ELAPHANT_APP_DID)
                         .appendQueryParameter("AppName", BRConstants.ELAPHANT_APP_NAME)
@@ -107,17 +113,17 @@ public class FragmentChatFriends extends BaseFragment {
 
                 String tmp = builder.build().toString();
                 Uri scheme = Uri.parse(tmp);
-                Intent intent = new Intent(Intent.ACTION_VIEW,scheme);
+                Intent intent = new Intent(Intent.ACTION_VIEW, scheme);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
 
             @Override
             public void sendMessage(View view, int position) {
-                String friendCode = mDatas.get(position-1).getFriendCode();
-                if(!StringUtil.isNullOrEmpty(friendCode)) {
-                    ContactInterface.Status status = mPeerNode.getFriendStatus(friendCode);
-                    if(status == ContactInterface.Status.Online) {
+                String friendCode = mDatas.get(position - 1).getFriendCode();
+                if (!StringUtil.isNullOrEmpty(friendCode)) {
+                    ContactInterface.Status status = CarrierPeerNode.getInstance(getContext()).getFriendStatus(friendCode);
+                    if (status == ContactInterface.Status.Online) {
                         Intent intent = new Intent(getContext(), ChatDetailActivity.class);
                         intent.putExtra("friendCode", friendCode);
                         getContext().startActivity(intent);
@@ -130,28 +136,33 @@ public class FragmentChatFriends extends BaseFragment {
             @Override
             public void deleteFriends(View view, int position) {
                 //TODO daokun.xi
-//                mPeerNode.removeFriend(mDatas.get(position).getFriendCode());
+                CarrierPeerNode.getInstance(getContext()).removeFriend(mDatas.get(position).getFriendCode());
                 mDatas.remove(position);
                 mAdapter.notifyDataSetChanged();
             }
         });
     }
 
-    public void addFriend(final String value) {
-        int ret = mPeerNode.addFriend(value, "");
-        refreshFriendView();
+    public void addFriend(final String friendCode) {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                int ret = CarrierPeerNode.getInstance(getContext()).addFriend(friendCode, "summary");
+                refreshFriendView();
+            }
+        });
     }
 
     private void refreshFriendView() {
-        getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
+        getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 //TODO daokun.xi
-                List<ContactInterface.FriendInfo> friendInfos = mPeerNode.listFriendInfo();
-                if(null == friendInfos) return;
+                List<ContactInterface.FriendInfo> friendInfos = CarrierPeerNode.getInstance(getContext()).getFriends();
+                if (null == friendInfos) return;
                 List<ContactEntity> contacts = new ArrayList<>();
                 contacts.clear();
-                for(ContactInterface.FriendInfo info : friendInfos) {
+                for (ContactInterface.FriendInfo info : friendInfos) {
                     ContactEntity contactEntity = new ContactEntity();
                     contactEntity.setContact(/*info.nickname*/info.did);
                     contactEntity.setTokenAddress(info.elaAddress);
@@ -169,7 +180,34 @@ public class FragmentChatFriends extends BaseFragment {
                 mAdapter.setDatas(mDatas);
                 mAdapter.notifyDataSetChanged();
             }
-        }, 500);
+        });
+//        getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                //TODO daokun.xi
+//                List<ContactInterface.FriendInfo> friendInfos = CarrierPeerNode.getInstance(getContext()).getFriends();
+//                if (null == friendInfos) return;
+//                List<ContactEntity> contacts = new ArrayList<>();
+//                contacts.clear();
+//                for (ContactInterface.FriendInfo info : friendInfos) {
+//                    ContactEntity contactEntity = new ContactEntity();
+//                    contactEntity.setContact(/*info.nickname*/info.did);
+//                    contactEntity.setTokenAddress(info.elaAddress);
+//                    contactEntity.setFriendCode(info.humanCode);
+//                    contacts.add(contactEntity);
+//                }
+//
+//                mDatas.clear();
+//                mDatas.addAll(contacts);
+//
+//                mIndexBar.setmSourceDatas(mDatas)
+//                        .invalidate();
+//                mDecoration.setmDatas(mDatas);
+//
+//                mAdapter.setDatas(mDatas);
+//                mAdapter.notifyDataSetChanged();
+//            }
+//        }, 500);
     }
 
     private void initDatas(final String[] data) {
@@ -202,6 +240,6 @@ public class FragmentChatFriends extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mPeerNode.stop();
+        CarrierPeerNode.getInstance(getContext()).stop();
     }
 }
