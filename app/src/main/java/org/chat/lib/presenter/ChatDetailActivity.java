@@ -3,7 +3,6 @@ package org.chat.lib.presenter;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -17,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.threads.executor.BRExecutor;
+
 import org.chat.lib.adapter.ChatAdapter;
 import org.chat.lib.adapter.CommonFragmentPagerAdapter;
 import org.chat.lib.entity.FullImageInfo;
@@ -27,7 +28,6 @@ import org.chat.lib.widget.EmotionInputDetector;
 import org.chat.lib.widget.NoScrollViewPager;
 import org.chat.lib.widget.StateButton;
 import org.easy.recycleview.EasyRecyclerView;
-import org.elastos.sdk.elephantwallet.contact.Contact;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.elaphant.sdk.peernode.Connector;
-import app.elaphant.sdk.peernode.PeerNode;
 
 public class ChatDetailActivity extends FragmentActivity {
 
@@ -50,8 +49,6 @@ public class ChatDetailActivity extends FragmentActivity {
     StateButton emotionSend;
     NoScrollViewPager viewpager;
     RelativeLayout emotionLayout;
-
-    PeerNode mPeerNode;
 
     private Connector mConnector = null;
 
@@ -88,7 +85,6 @@ public class ChatDetailActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_detail_layout);
         mFriendCode = getIntent().getStringExtra("friendCode");
-        mPeerNode = PeerNode.getInstance();
         initView();
         EventBus.getDefault().register(this);
         initWidget();
@@ -262,10 +258,25 @@ public class ChatDetailActivity extends FragmentActivity {
 //            }
 //        }, 3000);
 
-
-        messageInfos.add(messageInfo);
-        chatAdapter.add(messageInfo);
-        chatList.scrollToPosition(chatAdapter.getCount() - 1);
+        final int type = messageInfo.getType();
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                if(Constants.CHAT_ITEM_TYPE_RIGHT == type) {
+                    messageInfo.setSendState(Constants.CHAT_ITEM_SENDING);
+                    CarrierPeerNode.getInstance(ChatDetailActivity.this).sendMessage(mFriendCode, messageInfo.getContent());
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        messageInfo.setSendState(Constants.CHAT_ITEM_SEND_SUCCESS);
+                        messageInfos.add(messageInfo);
+                        chatAdapter.add(messageInfo);
+                        chatList.scrollToPosition(chatAdapter.getCount() - 1);
+                    }
+                });
+            }
+        });
     }
 
     @Override

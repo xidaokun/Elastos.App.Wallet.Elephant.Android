@@ -182,7 +182,9 @@ public class CarrierPeerNode {
     private void handleMessage(String humanCode, Contact.Message message) {
         Log.d("xidaokun", "humanCode:" + humanCode + " message:" + message);
         MessageInfo messageInfo = new MessageInfo();
-        messageInfo.setContent(messageInfo.getContent());
+        messageInfo.setContent(message.data.toString());
+        messageInfo.setTime(String.valueOf(message.timestamp));
+        messageInfo.setMsgId(String.valueOf(message.timestamp));
         messageInfo.setType(Constants.CHAT_ITEM_TYPE_LEFT);
         messageInfo.setHeader("https://xidaokun.github.io/im_boy.png");
         postSingleMessageEvent(messageInfo);
@@ -216,6 +218,10 @@ public class CarrierPeerNode {
         return mPeerNode.addFriend(friendCode, summary);
     }
 
+    public int acceptFriend(String friendCode) {
+        return mPeerNode.acceptFriend(friendCode);
+    }
+
     public ContactInterface.Status getFriendStatus(String friendCode) {
         return mPeerNode.getFriendStatus(friendCode);
     }
@@ -226,6 +232,11 @@ public class CarrierPeerNode {
 
     public int removeFriend(String friendCode) {
         return mPeerNode.removeFriend(friendCode);
+    }
+
+    public int sendMessage(String friendCode, String content) {
+        ContactInterface.Message message = Contact.MakeTextMessage(content, null);
+        return mConnector.sendMessage(friendCode, message);
     }
 
     public static class RequestFriendInfo {

@@ -25,6 +25,7 @@ import com.breadwallet.R;
 
 import org.chat.lib.entity.MessageInfo;
 import org.chat.lib.utils.AudioRecoderUtils;
+import org.chat.lib.utils.Constants;
 import org.chat.lib.utils.PopupWindowFactory;
 import org.chat.lib.utils.Utils;
 import org.greenrobot.eventbus.EventBus;
@@ -185,6 +186,7 @@ public class EmotionInputDetector {
                 mAddButton.setVisibility(View.VISIBLE);
                 mSendButton.setVisibility(View.GONE);
                 MessageInfo messageInfo = new MessageInfo();
+                messageInfo.setType(Constants.CHAT_ITEM_TYPE_RIGHT);
                 messageInfo.setContent(mEditText.getText().toString());
                 EventBus.getDefault().post(messageInfo);
                 mEditText.setText("");

@@ -23,6 +23,8 @@ import com.breadwallet.presenter.fragments.FragmentChat;
 import com.breadwallet.presenter.fragments.FragmentExplore;
 import com.breadwallet.presenter.fragments.FragmentSetting;
 import com.breadwallet.presenter.fragments.FragmentWallet;
+import com.breadwallet.tools.animation.ElaphantDialog;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -129,9 +131,27 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void acceptFriend(CarrierPeerNode.RequestFriendInfo requestFriendInfo) {
+    public void acceptFriend(final CarrierPeerNode.RequestFriendInfo requestFriendInfo) {
         Log.d("xidaokun", "humancode:"+requestFriendInfo.humanCode+" content:"+requestFriendInfo.content);
-        Toast.makeText(this, "humancode:"+requestFriendInfo.humanCode, Toast.LENGTH_SHORT).show();
+
+        final ElaphantDialog elaphantDialog = new ElaphantDialog(this);
+        elaphantDialog.setMessageStr("添加好友请求");
+        elaphantDialog.setPositiveStr("接受");
+        elaphantDialog.setNegativeStr("拒绝");
+        elaphantDialog.setPositiveListener(new ElaphantDialog.OnPositiveClickListener() {
+            @Override
+            public void onClick() {
+                CarrierPeerNode.getInstance(HomeActivity.this).acceptFriend(requestFriendInfo.humanCode);
+                elaphantDialog.dismiss();
+            }
+        });
+        elaphantDialog.setNegativeListener(new ElaphantDialog.OnNegativeClickListener() {
+            @Override
+            public void onClick() {
+                elaphantDialog.dismiss();
+            }
+        });
+        elaphantDialog.show();
     }
 
 
