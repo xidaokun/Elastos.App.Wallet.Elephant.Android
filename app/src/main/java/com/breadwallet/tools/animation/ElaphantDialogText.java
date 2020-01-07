@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 
-public class ElaphantDialog extends Dialog {
+public class ElaphantDialogText extends Dialog {
 
     private TextView mPositiveBtn;
     private TextView mNegativeBtn;
@@ -23,14 +23,14 @@ public class ElaphantDialog extends Dialog {
     private String mPositiveStr;
     private String mNegativeStr;
 
-    public ElaphantDialog(Context context) {
+    public ElaphantDialogText(Context context) {
         super(context);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.elaphant_dialog_layout);
+        setContentView(R.layout.elaphant_dialog_text_layout);
 
         setCanceledOnTouchOutside(false);
         initView();

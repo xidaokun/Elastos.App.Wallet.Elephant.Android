@@ -22,6 +22,7 @@ import app.elaphant.sdk.peernode.Connector;
 import app.elaphant.sdk.peernode.PeerNode;
 import app.elaphant.sdk.peernode.PeerNodeListener;
 
+
 public class CarrierPeerNode {
 
     private static CarrierPeerNode mInstance;
@@ -212,6 +213,10 @@ public class CarrierPeerNode {
 
     public void postGroupMessageEvent() {
 
+    }
+
+    public void setItemInfo(Contact.HumanInfo.Item item, String value) {
+        mPeerNode.setUserInfo(item, value);
     }
 
     public int addFriend(String friendCode, String summary) {

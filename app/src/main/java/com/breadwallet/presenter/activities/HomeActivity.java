@@ -23,8 +23,7 @@ import com.breadwallet.presenter.fragments.FragmentChat;
 import com.breadwallet.presenter.fragments.FragmentExplore;
 import com.breadwallet.presenter.fragments.FragmentSetting;
 import com.breadwallet.presenter.fragments.FragmentWallet;
-import com.breadwallet.tools.animation.ElaphantDialog;
-import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.animation.ElaphantDialogText;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -134,18 +133,18 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     public void acceptFriend(final CarrierPeerNode.RequestFriendInfo requestFriendInfo) {
         Log.d("xidaokun", "humancode:"+requestFriendInfo.humanCode+" content:"+requestFriendInfo.content);
 
-        final ElaphantDialog elaphantDialog = new ElaphantDialog(this);
+        final ElaphantDialogText elaphantDialog = new ElaphantDialogText(this);
         elaphantDialog.setMessageStr("添加好友请求");
         elaphantDialog.setPositiveStr("接受");
         elaphantDialog.setNegativeStr("拒绝");
-        elaphantDialog.setPositiveListener(new ElaphantDialog.OnPositiveClickListener() {
+        elaphantDialog.setPositiveListener(new ElaphantDialogText.OnPositiveClickListener() {
             @Override
             public void onClick() {
                 CarrierPeerNode.getInstance(HomeActivity.this).acceptFriend(requestFriendInfo.humanCode);
                 elaphantDialog.dismiss();
             }
         });
-        elaphantDialog.setNegativeListener(new ElaphantDialog.OnNegativeClickListener() {
+        elaphantDialog.setNegativeListener(new ElaphantDialogText.OnNegativeClickListener() {
             @Override
             public void onClick() {
                 elaphantDialog.dismiss();
@@ -158,10 +157,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     @Override
     protected void onResume() {
         super.onResume();
-//        boolean iscrash = getIntent().getBooleanExtra("crash", false);
-//        Log.i(TAG, "iscrash:" + iscrash);
-//        if (iscrash) navigation.setSelectedItemId(R.id.navigation_home);
-
         InternetManager.registerConnectionReceiver(this, this);
     }
 

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.animation.ElaphantDialogEdit;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.util.StringUtil;
 
@@ -18,6 +19,8 @@ import org.chat.lib.adapter.ChatPagerAdapter;
 import org.chat.lib.presenter.BaseFragment;
 import org.chat.lib.presenter.FragmentChatFriends;
 import org.chat.lib.presenter.FragmentChatMessage;
+import org.elastos.sdk.elephantwallet.contact.Contact;
+import org.moment.lib.node.CarrierPeerNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +78,26 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
         fragments.add(mChatFriendsFrg = FragmentChatFriends.newInstance(getContext().getString(R.string.My_chat_tab_friends_title)));
         mViewPager.setAdapter(new ChatPagerAdapter(getActivity().getSupportFragmentManager(), fragments));
         mTabLayout.setupWithViewPager(mViewPager);
+
+        final ElaphantDialogEdit elaphantDialog = new ElaphantDialogEdit(getContext());
+        elaphantDialog.setTitleStr("Set nickname to chat");
+        elaphantDialog.setMessageStr("Input your nickname");
+        elaphantDialog.setPositiveStr("Save");
+        elaphantDialog.setNegativeStr("Cancel");
+        elaphantDialog.setPositiveListener(new ElaphantDialogEdit.OnPositiveClickListener() {
+            @Override
+            public void onClick() {
+                CarrierPeerNode.getInstance(getContext()).setItemInfo(Contact.HumanInfo.Item.Nickname, elaphantDialog.getNickname());
+                elaphantDialog.dismiss();
+            }
+        });
+        elaphantDialog.setNegativeListener(new ElaphantDialogEdit.OnNegativeClickListener() {
+            @Override
+            public void onClick() {
+                elaphantDialog.dismiss();
+            }
+        });
+        elaphantDialog.show();
     }
 
     private void initListener() {
