@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,31 +12,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 
 import org.chat.lib.adapter.FriendsAdapter;
 import org.chat.lib.entity.ContactEntity;
-import org.chat.lib.entity.MessageInfo;
-import org.chat.lib.utils.ChatUiUtils;
-import org.chat.lib.utils.Constants;
 import org.chat.lib.widget.DividerItemDecoration;
 import org.chat.lib.widget.IndexBar;
 import org.chat.lib.widget.SuspensionDecoration;
-import org.elastos.sdk.elephantwallet.contact.Contact;
 import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
-import org.greenrobot.eventbus.EventBus;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.moment.lib.node.CarrierPeerNode;
+import org.node.CarrierPeerNode;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import app.elaphant.sdk.peernode.Connector;
-import app.elaphant.sdk.peernode.PeerNode;
-import app.elaphant.sdk.peernode.PeerNodeListener;
 
 public class FragmentChatFriends extends BaseFragment {
     private static final String TAG = FragmentChatFriends.class.getSimpleName() + "_log";
@@ -63,10 +52,14 @@ public class FragmentChatFriends extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_chat_friends, container, false);
         initView(rootView);
 
-        //mock data
-        initDatas(getResources().getStringArray(R.array.provinces));
         initListener();
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        initDatas(getResources().getStringArray(R.array.provinces));
     }
 
     private void initView(View rootView) {
@@ -124,9 +117,10 @@ public class FragmentChatFriends extends BaseFragment {
                 if (!StringUtil.isNullOrEmpty(friendCode)) {
                     ContactInterface.Status status = CarrierPeerNode.getInstance(getContext()).getFriendStatus(friendCode);
                     if (status == ContactInterface.Status.Online) {
-                        Intent intent = new Intent(getContext(), ChatDetailActivity.class);
-                        intent.putExtra("friendCode", friendCode);
-                        getContext().startActivity(intent);
+                        List friendCodes = new ArrayList();
+                        friendCodes.clear();
+                        friendCodes.add(friendCode);
+                        UiUtils.startChatDetailActivity(getContext(), friendCodes);
                         return;
                     }
                 }
@@ -193,7 +187,7 @@ public class FragmentChatFriends extends BaseFragment {
 //                    ContactEntity contactEntity = new ContactEntity();
 //                    contactEntity.setContact(/*info.nickname*/info.did);
 //                    contactEntity.setTokenAddress(info.elaAddress);
-//                    contactEntity.setFriendCode(info.humanCode);
+//                    contactEntity.setFriendCodes(info.humanCode);
 //                    contacts.add(contactEntity);
 //                }
 //

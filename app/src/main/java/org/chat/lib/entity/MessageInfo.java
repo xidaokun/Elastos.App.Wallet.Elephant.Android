@@ -1,5 +1,7 @@
 package org.chat.lib.entity;
 
+import java.util.List;
+
 public class MessageInfo {
     private int type;
     private String content;
@@ -10,6 +12,15 @@ public class MessageInfo {
     private String imageUrl;
     private long voiceTime;
     private String msgId;
+    private List<String> friendCodes;
+
+    public List<String> getFriendCodes() {
+        return friendCodes;
+    }
+
+    public void setFriendCodes(List<String> friendCodes) {
+        this.friendCodes = friendCodes;
+    }
 
     public int getType() {
         return type;

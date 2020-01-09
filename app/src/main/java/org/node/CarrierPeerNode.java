@@ -1,4 +1,4 @@
-package org.moment.lib.node;
+package org.node;
 
 import android.content.Context;
 import android.provider.Settings;
@@ -7,6 +7,7 @@ import android.util.Log;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
+import com.google.gson.Gson;
 
 import org.chat.lib.entity.MessageInfo;
 import org.chat.lib.utils.Constants;
@@ -15,6 +16,7 @@ import org.elastos.sdk.elephantwallet.contact.Utils;
 import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
 import org.elastos.sdk.keypair.ElastosKeypair;
 import org.greenrobot.eventbus.EventBus;
+import org.node.bean.MsgProtocol;
 
 import java.util.List;
 
@@ -183,12 +185,18 @@ public class CarrierPeerNode {
     private void handleMessage(String humanCode, Contact.Message message) {
         Log.d("xidaokun", "humanCode:" + humanCode + " message:" + message);
         MessageInfo messageInfo = new MessageInfo();
-        messageInfo.setContent(message.data.toString());
+
+        String data = message.data.toString();
+        if(StringUtil.isNullOrEmpty(data)) return;
+
+        MsgProtocol msgProtocol = new Gson().fromJson(data, MsgProtocol.class);
+        messageInfo.setContent(msgProtocol.content);
+        messageInfo.setFriendCodes(msgProtocol.friendCodes);
         messageInfo.setTime(String.valueOf(message.timestamp));
         messageInfo.setMsgId(String.valueOf(message.timestamp));
         messageInfo.setType(Constants.CHAT_ITEM_TYPE_LEFT);
         messageInfo.setHeader("https://xidaokun.github.io/im_boy.png");
-        postSingleMessageEvent(messageInfo);
+        postMessageEvent(messageInfo);
     }
 
     public void createRoom(String serviceName) {
@@ -207,12 +215,8 @@ public class CarrierPeerNode {
         EventBus.getDefault().post(humanChangeInfo);
     }
 
-    public void postSingleMessageEvent(MessageInfo messageInfo) {
+    public void postMessageEvent(MessageInfo messageInfo) {
         EventBus.getDefault().post(messageInfo);
-    }
-
-    public void postGroupMessageEvent() {
-
     }
 
     public void setItemInfo(Contact.HumanInfo.Item item, String value) {
@@ -233,6 +237,10 @@ public class CarrierPeerNode {
 
     public List<ContactInterface.FriendInfo> getFriends() {
         return mPeerNode.listFriendInfo();
+    }
+
+    public ContactInterface.UserInfo getUserInfo() {
+        return mPeerNode.getUserInfo();
     }
 
     public int removeFriend(String friendCode) {

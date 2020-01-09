@@ -30,11 +30,16 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.ProfileDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.StringUtil;
+import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.elastos.jni.Utility;
 import com.elastos.jni.utils.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.chat.lib.entity.MessageCacheBean;
+import org.chat.lib.entity.MessageInfo;
+import org.chat.lib.entity.MessageItemBean;
+import org.chat.lib.source.ChatDataSource;
 import org.elastos.sdk.wallet.BlockChainNode;
 import org.elastos.sdk.wallet.Did;
 import org.elastos.sdk.wallet.DidManager;
@@ -43,7 +48,7 @@ import org.elastos.sdk.wallet.IdentityManager;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.moment.lib.node.CarrierPeerNode;
+import org.node.CarrierPeerNode;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -153,6 +158,27 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         elaphantDialog.show();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void MessageEvent(MessageInfo messageInfo) {
+        MessageCacheBean messageCacheBean = new MessageCacheBean();
+        messageCacheBean.MessageType = ChatDataSource.TYPE_MESSAGE_TEXT;
+        messageCacheBean.MessageContent = messageInfo.getContent();
+        messageCacheBean.MessageHumncode = WalletElaManager.getInstance(this).getDid();
+        messageCacheBean.MessageHasRead = 0;
+        messageCacheBean.MessageFriendCodes = messageInfo.getFriendCodes();
+        messageCacheBean.MessageOrientation = messageInfo.getType();
+
+        List<MessageCacheBean> messageCacheBeans = new ArrayList<>();
+        messageCacheBeans.add(messageCacheBean);
+        ChatDataSource.getInstance(this).cacheMessage(messageCacheBeans);
+
+        MessageItemBean messageItemBean = new MessageItemBean();
+        messageItemBean.friendCodes = messageInfo.getFriendCodes();
+        messageItemBean.timeStamp = String.valueOf(System.currentTimeMillis());
+        List<MessageItemBean> messageItemBeans = new ArrayList<>();
+        messageItemBeans.add(messageItemBean);
+        ChatDataSource.getInstance(this).cacheMessageItemInfos(messageItemBeans);
+    }
 
     @Override
     protected void onResume() {

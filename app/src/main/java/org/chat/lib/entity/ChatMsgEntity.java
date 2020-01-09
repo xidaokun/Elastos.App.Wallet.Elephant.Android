@@ -1,5 +1,7 @@
 package org.chat.lib.entity;
 
+import java.util.List;
+
 public class ChatMsgEntity {
     public String getName() {
         return name;
@@ -46,4 +48,14 @@ public class ChatMsgEntity {
     private String count;
     private String timeStamp;
     private String iconUrl;
+
+    public List<String> getFriendCodes() {
+        return friendCodes;
+    }
+
+    public void setFriendCodes(List<String> friendCodes) {
+        this.friendCodes = friendCodes;
+    }
+
+    private List<String> friendCodes;
 }

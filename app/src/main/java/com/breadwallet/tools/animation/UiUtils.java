@@ -82,6 +82,7 @@ import com.google.gson.Gson;
 import com.platform.sqlite.PlatformSqliteHelper;
 
 import org.chat.lib.presenter.AddFriendActivity;
+import org.chat.lib.presenter.ChatDetailActivity;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -522,6 +523,12 @@ public class UiUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void startChatDetailActivity(Context context, List<String> friendCodes) {
+        Intent intent = new Intent(context, ChatDetailActivity.class);
+        intent.putExtra("friendCodes", friendCodes.toString());
+        context.startActivity(intent);
     }
 
     public static void startSignEditActivity(Activity activity, String from, String value, int requestCode) {

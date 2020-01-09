@@ -20,7 +20,7 @@ import org.chat.lib.presenter.BaseFragment;
 import org.chat.lib.presenter.FragmentChatFriends;
 import org.chat.lib.presenter.FragmentChatMessage;
 import org.elastos.sdk.elephantwallet.contact.Contact;
-import org.moment.lib.node.CarrierPeerNode;
+import org.node.CarrierPeerNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,6 +79,9 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
         mViewPager.setAdapter(new ChatPagerAdapter(getActivity().getSupportFragmentManager(), fragments));
         mTabLayout.setupWithViewPager(mViewPager);
 
+        String nickName = CarrierPeerNode.getInstance(getContext()).getUserInfo().nickname;
+        if(!StringUtil.isNullOrEmpty(nickName)) return;
+
         final ElaphantDialogEdit elaphantDialog = new ElaphantDialogEdit(getContext());
         elaphantDialog.setTitleStr("Set nickname to chat");
         elaphantDialog.setMessageStr("Input your nickname");
@@ -87,7 +90,10 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
         elaphantDialog.setPositiveListener(new ElaphantDialogEdit.OnPositiveClickListener() {
             @Override
             public void onClick() {
-                CarrierPeerNode.getInstance(getContext()).setItemInfo(Contact.HumanInfo.Item.Nickname, elaphantDialog.getNickname());
+                String nickName = elaphantDialog.getNickname();
+                CarrierPeerNode.getInstance(getContext()).
+                        setItemInfo(Contact.HumanInfo.Item.Nickname,
+                                StringUtil.isNullOrEmpty(nickName)?"nickname":nickName);
                 elaphantDialog.dismiss();
             }
         });

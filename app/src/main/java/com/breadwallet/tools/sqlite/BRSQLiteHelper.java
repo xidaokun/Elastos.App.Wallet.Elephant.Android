@@ -57,6 +57,42 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static String DATABASE_NAME = "breadwallet.db";
     private static final int DATABASE_VERSION = 20;
 
+    public static final String CHAT_MESSAGE_ITEM_TABLE_NAME = "chatMessageItemTable";
+    public static final String CHAT_MESSAGE_ITEM_ID = "_id";
+    public static final String CHAT_MESSAGE_ITEM_FRIENDCODE = "chatMessageItemFriendCode";
+    public static final String HCAT_MESSAGE_ITEM_TIMESTAMP = "chatMessageItemTimestamp";
+    private static final String CHAT_MESSAGE_ITEM_DATABASE_CREATE = "create table if not exists " + CHAT_MESSAGE_ITEM_TABLE_NAME + " (" +
+            CHAT_MESSAGE_ITEM_ID + " integer primary key autoincrement, " +
+            CHAT_MESSAGE_ITEM_FRIENDCODE + " text, " +
+            HCAT_MESSAGE_ITEM_TIMESTAMP + " text" +
+            ");";
+
+    public static final String CHAT_MESSAGE_TABLE_NAME = "chatMessageTable";
+    public static final String CHAT_MESSAGE_ID = "_id";
+    public static final String CHAT_MESSAGE_TYPE = "chatMessageType";
+    public static final String CHAT_MESSAGE_HUMANCODE = "chatMessageHumncode";
+    public static final String CHAT_MESSAGE_TIMESTAMP = "chatMessageTimestamp";
+    public static final String CHAT_MESSAGE_HAS_READ = "chatMessageHasRead";
+    public static final String CHAT_MESSAGE_CONTENT = "chatMessageContent";
+    public static final String CHAT_MESSAGE_NICKNAME = "chatMessageNickname";
+    public static final String CHAT_MESSAGE_ICON_PATH = "chatMessageIconPath";
+    public static final String CHAT_MESSAGE_ORIENTATION = "chatMessageOrientation";
+    public static final String CHAT_MESSAGE_FRIENDCODE = "chatMessageFriendCode";
+    public static final String CHAT_MESSAGE_FRIEND_ICON_PATH = "chatMessageFriendIconPath";
+    private static final String CHAT_MESSAGE_DATABASE_CREATE = "create table if not exists " + CHAT_MESSAGE_TABLE_NAME + " (" +
+            CHAT_MESSAGE_ID + " integer primary key autoincrement, " +
+            CHAT_MESSAGE_TYPE + " text, " +
+            CHAT_MESSAGE_HUMANCODE + " text, " +
+            CHAT_MESSAGE_TIMESTAMP + " text, " +
+            CHAT_MESSAGE_HAS_READ + " integer, " +
+            CHAT_MESSAGE_CONTENT + " text, " +
+            CHAT_MESSAGE_NICKNAME + " text, " +
+            CHAT_MESSAGE_ICON_PATH + " text, " +
+            CHAT_MESSAGE_ORIENTATION + " integer, " +
+            CHAT_MESSAGE_FRIENDCODE + " text, " +
+            CHAT_MESSAGE_FRIEND_ICON_PATH + " text" +
+            ");";
+
     public static final String ADD_APPS_TABLE_NAME = "addAppTable";
     public static final String ADD_APPS_NAME = "name";
     public static final String ADD_APPS_NAME_EN = "name_en";
@@ -355,6 +391,8 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
         Log.e(TAG, "onCreate: " + TX_DATABASE_CREATE);
         Log.e(TAG, "onCreate: " + PEER_DATABASE_CREATE);
         Log.e(TAG, "onCreate: " + CURRENCY_DATABASE_CREATE);
+        database.execSQL(CHAT_MESSAGE_ITEM_DATABASE_CREATE);
+        database.execSQL(CHAT_MESSAGE_DATABASE_CREATE);
         database.execSQL(ADD_APPS_DATABASE_CREATE);
         database.execSQL(ESIGN_HISTORY_DATABASE_CREATE);
         database.execSQL(IOEX_TX_DATABASE_CREATE);

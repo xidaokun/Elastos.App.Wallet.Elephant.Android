@@ -17,11 +17,16 @@ import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.wallet.wallets.ela.WalletElaManager;
+import com.google.gson.Gson;
 
 import org.chat.lib.adapter.ChatAdapter;
 import org.chat.lib.adapter.CommonFragmentPagerAdapter;
 import org.chat.lib.entity.FullImageInfo;
+import org.chat.lib.entity.MessageCacheBean;
 import org.chat.lib.entity.MessageInfo;
+import org.chat.lib.entity.MessageItemBean;
+import org.chat.lib.source.ChatDataSource;
 import org.chat.lib.utils.Constants;
 import org.chat.lib.utils.GlobalOnItemClickListener;
 import org.chat.lib.widget.EmotionInputDetector;
@@ -31,12 +36,12 @@ import org.easy.recycleview.EasyRecyclerView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.moment.lib.node.CarrierPeerNode;
+import org.node.CarrierPeerNode;
+import org.node.bean.MsgProtocol;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
-import app.elaphant.sdk.peernode.Connector;
 
 public class ChatDetailActivity extends FragmentActivity {
 
@@ -49,8 +54,6 @@ public class ChatDetailActivity extends FragmentActivity {
     StateButton emotionSend;
     NoScrollViewPager viewpager;
     RelativeLayout emotionLayout;
-
-    private Connector mConnector = null;
 
     private void initView() {
         chatList = findViewById(R.id.chat_list);
@@ -84,7 +87,7 @@ public class ChatDetailActivity extends FragmentActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_detail_layout);
-        mFriendCode = getIntent().getStringExtra("friendCode");
+        mFriendCode = getIntent().getStringExtra("friendCodes");
         initView();
         EventBus.getDefault().register(this);
         initWidget();
@@ -231,7 +234,7 @@ public class ChatDetailActivity extends FragmentActivity {
         chatAdapter.addAll(messageInfos);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN, priority = 1)
     public void MessageEventBus(final MessageInfo messageInfo) {
 
 //        messageInfo.setHeader("https://xidaokun.github.io/im_girl.png");
@@ -263,8 +266,16 @@ public class ChatDetailActivity extends FragmentActivity {
             @Override
             public void run() {
                 if(Constants.CHAT_ITEM_TYPE_RIGHT == type) {
+                    List<String> friendCodes = Arrays.asList(mFriendCode);
                     messageInfo.setSendState(Constants.CHAT_ITEM_SENDING);
-                    CarrierPeerNode.getInstance(ChatDetailActivity.this).sendMessage(mFriendCode, messageInfo.getContent());
+                    MsgProtocol msgProtocol = new MsgProtocol();
+                    msgProtocol.from = CarrierPeerNode.getInstance(ChatDetailActivity.this).getUserInfo().humanCode;
+                    msgProtocol.content = messageInfo.getContent();
+                    msgProtocol.friendCodes = friendCodes;
+                    msgProtocol.at = null;
+                    for(String friendCode : friendCodes) {
+                        CarrierPeerNode.getInstance(ChatDetailActivity.this).sendMessage(friendCode, new Gson().toJson(msgProtocol));
+                    }
                 }
                 runOnUiThread(new Runnable() {
                     @Override
@@ -273,6 +284,25 @@ public class ChatDetailActivity extends FragmentActivity {
                         messageInfos.add(messageInfo);
                         chatAdapter.add(messageInfo);
                         chatList.scrollToPosition(chatAdapter.getCount() - 1);
+
+                        MessageCacheBean messageCacheBean = new MessageCacheBean();
+                        messageCacheBean.MessageType = ChatDataSource.TYPE_MESSAGE_TEXT;
+                        messageCacheBean.MessageContent = messageInfo.getContent();
+                        messageCacheBean.MessageHumncode = WalletElaManager.getInstance(ChatDetailActivity.this).getDid();
+                        messageCacheBean.MessageHasRead = 1;
+                        messageCacheBean.MessageFriendCodes = Arrays.asList(mFriendCode);
+                        messageCacheBean.MessageOrientation = type;
+
+                        List<MessageCacheBean> messageCacheBeans = new ArrayList<>();
+                        messageCacheBeans.add(messageCacheBean);
+                        ChatDataSource.getInstance(ChatDetailActivity.this).cacheMessage(messageCacheBeans);
+
+                        MessageItemBean messageItemBean = new MessageItemBean();
+                        messageItemBean.friendCodes = Arrays.asList(mFriendCode);
+                        messageItemBean.timeStamp = String.valueOf(System.currentTimeMillis());
+                        List<MessageItemBean> messageItemBeans = new ArrayList<>();
+                        messageItemBeans.add(messageItemBean);
+                        ChatDataSource.getInstance(ChatDetailActivity.this).cacheMessageItemInfos(messageItemBeans);
                     }
                 });
             }
