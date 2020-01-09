@@ -35,6 +35,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.elastos.sdk.keypair.ElastosKeypair;
+import org.elastos.sdk.keypair.ElastosKeypairCrypto;
 import org.elastos.sdk.keypair.ElastosKeypairDID;
 
 import java.math.BigDecimal;
@@ -145,17 +146,22 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         return mPrivateKey;
     }
 
+    String mPublickey = null;
     public String getPublicKey(){
-        try {
-            byte[] phrase = BRKeyStore.getPhrase(mContext, 0);
-            return Utility.getInstance(mContext).getSinglePublicKey(new String(phrase));
-        } catch (Exception e) {
-            e.printStackTrace();
+        if(mPublickey == null) {
+            try {
+                byte[] phrase = BRKeyStore.getPhrase(mContext, 0);
+                return Utility.getInstance(mContext).getSinglePublicKey(new String(phrase));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        return null;
+
+        return mPrivateKey;
     }
 
     public String getDid() {
+
         return ElastosKeypairDID.getDid(getPublicKey());
     }
 

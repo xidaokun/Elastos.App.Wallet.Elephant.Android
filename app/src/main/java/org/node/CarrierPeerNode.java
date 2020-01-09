@@ -50,14 +50,13 @@ public class CarrierPeerNode {
     }
 
     private void init(final Context context) {
+        mPrivateKey = WalletElaManager.getInstance(context).getPrivateKey();
+        mPublicKey = WalletElaManager.getInstance(context).getPublicKey();
+        mPeerNode = PeerNode.getInstance(context.getFilesDir().getAbsolutePath(),
+                Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                mPrivateKey = WalletElaManager.getInstance(context).getPrivateKey();
-                mPublicKey = WalletElaManager.getInstance(context).getPublicKey();
-                mPeerNode = PeerNode.getInstance(context.getFilesDir().getAbsolutePath(),
-                        Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID));
-
                 mPeerNode.setListener(new PeerNodeListener.Listener() {
 
                     @Override
@@ -248,8 +247,9 @@ public class CarrierPeerNode {
     }
 
     public int sendMessage(String friendCode, String content) {
+        String fcode = friendCode.replace("[", "").replace("]", "");
         ContactInterface.Message message = Contact.MakeTextMessage(content, null);
-        return mConnector.sendMessage(friendCode, message);
+        return mConnector.sendMessage(fcode, message);
     }
 
     public static class RequestFriendInfo {
