@@ -9,6 +9,7 @@ import android.util.Log;
 import com.breadwallet.tools.sqlite.BRDataSourceInterface;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.util.BRConstants;
+import com.elastos.jni.utils.StringUtils;
 
 import org.chat.lib.entity.MessageCacheBean;
 import org.chat.lib.entity.MessageItemBean;
@@ -54,8 +55,8 @@ public class ChatDataSource implements BRDataSourceInterface {
 
     private MessageItemBean cursorToItemBean(Cursor cursor) {
         MessageItemBean messageItemBean = new MessageItemBean();
-        messageItemBean.friendCodes = Arrays.asList(cursor.getString(0));
-        messageItemBean.timeStamp = cursor.getString(1);
+        messageItemBean.friendCodes = StringUtils.asList(cursor.getString(0));
+        messageItemBean.timeStamp = cursor.getLong(1);
 
         return messageItemBean;
     }
@@ -65,7 +66,7 @@ public class ChatDataSource implements BRDataSourceInterface {
         Cursor cursor = null;
         try {
             database = openDatabase();
-            cursor = database.query(BRSQLiteHelper.CHAT_MESSAGE_ITEM_TABLE_NAME, itemColumns, null, null, null, null, "chatMessageItemTimestamp desc");
+            cursor = database.query(BRSQLiteHelper.CHAT_MESSAGE_ITEM_TABLE_NAME, itemColumns, null, null, null, null, null/*"chatMessageItemTimestamp desc"*/);
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
                 MessageItemBean messageInfo = cursorToItemBean(cursor);
@@ -92,8 +93,8 @@ public class ChatDataSource implements BRDataSourceInterface {
             for(MessageItemBean entity : messageItemBeans){
 
                 ContentValues value = new ContentValues();
-                value.put(BRSQLiteHelper.CHAT_MESSAGE_HUMANCODE, entity.friendCodes.toString());
-                value.put(BRSQLiteHelper.CHAT_MESSAGE_NICKNAME, entity.timeStamp);
+                value.put(BRSQLiteHelper.CHAT_MESSAGE_ITEM_FRIENDCODE, (null==entity.friendCodes)?"":entity.friendCodes.toString());
+                value.put(BRSQLiteHelper.HCAT_MESSAGE_ITEM_TIMESTAMP, entity.timeStamp);
 
                 long l = database.insertWithOnConflict(BRSQLiteHelper.CHAT_MESSAGE_ITEM_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
                 Log.d(TAG, "l:"+l);
@@ -125,7 +126,7 @@ public class ChatDataSource implements BRDataSourceInterface {
         MessageCacheBean messageCacheBean = new MessageCacheBean();
         messageCacheBean.MessageType = cursor.getString(0);
         messageCacheBean.MessageHumncode = cursor.getString(1);
-        messageCacheBean.MessageTimestamp = cursor.getString(2);
+        messageCacheBean.MessageTimestamp = cursor.getLong(2);
         messageCacheBean.MessageHasRead = cursor.getInt(3);
         messageCacheBean.MessageContent = cursor.getString(4);
         messageCacheBean.MessageNickname = cursor.getString(5);
@@ -174,7 +175,7 @@ public class ChatDataSource implements BRDataSourceInterface {
                 value.put(BRSQLiteHelper.CHAT_MESSAGE_NICKNAME, entity.MessageNickname);
                 value.put(BRSQLiteHelper.CHAT_MESSAGE_CONTENT, entity.MessageContent);
                 value.put(BRSQLiteHelper.CHAT_MESSAGE_FRIEND_ICON_PATH, entity.MessageFriendIconPath);
-                value.put(BRSQLiteHelper.CHAT_MESSAGE_FRIENDCODE, entity.MessageFriendCodes.toString());
+                value.put(BRSQLiteHelper.CHAT_MESSAGE_FRIENDCODE, (entity.MessageFriendCodes==null)?"":entity.MessageFriendCodes.toString());
                 value.put(BRSQLiteHelper.CHAT_MESSAGE_HAS_READ, entity.MessageHasRead);
                 value.put(BRSQLiteHelper.CHAT_MESSAGE_ICON_PATH, entity.MessageIconPath);
                 value.put(BRSQLiteHelper.CHAT_MESSAGE_ORIENTATION, entity.MessageOrientation);

@@ -5,7 +5,7 @@ import java.util.List;
 public class MessageCacheBean {
     public String MessageType;
     public String MessageHumncode;
-    public String MessageTimestamp;
+    public long MessageTimestamp;
     public int MessageHasRead; //0 false, 1 true
     public String MessageContent ;
     public String MessageNickname;

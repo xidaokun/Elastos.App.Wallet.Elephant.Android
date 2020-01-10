@@ -55,16 +55,16 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     }
 
     public static String DATABASE_NAME = "breadwallet.db";
-    private static final int DATABASE_VERSION = 20;
+    private static final int DATABASE_VERSION = 21;
 
     public static final String CHAT_MESSAGE_ITEM_TABLE_NAME = "chatMessageItemTable";
     public static final String CHAT_MESSAGE_ITEM_ID = "_id";
     public static final String CHAT_MESSAGE_ITEM_FRIENDCODE = "chatMessageItemFriendCode";
     public static final String HCAT_MESSAGE_ITEM_TIMESTAMP = "chatMessageItemTimestamp";
     private static final String CHAT_MESSAGE_ITEM_DATABASE_CREATE = "create table if not exists " + CHAT_MESSAGE_ITEM_TABLE_NAME + " (" +
-            CHAT_MESSAGE_ITEM_ID + " integer primary key autoincrement, " +
             CHAT_MESSAGE_ITEM_FRIENDCODE + " text, " +
-            HCAT_MESSAGE_ITEM_TIMESTAMP + " text" +
+            HCAT_MESSAGE_ITEM_TIMESTAMP + " integer, " +
+            "PRIMARY KEY (" + CHAT_MESSAGE_ITEM_FRIENDCODE + ", " + HCAT_MESSAGE_ITEM_TIMESTAMP + ")" +
             ");";
 
     public static final String CHAT_MESSAGE_TABLE_NAME = "chatMessageTable";
@@ -80,17 +80,17 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String CHAT_MESSAGE_FRIENDCODE = "chatMessageFriendCode";
     public static final String CHAT_MESSAGE_FRIEND_ICON_PATH = "chatMessageFriendIconPath";
     private static final String CHAT_MESSAGE_DATABASE_CREATE = "create table if not exists " + CHAT_MESSAGE_TABLE_NAME + " (" +
-            CHAT_MESSAGE_ID + " integer primary key autoincrement, " +
             CHAT_MESSAGE_TYPE + " text, " +
             CHAT_MESSAGE_HUMANCODE + " text, " +
-            CHAT_MESSAGE_TIMESTAMP + " text, " +
+            CHAT_MESSAGE_TIMESTAMP + " integer, " +
             CHAT_MESSAGE_HAS_READ + " integer, " +
             CHAT_MESSAGE_CONTENT + " text, " +
             CHAT_MESSAGE_NICKNAME + " text, " +
             CHAT_MESSAGE_ICON_PATH + " text, " +
             CHAT_MESSAGE_ORIENTATION + " integer, " +
             CHAT_MESSAGE_FRIENDCODE + " text, " +
-            CHAT_MESSAGE_FRIEND_ICON_PATH + " text" +
+            CHAT_MESSAGE_FRIEND_ICON_PATH + " text, " +
+            "PRIMARY KEY (" + CHAT_MESSAGE_FRIENDCODE + ", " + CHAT_MESSAGE_TIMESTAMP + ")" +
             ");";
 
     public static final String ADD_APPS_TABLE_NAME = "addAppTable";

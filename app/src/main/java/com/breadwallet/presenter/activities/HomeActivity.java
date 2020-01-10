@@ -146,6 +146,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             @Override
             public void onClick() {
                 CarrierPeerNode.getInstance(HomeActivity.this).acceptFriend(requestFriendInfo.humanCode);
+                EventBus.getDefault().post(requestFriendInfo.humanCode);
                 elaphantDialog.dismiss();
             }
         });
@@ -160,6 +161,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void MessageEvent(MessageInfo messageInfo) {
+        if(messageInfo.getFriendCodes() == null) return;
         MessageCacheBean messageCacheBean = new MessageCacheBean();
         messageCacheBean.MessageType = ChatDataSource.TYPE_MESSAGE_TEXT;
         messageCacheBean.MessageContent = messageInfo.getContent();
@@ -174,7 +176,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
         MessageItemBean messageItemBean = new MessageItemBean();
         messageItemBean.friendCodes = messageInfo.getFriendCodes();
-        messageItemBean.timeStamp = String.valueOf(System.currentTimeMillis());
+        messageItemBean.timeStamp = System.currentTimeMillis();
         List<MessageItemBean> messageItemBeans = new ArrayList<>();
         messageItemBeans.add(messageItemBean);
         ChatDataSource.getInstance(this).cacheMessageItemInfos(messageItemBeans);

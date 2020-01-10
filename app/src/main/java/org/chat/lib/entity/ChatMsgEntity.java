@@ -19,19 +19,19 @@ public class ChatMsgEntity {
         this.message = message;
     }
 
-    public String getCount() {
+    public int getCount() {
         return count;
     }
 
-    public void setCount(String count) {
+    public void setCount(int count) {
         this.count = count;
     }
 
-    public String getTimeStamp() {
+    public long getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(String timeStamp) {
+    public void setTimeStamp(long timeStamp) {
         this.timeStamp = timeStamp;
     }
 
@@ -45,8 +45,8 @@ public class ChatMsgEntity {
 
     private String name;
     private String message;
-    private String count;
-    private String timeStamp;
+    private int count;
+    private long timeStamp;
     private String iconUrl;
 
     public List<String> getFriendCodes() {

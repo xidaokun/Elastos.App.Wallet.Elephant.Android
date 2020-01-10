@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
+import com.elastos.jni.utils.StringUtils;
 import com.google.gson.Gson;
 
 import org.chat.lib.adapter.ChatAdapter;
@@ -40,7 +41,6 @@ import org.node.CarrierPeerNode;
 import org.node.bean.MsgProtocol;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ChatDetailActivity extends FragmentActivity {
@@ -266,7 +266,7 @@ public class ChatDetailActivity extends FragmentActivity {
             @Override
             public void run() {
                 if(Constants.CHAT_ITEM_TYPE_RIGHT == type) {
-                    List<String> friendCodes = Arrays.asList(mFriendCode);
+                    List<String> friendCodes = StringUtils.asList(mFriendCode);
                     messageInfo.setSendState(Constants.CHAT_ITEM_SENDING);
                     MsgProtocol msgProtocol = new MsgProtocol();
                     msgProtocol.from = CarrierPeerNode.getInstance(ChatDetailActivity.this).getUserInfo().humanCode;
@@ -290,7 +290,7 @@ public class ChatDetailActivity extends FragmentActivity {
                         messageCacheBean.MessageContent = messageInfo.getContent();
                         messageCacheBean.MessageHumncode = WalletElaManager.getInstance(ChatDetailActivity.this).getDid();
                         messageCacheBean.MessageHasRead = 1;
-                        messageCacheBean.MessageFriendCodes = Arrays.asList(mFriendCode);
+                        messageCacheBean.MessageFriendCodes = StringUtils.asList(mFriendCode);
                         messageCacheBean.MessageOrientation = type;
 
                         List<MessageCacheBean> messageCacheBeans = new ArrayList<>();
@@ -298,8 +298,8 @@ public class ChatDetailActivity extends FragmentActivity {
                         ChatDataSource.getInstance(ChatDetailActivity.this).cacheMessage(messageCacheBeans);
 
                         MessageItemBean messageItemBean = new MessageItemBean();
-                        messageItemBean.friendCodes = Arrays.asList(mFriendCode);
-                        messageItemBean.timeStamp = String.valueOf(System.currentTimeMillis());
+                        messageItemBean.friendCodes = StringUtils.asList(mFriendCode);
+                        messageItemBean.timeStamp = System.currentTimeMillis();
                         List<MessageItemBean> messageItemBeans = new ArrayList<>();
                         messageItemBeans.add(messageItemBean);
                         ChatDataSource.getInstance(ChatDetailActivity.this).cacheMessageItemInfos(messageItemBeans);

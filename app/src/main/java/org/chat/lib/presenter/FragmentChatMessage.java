@@ -1,6 +1,5 @@
 package org.chat.lib.presenter;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -102,6 +101,8 @@ public class FragmentChatMessage extends BaseFragment {
         for(MessageItemBean messageCacheBean : messageItemBeans) {
             List<String> friendCode = messageCacheBean.friendCodes;
 
+            if(null == friendCode) continue;
+
             List<MessageCacheBean> allMessageCacheBeans  = ChatDataSource.getInstance(getContext()).getMessage(BRSQLiteHelper.CHAT_MESSAGE_FRIENDCODE + " = ? ", new String[]{friendCode.toString()});
             List<MessageCacheBean> hasNotReadCacheBeans = ChatDataSource.getInstance(getContext()).getMessage(BRSQLiteHelper.CHAT_MESSAGE_FRIENDCODE + " = ? AND " + BRSQLiteHelper.CHAT_MESSAGE_HAS_READ + " = ? ", new String[]{friendCode.toString(), String.valueOf(0)});
 
@@ -114,7 +115,7 @@ public class FragmentChatMessage extends BaseFragment {
                     entity.setMessage(lastBean.MessageContent);
                     entity.setTimeStamp(lastBean.MessageTimestamp);
                     entity.setFriendCodes(lastBean.MessageFriendCodes);
-                    entity.setCount((null!=hasNotReadCacheBeans && hasNotReadCacheBeans.size()>0)? String.valueOf(hasNotReadCacheBeans.size()-1) : String.valueOf(0));
+                    entity.setCount((null!=hasNotReadCacheBeans && hasNotReadCacheBeans.size()>0)? hasNotReadCacheBeans.size()-1 : 0);
 
                     entities.add(entity);
                     mAdapter.notifyDataSetChanged();

@@ -23,6 +23,8 @@ import org.chat.lib.widget.DividerItemDecoration;
 import org.chat.lib.widget.IndexBar;
 import org.chat.lib.widget.SuspensionDecoration;
 import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.node.CarrierPeerNode;
 
 import java.util.ArrayList;
@@ -145,6 +147,11 @@ public class FragmentChatFriends extends BaseFragment {
                 refreshFriendView();
             }
         });
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void acceptFriendEvent(String friendCode) {
+        refreshFriendView();
     }
 
     private void refreshFriendView() {

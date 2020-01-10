@@ -7,6 +7,8 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.util.BRDateUtil;
+
 import org.chat.lib.entity.ChatMsgEntity;
 import org.chat.lib.widget.RoundImageView;
 
@@ -53,9 +55,14 @@ public class ChatMessageAdapter extends BaseAdapter {
         }
         viewHolder.nameTv.setText(mEntities.get(position).getName());
         viewHolder.msgTv.setText(mEntities.get(position).getMessage());
-        viewHolder.timeTv.setText(mEntities.get(position).getTimeStamp());
-        viewHolder.countTv.setText(mEntities.get(position).getCount());
-        final int pos = position;
+        viewHolder.timeTv.setText(BRDateUtil.getFullDate(mEntities.get(position).getTimeStamp()));
+        int count = mEntities.get(position).getCount();
+        if(count == 0) {
+            viewHolder.countTv.setVisibility(View.GONE);
+        } else {
+            viewHolder.countTv.setVisibility(View.VISIBLE);
+            viewHolder.countTv.setText(String.valueOf(count));
+        }
         return convertView;
     }
 

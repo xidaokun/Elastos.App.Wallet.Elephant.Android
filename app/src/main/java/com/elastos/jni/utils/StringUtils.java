@@ -3,7 +3,10 @@ package com.elastos.jni.utils;
 import android.net.Uri;
 
 import com.breadwallet.tools.util.StringUtil;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,5 +42,11 @@ public class StringUtils {
         Uri uri = Uri.parse(url);
         String scheme = uri.getScheme();
         return url.replace(scheme+"://", protocol+"://");
+    }
+
+    public static List<String> asList(String value) {
+        if(isNullOrEmpty(value)) return null;
+        return new Gson().fromJson(value, new TypeToken<List<String>>() {
+        }.getType());
     }
 }
