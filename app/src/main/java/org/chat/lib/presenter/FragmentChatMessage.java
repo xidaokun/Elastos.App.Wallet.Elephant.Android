@@ -47,55 +47,6 @@ public class FragmentChatMessage extends BaseFragment {
     }
 
     private void refreshData() {
-//        ChatMsgEntity entity1 = new ChatMsgEntity();
-//        entity1.setName("Chris");
-//        entity1.setMessage("How are you..........");
-//        entity1.setTimeStamp("2:10");
-//        entity1.setCount("999");
-//        entities.add(entity1);
-//
-//        ChatMsgEntity entity2 = new ChatMsgEntity();
-//        entity2.setName("Chris1");
-//        entity2.setMessage("How are you..........");
-//        entity2.setTimeStamp("2:10");
-//        entity2.setCount("9");
-//        entities.add(entity2);
-//
-//        ChatMsgEntity entity3 = new ChatMsgEntity();
-//        entity3.setName("Chris2");
-//        entity3.setMessage("How are you..........");
-//        entity3.setTimeStamp("2:10");
-//        entity3.setCount("9");
-//        entities.add(entity3);
-//
-//        ChatMsgEntity entity4 = new ChatMsgEntity();
-//        entity4.setName("Chris3");
-//        entity4.setMessage("How are you..........");
-//        entity4.setTimeStamp("2:10");
-//        entity4.setCount("9");
-//        entities.add(entity4);
-//
-//        ChatMsgEntity entity5 = new ChatMsgEntity();
-//        entity5.setName("Chris5");
-//        entity5.setMessage("How are you..........");
-//        entity5.setTimeStamp("2:10");
-//        entity5.setCount("666");
-//        entities.add(entity5);
-//
-//        ChatMsgEntity entity6 = new ChatMsgEntity();
-//        entity6.setName("Chris6");
-//        entity6.setMessage("How are you..........");
-//        entity6.setTimeStamp("2:10");
-//        entity6.setCount("9");
-//        entities.add(entity6);
-//
-//        ChatMsgEntity entity7 = new ChatMsgEntity();
-//        entity7.setName("Chris7");
-//        entity7.setMessage("How are you..........");
-//        entity7.setTimeStamp("2:10");
-//        entity7.setCount("9");
-//        entities.add(entity7);
-
         entities.clear();
         List<MessageItemBean> messageItemBeans = ChatDataSource.getInstance(getContext()).getMessageItemInfos();
         for(MessageItemBean messageCacheBean : messageItemBeans) {

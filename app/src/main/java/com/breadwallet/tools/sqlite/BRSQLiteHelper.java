@@ -62,9 +62,8 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String CHAT_MESSAGE_ITEM_FRIENDCODE = "chatMessageItemFriendCode";
     public static final String HCAT_MESSAGE_ITEM_TIMESTAMP = "chatMessageItemTimestamp";
     private static final String CHAT_MESSAGE_ITEM_DATABASE_CREATE = "create table if not exists " + CHAT_MESSAGE_ITEM_TABLE_NAME + " (" +
-            CHAT_MESSAGE_ITEM_FRIENDCODE + " text, " +
-            HCAT_MESSAGE_ITEM_TIMESTAMP + " integer, " +
-            "PRIMARY KEY (" + CHAT_MESSAGE_ITEM_FRIENDCODE + ", " + HCAT_MESSAGE_ITEM_TIMESTAMP + ")" +
+            CHAT_MESSAGE_ITEM_FRIENDCODE + " text primary key , " +
+            HCAT_MESSAGE_ITEM_TIMESTAMP + " integer" +
             ");";
 
     public static final String CHAT_MESSAGE_TABLE_NAME = "chatMessageTable";

@@ -66,7 +66,7 @@ public class ChatDataSource implements BRDataSourceInterface {
         Cursor cursor = null;
         try {
             database = openDatabase();
-            cursor = database.query(BRSQLiteHelper.CHAT_MESSAGE_ITEM_TABLE_NAME, itemColumns, null, null, null, null, null/*"chatMessageItemTimestamp desc"*/);
+            cursor = database.query(BRSQLiteHelper.CHAT_MESSAGE_ITEM_TABLE_NAME, itemColumns, null, null, null, null, "chatMessageItemTimestamp desc");
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
                 MessageItemBean messageInfo = cursorToItemBean(cursor);

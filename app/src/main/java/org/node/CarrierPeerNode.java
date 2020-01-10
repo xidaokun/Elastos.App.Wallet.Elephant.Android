@@ -247,9 +247,8 @@ public class CarrierPeerNode {
     }
 
     public int sendMessage(String friendCode, String content) {
-        String fcode = friendCode.replace("[", "").replace("]", "");
         ContactInterface.Message message = Contact.MakeTextMessage(content, null);
-        return mConnector.sendMessage(fcode, message);
+        return mConnector.sendMessage(friendCode, message);
     }
 
     public static class RequestFriendInfo {

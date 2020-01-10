@@ -23,6 +23,7 @@ import org.chat.lib.widget.DividerItemDecoration;
 import org.chat.lib.widget.IndexBar;
 import org.chat.lib.widget.SuspensionDecoration;
 import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.node.CarrierPeerNode;
@@ -55,6 +56,7 @@ public class FragmentChatFriends extends BaseFragment {
         initView(rootView);
 
         initListener();
+        EventBus.getDefault().register(this);
         return rootView;
     }
 
@@ -63,6 +65,7 @@ public class FragmentChatFriends extends BaseFragment {
         super.onResume();
         initDatas(getResources().getStringArray(R.array.provinces));
     }
+
 
     private void initView(View rootView) {
         mSideHintTv = rootView.findViewById(R.id.side_bar_hint);
@@ -155,6 +158,7 @@ public class FragmentChatFriends extends BaseFragment {
     }
 
     private void refreshFriendView() {
+        if(null == null) return;
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -182,33 +186,6 @@ public class FragmentChatFriends extends BaseFragment {
                 mAdapter.notifyDataSetChanged();
             }
         });
-//        getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                //TODO daokun.xi
-//                List<ContactInterface.FriendInfo> friendInfos = CarrierPeerNode.getInstance(getContext()).getFriends();
-//                if (null == friendInfos) return;
-//                List<ContactEntity> contacts = new ArrayList<>();
-//                contacts.clear();
-//                for (ContactInterface.FriendInfo info : friendInfos) {
-//                    ContactEntity contactEntity = new ContactEntity();
-//                    contactEntity.setContact(/*info.nickname*/info.did);
-//                    contactEntity.setTokenAddress(info.elaAddress);
-//                    contactEntity.setFriendCodes(info.humanCode);
-//                    contacts.add(contactEntity);
-//                }
-//
-//                mDatas.clear();
-//                mDatas.addAll(contacts);
-//
-//                mIndexBar.setmSourceDatas(mDatas)
-//                        .invalidate();
-//                mDecoration.setmDatas(mDatas);
-//
-//                mAdapter.setDatas(mDatas);
-//                mAdapter.notifyDataSetChanged();
-//            }
-//        }, 500);
     }
 
     private void initDatas(final String[] data) {
@@ -242,5 +219,6 @@ public class FragmentChatFriends extends BaseFragment {
     public void onDestroy() {
         super.onDestroy();
         CarrierPeerNode.getInstance(getContext()).stop();
+        EventBus.getDefault().unregister(this);
     }
 }
