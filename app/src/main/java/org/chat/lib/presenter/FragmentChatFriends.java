@@ -121,15 +121,20 @@ public class FragmentChatFriends extends BaseFragment {
             public void sendMessage(View view, int position) {
                 String friendCode = mDatas.get(position - 1).getFriendCode();
                 if (!StringUtil.isNullOrEmpty(friendCode)) {
-                    ContactInterface.Status status = CarrierPeerNode.getInstance(getContext()).getFriendStatus(friendCode);
-                    if (status == ContactInterface.Status.Online) {
-                        List friendCodes = new ArrayList();
-                        friendCodes.clear();
-                        friendCodes.add(friendCode);
-                        Log.d("xidaokun", "FragementChatFriends#StartChatDetail#friendCode:"+friendCode);
-                        UiUtils.startChatDetailActivity(getContext(), friendCodes);
-                        return;
-                    }
+//                    ContactInterface.Status status = CarrierPeerNode.getInstance(getContext()).getFriendStatus(friendCode);
+////                    if (status == ContactInterface.Status.Online) {
+////                        List friendCodes = new ArrayList();
+////                        friendCodes.clear();
+////                        friendCodes.add(friendCode);
+////                        Log.d("xidaokun", "FragementChatFriends#StartChatDetail#friendCode:"+friendCode);
+////                        UiUtils.startChatDetailActivity(getContext(), friendCodes);
+////                        return;
+////                    }
+                    List friendCodes = new ArrayList();
+                    friendCodes.clear();
+                    friendCodes.add(friendCode);
+                    Log.d("xidaokun", "FragementChatFriends#StartChatDetail#friendCode:"+friendCode);
+                    UiUtils.startChatDetailActivity(getContext(), friendCodes);
                 }
                 Toast.makeText(getContext(), "send Message failed", Toast.LENGTH_SHORT).show();
             }

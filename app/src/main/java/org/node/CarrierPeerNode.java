@@ -29,7 +29,7 @@ public class CarrierPeerNode {
 
     private static CarrierPeerNode mInstance;
     private static PeerNode mPeerNode;
-    private Connector mConnector = null;
+    private static Connector mConnector = null;
 
     private String mPrivateKey;
     private String mPublicKey;

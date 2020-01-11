@@ -260,6 +260,7 @@ public class ChatDetailActivity extends FragmentActivity {
             messageInfos.add(messageInfo);
         }
         chatAdapter.addAll(messageInfos);
+        ChatDataSource.getInstance(ChatDetailActivity.this).updateMessage(allMessageCacheBeans, true);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
