@@ -41,7 +41,7 @@ public class ChatDataSource implements BRDataSourceInterface {
     }
 
     public static ChatDataSource getInstance(Context context) {
-        if(null == mInstance) {
+        if (null == mInstance) {
             mInstance = new ChatDataSource(context);
         }
 
@@ -85,19 +85,19 @@ public class ChatDataSource implements BRDataSourceInterface {
     }
 
     public void cacheMessageItemInfos(List<MessageItemBean> messageItemBeans) {
-        if(messageItemBeans == null) return;
+        if (messageItemBeans == null) return;
         try {
             database = openDatabase();
             database.beginTransaction();
 
-            for(MessageItemBean entity : messageItemBeans){
+            for (MessageItemBean entity : messageItemBeans) {
 
                 ContentValues value = new ContentValues();
-                value.put(BRSQLiteHelper.CHAT_MESSAGE_ITEM_FRIENDCODE, (null==entity.friendCodes)?"":entity.friendCodes.toString());
+                value.put(BRSQLiteHelper.CHAT_MESSAGE_ITEM_FRIENDCODE, (null == entity.friendCodes) ? "" : entity.friendCodes.toString());
                 value.put(BRSQLiteHelper.HCAT_MESSAGE_ITEM_TIMESTAMP, entity.timeStamp);
 
                 long l = database.insertWithOnConflict(BRSQLiteHelper.CHAT_MESSAGE_ITEM_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
-                Log.d(TAG, "l:"+l);
+                Log.d(TAG, "l:" + l);
             }
             database.setTransactionSuccessful();
         } catch (Exception e) {
@@ -127,7 +127,7 @@ public class ChatDataSource implements BRDataSourceInterface {
         messageCacheBean.MessageType = cursor.getString(0);
         messageCacheBean.MessageHumncode = cursor.getString(1);
         messageCacheBean.MessageTimestamp = cursor.getLong(2);
-        messageCacheBean.MessageHasRead = cursor.getInt(3)==1;
+        messageCacheBean.MessageHasRead = cursor.getInt(3) == 1;
         messageCacheBean.MessageContent = cursor.getString(4);
         messageCacheBean.MessageNickname = cursor.getString(5);
         messageCacheBean.MessageIconPath = cursor.getString(6);
@@ -161,29 +161,45 @@ public class ChatDataSource implements BRDataSourceInterface {
         return messageInfos;
     }
 
-    public void cacheMessage(List<MessageCacheBean> messageCacheBeans){
-        if(messageCacheBeans == null) return;
+    public void updateMessage(List<MessageCacheBean> messageCacheBeans, boolean hasRead) {
+        try {
+            database = openDatabase();
+
+            for (MessageCacheBean entity : messageCacheBeans) {
+                ContentValues args = new ContentValues();
+                args.put(BRSQLiteHelper.CHAT_MESSAGE_HAS_READ, hasRead ? 1 : 0);
+
+                int r = database.update(BRSQLiteHelper.CHAT_MESSAGE_TABLE_NAME, args, BRSQLiteHelper.CHAT_MESSAGE_FRIENDCODE + " = ? ", new String[]{entity.MessageFriendCodes.toString()});
+
+            }
+        } finally {
+            closeDatabase();
+        }
+    }
+
+    public void cacheMessage(List<MessageCacheBean> messageCacheBeans) {
+        if (messageCacheBeans == null) return;
 //        Cursor cursor = null;
         try {
             database = openDatabase();
             database.beginTransaction();
 
-            for(MessageCacheBean entity : messageCacheBeans){
+            for (MessageCacheBean entity : messageCacheBeans) {
 
                 ContentValues value = new ContentValues();
                 value.put(BRSQLiteHelper.CHAT_MESSAGE_HUMANCODE, entity.MessageHumncode);
                 value.put(BRSQLiteHelper.CHAT_MESSAGE_NICKNAME, entity.MessageNickname);
                 value.put(BRSQLiteHelper.CHAT_MESSAGE_CONTENT, entity.MessageContent);
                 value.put(BRSQLiteHelper.CHAT_MESSAGE_FRIEND_ICON_PATH, entity.MessageFriendIconPath);
-                value.put(BRSQLiteHelper.CHAT_MESSAGE_FRIENDCODE, (entity.MessageFriendCodes==null)?"":entity.MessageFriendCodes.toString());
-                value.put(BRSQLiteHelper.CHAT_MESSAGE_HAS_READ, entity.MessageHasRead?1:0);
+                value.put(BRSQLiteHelper.CHAT_MESSAGE_FRIENDCODE, (entity.MessageFriendCodes == null) ? "" : entity.MessageFriendCodes.toString());
+                value.put(BRSQLiteHelper.CHAT_MESSAGE_HAS_READ, entity.MessageHasRead ? 1 : 0);
                 value.put(BRSQLiteHelper.CHAT_MESSAGE_ICON_PATH, entity.MessageIconPath);
                 value.put(BRSQLiteHelper.CHAT_MESSAGE_ORIENTATION, entity.MessageOrientation);
                 value.put(BRSQLiteHelper.CHAT_MESSAGE_TIMESTAMP, entity.MessageTimestamp);
                 value.put(BRSQLiteHelper.CHAT_MESSAGE_TYPE, entity.MessageType);
 
                 long l = database.insertWithOnConflict(BRSQLiteHelper.CHAT_MESSAGE_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
-                Log.d(TAG, "l:"+l);
+                Log.d(TAG, "l:" + l);
             }
             database.setTransactionSuccessful();
         } catch (Exception e) {

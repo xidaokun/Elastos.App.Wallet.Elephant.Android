@@ -293,6 +293,7 @@ public class ChatDetailActivity extends FragmentActivity {
 
     private void handleSend(MessageInfo messageInfo) {
         messageInfo.setSendState(Constants.CHAT_ITEM_SENDING);
+        messageInfo.setHeader("https://xidaokun.github.io/im_boy.png");
         MsgProtocol msgProtocol = new MsgProtocol();
         msgProtocol.from = CarrierPeerNode.getInstance(ChatDetailActivity.this).getUserInfo().humanCode;
         msgProtocol.content = messageInfo.getContent();
@@ -330,12 +331,6 @@ public class ChatDetailActivity extends FragmentActivity {
     private void handleReceive(MessageInfo messageInfo) {
         //TODO daokun.xi only change read status
         MessageCacheBean messageCacheBean = new MessageCacheBean();
-        messageCacheBean.MessageType = ChatDataSource.TYPE_MESSAGE_TEXT;
-        messageCacheBean.MessageContent = messageInfo.getContent();
-        messageCacheBean.MessageHasRead = true;
-        messageCacheBean.MessageHumncode = messageInfo.getHumanCode();
-        messageCacheBean.MessageTimestamp = messageInfo.getTime();
-        messageCacheBean.MessageOrientation = Constants.CHAT_ITEM_TYPE_LEFT;
         List<String> tmp = messageInfo.getFriendCodes();
         Collections.sort(tmp);
         messageCacheBean.MessageFriendCodes = tmp;
@@ -343,15 +338,7 @@ public class ChatDetailActivity extends FragmentActivity {
         List<MessageCacheBean> messageCacheBeans = new ArrayList<>();
         messageCacheBeans.add(messageCacheBean);
         Log.d("xidaokun", "ChatDetailActivity#handleReceive#\ncacheMessage:"+ new Gson().toJson(messageCacheBeans));
-        ChatDataSource.getInstance(ChatDetailActivity.this).cacheMessage(messageCacheBeans);
-
-        MessageItemBean messageItemBean = new MessageItemBean();
-        messageItemBean.friendCodes = messageInfo.getFriendCodes();
-        messageItemBean.timeStamp = messageInfo.getTime();
-        List<MessageItemBean> messageItemBeans = new ArrayList<>();
-        messageItemBeans.add(messageItemBean);
-        Log.d("xidaokun", "ChatDetailActivity#handleReceive#\ncacheMessageItemInfos:"+ new Gson().toJson(messageItemBeans));
-        ChatDataSource.getInstance(ChatDetailActivity.this).cacheMessageItemInfos(messageItemBeans);
+        ChatDataSource.getInstance(ChatDetailActivity.this).updateMessage(messageCacheBeans, true);
     }
 
     @Override

@@ -11,6 +11,7 @@ import android.widget.ListView;
 import com.breadwallet.R;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.google.gson.Gson;
 
 import org.chat.lib.adapter.ChatMessageAdapter;
@@ -86,10 +87,15 @@ public class FragmentChatMessage extends BaseFragment {
                     entity.setMessage(lastBean.MessageContent);
                     entity.setTimeStamp(lastBean.MessageTimestamp);
                     entity.setFriendCodes(lastBean.MessageFriendCodes);
-                    entity.setCount((null!=hasNotReadCacheBeans && hasNotReadCacheBeans.size()>0)? hasNotReadCacheBeans.size()-1 : 0);
+                    entity.setCount((null!=hasNotReadCacheBeans && hasNotReadCacheBeans.size()>0)? hasNotReadCacheBeans.size() : 0);
 
                     entities.add(entity);
-                    mAdapter.notifyDataSetChanged();
+                    getActivity().getWindow().getDecorView().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    });
                 }
             }
 
@@ -107,9 +113,18 @@ public class FragmentChatMessage extends BaseFragment {
     private void initListener() {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 UiUtils.startChatDetailActivity(getContext(), entities.get(position).getFriendCodes());
-
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        ChatMsgEntity chatMsgEntity = entities.get(position);
+                        List<String> friendCodes = chatMsgEntity.getFriendCodes();
+                        List<MessageCacheBean> hasNotReadCacheBeans = ChatDataSource.getInstance(getContext()).getMessage(BRSQLiteHelper.CHAT_MESSAGE_FRIENDCODE + " = ? AND " + BRSQLiteHelper.CHAT_MESSAGE_HAS_READ + " = ? ", new String[]{friendCodes.toString(), String.valueOf(0)});
+                        ChatDataSource.getInstance(getContext()).updateMessage(hasNotReadCacheBeans, true);
+//                        refreshData();
+                    }
+                });
             }
         });
     }

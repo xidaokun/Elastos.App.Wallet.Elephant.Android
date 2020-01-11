@@ -64,7 +64,7 @@ public class FragmentChatFriends extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        initDatas(getResources().getStringArray(R.array.provinces));
+        refreshFriendView();
     }
 
 
@@ -188,33 +188,6 @@ public class FragmentChatFriends extends BaseFragment {
                 mAdapter.notifyDataSetChanged();
             }
         });
-    }
-
-    private void initDatas(final String[] data) {
-
-        refreshFriendView();
-
-//        getActivity().getWindow().getDecorView().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                mDatas = new ArrayList<>();
-//                mDatas.add((ContactEntity) new ContactEntity("新的朋友").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
-//                mDatas.add((ContactEntity) new ContactEntity("群聊").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
-//                mDatas.add((ContactEntity) new ContactEntity("标签").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
-//                mDatas.add((ContactEntity) new ContactEntity("公众号").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
-//                for (int i = 0; i < data.length; i++) {
-//                    ContactEntity ContactEntity = new ContactEntity();
-//                    ContactEntity.setContact(data[i]);
-//                    mDatas.add(ContactEntity);
-//                }
-//                mAdapter.setDatas(mDatas);
-//                mAdapter.notifyDataSetChanged();
-//
-//                mIndexBar.setmSourceDatas(mDatas)
-//                        .invalidate();
-//                mDecoration.setmDatas(mDatas);
-//            }
-//        }, 500);
     }
 
     @Override
