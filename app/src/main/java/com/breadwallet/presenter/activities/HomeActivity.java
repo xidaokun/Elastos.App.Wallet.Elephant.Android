@@ -136,8 +136,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void acceptFriend(final CarrierPeerNode.RequestFriendInfo requestFriendInfo) {
-        Log.d("xidaokun", "humancode:"+requestFriendInfo.humanCode+" content:"+requestFriendInfo.content);
-
+        Log.d("xidaokun", "HomeActivity#acceptFriend#\nhumancode:"+ requestFriendInfo.humanCode + "\ncontent:" + requestFriendInfo.content);
         final ElaphantDialogText elaphantDialog = new ElaphantDialogText(this);
         elaphantDialog.setMessageStr("添加好友请求");
         elaphantDialog.setPositiveStr("接受");
@@ -159,26 +158,29 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         elaphantDialog.show();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN, priority = 1)
     public void MessageEvent(MessageInfo messageInfo) {
-        if(messageInfo.getFriendCodes() == null) return;
+        if(messageInfo.getFriendCodes() == null) return; //only receive message
         MessageCacheBean messageCacheBean = new MessageCacheBean();
         messageCacheBean.MessageType = ChatDataSource.TYPE_MESSAGE_TEXT;
         messageCacheBean.MessageContent = messageInfo.getContent();
-        messageCacheBean.MessageHumncode = WalletElaManager.getInstance(this).getDid();
-        messageCacheBean.MessageHasRead = 0;
+        messageCacheBean.MessageHumncode = messageInfo.getHumanCode();
+        messageCacheBean.MessageHasRead = false;
+        messageCacheBean.MessageTimestamp = messageInfo.getTime();
         messageCacheBean.MessageFriendCodes = messageInfo.getFriendCodes();
         messageCacheBean.MessageOrientation = messageInfo.getType();
 
         List<MessageCacheBean> messageCacheBeans = new ArrayList<>();
         messageCacheBeans.add(messageCacheBean);
+        Log.d("xidaokun", "HomeActivity#MessageEvent#\ncacheMessage:"+ new Gson().toJson(messageCacheBeans));
         ChatDataSource.getInstance(this).cacheMessage(messageCacheBeans);
 
         MessageItemBean messageItemBean = new MessageItemBean();
         messageItemBean.friendCodes = messageInfo.getFriendCodes();
-        messageItemBean.timeStamp = System.currentTimeMillis();
+        messageItemBean.timeStamp = messageInfo.getTime();
         List<MessageItemBean> messageItemBeans = new ArrayList<>();
         messageItemBeans.add(messageItemBean);
+        Log.d("xidaokun", "HomeActivity#MessageEvent#\ncacheMessageItemInfos:"+ new Gson().toJson(messageItemBeans));
         ChatDataSource.getInstance(this).cacheMessageItemInfos(messageItemBeans);
     }
 

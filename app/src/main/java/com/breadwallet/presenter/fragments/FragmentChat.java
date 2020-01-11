@@ -20,6 +20,7 @@ import org.chat.lib.presenter.BaseFragment;
 import org.chat.lib.presenter.FragmentChatFriends;
 import org.chat.lib.presenter.FragmentChatMessage;
 import org.elastos.sdk.elephantwallet.contact.Contact;
+import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
 import org.node.CarrierPeerNode;
 
 import java.util.ArrayList;
@@ -78,9 +79,14 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
         fragments.add(mChatFriendsFrg = FragmentChatFriends.newInstance(getContext().getString(R.string.My_chat_tab_friends_title)));
         mViewPager.setAdapter(new ChatPagerAdapter(getActivity().getSupportFragmentManager(), fragments));
         mTabLayout.setupWithViewPager(mViewPager);
+    }
 
-        String nickName = CarrierPeerNode.getInstance(getContext()).getUserInfo().nickname;
-        if(!StringUtil.isNullOrEmpty(nickName)) return;
+    @Override
+    public void onResume() {
+        super.onResume();
+        ContactInterface.UserInfo userInfo = CarrierPeerNode.getInstance(getContext()).getUserInfo();
+        String nickName = userInfo.nickname;
+        if(null==userInfo || !StringUtil.isNullOrEmpty(nickName)) return;
 
         final ElaphantDialogEdit elaphantDialog = new ElaphantDialogEdit(getContext());
         elaphantDialog.setTitleStr("Set nickname to chat");

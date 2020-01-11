@@ -7,12 +7,21 @@ public class MessageInfo {
     private String content;
     private String filepath;
     private int sendState;
-    private String time;
+    private long time;
     private String header;
     private String imageUrl;
     private long voiceTime;
-    private String msgId;
+    private long msgId;
+    private String humanCode;
     private List<String> friendCodes;
+
+    public String getHumanCode() {
+        return humanCode;
+    }
+
+    public void setHumanCode(String humanCode) {
+        this.humanCode = humanCode;
+    }
 
     public List<String> getFriendCodes() {
         return friendCodes;
@@ -54,11 +63,11 @@ public class MessageInfo {
         this.sendState = sendState;
     }
 
-    public String getTime() {
+    public long getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(long time) {
         this.time = time;
     }
 
@@ -86,11 +95,11 @@ public class MessageInfo {
         this.voiceTime = voiceTime;
     }
 
-    public String getMsgId() {
+    public long getMsgId() {
         return msgId;
     }
 
-    public void setMsgId(String msgId) {
+    public void setMsgId(long msgId) {
         this.msgId = msgId;
     }
 

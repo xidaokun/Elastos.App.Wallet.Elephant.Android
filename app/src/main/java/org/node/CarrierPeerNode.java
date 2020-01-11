@@ -157,42 +157,43 @@ public class CarrierPeerNode {
                 String summary = requestEvent.summary;
                 text = requestEvent.humanCode + " request friend, said: " + summary;
 
+                Log.d("xidaokun", "CarrierPeerNode#handleEvent#FriendRequest#\ntext:"+ text);
                 RequestFriendInfo requestFriendInfo = new RequestFriendInfo(requestEvent.humanCode, summary);
                 postAddFriendEvent(requestFriendInfo);
-//                mConnector.acceptFriend(requestEvent.humanCode);
                 break;
             case StatusChanged:
                 Contact.Listener.StatusEvent statusEvent = (Contact.Listener.StatusEvent) event;
                 text = statusEvent.humanCode + " status changed " + statusEvent.status;
+                Log.d("xidaokun", "CarrierPeerNode#handleEvent#StatusChanged#\ntext:"+ text);
                 FriendStatusInfo friendStatusInfo = new FriendStatusInfo(statusEvent.humanCode, statusEvent.status);
                 postFriendChangeEvent(friendStatusInfo);
                 break;
             case HumanInfoChanged:
                 Contact.Listener.InfoEvent infoEvent = (Contact.Listener.InfoEvent) event;
                 text = event.humanCode + " info changed: " + infoEvent.toString();
+                Log.d("xidaokun", "CarrierPeerNode#handleEvent#HumanInfoChanged#\ntext:"+ text);
                 HumanChangeInfo humanChangeInfo = new HumanChangeInfo(event.humanCode, infoEvent.toString());
                 postHumanInfoChangeEvent(humanChangeInfo);
                 break;
             default:
                 return;
         }
-
-        Log.d("xidaokun", "text:" + text);
-
     }
 
     private void handleMessage(String humanCode, Contact.Message message) {
-        Log.d("xidaokun", "humanCode:" + humanCode + " message:" + message);
         MessageInfo messageInfo = new MessageInfo();
 
         String data = message.data.toString();
         if(StringUtil.isNullOrEmpty(data)) return;
 
+        Log.d("xidaokun", "CarrierPeerNode#handleMessage#\nhumanCode:"+ humanCode + "\nmessage:"+data);
+
         MsgProtocol msgProtocol = new Gson().fromJson(data, MsgProtocol.class);
         messageInfo.setContent(msgProtocol.content);
+        messageInfo.setHumanCode(humanCode);
         messageInfo.setFriendCodes(msgProtocol.friendCodes);
-        messageInfo.setTime(String.valueOf(message.timestamp));
-        messageInfo.setMsgId(String.valueOf(message.timestamp));
+        messageInfo.setTime(message.timestamp);
+        messageInfo.setMsgId(message.timestamp);
         messageInfo.setType(Constants.CHAT_ITEM_TYPE_LEFT);
         messageInfo.setHeader("https://xidaokun.github.io/im_boy.png");
         postMessageEvent(messageInfo);

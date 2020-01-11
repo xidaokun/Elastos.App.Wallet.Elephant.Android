@@ -32,6 +32,8 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.elastos.jni.Utility;
 
+import org.node.CarrierPeerNode;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -144,7 +146,7 @@ public class FragmentSetting extends Fragment {
 
     private void copyText() {
         Activity app = getActivity();
-        BRClipboardManager.putClipboard(app, mDidContent.getText().toString());
+        BRClipboardManager.putClipboard(app, /*mDidContent.getText().toString()*/CarrierPeerNode.getInstance(getContext()).getUserInfo().getCurrDevCarrierAddr());
         //copy the legacy for testing purposes (testnet faucet money receiving)
         if (Utils.isEmulatorOrDebug(app) && BuildConfig.BITCOIN_TESTNET)
             BRClipboardManager.putClipboard(app, WalletsMaster.getInstance(app).getCurrentWallet(app).undecorateAddress(mDidContent.getText().toString()));

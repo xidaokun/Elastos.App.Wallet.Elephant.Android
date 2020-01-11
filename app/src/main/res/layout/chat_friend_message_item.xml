@@ -23,9 +23,10 @@
 
         <TextView
             android:id="@+id/chat_item_name"
-            android:layout_width="wrap_content"
+            android:layout_width="130dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
+            android:lines="1"
             android:textColor="#333333"
             app:layout_constraintLeft_toRightOf="@+id/chat_item_logo"
             app:layout_constraintTop_toTopOf="parent" />

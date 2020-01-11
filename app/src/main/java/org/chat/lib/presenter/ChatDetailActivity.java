@@ -90,7 +90,6 @@ public class ChatDetailActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_detail_layout);
         mFriendCode = getIntent().getStringExtra("friendCodes");
-        Log.d("xidaokun", "friendCode:"+ mFriendCode);
         initView();
         EventBus.getDefault().register(this);
         initWidget();
@@ -237,53 +236,23 @@ public class ChatDetailActivity extends FragmentActivity {
         chatAdapter.addAll(messageInfos);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN, priority = 1)
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void MessageEventBus(final MessageInfo messageInfo) {
 
         final int type = messageInfo.getType();
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                List<String> friendCodes = StringUtils.asList(mFriendCode);
-                ContactInterface.UserInfo userInfo = CarrierPeerNode.getInstance(ChatDetailActivity.this).getUserInfo();
-                String humanCode = userInfo.humanCode;
-                if(StringUtils.isNullOrEmpty(humanCode)) return;
-                friendCodes.add(humanCode);
 
-                if(Constants.CHAT_ITEM_TYPE_RIGHT == type) {
-                    messageInfo.setSendState(Constants.CHAT_ITEM_SENDING);
-                    MsgProtocol msgProtocol = new MsgProtocol();
-                    msgProtocol.from = CarrierPeerNode.getInstance(ChatDetailActivity.this).getUserInfo().humanCode;
-                    msgProtocol.content = messageInfo.getContent();
-                    msgProtocol.friendCodes = friendCodes;
-                    msgProtocol.at = null;
-                    for(String friendCode : friendCodes) {
-                        if(StringUtils.isNullOrEmpty(friendCode) || friendCode.equals(humanCode)) continue;
-                        Log.d("xidaokun", "sendMessage#CHAT_ITEM_TYPE_RIGHT#msgProtocol:"+ new Gson().toJson(msgProtocol));
-                        CarrierPeerNode.getInstance(ChatDetailActivity.this).sendMessage(friendCode, new Gson().toJson(msgProtocol));
-                    }
+                if(Constants.CHAT_ITEM_TYPE_RIGHT == type) { //send handle
+                    handleSend(messageInfo);
                 }
 
-                MessageCacheBean messageCacheBean = new MessageCacheBean();
-                messageCacheBean.MessageType = ChatDataSource.TYPE_MESSAGE_TEXT;
-                messageCacheBean.MessageContent = messageInfo.getContent();
-                messageCacheBean.MessageHasRead = 1;
-                messageCacheBean.MessageFriendCodes = StringUtils.asList(mFriendCode);
-                messageCacheBean.MessageOrientation = type;
+                if(Constants.CHAT_ITEM_TYPE_LEFT == type){ //receive handle
+                    handleReceive(messageInfo);
+                }
 
-                List<MessageCacheBean> messageCacheBeans = new ArrayList<>();
-                messageCacheBeans.add(messageCacheBean);
-                ChatDataSource.getInstance(ChatDetailActivity.this).cacheMessage(messageCacheBeans);
-
-                MessageItemBean messageItemBean = new MessageItemBean();
-                messageItemBean.friendCodes = friendCodes;
-                messageItemBean.timeStamp = System.currentTimeMillis();
-                List<MessageItemBean> messageItemBeans = new ArrayList<>();
-                messageItemBeans.add(messageItemBean);
-                Log.d("xidaokun", "cacheMessageItemInfos:"+ new Gson().toJson(messageItemBean));
-                ChatDataSource.getInstance(ChatDetailActivity.this).cacheMessageItemInfos(messageItemBeans);
-
-                runOnUiThread(new Runnable() {
+                runOnUiThread(new Runnable() {  //refresh ui
                     @Override
                     public void run() {
                         messageInfo.setSendState(Constants.CHAT_ITEM_SEND_SUCCESS);
@@ -294,6 +263,74 @@ public class ChatDetailActivity extends FragmentActivity {
                 });
             }
         });
+    }
+
+    private void handleSend(MessageInfo messageInfo) {
+        List<String> friendCodes = StringUtils.asList(mFriendCode);
+        ContactInterface.UserInfo userInfo = CarrierPeerNode.getInstance(ChatDetailActivity.this).getUserInfo();
+        String humanCode = userInfo.humanCode;
+        if(StringUtils.isNullOrEmpty(humanCode)) return;
+        friendCodes.add(humanCode);
+
+        messageInfo.setSendState(Constants.CHAT_ITEM_SENDING);
+        MsgProtocol msgProtocol = new MsgProtocol();
+        msgProtocol.from = CarrierPeerNode.getInstance(ChatDetailActivity.this).getUserInfo().humanCode;
+        msgProtocol.content = messageInfo.getContent();
+        msgProtocol.friendCodes = friendCodes;
+        msgProtocol.at = null;
+        for(String friendCode : friendCodes) {
+            if(StringUtils.isNullOrEmpty(friendCode) || friendCode.equals(humanCode)) continue;
+            Log.d("xidaokun", "ChatDetailActivity#handleSend#sendMessage#CHAT_ITEM_TYPE_RIGHT#\nmsgProtocol:"+ new Gson().toJson(msgProtocol));
+            int ret = CarrierPeerNode.getInstance(ChatDetailActivity.this).sendMessage(friendCode, new Gson().toJson(msgProtocol));
+        }
+
+        long time = System.currentTimeMillis();
+        MessageCacheBean messageCacheBean = new MessageCacheBean();
+        messageCacheBean.MessageType = ChatDataSource.TYPE_MESSAGE_TEXT;
+        messageCacheBean.MessageContent = messageInfo.getContent();
+        messageCacheBean.MessageHasRead = true;
+        messageCacheBean.MessageHumncode = mFriendCode;
+        messageCacheBean.MessageTimestamp = time;
+        messageCacheBean.MessageFriendCodes = friendCodes;
+        messageCacheBean.MessageOrientation = Constants.CHAT_ITEM_TYPE_RIGHT;
+
+        List<MessageCacheBean> messageCacheBeans = new ArrayList<>();
+        messageCacheBeans.add(messageCacheBean);
+        Log.d("xidaokun", "ChatDetailActivity#handleSend#\ncacheMessage:"+ new Gson().toJson(messageCacheBeans));
+        ChatDataSource.getInstance(ChatDetailActivity.this).cacheMessage(messageCacheBeans);
+
+        MessageItemBean messageItemBean = new MessageItemBean();
+        messageItemBean.friendCodes = friendCodes;
+        messageItemBean.timeStamp = time;
+        List<MessageItemBean> messageItemBeans = new ArrayList<>();
+        messageItemBeans.add(messageItemBean);
+        Log.d("xidaokun", "ChatDetailActivity#handleSend#\ncacheMessageItemInfos:"+ new Gson().toJson(messageItemBeans));
+        ChatDataSource.getInstance(ChatDetailActivity.this).cacheMessageItemInfos(messageItemBeans);
+    }
+
+    private void handleReceive(MessageInfo messageInfo) {
+        //TODO daokun.xi only change read status
+        MessageCacheBean messageCacheBean = new MessageCacheBean();
+        messageCacheBean.MessageType = ChatDataSource.TYPE_MESSAGE_TEXT;
+        messageCacheBean.MessageContent = messageInfo.getContent();
+        messageCacheBean.MessageHasRead = true;
+        messageCacheBean.MessageHumncode = messageInfo.getHumanCode();
+        messageCacheBean.MessageTimestamp = messageInfo.getTime();
+        messageCacheBean.MessageFriendCodes = messageInfo.getFriendCodes();
+        messageCacheBean.MessageOrientation = Constants.CHAT_ITEM_TYPE_LEFT;
+
+        List<MessageCacheBean> messageCacheBeans = new ArrayList<>();
+        messageCacheBeans.add(messageCacheBean);
+        Log.d("xidaokun", "ChatDetailActivity#handleReceive#\ncacheMessage:"+ new Gson().toJson(messageCacheBeans));
+        ChatDataSource.getInstance(ChatDetailActivity.this).cacheMessage(messageCacheBeans);
+
+        MessageItemBean messageItemBean = new MessageItemBean();
+        messageItemBean.friendCodes = messageInfo.getFriendCodes();
+        messageItemBean.timeStamp = messageInfo.getTime();
+        List<MessageItemBean> messageItemBeans = new ArrayList<>();
+        messageItemBeans.add(messageItemBean);
+        Log.d("xidaokun", "ChatDetailActivity#handleReceive#\ncacheMessageItemInfos:"+ new Gson().toJson(messageItemBeans));
+        ChatDataSource.getInstance(ChatDetailActivity.this).cacheMessageItemInfos(messageItemBeans);
     }
 
     @Override

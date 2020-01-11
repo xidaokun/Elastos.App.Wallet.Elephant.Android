@@ -1,6 +1,7 @@
 package org.chat.lib.presenter;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.ListView;
 import com.breadwallet.R;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
+import com.google.gson.Gson;
 
 import org.chat.lib.adapter.ChatMessageAdapter;
 import org.chat.lib.entity.ChatMsgEntity;
@@ -60,9 +62,13 @@ public class FragmentChatMessage extends BaseFragment {
             if(null != allMessageCacheBeans) {
                 int count = allMessageCacheBeans.size();
                 if(count > 0) {
+                    Log.d("xidaokun", "FragmentChatMessage#refreshData#\nallMessageCacheBeans:"+ new Gson().toJson(allMessageCacheBeans));
+                    Log.d("xidaokun", "FragmentChatMessage#refreshData#\nhasNotReadCacheBeans:"+ new Gson().toJson(hasNotReadCacheBeans));
+
                     MessageCacheBean lastBean = allMessageCacheBeans.get(count - 1);
                     ChatMsgEntity entity = new ChatMsgEntity();
-                    entity.setName(lastBean.MessageNickname);
+                    //TODO daokun.xi
+                    entity.setName(/*lastBean.MessageNickname*/ lastBean.MessageHumncode);
                     entity.setMessage(lastBean.MessageContent);
                     entity.setTimeStamp(lastBean.MessageTimestamp);
                     entity.setFriendCodes(lastBean.MessageFriendCodes);

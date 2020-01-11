@@ -6,7 +6,7 @@ public class MessageCacheBean {
     public String MessageType;
     public String MessageHumncode;
     public long MessageTimestamp;
-    public int MessageHasRead; //0 false, 1 true
+    public boolean MessageHasRead; //0 false, 1 true
     public String MessageContent ;
     public String MessageNickname;
     public String MessageIconPath;

@@ -66,7 +66,7 @@ public class ChatDataSource implements BRDataSourceInterface {
         Cursor cursor = null;
         try {
             database = openDatabase();
-            cursor = database.query(BRSQLiteHelper.CHAT_MESSAGE_ITEM_TABLE_NAME, itemColumns, null, null, null, null, "chatMessageItemTimestamp desc");
+            cursor = database.query(BRSQLiteHelper.CHAT_MESSAGE_ITEM_TABLE_NAME, itemColumns, null, null, null, null, "chatMessageItemTimestamp asc");
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
                 MessageItemBean messageInfo = cursorToItemBean(cursor);
@@ -127,7 +127,7 @@ public class ChatDataSource implements BRDataSourceInterface {
         messageCacheBean.MessageType = cursor.getString(0);
         messageCacheBean.MessageHumncode = cursor.getString(1);
         messageCacheBean.MessageTimestamp = cursor.getLong(2);
-        messageCacheBean.MessageHasRead = cursor.getInt(3);
+        messageCacheBean.MessageHasRead = cursor.getInt(3)==1;
         messageCacheBean.MessageContent = cursor.getString(4);
         messageCacheBean.MessageNickname = cursor.getString(5);
         messageCacheBean.MessageIconPath = cursor.getString(6);
@@ -143,7 +143,7 @@ public class ChatDataSource implements BRDataSourceInterface {
         Cursor cursor = null;
         try {
             database = openDatabase();
-            cursor = database.query(BRSQLiteHelper.CHAT_MESSAGE_TABLE_NAME, allColumns, selection, selectionArgs, null, null, "chatMessageTimestamp desc");
+            cursor = database.query(BRSQLiteHelper.CHAT_MESSAGE_TABLE_NAME, allColumns, selection, selectionArgs, null, null, "chatMessageTimestamp asc");
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
                 MessageCacheBean messageInfo = cursorToMessageInfo(cursor);
@@ -176,7 +176,7 @@ public class ChatDataSource implements BRDataSourceInterface {
                 value.put(BRSQLiteHelper.CHAT_MESSAGE_CONTENT, entity.MessageContent);
                 value.put(BRSQLiteHelper.CHAT_MESSAGE_FRIEND_ICON_PATH, entity.MessageFriendIconPath);
                 value.put(BRSQLiteHelper.CHAT_MESSAGE_FRIENDCODE, (entity.MessageFriendCodes==null)?"":entity.MessageFriendCodes.toString());
-                value.put(BRSQLiteHelper.CHAT_MESSAGE_HAS_READ, entity.MessageHasRead);
+                value.put(BRSQLiteHelper.CHAT_MESSAGE_HAS_READ, entity.MessageHasRead?1:0);
                 value.put(BRSQLiteHelper.CHAT_MESSAGE_ICON_PATH, entity.MessageIconPath);
                 value.put(BRSQLiteHelper.CHAT_MESSAGE_ORIENTATION, entity.MessageOrientation);
                 value.put(BRSQLiteHelper.CHAT_MESSAGE_TIMESTAMP, entity.MessageTimestamp);

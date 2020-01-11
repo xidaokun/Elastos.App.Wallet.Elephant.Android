@@ -45,8 +45,14 @@ public class StringUtils {
     }
 
     public static List<String> asList(String value) {
-        if(isNullOrEmpty(value)) return null;
-        return new Gson().fromJson(value, new TypeToken<List<String>>() {
-        }.getType());
+        try {
+            if(isNullOrEmpty(value)) return null;
+            return new Gson().fromJson(value, new TypeToken<List<String>>() {
+            }.getType());
+        } catch (Exception e) {
+
+        }
+
+        return null;
     }
 }

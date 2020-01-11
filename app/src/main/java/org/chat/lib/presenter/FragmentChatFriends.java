@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -125,6 +126,7 @@ public class FragmentChatFriends extends BaseFragment {
                         List friendCodes = new ArrayList();
                         friendCodes.clear();
                         friendCodes.add(friendCode);
+                        Log.d("xidaokun", "FragementChatFriends#StartChatDetail#friendCode:"+friendCode);
                         UiUtils.startChatDetailActivity(getContext(), friendCodes);
                         return;
                     }
@@ -147,6 +149,7 @@ public class FragmentChatFriends extends BaseFragment {
             @Override
             public void run() {
                 int ret = CarrierPeerNode.getInstance(getContext()).addFriend(friendCode, "summary");
+                Log.d("xidaokun", "FragementChatFriends#addFriend#ret:"+ret);
                 refreshFriendView();
             }
         });
@@ -158,7 +161,6 @@ public class FragmentChatFriends extends BaseFragment {
     }
 
     private void refreshFriendView() {
-        if(null == null) return;
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -169,7 +171,7 @@ public class FragmentChatFriends extends BaseFragment {
                 contacts.clear();
                 for (ContactInterface.FriendInfo info : friendInfos) {
                     ContactEntity contactEntity = new ContactEntity();
-                    contactEntity.setContact(/*info.nickname*/info.did);
+                    contactEntity.setContact(/*info.nickname*/info.humanCode);
                     contactEntity.setTokenAddress(info.elaAddress);
                     contactEntity.setFriendCode(info.humanCode);
                     contacts.add(contactEntity);
