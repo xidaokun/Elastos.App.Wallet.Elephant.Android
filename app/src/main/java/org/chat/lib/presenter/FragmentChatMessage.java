@@ -18,8 +18,12 @@ import org.chat.lib.entity.ChatMsgEntity;
 import org.chat.lib.entity.MessageCacheBean;
 import org.chat.lib.entity.MessageItemBean;
 import org.chat.lib.source.ChatDataSource;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class FragmentChatMessage extends BaseFragment {
@@ -39,6 +43,7 @@ public class FragmentChatMessage extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_chat_message, container, false);
         initView(rootView);
         initListener();
+        EventBus.getDefault().register(this);
         return rootView;
     }
 
@@ -48,16 +53,25 @@ public class FragmentChatMessage extends BaseFragment {
         refreshData();
     }
 
+    public static class RefreshMessage {
+
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void receiveMessageEvent(RefreshMessage refreshMessage) {
+        refreshData();
+    }
+
     private void refreshData() {
         entities.clear();
         List<MessageItemBean> messageItemBeans = ChatDataSource.getInstance(getContext()).getMessageItemInfos();
         for(MessageItemBean messageCacheBean : messageItemBeans) {
-            List<String> friendCode = messageCacheBean.friendCodes;
+            List<String> friendCodes = messageCacheBean.friendCodes;
+            if(null == friendCodes) continue;
 
-            if(null == friendCode) continue;
-
-            List<MessageCacheBean> allMessageCacheBeans  = ChatDataSource.getInstance(getContext()).getMessage(BRSQLiteHelper.CHAT_MESSAGE_FRIENDCODE + " = ? ", new String[]{friendCode.toString()});
-            List<MessageCacheBean> hasNotReadCacheBeans = ChatDataSource.getInstance(getContext()).getMessage(BRSQLiteHelper.CHAT_MESSAGE_FRIENDCODE + " = ? AND " + BRSQLiteHelper.CHAT_MESSAGE_HAS_READ + " = ? ", new String[]{friendCode.toString(), String.valueOf(0)});
+            Collections.sort(friendCodes);
+            List<MessageCacheBean> allMessageCacheBeans  = ChatDataSource.getInstance(getContext()).getMessage(BRSQLiteHelper.CHAT_MESSAGE_FRIENDCODE + " = ? ", new String[]{friendCodes.toString()});
+            List<MessageCacheBean> hasNotReadCacheBeans = ChatDataSource.getInstance(getContext()).getMessage(BRSQLiteHelper.CHAT_MESSAGE_FRIENDCODE + " = ? AND " + BRSQLiteHelper.CHAT_MESSAGE_HAS_READ + " = ? ", new String[]{friendCodes.toString(), String.valueOf(0)});
 
             if(null != allMessageCacheBeans) {
                 int count = allMessageCacheBeans.size();
@@ -97,5 +111,11 @@ public class FragmentChatMessage extends BaseFragment {
                 UiUtils.startChatDetailActivity(getContext(), entities.get(position).getFriendCodes());
             }
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }

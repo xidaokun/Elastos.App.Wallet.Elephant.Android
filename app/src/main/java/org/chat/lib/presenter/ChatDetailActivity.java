@@ -17,8 +17,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.elastos.jni.utils.StringUtils;
 import com.google.gson.Gson;
 
@@ -43,6 +43,7 @@ import org.node.CarrierPeerNode;
 import org.node.bean.MsgProtocol;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ChatDetailActivity extends FragmentActivity {
@@ -206,33 +207,50 @@ public class ChatDetailActivity extends FragmentActivity {
     private void LoadData() {
         messageInfos = new ArrayList<>();
 
-        MessageInfo messageInfo = new MessageInfo();
-        messageInfo.setContent("欢迎使用elephant IM");
-        messageInfo.setType(Constants.CHAT_ITEM_TYPE_LEFT);
-        messageInfo.setHeader("https://xidaokun.github.io/im_boy.png");
-        messageInfos.add(messageInfo);
+//        MessageInfo messageInfo = new MessageInfo();
+//        messageInfo.setContent("欢迎使用elephant IM");
+//        messageInfo.setType(Constants.CHAT_ITEM_TYPE_LEFT);
+//        messageInfo.setHeader("https://xidaokun.github.io/im_boy.png");
+//        messageInfos.add(messageInfo);
+//
+//        MessageInfo messageInfo1 = new MessageInfo();
+//        messageInfo1.setFilepath("http://www.trueme.net/bb_midi/welcome.wav");
+//        messageInfo1.setVoiceTime(3000);
+//        messageInfo1.setType(Constants.CHAT_ITEM_TYPE_RIGHT);
+//        messageInfo1.setSendState(Constants.CHAT_ITEM_SEND_SUCCESS);
+//        messageInfo1.setHeader("https://xidaokun.github.io/im_girl.png");
+//        messageInfos.add(messageInfo1);
+//
+//        MessageInfo messageInfo2 = new MessageInfo();
+//        messageInfo2.setImageUrl("https://xidaokun.github.io/im_boy.png");
+//        messageInfo2.setType(Constants.CHAT_ITEM_TYPE_LEFT);
+//        messageInfo2.setHeader("https://xidaokun.github.io/im_boy.png");
+//        messageInfos.add(messageInfo2);
+//
+//        MessageInfo messageInfo3 = new MessageInfo();
+//        messageInfo3.setContent("[微笑][色][色][色]");
+//        messageInfo3.setType(Constants.CHAT_ITEM_TYPE_RIGHT);
+//        messageInfo3.setSendState(Constants.CHAT_ITEM_SEND_ERROR);
+//        messageInfo3.setHeader("https://xidaokun.github.io/im_girl.png");
+//        messageInfos.add(messageInfo3);
 
-        MessageInfo messageInfo1 = new MessageInfo();
-        messageInfo1.setFilepath("http://www.trueme.net/bb_midi/welcome.wav");
-        messageInfo1.setVoiceTime(3000);
-        messageInfo1.setType(Constants.CHAT_ITEM_TYPE_RIGHT);
-        messageInfo1.setSendState(Constants.CHAT_ITEM_SEND_SUCCESS);
-        messageInfo1.setHeader("https://xidaokun.github.io/im_girl.png");
-        messageInfos.add(messageInfo1);
+        List<String> friendCodes = StringUtils.asList(mFriendCode);
+        ContactInterface.UserInfo userInfo = CarrierPeerNode.getInstance(ChatDetailActivity.this).getUserInfo();
+        String humanCode = userInfo.humanCode;
+        if(StringUtils.isNullOrEmpty(humanCode)) return;
+        friendCodes.add(humanCode);
+        Collections.sort(friendCodes);
+        List<MessageCacheBean> allMessageCacheBeans  = ChatDataSource.getInstance(this).getMessage(BRSQLiteHelper.CHAT_MESSAGE_FRIENDCODE + " = ? ", new String[]{friendCodes.toString()});
 
-        MessageInfo messageInfo2 = new MessageInfo();
-        messageInfo2.setImageUrl("https://xidaokun.github.io/im_boy.png");
-        messageInfo2.setType(Constants.CHAT_ITEM_TYPE_LEFT);
-        messageInfo2.setHeader("https://xidaokun.github.io/im_boy.png");
-        messageInfos.add(messageInfo2);
+        if(allMessageCacheBeans==null || allMessageCacheBeans.size()<=0) return;
 
-        MessageInfo messageInfo3 = new MessageInfo();
-        messageInfo3.setContent("[微笑][色][色][色]");
-        messageInfo3.setType(Constants.CHAT_ITEM_TYPE_RIGHT);
-        messageInfo3.setSendState(Constants.CHAT_ITEM_SEND_ERROR);
-        messageInfo3.setHeader("https://xidaokun.github.io/im_girl.png");
-        messageInfos.add(messageInfo3);
-
+        for(MessageCacheBean messageCacheBean : allMessageCacheBeans) {
+            MessageInfo messageInfo = new MessageInfo();
+            messageInfo.setContent(messageCacheBean.MessageContent);
+            messageInfo.setType(messageCacheBean.MessageOrientation);
+            messageInfo.setHeader("https://xidaokun.github.io/im_boy.png");
+            messageInfos.add(messageInfo);
+        }
         chatAdapter.addAll(messageInfos);
     }
 
@@ -289,10 +307,10 @@ public class ChatDetailActivity extends FragmentActivity {
         messageCacheBean.MessageType = ChatDataSource.TYPE_MESSAGE_TEXT;
         messageCacheBean.MessageContent = messageInfo.getContent();
         messageCacheBean.MessageHasRead = true;
-        messageCacheBean.MessageHumncode = mFriendCode;
         messageCacheBean.MessageTimestamp = time;
-        messageCacheBean.MessageFriendCodes = friendCodes;
         messageCacheBean.MessageOrientation = Constants.CHAT_ITEM_TYPE_RIGHT;
+        Collections.sort(friendCodes);
+        messageCacheBean.MessageFriendCodes = friendCodes;
 
         List<MessageCacheBean> messageCacheBeans = new ArrayList<>();
         messageCacheBeans.add(messageCacheBean);
@@ -316,8 +334,10 @@ public class ChatDetailActivity extends FragmentActivity {
         messageCacheBean.MessageHasRead = true;
         messageCacheBean.MessageHumncode = messageInfo.getHumanCode();
         messageCacheBean.MessageTimestamp = messageInfo.getTime();
-        messageCacheBean.MessageFriendCodes = messageInfo.getFriendCodes();
         messageCacheBean.MessageOrientation = Constants.CHAT_ITEM_TYPE_LEFT;
+        List<String> tmp = messageInfo.getFriendCodes();
+        Collections.sort(tmp);
+        messageCacheBean.MessageFriendCodes = tmp;
 
         List<MessageCacheBean> messageCacheBeans = new ArrayList<>();
         messageCacheBeans.add(messageCacheBean);
