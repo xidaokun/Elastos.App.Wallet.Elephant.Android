@@ -132,7 +132,7 @@ public class ChatDataSource implements BRDataSourceInterface {
         messageCacheBean.MessageNickname = cursor.getString(5);
         messageCacheBean.MessageIconPath = cursor.getString(6);
         messageCacheBean.MessageOrientation = cursor.getInt(7);
-        messageCacheBean.MessageFriendCodes = Arrays.asList(cursor.getString(8));
+        messageCacheBean.MessageFriendCodes = StringUtils.asList(cursor.getString(8));
         messageCacheBean.MessageFriendIconPath = cursor.getString(9);
 
         return messageCacheBean;

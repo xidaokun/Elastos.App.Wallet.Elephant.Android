@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.StringUtil;
 import com.elastos.jni.utils.StringUtils;
 import com.google.gson.Gson;
 
@@ -204,6 +205,7 @@ public class ChatDetailActivity extends FragmentActivity {
         }
     };
 
+    List<String> mFriendCodes = new ArrayList<>();
     private void LoadData() {
         messageInfos = new ArrayList<>();
 
@@ -234,12 +236,18 @@ public class ChatDetailActivity extends FragmentActivity {
 //        messageInfo3.setHeader("https://xidaokun.github.io/im_girl.png");
 //        messageInfos.add(messageInfo3);
 
+        if(StringUtil.isNullOrEmpty(mFriendCode)) return;
         List<String> friendCodes = StringUtils.asList(mFriendCode);
+        if(null == friendCodes) return;
         ContactInterface.UserInfo userInfo = CarrierPeerNode.getInstance(ChatDetailActivity.this).getUserInfo();
+        if(userInfo == null) return;
         String humanCode = userInfo.humanCode;
         if(StringUtils.isNullOrEmpty(humanCode)) return;
-        friendCodes.add(humanCode);
+        if(!mFriendCode.contains(humanCode)) friendCodes.add(humanCode);
         Collections.sort(friendCodes);
+        mFriendCodes.clear();
+        mFriendCodes.addAll(friendCodes);
+
         List<MessageCacheBean> allMessageCacheBeans  = ChatDataSource.getInstance(this).getMessage(BRSQLiteHelper.CHAT_MESSAGE_FRIENDCODE + " = ? ", new String[]{friendCodes.toString()});
 
         if(allMessageCacheBeans==null || allMessageCacheBeans.size()<=0) return;
@@ -284,20 +292,14 @@ public class ChatDetailActivity extends FragmentActivity {
     }
 
     private void handleSend(MessageInfo messageInfo) {
-        List<String> friendCodes = StringUtils.asList(mFriendCode);
-        ContactInterface.UserInfo userInfo = CarrierPeerNode.getInstance(ChatDetailActivity.this).getUserInfo();
-        String humanCode = userInfo.humanCode;
-        if(StringUtils.isNullOrEmpty(humanCode)) return;
-        friendCodes.add(humanCode);
-
         messageInfo.setSendState(Constants.CHAT_ITEM_SENDING);
         MsgProtocol msgProtocol = new MsgProtocol();
         msgProtocol.from = CarrierPeerNode.getInstance(ChatDetailActivity.this).getUserInfo().humanCode;
         msgProtocol.content = messageInfo.getContent();
-        msgProtocol.friendCodes = friendCodes;
+        msgProtocol.friendCodes = mFriendCodes;
         msgProtocol.at = null;
-        for(String friendCode : friendCodes) {
-            if(StringUtils.isNullOrEmpty(friendCode) || friendCode.equals(humanCode)) continue;
+        for(String friendCode : mFriendCodes) {
+            if(StringUtils.isNullOrEmpty(friendCode)) continue;
             Log.d("xidaokun", "ChatDetailActivity#handleSend#sendMessage#CHAT_ITEM_TYPE_RIGHT#\nmsgProtocol:"+ new Gson().toJson(msgProtocol));
             int ret = CarrierPeerNode.getInstance(ChatDetailActivity.this).sendMessage(friendCode, new Gson().toJson(msgProtocol));
         }
@@ -309,8 +311,7 @@ public class ChatDetailActivity extends FragmentActivity {
         messageCacheBean.MessageHasRead = true;
         messageCacheBean.MessageTimestamp = time;
         messageCacheBean.MessageOrientation = Constants.CHAT_ITEM_TYPE_RIGHT;
-        Collections.sort(friendCodes);
-        messageCacheBean.MessageFriendCodes = friendCodes;
+        messageCacheBean.MessageFriendCodes = mFriendCodes;
 
         List<MessageCacheBean> messageCacheBeans = new ArrayList<>();
         messageCacheBeans.add(messageCacheBean);
@@ -318,7 +319,7 @@ public class ChatDetailActivity extends FragmentActivity {
         ChatDataSource.getInstance(ChatDetailActivity.this).cacheMessage(messageCacheBeans);
 
         MessageItemBean messageItemBean = new MessageItemBean();
-        messageItemBean.friendCodes = friendCodes;
+        messageItemBean.friendCodes = mFriendCodes;
         messageItemBean.timeStamp = time;
         List<MessageItemBean> messageItemBeans = new ArrayList<>();
         messageItemBeans.add(messageItemBean);

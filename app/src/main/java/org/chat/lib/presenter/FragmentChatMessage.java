@@ -109,6 +109,7 @@ public class FragmentChatMessage extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 UiUtils.startChatDetailActivity(getContext(), entities.get(position).getFriendCodes());
+
             }
         });
     }

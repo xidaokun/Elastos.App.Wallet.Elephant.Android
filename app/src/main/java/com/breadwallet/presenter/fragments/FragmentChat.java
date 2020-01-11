@@ -85,8 +85,9 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
     public void onResume() {
         super.onResume();
         ContactInterface.UserInfo userInfo = CarrierPeerNode.getInstance(getContext()).getUserInfo();
+        if(userInfo == null) return;
         String nickName = userInfo.nickname;
-        if(null==userInfo || !StringUtil.isNullOrEmpty(nickName)) return;
+        if(!StringUtil.isNullOrEmpty(nickName)) return;
 
         final ElaphantDialogEdit elaphantDialog = new ElaphantDialogEdit(getContext());
         elaphantDialog.setTitleStr("Set nickname to chat");
