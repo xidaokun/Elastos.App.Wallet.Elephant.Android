@@ -68,22 +68,26 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
 
     public static final String CHAT_MESSAGE_TABLE_NAME = "chatMessageTable";
     public static final String CHAT_MESSAGE_ID = "_id";
+//    public static final String CHAT_MESSAGE_MANAGER = "chatMessageManager";
     public static final String CHAT_MESSAGE_TYPE = "chatMessageType";
     public static final String CHAT_MESSAGE_HUMANCODE = "chatMessageHumncode";
     public static final String CHAT_MESSAGE_TIMESTAMP = "chatMessageTimestamp";
     public static final String CHAT_MESSAGE_HAS_READ = "chatMessageHasRead";
     public static final String CHAT_MESSAGE_CONTENT = "chatMessageContent";
+//    public static final String CHAT_MESSAGE_CONTENT_TYPE = "chatMessageContentType";
     public static final String CHAT_MESSAGE_NICKNAME = "chatMessageNickname";
     public static final String CHAT_MESSAGE_ICON_PATH = "chatMessageIconPath";
     public static final String CHAT_MESSAGE_ORIENTATION = "chatMessageOrientation";
     public static final String CHAT_MESSAGE_FRIENDCODE = "chatMessageFriendCode";
     public static final String CHAT_MESSAGE_FRIEND_ICON_PATH = "chatMessageFriendIconPath";
     private static final String CHAT_MESSAGE_DATABASE_CREATE = "create table if not exists " + CHAT_MESSAGE_TABLE_NAME + " (" +
+//            CHAT_MESSAGE_MANAGER + " text, " +
             CHAT_MESSAGE_TYPE + " text, " +
             CHAT_MESSAGE_HUMANCODE + " text, " +
             CHAT_MESSAGE_TIMESTAMP + " integer, " +
             CHAT_MESSAGE_HAS_READ + " integer, " +
             CHAT_MESSAGE_CONTENT + " text, " +
+//            CHAT_MESSAGE_CONTENT_TYPE + " text, " +
             CHAT_MESSAGE_NICKNAME + " text, " +
             CHAT_MESSAGE_ICON_PATH + " text, " +
             CHAT_MESSAGE_ORIENTATION + " integer, " +

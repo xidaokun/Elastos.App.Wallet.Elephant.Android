@@ -259,6 +259,10 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
 
+        <activity android:name="org.chat.lib.presenter.ChatGroupSelectActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
+
         <service
             android:name=".tools.listeners.SyncReceiver"
             android:enabled="true"

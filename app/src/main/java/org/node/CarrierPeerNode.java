@@ -7,6 +7,7 @@ import android.util.Log;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
+import com.elastos.jni.utils.StringUtils;
 import com.google.gson.Gson;
 
 import org.chat.lib.entity.MessageInfo;
@@ -94,6 +95,7 @@ public class CarrierPeerNode {
 
                 mStartRet = mPeerNode.start();
                 createConnector("elaphantchat");
+                getUserInfo();
             }
         });
     }
@@ -156,8 +158,8 @@ public class CarrierPeerNode {
                 Contact.Listener.RequestEvent requestEvent = (Contact.Listener.RequestEvent) event;
                 String summary = requestEvent.summary;
                 text = requestEvent.humanCode + " request friend, said: " + summary;
-
                 Log.d("xidaokun", "CarrierPeerNode#handleEvent#FriendRequest#\ntext:"+ text);
+                if(!StringUtils.isNullOrEmpty(summary) && summary.equals("group")) acceptFriend(requestEvent.humanCode);
                 RequestFriendInfo requestFriendInfo = new RequestFriendInfo(requestEvent.humanCode, summary);
                 postAddFriendEvent(requestFriendInfo);
                 break;
@@ -239,6 +241,7 @@ public class CarrierPeerNode {
         return mPeerNode.listFriendInfo();
     }
 
+    private static ContactInterface.UserInfo mUserInfo;
     public ContactInterface.UserInfo getUserInfo() {
         return mPeerNode.getUserInfo();
     }

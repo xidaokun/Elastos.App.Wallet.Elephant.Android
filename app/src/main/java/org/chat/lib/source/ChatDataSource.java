@@ -177,6 +177,20 @@ public class ChatDataSource implements BRDataSourceInterface {
         }
     }
 
+    public void updateMessage(String friendCode, String key, String value) {
+        try {
+            database = openDatabase();
+
+            ContentValues args = new ContentValues();
+            args.put(key, value);
+
+            int r = database.update(BRSQLiteHelper.CHAT_MESSAGE_TABLE_NAME, args, BRSQLiteHelper.CHAT_MESSAGE_FRIENDCODE + " = ? ", new String[]{friendCode});
+            Log.d("xidaokun", "ChatDataSource#updateMessage#ret:"+ r);
+        } finally {
+            closeDatabase();
+        }
+    }
+
     public void cacheMessage(List<MessageCacheBean> messageCacheBeans) {
         if (messageCacheBeans == null) return;
 //        Cursor cursor = null;

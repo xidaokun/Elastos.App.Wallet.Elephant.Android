@@ -57,6 +57,7 @@ public final class BRConstants {
     public static final int SIGN_CONTENT_REQUEST = 122;
     public static final int GET_PHRASE_LIST_REQUEST_CODE = 123;
     public static final int INIT_GLOBAL_REQUEST_CODE = 124;
+    public static final int CHAT_GROUP_SELECT_FRIENDS = 125;
 
     /**
      * Request codes for take picture

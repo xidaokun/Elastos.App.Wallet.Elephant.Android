@@ -83,6 +83,7 @@ import com.platform.sqlite.PlatformSqliteHelper;
 
 import org.chat.lib.presenter.AddFriendActivity;
 import org.chat.lib.presenter.ChatDetailActivity;
+import org.chat.lib.presenter.ChatGroupSelectActivity;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -531,6 +532,12 @@ public class UiUtils {
         Intent intent = new Intent(context, ChatDetailActivity.class);
         intent.putExtra("friendCodes", friendCodes.toString());
         context.startActivity(intent);
+    }
+
+    public static void startChatGroupSelectActivity(Activity activity, List<String> friendCodes) {
+        Intent intent = new Intent(activity, ChatGroupSelectActivity.class);
+        intent.putExtra("friendCodes", friendCodes.toString());
+        activity.startActivityForResult(intent, BRConstants.CHAT_GROUP_SELECT_FRIENDS);
     }
 
     public static void startSignEditActivity(Activity activity, String from, String value, int requestCode) {

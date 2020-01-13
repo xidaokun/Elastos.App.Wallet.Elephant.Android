@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.StringUtil;
@@ -49,6 +50,7 @@ import java.util.List;
 
 public class ChatDetailActivity extends FragmentActivity {
 
+    View mBackBtn;
     EasyRecyclerView chatList;
     ImageView emotionVoice;
     EditText editText;
@@ -60,6 +62,7 @@ public class ChatDetailActivity extends FragmentActivity {
     RelativeLayout emotionLayout;
 
     private void initView() {
+        mBackBtn = findViewById(R.id.back_button);
         chatList = findViewById(R.id.chat_list);
         emotionVoice = findViewById(R.id.emotion_voice);
         editText = findViewById(R.id.edit_text);
@@ -69,6 +72,7 @@ public class ChatDetailActivity extends FragmentActivity {
         emotionSend = findViewById(R.id.emotion_send);
         viewpager = findViewById(R.id.viewpager);
         emotionLayout = findViewById(R.id.emotion_layout);
+        mJoinGroupView = findViewById(R.id.join_group);
     }
 
     private EmotionInputDetector mDetector;
@@ -80,8 +84,10 @@ public class ChatDetailActivity extends FragmentActivity {
     private ChatAdapter chatAdapter;
     private LinearLayoutManager layoutManager;
     private List<MessageInfo> messageInfos;
+    private View mJoinGroupView;
 
-    private String mFriendCode;
+    private String mFriendCodeStr;
+    private String mType;
     int animationRes = 0;
     int res = 0;
     AnimationDrawable animationDrawable = null;
@@ -91,7 +97,7 @@ public class ChatDetailActivity extends FragmentActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_detail_layout);
-        mFriendCode = getIntent().getStringExtra("friendCodes");
+        mFriendCodeStr = getIntent().getStringExtra("friendCodes");
         initView();
         EventBus.getDefault().register(this);
         initWidget();
@@ -151,6 +157,18 @@ public class ChatDetailActivity extends FragmentActivity {
             }
         });
         chatAdapter.addItemClickListener(itemClickListener);
+        mBackBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        mJoinGroupView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UiUtils.startChatGroupSelectActivity(ChatDetailActivity.this, StringUtils.asList(mFriendCodeStr));
+            }
+        });
         LoadData();
     }
 
@@ -236,14 +254,14 @@ public class ChatDetailActivity extends FragmentActivity {
 //        messageInfo3.setHeader("https://xidaokun.github.io/im_girl.png");
 //        messageInfos.add(messageInfo3);
 
-        if(StringUtil.isNullOrEmpty(mFriendCode)) return;
-        List<String> friendCodes = StringUtils.asList(mFriendCode);
+        if(StringUtil.isNullOrEmpty(mFriendCodeStr)) return;
+        List<String> friendCodes = StringUtils.asList(mFriendCodeStr);
         if(null == friendCodes) return;
         ContactInterface.UserInfo userInfo = CarrierPeerNode.getInstance(ChatDetailActivity.this).getUserInfo();
         if(userInfo == null) return;
         String humanCode = userInfo.humanCode;
         if(StringUtils.isNullOrEmpty(humanCode)) return;
-        if(!mFriendCode.contains(humanCode)) friendCodes.add(humanCode);
+        if(!mFriendCodeStr.contains(humanCode)) friendCodes.add(humanCode);
         Collections.sort(friendCodes);
         mFriendCodes.clear();
         mFriendCodes.addAll(friendCodes);
@@ -293,15 +311,16 @@ public class ChatDetailActivity extends FragmentActivity {
     }
 
     private void handleSend(MessageInfo messageInfo) {
+        String myHumanCode = CarrierPeerNode.getInstance(ChatDetailActivity.this).getUserInfo().humanCode;
         messageInfo.setSendState(Constants.CHAT_ITEM_SENDING);
         messageInfo.setHeader("https://xidaokun.github.io/im_boy.png");
         MsgProtocol msgProtocol = new MsgProtocol();
-        msgProtocol.from = CarrierPeerNode.getInstance(ChatDetailActivity.this).getUserInfo().humanCode;
+        msgProtocol.from = myHumanCode;
         msgProtocol.content = messageInfo.getContent();
         msgProtocol.friendCodes = mFriendCodes;
         msgProtocol.at = null;
         for(String friendCode : mFriendCodes) {
-            if(StringUtils.isNullOrEmpty(friendCode)) continue;
+            if(StringUtils.isNullOrEmpty(friendCode) || friendCode.equals(myHumanCode)) continue;
             Log.d("xidaokun", "ChatDetailActivity#handleSend#sendMessage#CHAT_ITEM_TYPE_RIGHT#\nmsgProtocol:"+ new Gson().toJson(msgProtocol));
             int ret = CarrierPeerNode.getInstance(ChatDetailActivity.this).sendMessage(friendCode, new Gson().toJson(msgProtocol));
         }
@@ -341,6 +360,36 @@ public class ChatDetailActivity extends FragmentActivity {
         Log.d("xidaokun", "ChatDetailActivity#handleReceive#\ncacheMessage:"+ new Gson().toJson(messageCacheBeans));
         ChatDataSource.getInstance(ChatDetailActivity.this).updateMessage(messageCacheBeans, true);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            String newFriendStr = data.getStringExtra("friendCodes");
+            List<String> newFriends = StringUtils.asList(newFriendStr);
+
+            if(mType.equals("singleChat") && newFriends.size()>=1) {
+                createGroup(mFriendCodes, newFriends);
+            }
+
+            Log.d("xidaokun", "ChatDetailActivity#onActivityResult#\nfriendCodes:"+ mFriendCodeStr);
+        }
+    }
+
+    private void createGroup(final List<String> oldFriend, final List<String> newFriend) {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                for(String friendCode : newFriend) {
+                    CarrierPeerNode.getInstance(ChatDetailActivity.this).addFriend(friendCode, "group");
+                }
+                newFriend.addAll(oldFriend);
+                Collections.sort(newFriend);
+                ChatDataSource.getInstance(getApplicationContext()).updateMessage(oldFriend.toString(), BRSQLiteHelper.CHAT_MESSAGE_FRIENDCODE, newFriend.toString());
+            }
+        });
+    }
+
 
     @Override
     public void onBackPressed() {
