@@ -25,12 +25,12 @@ import app.elaphant.sdk.peernode.Connector;
 import app.elaphant.sdk.peernode.PeerNode;
 import app.elaphant.sdk.peernode.PeerNodeListener;
 
-
 public class CarrierPeerNode {
 
     private static CarrierPeerNode mInstance;
     private static PeerNode mPeerNode;
     private static Connector mConnector = null;
+    private static Connector mGroupConnector = null;
 
     private String mPrivateKey;
     private String mPublicKey;
@@ -94,7 +94,8 @@ public class CarrierPeerNode {
                 });
 
                 mStartRet = mPeerNode.start();
-                createConnector("elaphantchat");
+                createConnector("chat");
+                createGroupConnector("ChatGroupService");
                 getUserInfo();
             }
         });
@@ -133,8 +134,8 @@ public class CarrierPeerNode {
         return signedData.buf;
     }
 
-    private boolean createConnector(String serviceName) {
-        if (mConnector != null) return false;
+    private void createConnector(String serviceName) {
+        if (mConnector != null) return;
         mConnector = new Connector(serviceName);
         mConnector.setMessageListener(new PeerNodeListener.MessageListener() {
             @Override
@@ -147,8 +148,22 @@ public class CarrierPeerNode {
                 handleMessage(humanCode, message);
             }
         });
+    }
 
-        return false;
+    private void createGroupConnector(String serviceName) {
+        if(mGroupConnector != null) return;
+        mGroupConnector = new Connector(serviceName);
+        mGroupConnector.setMessageListener(new PeerNodeListener.MessageListener() {
+            @Override
+            public void onEvent(Contact.Listener.EventArgs eventArgs) {
+                handleEvent(eventArgs);
+            }
+
+            @Override
+            public void onReceivedMessage(String s, ContactInterface.Channel channel, ContactInterface.Message message) {
+                handleMessage(s, message);
+            }
+        });
     }
 
     private void handleEvent(Contact.Listener.EventArgs event) {
@@ -226,11 +241,15 @@ public class CarrierPeerNode {
     }
 
     public int addFriend(String friendCode, String summary) {
-        return mPeerNode.addFriend(friendCode, summary);
+        int ret = mPeerNode.addFriend(friendCode, summary);
+        Log.d("xidaokun", "CarrierPeerNode#addFriend#ret:"+ ret);
+        return ret;
     }
 
     public int acceptFriend(String friendCode) {
-        return mPeerNode.acceptFriend(friendCode);
+        int ret = mPeerNode.acceptFriend(friendCode);
+        Log.d("xidaokun", "CarrierPeerNode#acceptFriend#ret:"+ ret);
+        return ret;
     }
 
     public ContactInterface.Status getFriendStatus(String friendCode) {
@@ -251,7 +270,15 @@ public class CarrierPeerNode {
     }
 
     public int sendMessage(String friendCode, String content) {
-        return mConnector.sendMessage(friendCode, content);
+        int ret = mConnector.sendMessage(friendCode, content);
+        Log.d("xidaokun", "CarrierPeerNode#sendMessage#ret:"+ ret);
+        return ret;
+    }
+
+    public int sendGroupMessage(String friendCode, String content) {
+        int ret = mGroupConnector.sendMessage(friendCode, content);
+        Log.d("xidaokun", "CarrierPeerNode#sendGroupMessage#ret:"+ ret);
+        return ret;
     }
 
     public static class RequestFriendInfo {

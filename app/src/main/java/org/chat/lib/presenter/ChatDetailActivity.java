@@ -323,6 +323,8 @@ public class ChatDetailActivity extends FragmentActivity {
             if(StringUtils.isNullOrEmpty(friendCode) || friendCode.equals(myHumanCode)) continue;
             Log.d("xidaokun", "ChatDetailActivity#handleSend#sendMessage#CHAT_ITEM_TYPE_RIGHT#\nmsgProtocol:"+ new Gson().toJson(msgProtocol));
             int ret = CarrierPeerNode.getInstance(ChatDetailActivity.this).sendMessage(friendCode, new Gson().toJson(msgProtocol));
+//            int ret = CarrierPeerNode.getInstance(ChatDetailActivity.this).sendGroupMessage("HuBkrBkUJatE2QVCtRpbsZgi27v47XGnzg6XcYeYqqfb92jmDyDW", "hello");
+
         }
 
         long time = System.currentTimeMillis();
