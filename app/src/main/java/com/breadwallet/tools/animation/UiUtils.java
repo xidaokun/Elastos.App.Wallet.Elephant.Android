@@ -515,7 +515,7 @@ public class UiUtils {
                     // No explanation needed, we can request the permission.
                     ActivityCompat.requestPermissions(app,
                             new String[]{Manifest.permission.CAMERA},
-                            BRConstants.CAMERA_REQUEST_ID);
+                            BRConstants.CHAT_CAMERA_REQUST_ID);
                 }
             } else {
 

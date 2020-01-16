@@ -230,6 +230,11 @@ public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgroun
             }
             // other 'case' lines to check for other
             // permissions this app might request
+        } else if(requestCode == BRConstants.CHAT_CAMERA_REQUST_ID) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                UiUtils.openScanner(this, BRConstants.SCANNER_REQUEST);
+                UiUtils.startAddFriendActivity(this);
+            }
         }
     }
 
