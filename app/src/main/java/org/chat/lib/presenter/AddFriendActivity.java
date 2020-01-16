@@ -52,6 +52,7 @@ public class AddFriendActivity extends BRActivity implements ActivityCompat.OnRe
 
     private EditText mPasteEdit;
     private BaseTextView mPasteBtn;
+    private String mType;
 
     public static AddFriendActivity getApp() {
         return app;
@@ -61,6 +62,8 @@ public class AddFriendActivity extends BRActivity implements ActivityCompat.OnRe
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friend_layout);
+
+        mType = getIntent().getStringExtra("type");
 
         initView();
     }
@@ -79,9 +82,11 @@ public class AddFriendActivity extends BRActivity implements ActivityCompat.OnRe
 
         if (android.support.v4.app.ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
+            Log.d("scanTest", "checkSelfPermission");
             initQRCodeReaderView();
         }
 
+        Log.d("scanTest", "postDelayed");
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -185,7 +190,7 @@ public class AddFriendActivity extends BRActivity implements ActivityCompat.OnRe
                         mPasteEdit.setText(text);
                         Intent returnIntent = new Intent();
                         returnIntent.putExtra("result", text);
-                        returnIntent.putExtra("type", "did");
+                        returnIntent.putExtra("type", mType);
                         setResult(Activity.RESULT_OK, returnIntent);
                         finish();
                     } finally {

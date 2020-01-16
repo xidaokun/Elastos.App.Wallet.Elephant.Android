@@ -13,7 +13,7 @@ public class MessageInfo {
     private long voiceTime;
     private long msgId;
     private String humanCode;
-    private List<String> friendCodes;
+    private String friendCode;
 
     public String getHumanCode() {
         return humanCode;
@@ -23,12 +23,12 @@ public class MessageInfo {
         this.humanCode = humanCode;
     }
 
-    public List<String> getFriendCodes() {
-        return friendCodes;
+    public String getFriendCode() {
+        return friendCode;
     }
 
-    public void setFriendCodes(List<String> friendCodes) {
-        this.friendCodes = friendCodes;
+    public void setFriendCode(String friendCode) {
+        this.friendCode = friendCode;
     }
 
     public int getType() {

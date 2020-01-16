@@ -162,7 +162,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
     @Subscribe(threadMode = ThreadMode.MAIN, priority = 1)
     public void MessageEvent(MessageInfo messageInfo) {
-        if(messageInfo.getFriendCodes() == null) return; //only receive message
+        String friendCode = messageInfo.getFriendCode();
+        if(StringUtil.isNullOrEmpty(friendCode)) return; //only receive message
         MessageCacheBean messageCacheBean = new MessageCacheBean();
         messageCacheBean.MessageType = ChatDataSource.TYPE_MESSAGE_TEXT;
         messageCacheBean.MessageContent = messageInfo.getContent();
@@ -170,9 +171,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         messageCacheBean.MessageHasRead = false;
         messageCacheBean.MessageTimestamp = messageInfo.getTime();
         messageCacheBean.MessageOrientation = messageInfo.getType();
-        List<String> tmp = messageInfo.getFriendCodes();
-        Collections.sort(tmp);
-        messageCacheBean.MessageFriendCodes = tmp;
+        messageCacheBean.MessageFriendCode = friendCode;
 
         List<MessageCacheBean> messageCacheBeans = new ArrayList<>();
         messageCacheBeans.add(messageCacheBean);
@@ -180,7 +179,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         ChatDataSource.getInstance(this).cacheMessage(messageCacheBeans);
 
         MessageItemBean messageItemBean = new MessageItemBean();
-        messageItemBean.friendCodes = messageInfo.getFriendCodes();
+        messageItemBean.friendCode = messageInfo.getFriendCode();
         messageItemBean.timeStamp = messageInfo.getTime();
         List<MessageItemBean> messageItemBeans = new ArrayList<>();
         messageItemBeans.add(messageItemBean);

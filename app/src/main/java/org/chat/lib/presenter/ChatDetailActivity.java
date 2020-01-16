@@ -20,7 +20,7 @@ import com.breadwallet.R;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.StringUtil;
+import com.breadwallet.tools.util.BRConstants;
 import com.elastos.jni.utils.StringUtils;
 import com.google.gson.Gson;
 
@@ -37,7 +37,6 @@ import org.chat.lib.widget.EmotionInputDetector;
 import org.chat.lib.widget.NoScrollViewPager;
 import org.chat.lib.widget.StateButton;
 import org.easy.recycleview.EasyRecyclerView;
-import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -45,7 +44,6 @@ import org.node.CarrierPeerNode;
 import org.node.bean.MsgProtocol;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class ChatDetailActivity extends FragmentActivity {
@@ -87,7 +85,6 @@ public class ChatDetailActivity extends FragmentActivity {
     private View mJoinGroupView;
 
     private String mFriendCodeStr;
-    private String mType;
     int animationRes = 0;
     int res = 0;
     AnimationDrawable animationDrawable = null;
@@ -97,7 +94,7 @@ public class ChatDetailActivity extends FragmentActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_detail_layout);
-        mFriendCodeStr = getIntent().getStringExtra("friendCodes");
+        mFriendCodeStr = getIntent().getStringExtra("friendCode");
         initView();
         EventBus.getDefault().register(this);
         initWidget();
@@ -223,7 +220,6 @@ public class ChatDetailActivity extends FragmentActivity {
         }
     };
 
-    List<String> mFriendCodes = new ArrayList<>();
     private void LoadData() {
         messageInfos = new ArrayList<>();
 
@@ -254,19 +250,9 @@ public class ChatDetailActivity extends FragmentActivity {
 //        messageInfo3.setHeader("https://xidaokun.github.io/im_girl.png");
 //        messageInfos.add(messageInfo3);
 
-        if(StringUtil.isNullOrEmpty(mFriendCodeStr)) return;
-        List<String> friendCodes = StringUtils.asList(mFriendCodeStr);
-        if(null == friendCodes) return;
-        ContactInterface.UserInfo userInfo = CarrierPeerNode.getInstance(ChatDetailActivity.this).getUserInfo();
-        if(userInfo == null) return;
-        String humanCode = userInfo.humanCode;
-        if(StringUtils.isNullOrEmpty(humanCode)) return;
-        if(!mFriendCodeStr.contains(humanCode)) friendCodes.add(humanCode);
-        Collections.sort(friendCodes);
-        mFriendCodes.clear();
-        mFriendCodes.addAll(friendCodes);
 
-        List<MessageCacheBean> allMessageCacheBeans  = ChatDataSource.getInstance(this).getMessage(BRSQLiteHelper.CHAT_MESSAGE_FRIENDCODE + " = ? ", new String[]{friendCodes.toString()});
+
+        List<MessageCacheBean> allMessageCacheBeans  = ChatDataSource.getInstance(this).getMessage(BRSQLiteHelper.CHAT_MESSAGE_FRIENDCODE + " = ? ", new String[]{mFriendCodeStr});
 
         if(allMessageCacheBeans==null || allMessageCacheBeans.size()<=0) return;
 
@@ -317,15 +303,10 @@ public class ChatDetailActivity extends FragmentActivity {
         MsgProtocol msgProtocol = new MsgProtocol();
         msgProtocol.from = myHumanCode;
         msgProtocol.content = messageInfo.getContent();
-        msgProtocol.friendCodes = mFriendCodes;
+        msgProtocol.friendCode = mFriendCodeStr;
         msgProtocol.at = null;
-        for(String friendCode : mFriendCodes) {
-            if(StringUtils.isNullOrEmpty(friendCode) || friendCode.equals(myHumanCode)) continue;
-            Log.d("xidaokun", "ChatDetailActivity#handleSend#sendMessage#CHAT_ITEM_TYPE_RIGHT#\nmsgProtocol:"+ new Gson().toJson(msgProtocol));
-            int ret = CarrierPeerNode.getInstance(ChatDetailActivity.this).sendMessage(friendCode, new Gson().toJson(msgProtocol));
-//            int ret = CarrierPeerNode.getInstance(ChatDetailActivity.this).sendGroupMessage("HuBkrBkUJatE2QVCtRpbsZgi27v47XGnzg6XcYeYqqfb92jmDyDW", "hello");
-
-        }
+        //需要区分是single还是group
+        int ret = CarrierPeerNode.getInstance(ChatDetailActivity.this).sendMessage(mFriendCodeStr, new Gson().toJson(msgProtocol));
 
         long time = System.currentTimeMillis();
         MessageCacheBean messageCacheBean = new MessageCacheBean();
@@ -334,7 +315,7 @@ public class ChatDetailActivity extends FragmentActivity {
         messageCacheBean.MessageHasRead = true;
         messageCacheBean.MessageTimestamp = time;
         messageCacheBean.MessageOrientation = Constants.CHAT_ITEM_TYPE_RIGHT;
-        messageCacheBean.MessageFriendCodes = mFriendCodes;
+        messageCacheBean.MessageFriendCode = mFriendCodeStr;
 
         List<MessageCacheBean> messageCacheBeans = new ArrayList<>();
         messageCacheBeans.add(messageCacheBean);
@@ -342,7 +323,7 @@ public class ChatDetailActivity extends FragmentActivity {
         ChatDataSource.getInstance(ChatDetailActivity.this).cacheMessage(messageCacheBeans);
 
         MessageItemBean messageItemBean = new MessageItemBean();
-        messageItemBean.friendCodes = mFriendCodes;
+        messageItemBean.friendCode = mFriendCodeStr;
         messageItemBean.timeStamp = time;
         List<MessageItemBean> messageItemBeans = new ArrayList<>();
         messageItemBeans.add(messageItemBean);
@@ -353,45 +334,13 @@ public class ChatDetailActivity extends FragmentActivity {
     private void handleReceive(MessageInfo messageInfo) {
         //TODO daokun.xi only change read status
         MessageCacheBean messageCacheBean = new MessageCacheBean();
-        List<String> tmp = messageInfo.getFriendCodes();
-        Collections.sort(tmp);
-        messageCacheBean.MessageFriendCodes = tmp;
+        messageCacheBean.MessageFriendCode = messageInfo.getFriendCode();
 
         List<MessageCacheBean> messageCacheBeans = new ArrayList<>();
         messageCacheBeans.add(messageCacheBean);
         Log.d("xidaokun", "ChatDetailActivity#handleReceive#\ncacheMessage:"+ new Gson().toJson(messageCacheBeans));
         ChatDataSource.getInstance(ChatDetailActivity.this).updateMessage(messageCacheBeans, true);
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            String newFriendStr = data.getStringExtra("friendCodes");
-            List<String> newFriends = StringUtils.asList(newFriendStr);
-
-            if(mType.equals("singleChat") && newFriends.size()>=1) {
-                createGroup(mFriendCodes, newFriends);
-            }
-
-            Log.d("xidaokun", "ChatDetailActivity#onActivityResult#\nfriendCodes:"+ mFriendCodeStr);
-        }
-    }
-
-    private void createGroup(final List<String> oldFriend, final List<String> newFriend) {
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                for(String friendCode : newFriend) {
-                    CarrierPeerNode.getInstance(ChatDetailActivity.this).addFriend(friendCode, "group");
-                }
-                newFriend.addAll(oldFriend);
-                Collections.sort(newFriend);
-                ChatDataSource.getInstance(getApplicationContext()).updateMessage(oldFriend.toString(), BRSQLiteHelper.CHAT_MESSAGE_FRIENDCODE, newFriend.toString());
-            }
-        });
-    }
-
 
     @Override
     public void onBackPressed() {

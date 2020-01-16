@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.breadwallet.R;
 import com.breadwallet.tools.animation.ElaphantDialogEdit;
 import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 
 import org.chat.lib.adapter.ChatPagerAdapter;
@@ -158,13 +159,13 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.chat_add_by_did:
-                UiUtils.startAddFriendActivity(getActivity());
+                UiUtils.startAddFriendActivity(getActivity(), BRConstants.CHAT_SCAN_ADDFRIEND_TYPE);
                 break;
             case R.id.chat_add_by_device:
-                UiUtils.startAddFriendActivity(getActivity());
+                UiUtils.startAddFriendActivity(getActivity(), BRConstants.CHAT_SCAN_ADDFRIEND_TYPE);
                 break;
             case R.id.chat_join_group:
-                UiUtils.startAddFriendActivity(getActivity());
+                UiUtils.startAddFriendActivity(getActivity(), BRConstants.CHAT_SCAN_JOINGROUP_TYPE);
                 break;
             default:
                 break;

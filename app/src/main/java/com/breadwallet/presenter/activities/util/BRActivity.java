@@ -40,6 +40,9 @@ import com.elastos.jni.utils.StringUtils;
 import com.platform.HTTPServer;
 import com.platform.tools.BRBitId;
 
+import org.chat.lib.presenter.ChatDetailActivity;
+import org.node.CarrierPeerNode;
+
 /**
  * BreadWallet
  * <p/>
@@ -231,7 +234,12 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                             String result = data.getStringExtra("result");
                             String type = data.getStringExtra("type");
                             if(!StringUtil.isNullOrEmpty(type)) {
-                                mHomeActivity.showChatFragment(result);
+                                if(type.equals(BRConstants.CHAT_SCAN_ADDFRIEND_TYPE)) {
+                                    mHomeActivity.showChatFragment(result);
+                                } else {
+                                    joinGroup(result);
+                                    UiUtils.startChatDetailActivity(BRActivity.this, result);
+                                }
                             } else if (CryptoUriParser.isCryptoUrl(BRActivity.this, result))
                                 CryptoUriParser.processRequest(BRActivity.this, result,
                                         WalletsMaster.getInstance(BRActivity.this).getCurrentWallet(BRActivity.this));
@@ -325,6 +333,17 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
 
         }
     }
+
+    private void joinGroup(final String friendCode) {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                int ret = CarrierPeerNode.getInstance(BRActivity.this).addFriend(friendCode, "{\"content\": \"Elephant request\"}");
+                Log.d("xidaokun", "ChatDetailActivity#joinGroup#ret:"+ret);
+            }
+        });
+    }
+
 
     public void init(Activity app) {
         //set status bar color

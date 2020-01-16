@@ -157,11 +157,16 @@ public class CarrierPeerNode {
             @Override
             public void onEvent(Contact.Listener.EventArgs eventArgs) {
                 handleEvent(eventArgs);
+//                String humanCode = eventArgs.humanCode;
+//                Log.d("xidaokun", "CarrierPeerNode#createGroupConnector#onEvent\n#eventArgs.type:"+ eventArgs.type+"\n#humanCode:"+humanCode);
             }
 
             @Override
             public void onReceivedMessage(String s, ContactInterface.Channel channel, ContactInterface.Message message) {
-                handleMessage(s, message);
+                Log.d("xidaokun", "CarrierPeerNode#handleMessage\n#humanCode:"+ s  + "\n#channel"+channel
+                        + "\n#message:" + message.data.toString()
+                + "\n#nanoTime" + message.nanoTime);
+//                handleMessage(s, message);
             }
         });
     }
@@ -208,16 +213,12 @@ public class CarrierPeerNode {
         MsgProtocol msgProtocol = new Gson().fromJson(data, MsgProtocol.class);
         messageInfo.setContent(msgProtocol.content);
         messageInfo.setHumanCode(humanCode);
-        messageInfo.setFriendCodes(msgProtocol.friendCodes);
+        messageInfo.setFriendCode(msgProtocol.friendCode);
         messageInfo.setTime(message.nanoTime);
         messageInfo.setMsgId(message.nanoTime);
         messageInfo.setType(Constants.CHAT_ITEM_TYPE_LEFT);
         messageInfo.setHeader("https://xidaokun.github.io/im_boy.png");
         postMessageEvent(messageInfo);
-    }
-
-    public void createRoom(String serviceName) {
-        createConnector(serviceName);
     }
 
     public void postAddFriendEvent(RequestFriendInfo requestFriendInfo) {
@@ -241,8 +242,9 @@ public class CarrierPeerNode {
     }
 
     public int addFriend(String friendCode, String summary) {
-        int ret = mPeerNode.addFriend(friendCode, summary);
-        Log.d("xidaokun", "CarrierPeerNode#addFriend#ret:"+ ret);
+//        int ret = mPeerNode.addFriend(friendCode, summary);
+        int ret = mGroupConnector.addFriend(friendCode, summary);
+        Log.d("xidaokun", "CarrierPeerNode#addFriend#======ret:"+ ret);
         return ret;
     }
 

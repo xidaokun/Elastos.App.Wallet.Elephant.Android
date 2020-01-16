@@ -1,7 +1,5 @@
 package org.chat.lib.entity;
 
-import java.util.List;
-
 public class MessageCacheBean {
     public String MessageType;
     public String MessageHumncode;
@@ -11,6 +9,6 @@ public class MessageCacheBean {
     public String MessageNickname;
     public String MessageIconPath;
     public int MessageOrientation;
-    public List<String> MessageFriendCodes;
+    public String MessageFriendCode;
     public String MessageFriendIconPath;
 }

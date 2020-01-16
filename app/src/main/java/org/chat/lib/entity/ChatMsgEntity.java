@@ -48,14 +48,13 @@ public class ChatMsgEntity {
     private int count;
     private long timeStamp;
     private String iconUrl;
+    private String friendCode;
 
-    public List<String> getFriendCodes() {
-        return friendCodes;
+    public String getFriendCode() {
+        return friendCode;
     }
 
-    public void setFriendCodes(List<String> friendCodes) {
-        this.friendCodes = friendCodes;
+    public void setFriendCode(String friendCode) {
+        this.friendCode = friendCode;
     }
-
-    private List<String> friendCodes;
 }

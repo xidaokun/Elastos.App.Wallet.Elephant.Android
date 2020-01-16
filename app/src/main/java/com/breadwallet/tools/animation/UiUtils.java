@@ -491,7 +491,7 @@ public class UiUtils {
         activity.startActivityForResult(intent, requestCode);
     }
 
-    public static void startAddFriendActivity(Activity app) {
+    public static void startAddFriendActivity(Activity app, String type) {
         try {
             if (app == null) {
                 return;
@@ -520,6 +520,7 @@ public class UiUtils {
             } else {
 
                 Intent intent = new Intent(app, AddFriendActivity.class);
+                intent.putExtra("type", type);
                 app.startActivityForResult(intent, BRConstants.SCANNER_REQUEST);
                 app.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
             }
@@ -528,15 +529,15 @@ public class UiUtils {
         }
     }
 
-    public static void startChatDetailActivity(Context context, List<String> friendCodes) {
+    public static void startChatDetailActivity(Context context, String friendCode) {
         Intent intent = new Intent(context, ChatDetailActivity.class);
-        intent.putExtra("friendCodes", friendCodes.toString());
+        intent.putExtra("friendCode", friendCode);
         context.startActivity(intent);
     }
 
     public static void startChatGroupSelectActivity(Activity activity, List<String> friendCodes) {
         Intent intent = new Intent(activity, ChatGroupSelectActivity.class);
-        intent.putExtra("friendCodes", friendCodes.toString());
+        intent.putExtra("friendCode", friendCodes.toString());
         activity.startActivityForResult(intent, BRConstants.CHAT_GROUP_SELECT_FRIENDS);
     }
 
