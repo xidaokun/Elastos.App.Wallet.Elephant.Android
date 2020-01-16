@@ -166,9 +166,52 @@ public class CarrierPeerNode {
                 Log.d("xidaokun", "CarrierPeerNode#handleMessage\n#humanCode:"+ s  + "\n#channel"+channel
                         + "\n#message:" + message.data.toString()
                 + "\n#nanoTime" + message.nanoTime);
-//                handleMessage(s, message);
+                //      #humanCode:immMWGMeXsWtvKcTqgYkGEnRbafEvUdX6u
+                //      #channelCarrier(1)
+                //      #message:{"content":"aaaaa","nickName":"匿名6","serviceName":"ChatGroupService","timeStamp":"2020-1-16 16:27:57","type":"textMsg"}
+                //      #nanoTime1579163278535091625
+                handleGroupMessage(s, message);
             }
         });
+    }
+
+    private static class GroupMessage {
+        public String content;
+    }
+
+    private void handleGroupMessage(String humanCode, Contact.Message message) {
+        GroupMessage groupMessage = new Gson().fromJson(message.data.toString(), GroupMessage.class);
+        Log.d("xidaokun", "CarrierPeerNode#handleMessage#\nhumanCode:"+ humanCode + "\nmessage:"+groupMessage.content);
+
+        MessageInfo messageInfo = new MessageInfo();
+        messageInfo.setContent(groupMessage.content);
+        messageInfo.setHumanCode(humanCode);
+        messageInfo.setFriendCode(humanCode);
+        messageInfo.setTime(message.nanoTime);
+        messageInfo.setMsgId(message.nanoTime);
+        messageInfo.setType(Constants.CHAT_ITEM_TYPE_LEFT);
+        messageInfo.setHeader("https://xidaokun.github.io/im_boy.png");
+        postMessageEvent(messageInfo);
+
+    }
+
+    private void handleMessage(String humanCode, Contact.Message message) {
+        MessageInfo messageInfo = new MessageInfo();
+
+        String data = message.data.toString();
+        if(StringUtil.isNullOrEmpty(data)) return;
+
+        Log.d("xidaokun", "CarrierPeerNode#handleMessage#\nhumanCode:"+ humanCode + "\nmessage:"+data);
+
+        MsgProtocol msgProtocol = new Gson().fromJson(data, MsgProtocol.class);
+        messageInfo.setContent(msgProtocol.content);
+        messageInfo.setHumanCode(humanCode);
+        messageInfo.setFriendCode(msgProtocol.friendCode);
+        messageInfo.setTime(message.nanoTime);
+        messageInfo.setMsgId(message.nanoTime);
+        messageInfo.setType(Constants.CHAT_ITEM_TYPE_LEFT);
+        messageInfo.setHeader("https://xidaokun.github.io/im_boy.png");
+        postMessageEvent(messageInfo);
     }
 
     private void handleEvent(Contact.Listener.EventArgs event) {
@@ -202,25 +245,6 @@ public class CarrierPeerNode {
         }
     }
 
-    private void handleMessage(String humanCode, Contact.Message message) {
-        MessageInfo messageInfo = new MessageInfo();
-
-        String data = message.data.toString();
-        if(StringUtil.isNullOrEmpty(data)) return;
-
-        Log.d("xidaokun", "CarrierPeerNode#handleMessage#\nhumanCode:"+ humanCode + "\nmessage:"+data);
-
-        MsgProtocol msgProtocol = new Gson().fromJson(data, MsgProtocol.class);
-        messageInfo.setContent(msgProtocol.content);
-        messageInfo.setHumanCode(humanCode);
-        messageInfo.setFriendCode(msgProtocol.friendCode);
-        messageInfo.setTime(message.nanoTime);
-        messageInfo.setMsgId(message.nanoTime);
-        messageInfo.setType(Constants.CHAT_ITEM_TYPE_LEFT);
-        messageInfo.setHeader("https://xidaokun.github.io/im_boy.png");
-        postMessageEvent(messageInfo);
-    }
-
     public void postAddFriendEvent(RequestFriendInfo requestFriendInfo) {
         EventBus.getDefault().post(requestFriendInfo);
     }
@@ -242,9 +266,14 @@ public class CarrierPeerNode {
     }
 
     public int addFriend(String friendCode, String summary) {
-//        int ret = mPeerNode.addFriend(friendCode, summary);
-        int ret = mGroupConnector.addFriend(friendCode, summary);
+        int ret = mPeerNode.addFriend(friendCode, summary);
         Log.d("xidaokun", "CarrierPeerNode#addFriend#======ret:"+ ret);
+        return ret;
+    }
+
+    public int addGroupFriend(String friendCode, String summary) {
+        int ret = mGroupConnector.addFriend(friendCode, summary);
+        Log.d("xidaokun", "CarrierPeerNode#addGroupFriend#======ret:"+ ret);
         return ret;
     }
 
@@ -278,6 +307,7 @@ public class CarrierPeerNode {
     }
 
     public int sendGroupMessage(String friendCode, String content) {
+        Log.d("xidaokun", "CarrierPeerNode#sendGroupMessage\n#friendCode:"+ friendCode + "\n#content:" + content);
         int ret = mGroupConnector.sendMessage(friendCode, content);
         Log.d("xidaokun", "CarrierPeerNode#sendGroupMessage#ret:"+ ret);
         return ret;

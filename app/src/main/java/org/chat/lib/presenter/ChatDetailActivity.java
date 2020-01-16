@@ -306,7 +306,7 @@ public class ChatDetailActivity extends FragmentActivity {
         msgProtocol.friendCode = mFriendCodeStr;
         msgProtocol.at = null;
         //需要区分是single还是group
-        int ret = CarrierPeerNode.getInstance(ChatDetailActivity.this).sendMessage(mFriendCodeStr, new Gson().toJson(msgProtocol));
+        int ret = CarrierPeerNode.getInstance(ChatDetailActivity.this).sendGroupMessage(mFriendCodeStr, new Gson().toJson(msgProtocol));
 
         long time = System.currentTimeMillis();
         MessageCacheBean messageCacheBean = new MessageCacheBean();

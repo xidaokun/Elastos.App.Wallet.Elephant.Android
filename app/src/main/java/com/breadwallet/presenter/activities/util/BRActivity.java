@@ -338,8 +338,7 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                int ret = CarrierPeerNode.getInstance(BRActivity.this).addFriend(friendCode, "{\"content\": \"Elephant request\"}");
-                Log.d("xidaokun", "ChatDetailActivity#joinGroup#ret:"+ret);
+                CarrierPeerNode.getInstance(BRActivity.this).addGroupFriend(friendCode, "{\"content\": \"hello\"}");
             }
         });
     }
