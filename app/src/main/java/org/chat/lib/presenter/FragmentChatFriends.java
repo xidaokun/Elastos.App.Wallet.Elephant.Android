@@ -17,6 +17,7 @@ import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
+import com.elastos.jni.utils.StringUtils;
 
 import org.chat.lib.adapter.FriendsAdapter;
 import org.chat.lib.entity.ContactEntity;
@@ -120,9 +121,11 @@ public class FragmentChatFriends extends BaseFragment {
             @Override
             public void sendMessage(View view, int position) {
                 String friendCode = mDatas.get(position - 1).getFriendCode();
+                //TODO daokun.xi 缺少群聊flag
+                String type = /*mDatas.get(position -1 ).getType()*/BRConstants.CHAT_TYPE;
                 if (!StringUtil.isNullOrEmpty(friendCode)) {
                     Log.d("xidaokun", "FragementChatFriends#StartChatDetail#friendCode:"+friendCode);
-                    UiUtils.startChatDetailActivity(getContext(), friendCode);
+                    UiUtils.startChatDetailActivity(getContext(), friendCode, type);
                 }
                 Toast.makeText(getContext(), "send Message failed", Toast.LENGTH_SHORT).show();
             }
@@ -164,7 +167,7 @@ public class FragmentChatFriends extends BaseFragment {
                 contacts.clear();
                 for (ContactInterface.FriendInfo info : friendInfos) {
                     ContactEntity contactEntity = new ContactEntity();
-                    contactEntity.setContact(/*info.nickname*/info.humanCode);
+                    contactEntity.setContact(StringUtils.isNullOrEmpty(info.nickname)?"Nickname":info.nickname);
                     contactEntity.setTokenAddress(info.elaAddress);
                     contactEntity.setFriendCode(info.humanCode);
                     contacts.add(contactEntity);

@@ -5,7 +5,16 @@ public class ContactEntity extends BaseIndexPinyinBean {
     private String iconUrl;
     private String tokenAddress;
     private String friendCode;
+    private String type; //single, group
     private boolean isTop;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public String getFriendCode() {
         return friendCode;

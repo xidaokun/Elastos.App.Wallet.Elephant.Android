@@ -9,13 +9,13 @@ import android.util.Log;
 import com.breadwallet.tools.sqlite.BRDataSourceInterface;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.util.BRConstants;
-import com.elastos.jni.utils.StringUtils;
+import com.google.gson.Gson;
 
 import org.chat.lib.entity.MessageCacheBean;
 import org.chat.lib.entity.MessageItemBean;
+import org.chat.lib.utils.Constants;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ChatDataSource implements BRDataSourceInterface {
@@ -94,6 +94,7 @@ public class ChatDataSource implements BRDataSourceInterface {
 
                 ContentValues value = new ContentValues();
                 value.put(BRSQLiteHelper.CHAT_MESSAGE_ITEM_FRIENDCODE, entity.friendCode);
+                value.put(BRSQLiteHelper.CHAT_MESSAGE_ITEM_TYPE, entity.type);
                 value.put(BRSQLiteHelper.HCAT_MESSAGE_ITEM_TIMESTAMP, entity.timeStamp);
 
                 long l = database.insertWithOnConflict(BRSQLiteHelper.CHAT_MESSAGE_ITEM_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
@@ -108,6 +109,75 @@ public class ChatDataSource implements BRDataSourceInterface {
             closeDatabase();
         }
     }
+
+    public String mType;
+    public ChatDataSource setType(String type) {
+        this.mType = type;
+        return this;
+    }
+
+    public String mContentType = ChatDataSource.TYPE_MESSAGE_TEXT;
+    public ChatDataSource setContentType(String contentType) {
+        this.mContentType = contentType;
+        return this;
+    }
+
+    public String mContent;
+    public ChatDataSource setContent(String content) {
+        this.mContent = content;
+        return this;
+    }
+
+    public boolean mIsRead;
+    public ChatDataSource hasRead(boolean isRead) {
+        this.mIsRead = isRead;
+        return this;
+    }
+
+    public long mTimestamp;
+    public ChatDataSource setTimestamp(long timestamp) {
+        this.mTimestamp = timestamp;
+        return this;
+    }
+
+    public int mOrientation = Constants.CHAT_ITEM_TYPE_RIGHT;
+    public ChatDataSource setOrientation(int orientation) {
+        this.mOrientation = orientation;
+        return this;
+    }
+
+    public String mFriendCode;
+    public ChatDataSource setFriendCode(String friendCode) {
+        this.mFriendCode = friendCode;
+        return this;
+    }
+
+    public void cacheMessgeInfo() {
+        MessageCacheBean messageCacheBean = new MessageCacheBean();
+        messageCacheBean.MessageType = mType;
+        messageCacheBean.MessageContentType = mContentType;
+        messageCacheBean.MessageContent = mContent;
+        messageCacheBean.MessageHasRead = mIsRead;
+        messageCacheBean.MessageTimestamp = mTimestamp;
+        messageCacheBean.MessageOrientation = mOrientation;
+        messageCacheBean.MessageFriendCode = mFriendCode;
+
+        List<MessageCacheBean> messageCacheBeans = new ArrayList<>();
+        messageCacheBeans.add(messageCacheBean);
+        Log.d("xidaokun", "ChatDataSource#cacheMessge#\ncacheMessage:"+ new Gson().toJson(messageCacheBeans));
+        cacheMessage(messageCacheBeans);
+
+        MessageItemBean messageItemBean = new MessageItemBean();
+        messageItemBean.friendCode = mFriendCode;
+        messageItemBean.type = mType;
+        messageItemBean.contentType = mContentType;
+        messageItemBean.timeStamp = mTimestamp;
+        List<MessageItemBean> messageItemBeans = new ArrayList<>();
+        messageItemBeans.add(messageItemBean);
+        Log.d("xidaokun", "ChatDataSource#cacheMessge#\ncacheMessageItemInfos:"+ new Gson().toJson(messageItemBeans));
+        cacheMessageItemInfos(messageItemBeans);
+    }
+
 
     private final String[] allColumns = {
             BRSQLiteHelper.CHAT_MESSAGE_TYPE,

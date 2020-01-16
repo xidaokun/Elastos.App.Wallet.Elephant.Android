@@ -12,6 +12,7 @@ import com.breadwallet.R;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.elastos.jni.utils.StringUtils;
 import com.google.gson.Gson;
 
 import org.chat.lib.adapter.ChatMessageAdapter;
@@ -79,7 +80,7 @@ public class FragmentChatMessage extends BaseFragment {
                     MessageCacheBean lastBean = allMessageCacheBeans.get(count - 1);
                     ChatMsgEntity entity = new ChatMsgEntity();
                     //TODO daokun.xi
-                    entity.setName(/*lastBean.MessageNickname*/ lastBean.MessageHumncode);
+                    entity.setName(StringUtils.isNullOrEmpty(lastBean.MessageNickname)?"Nickname":lastBean.MessageNickname);
                     entity.setMessage(lastBean.MessageContent);
                     entity.setTimeStamp(lastBean.MessageTimestamp);
                     entity.setFriendCode(lastBean.MessageFriendCode);
@@ -110,7 +111,9 @@ public class FragmentChatMessage extends BaseFragment {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-                UiUtils.startChatDetailActivity(getContext(), entities.get(position).getFriendCode());
+                String friendCode = entities.get(position).getFriendCode();
+                String type = entities.get(position).getType();
+                UiUtils.startChatDetailActivity(getContext(), friendCode, type);
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {

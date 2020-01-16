@@ -159,13 +159,13 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.chat_add_by_did:
-                UiUtils.startAddFriendActivity(getActivity(), BRConstants.CHAT_SCAN_ADDFRIEND_TYPE);
+                UiUtils.startAddFriendActivity(getActivity(), BRConstants.CHAT_TYPE);
                 break;
             case R.id.chat_add_by_device:
-                UiUtils.startAddFriendActivity(getActivity(), BRConstants.CHAT_SCAN_ADDFRIEND_TYPE);
+                UiUtils.startAddFriendActivity(getActivity(), BRConstants.CHAT_TYPE);
                 break;
             case R.id.chat_join_group:
-                UiUtils.startAddFriendActivity(getActivity(), BRConstants.CHAT_SCAN_JOINGROUP_TYPE);
+                UiUtils.startAddFriendActivity(getActivity(), BRConstants.CHAT_GROUP_TYPE);
                 break;
             default:
                 break;

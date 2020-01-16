@@ -49,6 +49,15 @@ public class ChatMsgEntity {
     private long timeStamp;
     private String iconUrl;
     private String friendCode;
+    private String type;//single, group
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public String getFriendCode() {
         return friendCode;

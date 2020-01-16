@@ -163,8 +163,8 @@ public final class BRConstants {
     public static final String ELA_ASSET_ID = "a3d0eaa466df74983b5d7c543de6904f4c9418ead5ffd6d25814234a96db37b0";
     public static final String IOEX_ASSET_ID = "61ccbfae9f8ce9660a71321041917139cb72cbb85bd105e92f0ed32cb1d1298f";
 
-    public static final String CHAT_SCAN_ADDFRIEND_TYPE = "addFriend";
-    public static final String CHAT_SCAN_JOINGROUP_TYPE = "joinGroup";
+    public static final String CHAT_TYPE = "chatType";
+    public static final String CHAT_GROUP_TYPE = "chatGroupType";
 
     private BRConstants() {
     }

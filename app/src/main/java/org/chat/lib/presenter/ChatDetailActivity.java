@@ -29,7 +29,6 @@ import org.chat.lib.adapter.CommonFragmentPagerAdapter;
 import org.chat.lib.entity.FullImageInfo;
 import org.chat.lib.entity.MessageCacheBean;
 import org.chat.lib.entity.MessageInfo;
-import org.chat.lib.entity.MessageItemBean;
 import org.chat.lib.source.ChatDataSource;
 import org.chat.lib.utils.Constants;
 import org.chat.lib.utils.GlobalOnItemClickListener;
@@ -85,6 +84,7 @@ public class ChatDetailActivity extends FragmentActivity {
     private View mJoinGroupView;
 
     private String mFriendCodeStr;
+    private String mType;
     int animationRes = 0;
     int res = 0;
     AnimationDrawable animationDrawable = null;
@@ -95,6 +95,8 @@ public class ChatDetailActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_detail_layout);
         mFriendCodeStr = getIntent().getStringExtra("friendCode");
+        mType = getIntent().getStringExtra("type");
+
         initView();
         EventBus.getDefault().register(this);
         initWidget();
@@ -297,38 +299,30 @@ public class ChatDetailActivity extends FragmentActivity {
     }
 
     private void handleSend(MessageInfo messageInfo) {
-        String myHumanCode = CarrierPeerNode.getInstance(ChatDetailActivity.this).getUserInfo().humanCode;
         messageInfo.setSendState(Constants.CHAT_ITEM_SENDING);
         messageInfo.setHeader("https://xidaokun.github.io/im_boy.png");
         MsgProtocol msgProtocol = new MsgProtocol();
-        msgProtocol.from = myHumanCode;
         msgProtocol.content = messageInfo.getContent();
-        msgProtocol.friendCode = mFriendCodeStr;
-        msgProtocol.at = null;
         //需要区分是single还是group
-        int ret = CarrierPeerNode.getInstance(ChatDetailActivity.this).sendGroupMessage(mFriendCodeStr, new Gson().toJson(msgProtocol));
+        int ret = 0;
+        if(mType.equals(BRConstants.CHAT_TYPE)) {
+            ret = CarrierPeerNode.getInstance(ChatDetailActivity.this).sendMessage(mFriendCodeStr, new Gson().toJson(msgProtocol));
+        } else if(mType.equals(BRConstants.CHAT_GROUP_TYPE)) {
+            ret = CarrierPeerNode.getInstance(ChatDetailActivity.this).sendGroupMessage(mFriendCodeStr, new Gson().toJson(msgProtocol));
+        }
+        if(0 != ret)  messageInfo.setSendState(Constants.CHAT_ITEM_SEND_ERROR);
 
+        Log.d("xidaokun", "ChatDetailActivity#handleSend#cacheMessgeInfo#begin");
         long time = System.currentTimeMillis();
-        MessageCacheBean messageCacheBean = new MessageCacheBean();
-        messageCacheBean.MessageType = ChatDataSource.TYPE_MESSAGE_TEXT;
-        messageCacheBean.MessageContent = messageInfo.getContent();
-        messageCacheBean.MessageHasRead = true;
-        messageCacheBean.MessageTimestamp = time;
-        messageCacheBean.MessageOrientation = Constants.CHAT_ITEM_TYPE_RIGHT;
-        messageCacheBean.MessageFriendCode = mFriendCodeStr;
-
-        List<MessageCacheBean> messageCacheBeans = new ArrayList<>();
-        messageCacheBeans.add(messageCacheBean);
-        Log.d("xidaokun", "ChatDetailActivity#handleSend#\ncacheMessage:"+ new Gson().toJson(messageCacheBeans));
-        ChatDataSource.getInstance(ChatDetailActivity.this).cacheMessage(messageCacheBeans);
-
-        MessageItemBean messageItemBean = new MessageItemBean();
-        messageItemBean.friendCode = mFriendCodeStr;
-        messageItemBean.timeStamp = time;
-        List<MessageItemBean> messageItemBeans = new ArrayList<>();
-        messageItemBeans.add(messageItemBean);
-        Log.d("xidaokun", "ChatDetailActivity#handleSend#\ncacheMessageItemInfos:"+ new Gson().toJson(messageItemBeans));
-        ChatDataSource.getInstance(ChatDetailActivity.this).cacheMessageItemInfos(messageItemBeans);
+        ChatDataSource.getInstance(ChatDetailActivity.this)
+                .setType(BRConstants.CHAT_GROUP_TYPE)
+                .setContentType(ChatDataSource.TYPE_MESSAGE_TEXT)
+                .setContent(messageInfo.getContent())
+                .hasRead(true)
+                .setTimestamp(time)
+                .setOrientation(Constants.CHAT_ITEM_TYPE_RIGHT)
+                .setFriendCode(mFriendCodeStr)
+                .cacheMessgeInfo();
     }
 
     private void handleReceive(MessageInfo messageInfo) {

@@ -185,7 +185,6 @@ public class CarrierPeerNode {
 
         MessageInfo messageInfo = new MessageInfo();
         messageInfo.setContent(groupMessage.content);
-        messageInfo.setHumanCode(humanCode);
         messageInfo.setFriendCode(humanCode);
         messageInfo.setTime(message.nanoTime);
         messageInfo.setMsgId(message.nanoTime);
@@ -205,8 +204,9 @@ public class CarrierPeerNode {
 
         MsgProtocol msgProtocol = new Gson().fromJson(data, MsgProtocol.class);
         messageInfo.setContent(msgProtocol.content);
-        messageInfo.setHumanCode(humanCode);
-        messageInfo.setFriendCode(msgProtocol.friendCode);
+        messageInfo.setFriendCode(humanCode);
+
+        messageInfo.setNickName(msgProtocol.nickName);
         messageInfo.setTime(message.nanoTime);
         messageInfo.setMsgId(message.nanoTime);
         messageInfo.setType(Constants.CHAT_ITEM_TYPE_LEFT);
@@ -301,6 +301,7 @@ public class CarrierPeerNode {
     }
 
     public int sendMessage(String friendCode, String content) {
+        Log.d("xidaokun", "CarrierPeerNode#sendMessage\n#friendCode:"+ friendCode + "\n#content:" + content);
         int ret = mConnector.sendMessage(friendCode, content);
         Log.d("xidaokun", "CarrierPeerNode#sendMessage#ret:"+ ret);
         return ret;

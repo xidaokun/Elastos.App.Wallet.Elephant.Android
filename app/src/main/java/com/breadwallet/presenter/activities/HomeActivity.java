@@ -29,16 +29,14 @@ import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.ProfileDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
-import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.elastos.jni.Utility;
 import com.elastos.jni.utils.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.chat.lib.entity.MessageCacheBean;
 import org.chat.lib.entity.MessageInfo;
-import org.chat.lib.entity.MessageItemBean;
 import org.chat.lib.presenter.FragmentChatMessage;
 import org.chat.lib.source.ChatDataSource;
 import org.elastos.sdk.wallet.BlockChainNode;
@@ -53,7 +51,6 @@ import org.node.CarrierPeerNode;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -164,27 +161,17 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     public void MessageEvent(MessageInfo messageInfo) {
         String friendCode = messageInfo.getFriendCode();
         if(StringUtil.isNullOrEmpty(friendCode)) return; //only receive message
-        MessageCacheBean messageCacheBean = new MessageCacheBean();
-        messageCacheBean.MessageType = ChatDataSource.TYPE_MESSAGE_TEXT;
-        messageCacheBean.MessageContent = messageInfo.getContent();
-        messageCacheBean.MessageHumncode = messageInfo.getHumanCode();
-        messageCacheBean.MessageHasRead = false;
-        messageCacheBean.MessageTimestamp = messageInfo.getTime();
-        messageCacheBean.MessageOrientation = messageInfo.getType();
-        messageCacheBean.MessageFriendCode = friendCode;
+        Log.d("xidaokun", "HomeActivity#MessageEvent#cacheMessgeInfo#begin");
+        ChatDataSource.getInstance(this)
+                .setType(BRConstants.CHAT_GROUP_TYPE)
+                .setContentType(ChatDataSource.TYPE_MESSAGE_TEXT)
+                .setContent(messageInfo.getContent())
+                .hasRead(false)
+                .setTimestamp(messageInfo.getTime())
+                .setOrientation(messageInfo.getType())
+                .setFriendCode(friendCode)
+                .cacheMessgeInfo();
 
-        List<MessageCacheBean> messageCacheBeans = new ArrayList<>();
-        messageCacheBeans.add(messageCacheBean);
-        Log.d("xidaokun", "HomeActivity#MessageEvent#\ncacheMessage:"+ new Gson().toJson(messageCacheBeans));
-        ChatDataSource.getInstance(this).cacheMessage(messageCacheBeans);
-
-        MessageItemBean messageItemBean = new MessageItemBean();
-        messageItemBean.friendCode = messageInfo.getFriendCode();
-        messageItemBean.timeStamp = messageInfo.getTime();
-        List<MessageItemBean> messageItemBeans = new ArrayList<>();
-        messageItemBeans.add(messageItemBean);
-        Log.d("xidaokun", "HomeActivity#MessageEvent#\ncacheMessageItemInfos:"+ new Gson().toJson(messageItemBeans));
-        ChatDataSource.getInstance(this).cacheMessageItemInfos(messageItemBeans);
         EventBus.getDefault().post(new FragmentChatMessage.RefreshMessage());
     }
 

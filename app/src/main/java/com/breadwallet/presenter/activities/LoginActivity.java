@@ -1,7 +1,5 @@
 package com.breadwallet.presenter.activities;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -10,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -233,7 +230,7 @@ public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgroun
         } else if(requestCode == BRConstants.CHAT_CAMERA_REQUST_ID) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 UiUtils.openScanner(this, BRConstants.SCANNER_REQUEST);
-                UiUtils.startAddFriendActivity(this, BRConstants.CHAT_SCAN_ADDFRIEND_TYPE);
+                UiUtils.startAddFriendActivity(this, BRConstants.CHAT_TYPE);
             }
         }
     }

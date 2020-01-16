@@ -40,7 +40,6 @@ import com.elastos.jni.utils.StringUtils;
 import com.platform.HTTPServer;
 import com.platform.tools.BRBitId;
 
-import org.chat.lib.presenter.ChatDetailActivity;
 import org.node.CarrierPeerNode;
 
 /**
@@ -234,11 +233,11 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                             String result = data.getStringExtra("result");
                             String type = data.getStringExtra("type");
                             if(!StringUtil.isNullOrEmpty(type)) {
-                                if(type.equals(BRConstants.CHAT_SCAN_ADDFRIEND_TYPE)) {
+                                if(type.equals(BRConstants.CHAT_TYPE)) {
                                     mHomeActivity.showChatFragment(result);
                                 } else {
                                     joinGroup(result);
-                                    UiUtils.startChatDetailActivity(BRActivity.this, result);
+                                    UiUtils.startChatDetailActivity(BRActivity.this, result, BRConstants.CHAT_GROUP_TYPE);
                                 }
                             } else if (CryptoUriParser.isCryptoUrl(BRActivity.this, result))
                                 CryptoUriParser.processRequest(BRActivity.this, result,

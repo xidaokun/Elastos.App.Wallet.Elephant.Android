@@ -89,8 +89,6 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static android.content.Context.ACTIVITY_SERVICE;
@@ -529,9 +527,10 @@ public class UiUtils {
         }
     }
 
-    public static void startChatDetailActivity(Context context, String friendCode) {
+    public static void startChatDetailActivity(Context context, String friendCode, String type) {
         Intent intent = new Intent(context, ChatDetailActivity.class);
         intent.putExtra("friendCode", friendCode);
+        intent.putExtra("type", type);
         context.startActivity(intent);
     }
 
