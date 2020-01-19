@@ -100,7 +100,7 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
             public void onClick() {
                 String nickName = elaphantDialog.getNickname();
                 CarrierPeerNode.getInstance(getContext()).
-                        setItemInfo(Contact.HumanInfo.Item.Nickname,
+                        setMyInfo(Contact.HumanInfo.Item.Nickname,
                                 StringUtil.isNullOrEmpty(nickName)?"nickname":nickName);
                 elaphantDialog.dismiss();
             }

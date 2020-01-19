@@ -5,9 +5,9 @@ import android.provider.Settings;
 import android.util.Log;
 
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
-import com.elastos.jni.utils.StringUtils;
 import com.google.gson.Gson;
 
 import org.chat.lib.entity.MessageInfo;
@@ -17,6 +17,7 @@ import org.elastos.sdk.elephantwallet.contact.Utils;
 import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
 import org.elastos.sdk.keypair.ElastosKeypair;
 import org.greenrobot.eventbus.EventBus;
+import org.json.JSONObject;
 import org.node.bean.MsgProtocol;
 
 import java.util.List;
@@ -222,9 +223,16 @@ public class CarrierPeerNode {
                 String summary = requestEvent.summary;
                 text = requestEvent.humanCode + " request friend, said: " + summary;
                 Log.d("xidaokun", "CarrierPeerNode#handleEvent#FriendRequest#\ntext:"+ text);
-                if(!StringUtils.isNullOrEmpty(summary) && summary.equals("group")) acceptFriend(requestEvent.humanCode);
-                RequestFriendInfo requestFriendInfo = new RequestFriendInfo(requestEvent.humanCode, summary);
-                postAddFriendEvent(requestFriendInfo);
+                String content = null;
+                try {
+                    JSONObject object = new JSONObject(summary);
+                    content = object.getString("content");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    RequestFriendInfo requestFriendInfo = new RequestFriendInfo(requestEvent.humanCode, content);
+                    postAddFriendEvent(requestFriendInfo);
+                }
                 break;
             case StatusChanged:
                 Contact.Listener.StatusEvent statusEvent = (Contact.Listener.StatusEvent) event;
@@ -261,23 +269,40 @@ public class CarrierPeerNode {
         EventBus.getDefault().post(messageInfo);
     }
 
-    public void setItemInfo(Contact.HumanInfo.Item item, String value) {
+    public void setMyInfo(Contact.HumanInfo.Item item, String value) {
         mPeerNode.setUserInfo(item, value);
     }
 
-    public int addFriend(String friendCode, String summary) {
-        int ret = mPeerNode.addFriend(friendCode, summary);
+    public void setFriendInfo(String humanCode, Contact.HumanInfo.Item item, String value) {
+        int ret = mConnector.setFriendInfo(humanCode, item, value);
+        Log.d("xidaokun", "CarrierPeerNode#setFriendInfo#======ret:"+ ret);
+    }
+
+    public void setGroupFriendInfo(String humanCode, Contact.HumanInfo.Item item, String value) {
+        int ret = mGroupConnector.setFriendInfo(humanCode, item, value);
+        Log.d("xidaokun", "CarrierPeerNode#setGroupFriendInfo#======ret:"+ ret);
+    }
+
+    public int addFriend(String friendCode) {
+        int ret = mPeerNode.addFriend(friendCode, "{\"content\": \"chatType\"}");
+        setFriendInfo(friendCode, Contact.HumanInfo.Item.Addition, BRConstants.CHAT_TYPE);
         Log.d("xidaokun", "CarrierPeerNode#addFriend#======ret:"+ ret);
         return ret;
     }
 
-    public int addGroupFriend(String friendCode, String summary) {
-        int ret = mGroupConnector.addFriend(friendCode, summary);
+    public int addGroupFriend(String friendCode) {
+        int ret = mGroupConnector.addFriend(friendCode, "{\"content\": \"chatGroupType\"}");
+        setFriendInfo(friendCode, Contact.HumanInfo.Item.Addition, BRConstants.CHAT_GROUP_TYPE);
         Log.d("xidaokun", "CarrierPeerNode#addGroupFriend#======ret:"+ ret);
         return ret;
     }
 
-    public int acceptFriend(String friendCode) {
+    public int acceptFriend(String friendCode, String type) {
+        if(!StringUtil.isNullOrEmpty(type) && type.equals(BRConstants.CHAT_GROUP_TYPE)) {
+            setGroupFriendInfo(friendCode, Contact.HumanInfo.Item.Addition, BRConstants.CHAT_GROUP_TYPE);
+        } else {
+            setFriendInfo(friendCode, Contact.HumanInfo.Item.Addition, BRConstants.CHAT_TYPE);
+        }
         int ret = mPeerNode.acceptFriend(friendCode);
         Log.d("xidaokun", "CarrierPeerNode#acceptFriend#ret:"+ ret);
         return ret;

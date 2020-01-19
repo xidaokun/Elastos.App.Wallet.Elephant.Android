@@ -144,7 +144,7 @@ public class FragmentChatFriends extends BaseFragment {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                int ret = CarrierPeerNode.getInstance(getContext()).addFriend(friendCode, "summary");
+                int ret = CarrierPeerNode.getInstance(getContext()).addFriend(friendCode);
                 Log.d("xidaokun", "FragementChatFriends#addFriend#ret:"+ret);
                 refreshFriendView();
             }

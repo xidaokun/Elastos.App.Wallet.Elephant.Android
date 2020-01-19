@@ -84,6 +84,8 @@ import com.platform.sqlite.PlatformSqliteHelper;
 import org.chat.lib.presenter.AddFriendActivity;
 import org.chat.lib.presenter.ChatDetailActivity;
 import org.chat.lib.presenter.ChatGroupSelectActivity;
+import org.chat.lib.presenter.GroupNameActivity;
+import org.elastos.sdk.elephantwallet.contact.Contact;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -531,6 +533,12 @@ public class UiUtils {
         Intent intent = new Intent(context, ChatDetailActivity.class);
         intent.putExtra("friendCode", friendCode);
         intent.putExtra("type", type);
+        context.startActivity(intent);
+    }
+
+    public static void startGroupNameActivity(Context context, String friendCode) {
+        Intent intent = new Intent(context, GroupNameActivity.class);
+        intent.putExtra("friendCode", friendCode);
         context.startActivity(intent);
     }
 

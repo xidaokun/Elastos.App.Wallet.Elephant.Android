@@ -40,8 +40,6 @@ import com.elastos.jni.utils.StringUtils;
 import com.platform.HTTPServer;
 import com.platform.tools.BRBitId;
 
-import org.node.CarrierPeerNode;
-
 /**
  * BreadWallet
  * <p/>
@@ -236,8 +234,7 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                                 if(type.equals(BRConstants.CHAT_TYPE)) {
                                     mHomeActivity.showChatFragment(result);
                                 } else {
-                                    joinGroup(result);
-                                    UiUtils.startChatDetailActivity(BRActivity.this, result, BRConstants.CHAT_GROUP_TYPE);
+                                    UiUtils.startGroupNameActivity(BRActivity.this, result);
                                 }
                             } else if (CryptoUriParser.isCryptoUrl(BRActivity.this, result))
                                 CryptoUriParser.processRequest(BRActivity.this, result,
@@ -332,16 +329,6 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
 
         }
     }
-
-    private void joinGroup(final String friendCode) {
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                CarrierPeerNode.getInstance(BRActivity.this).addGroupFriend(friendCode, "{\"content\": \"hello\"}");
-            }
-        });
-    }
-
 
     public void init(Activity app) {
         //set status bar color

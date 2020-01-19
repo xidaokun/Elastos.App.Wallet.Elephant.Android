@@ -307,6 +307,10 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
+        <activity android:name="org.chat.lib.presenter.GroupNameActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
+
         <activity
             android:name=".presenter.activities.did.ProfileEditActivity"
             android:launchMode="singleTask"

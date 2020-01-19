@@ -143,7 +143,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         elaphantDialog.setPositiveListener(new ElaphantDialogText.OnPositiveClickListener() {
             @Override
             public void onClick() {
-                CarrierPeerNode.getInstance(HomeActivity.this).acceptFriend(requestFriendInfo.humanCode);
+                CarrierPeerNode.getInstance(HomeActivity.this).acceptFriend(requestFriendInfo.humanCode, requestFriendInfo.content);
                 EventBus.getDefault().post(requestFriendInfo.humanCode);
                 elaphantDialog.dismiss();
             }
