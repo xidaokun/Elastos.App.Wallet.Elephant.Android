@@ -167,6 +167,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 .setContentType(ChatDataSource.TYPE_MESSAGE_TEXT)
                 .setContent(messageInfo.getContent())
                 .hasRead(false)
+                .setNickname(messageInfo.getNickName())
                 .setTimestamp(messageInfo.getTime())
                 .setOrientation(messageInfo.getType())
                 .setFriendCode(friendCode)

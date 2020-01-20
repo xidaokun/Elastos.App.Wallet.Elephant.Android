@@ -152,11 +152,18 @@ public class ChatDataSource implements BRDataSourceInterface {
         return this;
     }
 
+    public String mNickname;
+    public ChatDataSource setNickname(String nickname) {
+        this.mNickname = nickname;
+        return this;
+    }
+
     public void cacheMessgeInfo() {
         MessageCacheBean messageCacheBean = new MessageCacheBean();
         messageCacheBean.MessageType = mType;
         messageCacheBean.MessageContentType = mContentType;
         messageCacheBean.MessageContent = mContent;
+        messageCacheBean.MessageNickname = mNickname;
         messageCacheBean.MessageHasRead = mIsRead;
         messageCacheBean.MessageTimestamp = mTimestamp;
         messageCacheBean.MessageOrientation = mOrientation;

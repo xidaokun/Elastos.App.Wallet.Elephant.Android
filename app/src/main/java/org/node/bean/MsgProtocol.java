@@ -11,5 +11,6 @@ public class MsgProtocol {
     public String serviceName;
     public String content;
     public String nickName;
-    public String type; //
+    public String type;
+    public String timeStamp;
 }

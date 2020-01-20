@@ -17,12 +17,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
-import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
-import com.elastos.jni.utils.StringUtils;
 import com.google.gson.Gson;
 
 import org.chat.lib.adapter.ChatAdapter;
@@ -72,7 +70,6 @@ public class ChatDetailActivity extends FragmentActivity {
         emotionSendBtn = findViewById(R.id.emotion_send);
         viewpager = findViewById(R.id.viewpager);
         emotionLayout = findViewById(R.id.emotion_layout);
-        mJoinGroupView = findViewById(R.id.join_group);
     }
 
     private EmotionInputDetector mDetector;
@@ -84,7 +81,6 @@ public class ChatDetailActivity extends FragmentActivity {
     private ChatAdapter chatAdapter;
     private LinearLayoutManager layoutManager;
     private List<MessageInfo> messageInfos;
-    private View mJoinGroupView;
 
     private String mFriendCodeStr;
     private String mType;
@@ -167,12 +163,6 @@ public class ChatDetailActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 finish();
-            }
-        });
-        mJoinGroupView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                UiUtils.startChatGroupSelectActivity(ChatDetailActivity.this, StringUtils.asList(mFriendCodeStr));
             }
         });
         LoadData();
@@ -323,6 +313,7 @@ public class ChatDetailActivity extends FragmentActivity {
         long time = System.currentTimeMillis();
         ChatDataSource.getInstance(ChatDetailActivity.this)
                 .setType(BRConstants.CHAT_GROUP_TYPE)
+                .setNickname(mTitle)
                 .setContentType(ChatDataSource.TYPE_MESSAGE_TEXT)
                 .setContent(messageInfo.getContent())
                 .hasRead(true)

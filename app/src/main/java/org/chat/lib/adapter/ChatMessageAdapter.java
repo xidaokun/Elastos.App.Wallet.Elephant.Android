@@ -55,7 +55,7 @@ public class ChatMessageAdapter extends BaseAdapter {
         }
         viewHolder.nameTv.setText(mEntities.get(position).getName());
         viewHolder.msgTv.setText(mEntities.get(position).getMessage());
-        viewHolder.timeTv.setText(BRDateUtil.getFullDate(mEntities.get(position).getTimeStamp()));
+        viewHolder.timeTv.setText(BRDateUtil.getFormatDate(mEntities.get(position).getTimeStamp(), "yyyy-MM-dd hh:mm:ss"));
         int count = mEntities.get(position).getCount();
         if(count == 0) {
             viewHolder.countTv.setVisibility(View.GONE);

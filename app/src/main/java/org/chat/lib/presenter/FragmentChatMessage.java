@@ -84,6 +84,7 @@ public class FragmentChatMessage extends BaseFragment {
                     entity.setMessage(lastBean.MessageContent);
                     entity.setTimeStamp(lastBean.MessageTimestamp);
                     entity.setFriendCode(lastBean.MessageFriendCode);
+                    entity.setType(lastBean.MessageType);
                     entity.setCount((null!=hasNotReadCacheBeans && hasNotReadCacheBeans.size()>0)? hasNotReadCacheBeans.size() : 0);
 
                     entities.add(entity);

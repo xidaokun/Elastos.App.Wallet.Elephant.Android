@@ -166,11 +166,14 @@ public class CarrierPeerNode {
             public void onReceivedMessage(String s, ContactInterface.Channel channel, ContactInterface.Message message) {
                 Log.d("xidaokun", "CarrierPeerNode#handleMessage\n#humanCode:"+ s  + "\n#channel"+channel
                         + "\n#message:" + message.data.toString()
-                + "\n#nanoTime" + message.nanoTime);
+                + "\n#nanoTime:" + message.nanoTime);
+
+//                BRDateUtil.stringToLong(message.nanoTime, "yyyy-MM-dd hh:mm:ss");
+
                 //      #humanCode:immMWGMeXsWtvKcTqgYkGEnRbafEvUdX6u
                 //      #channelCarrier(1)
                 //      #message:{"content":"aaaaa","nickName":"匿名6","serviceName":"ChatGroupService","timeStamp":"2020-1-16 16:27:57","type":"textMsg"}
-                //      #nanoTime1579163278535091625
+                //      #nanoTime:1579163278535 091625
                 handleGroupMessage(s, message);
             }
         });
@@ -187,8 +190,8 @@ public class CarrierPeerNode {
         MessageInfo messageInfo = new MessageInfo();
         messageInfo.setContent(groupMessage.content);
         messageInfo.setFriendCode(humanCode);
-        messageInfo.setTime(message.nanoTime);
-        messageInfo.setMsgId(message.nanoTime);
+        messageInfo.setTime(message.nanoTime/1000000);
+        messageInfo.setMsgId(message.nanoTime/1000000);
         messageInfo.setType(Constants.CHAT_ITEM_TYPE_LEFT);
         messageInfo.setHeader("https://xidaokun.github.io/im_boy.png");
         postMessageEvent(messageInfo);
@@ -208,10 +211,14 @@ public class CarrierPeerNode {
         messageInfo.setFriendCode(humanCode);
 
         messageInfo.setNickName(msgProtocol.nickName);
-        messageInfo.setTime(message.nanoTime);
-        messageInfo.setMsgId(message.nanoTime);
-        messageInfo.setType(Constants.CHAT_ITEM_TYPE_LEFT);
+        messageInfo.setTime(message.nanoTime/1000000);
+        messageInfo.setMsgId(message.nanoTime/1000000);
         messageInfo.setHeader("https://xidaokun.github.io/im_boy.png");
+        if(!StringUtil.isNullOrEmpty(getUserInfo().humanCode) && humanCode.equals(getUserInfo().humanCode)) {
+            messageInfo.setType(Constants.CHAT_ITEM_TYPE_RIGHT);
+        } else {
+            messageInfo.setType(Constants.CHAT_ITEM_TYPE_LEFT);
+        }
         postMessageEvent(messageInfo);
     }
 

@@ -80,6 +80,15 @@ public class BRDateUtil {
         return dateString;
     }
 
+    public static String getFormatDate(long timestamp, String pattern) {
+        Calendar calendar = Calendar.getInstance(Locale.getDefault());
+        calendar.setTimeInMillis(timestamp);
+
+        String dateString = new SimpleDateFormat(pattern, Locale.getDefault()).format(calendar.getTimeInMillis());
+
+        return dateString;
+    }
+
     public static String getFullDate(long timestamp) {
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.setTimeInMillis(timestamp);
@@ -97,5 +106,32 @@ public class BRDateUtil {
         String dateString = new SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.getDefault()).format(calendar.getTimeInMillis());
 
         return dateString;
+    }
+
+    public static long stringToLong(String strTime, String formatType) {
+        Date date = stringToDate(strTime, formatType);
+        if (date == null) {
+            return 0;
+        } else {
+            long currentTime = dateToLong(date);
+            return currentTime;
+        }
+    }
+
+    public static Date stringToDate(String strTime, String formatType) {
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat(formatType);
+            Date date = null;
+            date = formatter.parse(strTime);
+            return date;
+        } catch (Exception e) {
+
+        }
+
+        return null;
+    }
+
+    public static long dateToLong(Date date) {
+        return date.getTime();
     }
 }
