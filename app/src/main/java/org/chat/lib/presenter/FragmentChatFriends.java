@@ -121,12 +121,12 @@ public class FragmentChatFriends extends BaseFragment {
             @Override
             public void sendMessage(View view, int position) {
                 String friendCode = mDatas.get(position - 1).getFriendCode();
-                //TODO daokun.xi 缺少群聊flag
                 String type = mDatas.get(position -1 ).getType();
+                String chatName = mDatas.get(position-1).getContact();
                 Log.d("xidaokun", "FragementChatFriends#sendMessage#type:"+type);
                 if (!StringUtil.isNullOrEmpty(friendCode)) {
                     Log.d("xidaokun", "FragementChatFriends#sendMessage#friendCode:"+friendCode);
-                    UiUtils.startChatDetailActivity(getContext(), friendCode, type);
+                    UiUtils.startChatDetailActivity(getContext(), friendCode, type, chatName);
                 }
             }
 

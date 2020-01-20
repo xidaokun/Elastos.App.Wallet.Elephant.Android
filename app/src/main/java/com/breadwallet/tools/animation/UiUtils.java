@@ -85,7 +85,6 @@ import org.chat.lib.presenter.AddFriendActivity;
 import org.chat.lib.presenter.ChatDetailActivity;
 import org.chat.lib.presenter.ChatGroupSelectActivity;
 import org.chat.lib.presenter.GroupNameActivity;
-import org.elastos.sdk.elephantwallet.contact.Contact;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -529,10 +528,11 @@ public class UiUtils {
         }
     }
 
-    public static void startChatDetailActivity(Context context, String friendCode, String type) {
+    public static void startChatDetailActivity(Context context, String friendCode, String type, String chatName) {
         Intent intent = new Intent(context, ChatDetailActivity.class);
         intent.putExtra("friendCode", friendCode);
         intent.putExtra("type", type);
+        intent.putExtra("chatName", chatName);
         context.startActivity(intent);
     }
 

@@ -113,7 +113,8 @@ public class FragmentChatMessage extends BaseFragment {
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 String friendCode = entities.get(position).getFriendCode();
                 String type = entities.get(position).getType();
-                UiUtils.startChatDetailActivity(getContext(), friendCode, type);
+                String nickName = entities.get(position).getName();
+                UiUtils.startChatDetailActivity(getContext(), friendCode, type, nickName);
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {

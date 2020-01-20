@@ -60,7 +60,7 @@ public class GroupNameActivity extends BRActivity {
                     String groupName = mGroupEdit.getText().toString();
                     Log.d("xidaokun", "CarrierPeerNode#mSaveBtn#groupName:"+ groupName);
                     CarrierPeerNode.getInstance(GroupNameActivity.this).setGroupFriendInfo(mGroupId, Contact.HumanInfo.Item.Nickname, groupName);
-                    UiUtils.startChatDetailActivity(GroupNameActivity.this, mGroupId, BRConstants.CHAT_GROUP_TYPE);
+                    UiUtils.startChatDetailActivity(GroupNameActivity.this, mGroupId, BRConstants.CHAT_GROUP_TYPE, groupName);
                     finish();
                 }
             }

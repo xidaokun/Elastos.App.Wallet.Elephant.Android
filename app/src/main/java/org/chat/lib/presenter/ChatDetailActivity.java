@@ -21,6 +21,7 @@ import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.StringUtil;
 import com.elastos.jni.utils.StringUtils;
 import com.google.gson.Gson;
 
@@ -48,25 +49,27 @@ import java.util.List;
 public class ChatDetailActivity extends FragmentActivity {
 
     View mBackBtn;
-    EasyRecyclerView chatList;
-    ImageView emotionVoice;
-    EditText editText;
-    TextView voiceText;
-    ImageView emotionButton;
-    ImageView emotionAdd;
-    StateButton emotionSend;
+    EasyRecyclerView chatLv;
+    ImageView emotionIv;
+    EditText editEdt;
+    TextView voiceTv;
+    TextView titleTv;
+    ImageView emotionBtn;
+    ImageView emotionAddIv;
+    StateButton emotionSendBtn;
     NoScrollViewPager viewpager;
     RelativeLayout emotionLayout;
 
     private void initView() {
         mBackBtn = findViewById(R.id.back_button);
-        chatList = findViewById(R.id.chat_list);
-        emotionVoice = findViewById(R.id.emotion_voice);
-        editText = findViewById(R.id.edit_text);
-        voiceText = findViewById(R.id.voice_text);
-        emotionButton = findViewById(R.id.emotion_button);
-        emotionAdd = findViewById(R.id.emotion_add);
-        emotionSend = findViewById(R.id.emotion_send);
+        titleTv = findViewById(R.id.title);
+        chatLv = findViewById(R.id.chat_list);
+        emotionIv = findViewById(R.id.emotion_voice);
+        editEdt = findViewById(R.id.edit_text);
+        voiceTv = findViewById(R.id.voice_text);
+        emotionBtn = findViewById(R.id.emotion_button);
+        emotionAddIv = findViewById(R.id.emotion_add);
+        emotionSendBtn = findViewById(R.id.emotion_send);
         viewpager = findViewById(R.id.viewpager);
         emotionLayout = findViewById(R.id.emotion_layout);
         mJoinGroupView = findViewById(R.id.join_group);
@@ -85,6 +88,7 @@ public class ChatDetailActivity extends FragmentActivity {
 
     private String mFriendCodeStr;
     private String mType;
+    private String mTitle;
     int animationRes = 0;
     int res = 0;
     AnimationDrawable animationDrawable = null;
@@ -96,6 +100,7 @@ public class ChatDetailActivity extends FragmentActivity {
         setContentView(R.layout.activity_chat_detail_layout);
         mFriendCodeStr = getIntent().getStringExtra("friendCode");
         mType = getIntent().getStringExtra("type");
+        mTitle = getIntent().getStringExtra("chatName");
 
         initView();
         EventBus.getDefault().register(this);
@@ -103,6 +108,8 @@ public class ChatDetailActivity extends FragmentActivity {
     }
 
     private void initWidget() {
+        if(!StringUtil.isNullOrEmpty(mTitle)) titleTv.setText(mTitle);
+
         fragments = new ArrayList<>();
         chatEmotionFragment = new ChatEmotionFragment();
         fragments.add(chatEmotionFragment);
@@ -115,24 +122,24 @@ public class ChatDetailActivity extends FragmentActivity {
         mDetector = EmotionInputDetector.with(this)
                 .setEmotionView(emotionLayout)
                 .setViewPager(viewpager)
-                .bindToContent(chatList)
-                .bindToEditText(editText)
-                .bindToEmotionButton(emotionButton)
-                .bindToAddButton(emotionAdd)
-                .bindToSendButton(emotionSend)
-                .bindToVoiceButton(emotionVoice)
-                .bindToVoiceText(voiceText)
+                .bindToContent(chatLv)
+                .bindToEditText(editEdt)
+                .bindToEmotionButton(emotionBtn)
+                .bindToAddButton(emotionAddIv)
+                .bindToSendButton(emotionSendBtn)
+                .bindToVoiceButton(emotionIv)
+                .bindToVoiceText(voiceTv)
                 .build();
 
         GlobalOnItemClickListener globalOnItemClickListener = GlobalOnItemClickListener.getInstance(this);
-        globalOnItemClickListener.attachToEditText(editText);
+        globalOnItemClickListener.attachToEditText(editEdt);
 
         chatAdapter = new ChatAdapter(this);
         layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        chatList.setLayoutManager(layoutManager);
-        chatList.setAdapter(chatAdapter);
-        chatList.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        chatLv.setLayoutManager(layoutManager);
+        chatLv.setAdapter(chatAdapter);
+        chatLv.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 switch (newState) {
@@ -291,7 +298,7 @@ public class ChatDetailActivity extends FragmentActivity {
                         messageInfo.setSendState(Constants.CHAT_ITEM_SEND_SUCCESS);
                         messageInfos.add(messageInfo);
                         chatAdapter.add(messageInfo);
-                        chatList.scrollToPosition(chatAdapter.getCount() - 1);
+                        chatLv.scrollToPosition(chatAdapter.getCount() - 1);
                     }
                 });
             }
