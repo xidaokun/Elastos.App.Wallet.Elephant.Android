@@ -122,12 +122,12 @@ public class FragmentChatFriends extends BaseFragment {
             public void sendMessage(View view, int position) {
                 String friendCode = mDatas.get(position - 1).getFriendCode();
                 //TODO daokun.xi 缺少群聊flag
-                String type = /*mDatas.get(position -1 ).getType()*/BRConstants.CHAT_TYPE;
+                String type = mDatas.get(position -1 ).getType();
+                Log.d("xidaokun", "FragementChatFriends#sendMessage#type:"+type);
                 if (!StringUtil.isNullOrEmpty(friendCode)) {
-                    Log.d("xidaokun", "FragementChatFriends#StartChatDetail#friendCode:"+friendCode);
+                    Log.d("xidaokun", "FragementChatFriends#sendMessage#friendCode:"+friendCode);
                     UiUtils.startChatDetailActivity(getContext(), friendCode, type);
                 }
-                Toast.makeText(getContext(), "send Message failed", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -170,6 +170,7 @@ public class FragmentChatFriends extends BaseFragment {
                     contactEntity.setContact(StringUtils.isNullOrEmpty(info.nickname)?"Nickname":info.nickname);
                     contactEntity.setTokenAddress(info.elaAddress);
                     contactEntity.setFriendCode(info.humanCode);
+                    contactEntity.setType(info.addition);
                     contacts.add(contactEntity);
                 }
 

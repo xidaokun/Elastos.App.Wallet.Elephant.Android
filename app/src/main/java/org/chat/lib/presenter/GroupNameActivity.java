@@ -2,6 +2,7 @@ package org.chat.lib.presenter;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -14,6 +15,7 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 
+import org.elastos.sdk.elephantwallet.contact.Contact;
 import org.node.CarrierPeerNode;
 
 public class GroupNameActivity extends BRActivity {
@@ -47,7 +49,7 @@ public class GroupNameActivity extends BRActivity {
         mBackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                finish();
             }
         });
 
@@ -55,7 +57,11 @@ public class GroupNameActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if(!StringUtil.isNullOrEmpty(mGroupId)) {
+                    String groupName = mGroupEdit.getText().toString();
+                    Log.d("xidaokun", "CarrierPeerNode#mSaveBtn#groupName:"+ groupName);
+                    CarrierPeerNode.getInstance(GroupNameActivity.this).setGroupFriendInfo(mGroupId, Contact.HumanInfo.Item.Nickname, groupName);
                     UiUtils.startChatDetailActivity(GroupNameActivity.this, mGroupId, BRConstants.CHAT_GROUP_TYPE);
+                    finish();
                 }
             }
         });
