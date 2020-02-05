@@ -15,12 +15,14 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.qrcode.QRCodeReaderView;
+import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
@@ -31,19 +33,19 @@ import org.chat.lib.widget.BaseTextView;
 
 import java.security.NoSuchAlgorithmException;
 
-public class AddFriendActivity extends BRActivity implements ActivityCompat.OnRequestPermissionsResultCallback, QRCodeReaderView.OnQRCodeReadListener{
+public class ChatScanActivity extends BRActivity implements ActivityCompat.OnRequestPermissionsResultCallback, QRCodeReaderView.OnQRCodeReadListener{
 
-    private static final String TAG = AddFriendActivity.class.getName();
+    private static final String TAG = ChatScanActivity.class.getName();
     private ImageView cameraGuide;
     private TextView descriptionText;
     private long lastUpdated;
-    private AddFriendActivity.UIUpdateTask task;
+    private ChatScanActivity.UIUpdateTask task;
     private boolean handlingCode;
     public static boolean appVisible = false;
-    private static AddFriendActivity app;
+    private static ChatScanActivity app;
     private static final int MY_PERMISSION_REQUEST_CAMERA = 56432;
 
-    private AddFriendActivity.MultiPartQrcode[] mQrArray = null;
+    private ChatScanActivity.MultiPartQrcode[] mQrArray = null;
     private String mData;
 
     private ViewGroup mainLayout;
@@ -54,7 +56,7 @@ public class AddFriendActivity extends BRActivity implements ActivityCompat.OnRe
     private BaseTextView mPasteBtn;
     private String mType;
 
-    public static AddFriendActivity getApp() {
+    public static ChatScanActivity getApp() {
         return app;
     }
 
@@ -74,7 +76,7 @@ public class AddFriendActivity extends BRActivity implements ActivityCompat.OnRe
         mPasteEdit = findViewById(R.id.add_friend_edt);
         mPasteBtn = findViewById(R.id.add_friend_paste_btn);
 
-        task = new AddFriendActivity.UIUpdateTask();
+        task = new ChatScanActivity.UIUpdateTask();
         task.start();
 
         cameraGuide.setImageResource(R.drawable.cameraguide);
@@ -94,6 +96,22 @@ public class AddFriendActivity extends BRActivity implements ActivityCompat.OnRe
                 SpringAnimator.showExpandCameraGuide(cameraGuide);
             }
         }, 400);
+
+        mPasteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String text = mPasteEdit.getText().toString();
+                if(StringUtil.isNullOrEmpty(text)) {
+                    Toast.makeText(ChatScanActivity.this, "id empty", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("result", text);
+                returnIntent.putExtra("type", mType);
+                setResult(Activity.RESULT_OK, returnIntent);
+                finish();
+            }
+        });
     }
 
 
@@ -207,16 +225,16 @@ public class AddFriendActivity extends BRActivity implements ActivityCompat.OnRe
         Log.d(TAG, "multiqr data: " + text);
 
         try {
-            AddFriendActivity.MultiPartQrcode part = new Gson().fromJson(text, AddFriendActivity.MultiPartQrcode.class);
+            ChatScanActivity.MultiPartQrcode part = new Gson().fromJson(text, ChatScanActivity.MultiPartQrcode.class);
             if (mQrArray == null || mQrArray.length != part.total) {
-                mQrArray = new AddFriendActivity.MultiPartQrcode[part.total];
+                mQrArray = new ChatScanActivity.MultiPartQrcode[part.total];
             }
 
             if (part.index < part.total && mQrArray[part.index] == null) {
                 mQrArray[part.index] = part;
             }
 
-            for (AddFriendActivity.MultiPartQrcode qr : mQrArray) {
+            for (ChatScanActivity.MultiPartQrcode qr : mQrArray) {
                 if (qr == null) {
                     handlingCode = false;
                     return;
@@ -224,7 +242,7 @@ public class AddFriendActivity extends BRActivity implements ActivityCompat.OnRe
             }
 
             StringBuilder qrText = new StringBuilder();
-            for (AddFriendActivity.MultiPartQrcode qr : mQrArray) {
+            for (ChatScanActivity.MultiPartQrcode qr : mQrArray) {
                 qrText.append(qr.data);
             }
 

@@ -302,7 +302,7 @@ public class ChatDetailActivity extends FragmentActivity {
         msgProtocol.content = messageInfo.getContent();
         //需要区分是single还是group
         int ret = 0;
-        if(mType.equals(BRConstants.CHAT_TYPE)) {
+        if(mType.equals(BRConstants.CHAT_SINGLE_TYPE)) {
             ret = CarrierPeerNode.getInstance(ChatDetailActivity.this).sendMessage(mFriendCodeStr, new Gson().toJson(msgProtocol));
         } else if(mType.equals(BRConstants.CHAT_GROUP_TYPE)) {
             ret = CarrierPeerNode.getInstance(ChatDetailActivity.this).sendGroupMessage(mFriendCodeStr, new Gson().toJson(msgProtocol));

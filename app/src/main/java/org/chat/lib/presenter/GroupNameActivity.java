@@ -16,6 +16,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 
 import org.elastos.sdk.elephantwallet.contact.Contact;
+import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
 import org.node.CarrierPeerNode;
 
 public class GroupNameActivity extends BRActivity {
@@ -24,7 +25,7 @@ public class GroupNameActivity extends BRActivity {
     private TextView mSaveBtn;
     private EditText mGroupEdit;
     private TextView mCleanTv;
-
+    private TextView mTitleTv;
     private String mGroupId;
 
     @Override
@@ -43,6 +44,7 @@ public class GroupNameActivity extends BRActivity {
         mSaveBtn = findViewById(R.id.save_btn);
         mGroupEdit = findViewById(R.id.group_name_edit);
         mCleanTv = findViewById(R.id.did_nickname_clean);
+        mTitleTv = findViewById(R.id.title);
     }
 
     private void initListener() {
@@ -83,6 +85,14 @@ public class GroupNameActivity extends BRActivity {
             @Override
             public void run() {
                 CarrierPeerNode.getInstance(GroupNameActivity.this).addGroupFriend(friendCode);
+                final ContactInterface.UserInfo groupInfo = CarrierPeerNode.getInstance(GroupNameActivity.this).getGroupInfo();
+                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        mTitleTv.setText(StringUtil.isNullOrEmpty(groupInfo.nickname)?"unknow":groupInfo.nickname);
+                    }
+                });
+
             }
         });
     }

@@ -81,7 +81,7 @@ import com.elastos.jni.Constants;
 import com.google.gson.Gson;
 import com.platform.sqlite.PlatformSqliteHelper;
 
-import org.chat.lib.presenter.AddFriendActivity;
+import org.chat.lib.presenter.ChatScanActivity;
 import org.chat.lib.presenter.ChatDetailActivity;
 import org.chat.lib.presenter.ChatGroupSelectActivity;
 import org.chat.lib.presenter.GroupNameActivity;
@@ -518,7 +518,7 @@ public class UiUtils {
                 }
             } else {
 
-                Intent intent = new Intent(app, AddFriendActivity.class);
+                Intent intent = new Intent(app, ChatScanActivity.class);
                 intent.putExtra("type", type);
                 app.startActivityForResult(intent, BRConstants.SCANNER_REQUEST);
                 app.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);

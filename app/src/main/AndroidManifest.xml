@@ -447,7 +447,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
 
-        <activity android:name="org.chat.lib.presenter.AddFriendActivity"
+        <activity android:name="org.chat.lib.presenter.ChatScanActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
 

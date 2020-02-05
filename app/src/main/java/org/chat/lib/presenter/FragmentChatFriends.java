@@ -131,11 +131,25 @@ public class FragmentChatFriends extends BaseFragment {
             }
 
             @Override
-            public void deleteFriends(View view, int position) {
+            public void deleteFriends(View view, final int position) {
                 //TODO daokun.xi
-                CarrierPeerNode.getInstance(getContext()).removeFriend(mDatas.get(position).getFriendCode());
-                mDatas.remove(position);
-                mAdapter.notifyDataSetChanged();
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        int ret = CarrierPeerNode.getInstance(getContext()).removeFriend(mDatas.get(position-1).getFriendCode());
+                        Log.d("xidaokun", "FragementChatFriends#deleteFriends#ret:"+ret);
+                        if(0 != ret) {
+                            return;
+                        }
+                        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                mDatas.remove(position-1);
+                                mAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                });
             }
         });
     }

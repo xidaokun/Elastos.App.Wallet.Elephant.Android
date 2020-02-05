@@ -290,16 +290,20 @@ public class CarrierPeerNode {
         Log.d("xidaokun", "CarrierPeerNode#setGroupFriendInfo#======ret:"+ ret);
     }
 
+    public ContactInterface.UserInfo getGroupInfo() {
+        return mGroupConnector.getUserInfo();
+    }
+
     public int addFriend(String friendCode) {
-        int ret = mPeerNode.addFriend(friendCode, "{\"content\": \"chatType\"}");
-        setFriendInfo(friendCode, Contact.HumanInfo.Item.Addition, BRConstants.CHAT_TYPE);
+        int ret = mPeerNode.addFriend(friendCode, "{\"content\": \"" + BRConstants.CHAT_SINGLE_TYPE + "\"}");
+        if(0 == ret) setFriendInfo(friendCode, Contact.HumanInfo.Item.Addition, "{\"type\":\"chat\",\"value\":\"" + BRConstants.CHAT_SINGLE_TYPE + "\"}");
         Log.d("xidaokun", "CarrierPeerNode#addFriend#======ret:"+ ret);
         return ret;
     }
 
     public int addGroupFriend(String friendCode) {
-        int ret = mGroupConnector.addFriend(friendCode, "{\"content\": \"chatGroupType\"}");
-        setFriendInfo(friendCode, Contact.HumanInfo.Item.Addition, BRConstants.CHAT_GROUP_TYPE);
+        int ret = mGroupConnector.addFriend(friendCode, "{\"content\": \""+ BRConstants.CHAT_GROUP_TYPE  +"\"}");
+        if(0 == ret) setFriendInfo(friendCode, Contact.HumanInfo.Item.Addition,  "{\"type\":\"chat\",\"value\":\"" + BRConstants.CHAT_GROUP_TYPE + "\"}");
         Log.d("xidaokun", "CarrierPeerNode#addGroupFriend#======ret:"+ ret);
         return ret;
     }
@@ -308,7 +312,7 @@ public class CarrierPeerNode {
         if(!StringUtil.isNullOrEmpty(type) && type.equals(BRConstants.CHAT_GROUP_TYPE)) {
             setGroupFriendInfo(friendCode, Contact.HumanInfo.Item.Addition, BRConstants.CHAT_GROUP_TYPE);
         } else {
-            setFriendInfo(friendCode, Contact.HumanInfo.Item.Addition, BRConstants.CHAT_TYPE);
+            setFriendInfo(friendCode, Contact.HumanInfo.Item.Addition, BRConstants.CHAT_SINGLE_TYPE);
         }
         int ret = mPeerNode.acceptFriend(friendCode);
         Log.d("xidaokun", "CarrierPeerNode#acceptFriend#ret:"+ ret);
