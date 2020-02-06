@@ -315,7 +315,6 @@ public class IndexBar extends View{
      * @return
      */
     private void initSourceDatas() {
-        //add by zhangxutong 2016 09 08 :解决源数据为空 或者size为0的情况,
         if (null == mSourceDatas || mSourceDatas.isEmpty()) {
             return;
         }

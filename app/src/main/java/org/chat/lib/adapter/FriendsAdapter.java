@@ -22,8 +22,8 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private LayoutInflater mInflater;
     private OnItemClickListener mClickListener;
 
-    public static final int TYPE_HEADER = 0;
-    public static final int TYPE_NORMAL = 1;
+//    public static final int TYPE_HEADER = 0;
+//    public static final int TYPE_NORMAL = 1;
 
     public FriendsAdapter(Context context, List<ContactEntity> datas) {
         this.mContext = context;
@@ -42,7 +42,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if(viewType==TYPE_HEADER) return new HeaderViewHolder(mInflater.inflate(R.layout.chat_friend_contact_header_layout, null));
+//        if(viewType==TYPE_HEADER) return new HeaderViewHolder(mInflater.inflate(R.layout.chat_friend_contact_header_layout, null));
         return new NormalViewHolder(mInflater.inflate(R.layout.chat_friend_contact_item, parent, false));
     }
 
@@ -50,20 +50,20 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         if(holder instanceof NormalViewHolder) {
             final NormalViewHolder viewHolder = ((NormalViewHolder)holder);
-            final ContactEntity contactEntity = mDatas.get(position-1);
+            final ContactEntity contactEntity = mDatas.get(position);
             viewHolder.name.setText(contactEntity.getContact());
             viewHolder.sendTokenLayout.setVisibility(View.GONE);
-            if(mDatas.get(position-1).isShowBottom()) viewHolder.sendTokenLayout.setVisibility(View.VISIBLE);
+            if(mDatas.get(position).isShowBottom()) viewHolder.sendTokenLayout.setVisibility(View.VISIBLE);
             viewHolder.content.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if(null != mClickListener) mClickListener.onItemClick(v, position);
                     if(viewHolder.sendTokenLayout.getVisibility()==View.VISIBLE) {
                         viewHolder.sendTokenLayout.setVisibility(View.GONE);
-                        mDatas.get(position-1).setShowBottom(false);
+                        mDatas.get(position).setShowBottom(false);
                     } else {
                         viewHolder.sendTokenLayout.setVisibility(View.VISIBLE);
-                        mDatas.get(position-1).setShowBottom(true);
+                        mDatas.get(position).setShowBottom(true);
                     }
                 }
             });
@@ -91,14 +91,14 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemCount() {
-        return (mDatas==null)? 1: mDatas.size()+1;
+        return (mDatas==null)? 0: mDatas.size();
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        if(position == 0) return TYPE_HEADER;
-        return TYPE_NORMAL;
-    }
+//    @Override
+//    public int getItemViewType(int position) {
+//        if(position == 0) return TYPE_HEADER;
+//        return TYPE_NORMAL;
+//    }
 
     public class NormalViewHolder extends RecyclerView.ViewHolder {
         TextView name;

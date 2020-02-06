@@ -120,9 +120,9 @@ public class FragmentChatFriends extends BaseFragment {
 
             @Override
             public void sendMessage(View view, int position) {
-                String friendCode = mDatas.get(position - 1).getFriendCode();
-                String type = mDatas.get(position -1 ).getType();
-                String chatName = mDatas.get(position-1).getContact();
+                String friendCode = mDatas.get(position).getFriendCode();
+                String type = mDatas.get(position).getType();
+                String chatName = mDatas.get(position).getContact();
                 Log.d("xidaokun", "FragementChatFriends#sendMessage#type:"+type);
                 if (!StringUtil.isNullOrEmpty(friendCode)) {
                     Log.d("xidaokun", "FragementChatFriends#sendMessage#friendCode:"+friendCode);
@@ -136,7 +136,7 @@ public class FragmentChatFriends extends BaseFragment {
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {
-                        int ret = CarrierPeerNode.getInstance(getContext()).removeFriend(mDatas.get(position-1).getFriendCode());
+                        int ret = CarrierPeerNode.getInstance(getContext()).removeFriend(mDatas.get(position).getFriendCode());
                         Log.d("xidaokun", "FragementChatFriends#deleteFriends#ret:"+ret);
                         if(0 != ret) {
                             return;
@@ -144,7 +144,7 @@ public class FragmentChatFriends extends BaseFragment {
                         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                             @Override
                             public void run() {
-                                mDatas.remove(position-1);
+                                mDatas.remove(position);
                                 mAdapter.notifyDataSetChanged();
                             }
                         });
@@ -189,6 +189,12 @@ public class FragmentChatFriends extends BaseFragment {
                 }
 
                 mDatas.clear();
+
+//                mDatas.add((ContactEntity) new ContactEntity("新的朋友").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
+//                mDatas.add((ContactEntity) new ContactEntity("群聊").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
+//                mDatas.add((ContactEntity) new ContactEntity("标签").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
+//                mDatas.add((ContactEntity) new ContactEntity("公众号").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
+
                 mDatas.addAll(contacts);
 
                 mIndexBar.setmSourceDatas(mDatas)
