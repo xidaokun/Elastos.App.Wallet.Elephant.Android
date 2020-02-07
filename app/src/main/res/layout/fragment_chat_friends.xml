@@ -12,6 +12,8 @@
         android:background="@drawable/chat_friend_search_bg"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="10dp"
+        android:drawableLeft="@drawable/ic_chat_search"
+        android:paddingLeft="5dp"
         android:layout_marginRight="10dp"/>
 
     <android.support.v7.widget.RecyclerView

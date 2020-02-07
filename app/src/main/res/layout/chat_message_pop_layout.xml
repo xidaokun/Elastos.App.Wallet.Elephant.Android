@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#f8f8ff"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/has_read_tv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:textColor="@color/black_333333"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="标为已读"/>
+
+    <TextView
+        android:id="@+id/roof_placement_tv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:textColor="@color/black_333333"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="置顶聊天"/>
+
+    <TextView
+        android:id="@+id/delete_message_tv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:textColor="@color/black_333333"
+        android:gravity="center"
+        android:text="删除聊天"/>
+
+</LinearLayout>

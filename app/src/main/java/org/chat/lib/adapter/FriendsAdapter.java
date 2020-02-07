@@ -20,7 +20,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private Context mContext;
     private List<ContactEntity> mDatas;
     private LayoutInflater mInflater;
-    private OnItemClickListener mClickListener;
+    private OnItemClickListener mListener;
 
 //    public static final int TYPE_HEADER = 0;
 //    public static final int TYPE_NORMAL = 1;
@@ -37,7 +37,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public void setOnClickListener(OnItemClickListener listener) {
-        this.mClickListener = listener;
+        this.mListener = listener;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             viewHolder.content.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(null != mClickListener) mClickListener.onItemClick(v, position);
+                    if(null != mListener) mListener.onItemClick(v, position);
                     if(viewHolder.sendTokenLayout.getVisibility()==View.VISIBLE) {
                         viewHolder.sendTokenLayout.setVisibility(View.GONE);
                         mDatas.get(position).setShowBottom(false);
@@ -67,22 +67,29 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     }
                 }
             });
+            viewHolder.content.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    mListener.longPress(v, position);
+                    return true;
+                }
+            });
             viewHolder.sendToken.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(null != mClickListener) mClickListener.sendToken(v, position);
+                    if(null != mListener) mListener.sendToken(v, position);
                 }
             });
             viewHolder.sendMessage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(null != mClickListener) mClickListener.sendMessage(v, position);
+                    if(null != mListener) mListener.sendMessage(v, position);
                 }
             });
             viewHolder.delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(null != mClickListener) mClickListener.deleteFriends(v, position);
+                    if(null != mListener) mListener.deleteFriends(v, position);
                 }
             });
             viewHolder.logo.setImageResource(R.drawable.emotion_duoyun);
@@ -129,10 +136,10 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public interface OnItemClickListener {
+        void longPress(View view, int position);
         void onItemClick(View view, int position);
         void sendToken(View view, int position);
         void sendMessage(View view, int position);
         void deleteFriends(View view, int position);
-
     }
 }

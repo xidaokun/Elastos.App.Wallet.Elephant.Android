@@ -2,11 +2,12 @@ package org.chat.lib.presenter;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 
 import com.breadwallet.R;
 import com.breadwallet.tools.animation.UiUtils;
@@ -20,6 +21,7 @@ import org.chat.lib.entity.ChatMsgEntity;
 import org.chat.lib.entity.MessageCacheBean;
 import org.chat.lib.entity.MessageItemBean;
 import org.chat.lib.source.ChatDataSource;
+import org.chat.lib.utils.Utils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -109,9 +111,14 @@ public class FragmentChatMessage extends BaseFragment {
     }
 
     private void initListener() {
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mAdapter.setListener(new ChatMessageAdapter.OnItemListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+            public void onLongPress(View view, int position, float x, float y) {
+                showDeletePop(view, (int) x, (int) y);
+            }
+
+            @Override
+            public void onClick(View view, final int position) {
                 String friendCode = entities.get(position).getFriendCode();
                 String type = entities.get(position).getType();
                 String nickName = entities.get(position).getName();
@@ -128,6 +135,20 @@ public class FragmentChatMessage extends BaseFragment {
                 });
             }
         });
+    }
+
+    private void showDeletePop(View headview, int x, int y) {
+        View view = getLayoutInflater().inflate(R.layout.chat_message_pop_layout, null);
+        PopupWindow popupWindow = new PopupWindow(view, Utils.dp2px(getContext(), 90), Utils.dp2px(getContext(), 120), true);
+        popupWindow.setOutsideTouchable(true);
+        if (popupWindow.isShowing()) {
+            popupWindow.dismiss();
+        } else {
+            Log.d("xidaokun", "FragmentChatMessage#showDeletePop#x:"+x+" #y"+y);
+            int headViewH = headview.getHeight();
+            Log.d("xidaokun", "FragmentChatMessage#showDeletePop#headViewH:"+headViewH);
+            popupWindow.showAsDropDown(headview, x, y - headViewH);
+        }
     }
 
     @Override

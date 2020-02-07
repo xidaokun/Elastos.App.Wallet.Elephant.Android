@@ -131,6 +131,10 @@ public class FragmentChatFriends extends BaseFragment {
             }
 
             @Override
+            public void longPress(View view, int position) {
+            }
+
+            @Override
             public void deleteFriends(View view, final int position) {
                 //TODO daokun.xi
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {

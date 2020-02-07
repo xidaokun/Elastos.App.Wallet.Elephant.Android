@@ -66,7 +66,7 @@ public class CarrierPeerNode {
                         byte[] response = null;
                         switch (request.type) {
                             case PublicKey:
-                                response = (null == mPublicKey)?null:mPublicKey.getBytes();
+                                response = (null==mPublicKey)?null:mPublicKey.getBytes();
                                 break;
                             case EncryptData:
                                 response = request.data;
