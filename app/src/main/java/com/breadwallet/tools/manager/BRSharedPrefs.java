@@ -124,6 +124,17 @@ public class BRSharedPrefs {
         return prefs.getString("receive_address" + iso.toUpperCase(), "");
     }
 
+    public static void putElaPK(Context context, String PK) {
+        SharedPreferences.Editor editor = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE).edit();
+        editor.putString("elaPk", PK);
+        editor.apply();
+    }
+
+    public static String getElaPK(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        return prefs.getString("elaPk", "");
+    }
+
     public static void putReceiveAddress(Context ctx, String tmpAddr, String iso) {
         SharedPreferences.Editor editor = ctx.getSharedPreferences(UiUtils.getCacheProviderName(ctx, PREFS_NAME), Context.MODE_PRIVATE).edit();
         editor.putString("receive_address" + iso.toUpperCase(), tmpAddr);

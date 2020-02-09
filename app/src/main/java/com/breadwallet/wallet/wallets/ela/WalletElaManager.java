@@ -148,20 +148,21 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     String mPublickey = null;
     public String getPublicKey(){
-        if(mPublickey == null) {
+        mPublickey = BRSharedPrefs.getElaPK(mContext);
+        if(StringUtil.isNullOrEmpty(mPublickey)) {
             try {
                 byte[] phrase = BRKeyStore.getPhrase(mContext, 0);
-                return Utility.getInstance(mContext).getSinglePublicKey(new String(phrase));
+                mPublickey = Utility.getInstance(mContext).getSinglePublicKey(new String(phrase));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        BRSharedPrefs.putElaPK(mContext, mPublickey);
 
-        return mPrivateKey;
+        return mPublickey;
     }
 
     public String getDid() {
-
         return ElastosKeypairDID.getDid(getPublicKey());
     }
 
@@ -171,7 +172,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         if (StringUtil.isNullOrEmpty(mAddress)) {
             String publickey = getPublicKey();
             if(publickey != null) {
-                mAddress = Utility.getInstance(mContext).getAddress(publickey);
+                mAddress = Utility.getInstance(mContext).getAddress(getPublicKey());
             }
         }
 
