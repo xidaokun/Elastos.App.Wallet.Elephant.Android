@@ -85,6 +85,8 @@ import org.chat.lib.presenter.ChatScanActivity;
 import org.chat.lib.presenter.ChatDetailActivity;
 import org.chat.lib.presenter.ChatGroupSelectActivity;
 import org.chat.lib.presenter.GroupNameActivity;
+import org.chat.lib.presenter.MyQrActivity;
+import org.elastos.sdk.elephantwallet.contact.Contact;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -533,6 +535,11 @@ public class UiUtils {
         intent.putExtra("friendCode", friendCode);
         intent.putExtra("type", type);
         intent.putExtra("chatName", chatName);
+        context.startActivity(intent);
+    }
+
+    public static void startMyQrActivity(Context context) {
+        Intent intent = new Intent(context, MyQrActivity.class);
         context.startActivity(intent);
     }
 

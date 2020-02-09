@@ -82,6 +82,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String CHAT_MESSAGE_ORIENTATION = "chatMessageOrientation";
     public static final String CHAT_MESSAGE_FRIENDCODE = "chatMessageFriendCode";
     public static final String CHAT_MESSAGE_FRIEND_ICON_PATH = "chatMessageFriendIconPath";
+    public static final String CHAT_MESSAGE_SEND_STATE = "chatMessageSendState";
     private static final String CHAT_MESSAGE_DATABASE_CREATE = "create table if not exists " + CHAT_MESSAGE_TABLE_NAME + " (" +
             CHAT_MESSAGE_MANAGER + " text, " +
             CHAT_MESSAGE_TYPE + " text, " +
@@ -95,6 +96,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             CHAT_MESSAGE_ORIENTATION + " integer, " +
             CHAT_MESSAGE_FRIENDCODE + " text, " +
             CHAT_MESSAGE_FRIEND_ICON_PATH + " text, " +
+            CHAT_MESSAGE_SEND_STATE + " integer, " +
             "PRIMARY KEY (" + CHAT_MESSAGE_FRIENDCODE + ", " + CHAT_MESSAGE_TIMESTAMP + ")" +
             ");";
 

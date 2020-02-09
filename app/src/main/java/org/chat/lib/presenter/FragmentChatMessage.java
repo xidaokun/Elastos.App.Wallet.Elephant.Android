@@ -2,7 +2,6 @@ package org.chat.lib.presenter;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -114,7 +113,7 @@ public class FragmentChatMessage extends BaseFragment {
         mAdapter.setListener(new ChatMessageAdapter.OnItemListener() {
             @Override
             public void onLongPress(View view, int position, float x, float y) {
-                showDeletePop(view, (int) x, (int) y);
+                showDeletePop(view, (int) x, (int) y, position);
             }
 
             @Override
@@ -137,10 +136,39 @@ public class FragmentChatMessage extends BaseFragment {
         });
     }
 
-    private void showDeletePop(View headview, int x, int y) {
+    private void showDeletePop(View headview, int x, int y, final int position) {
         View view = getLayoutInflater().inflate(R.layout.chat_message_pop_layout, null);
         PopupWindow popupWindow = new PopupWindow(view, Utils.dp2px(getContext(), 90), Utils.dp2px(getContext(), 120), true);
         popupWindow.setOutsideTouchable(true);
+
+        view.findViewById(R.id.has_read_tv).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String friendCode = entities.get(position).getFriendCode();
+                ChatDataSource.getInstance(getContext()).updateHasRead(friendCode, true);
+                entities.get(position).setCount(0);
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+
+        view.findViewById(R.id.roof_placement_tv).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        view.findViewById(R.id.delete_message_tv).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String friendCode = entities.get(position).getFriendCode();
+                ChatDataSource.getInstance(getContext()).deleteMessage(friendCode);
+                ChatDataSource.getInstance(getContext()).deleteMessageItemInfo(friendCode);
+                entities.remove(position);
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+
         if (popupWindow.isShowing()) {
             popupWindow.dismiss();
         } else {

@@ -110,6 +110,31 @@ public class ChatDataSource implements BRDataSourceInterface {
         }
     }
 
+    public void deleteMessageItemInfo(String friendCode) {
+        try {
+            database = openDatabase();
+            database.delete(BRSQLiteHelper.CHAT_MESSAGE_ITEM_TABLE_NAME, BRSQLiteHelper.CHAT_MESSAGE_FRIENDCODE + " = ?", new String[]{friendCode});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            closeDatabase();
+        }
+    }
+
+    public void updateMessageItem(String friendCode, String key, String value) {
+        try {
+            database = openDatabase();
+
+            ContentValues args = new ContentValues();
+            args.put(key, value);
+
+            int r = database.update(BRSQLiteHelper.CHAT_MESSAGE_ITEM_TABLE_NAME, args, BRSQLiteHelper.CHAT_MESSAGE_ITEM_FRIENDCODE + " = ? ", new String[]{friendCode});
+            Log.d("xidaokun", "ChatDataSource#updateMessageItem#ret:"+ r);
+        } finally {
+            closeDatabase();
+        }
+    }
+
     public String mType;
     public ChatDataSource setType(String type) {
         this.mType = type;
@@ -158,6 +183,12 @@ public class ChatDataSource implements BRDataSourceInterface {
         return this;
     }
 
+    public int mSendState;
+    public ChatDataSource setSendState(int state) {
+        this.mSendState = state;
+        return this;
+    }
+
     public void cacheMessgeInfo() {
         MessageCacheBean messageCacheBean = new MessageCacheBean();
         messageCacheBean.MessageType = mType;
@@ -168,6 +199,7 @@ public class ChatDataSource implements BRDataSourceInterface {
         messageCacheBean.MessageTimestamp = mTimestamp;
         messageCacheBean.MessageOrientation = mOrientation;
         messageCacheBean.MessageFriendCode = mFriendCode;
+        messageCacheBean.MessageSendState = mSendState;
 
         List<MessageCacheBean> messageCacheBeans = new ArrayList<>();
         messageCacheBeans.add(messageCacheBean);
@@ -238,6 +270,17 @@ public class ChatDataSource implements BRDataSourceInterface {
         return messageInfos;
     }
 
+    public void deleteMessage(String friendCode) {
+        try {
+            database = openDatabase();
+            database.delete(BRSQLiteHelper.CHAT_MESSAGE_TABLE_NAME, BRSQLiteHelper.CHAT_MESSAGE_FRIENDCODE + " = ?", new String[]{friendCode});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            closeDatabase();
+        }
+    }
+
     public void updateMessage(List<MessageCacheBean> messageCacheBeans, boolean hasRead) {
         try {
             database = openDatabase();
@@ -249,6 +292,18 @@ public class ChatDataSource implements BRDataSourceInterface {
                 int r = database.update(BRSQLiteHelper.CHAT_MESSAGE_TABLE_NAME, args, BRSQLiteHelper.CHAT_MESSAGE_FRIENDCODE + " = ? ", new String[]{entity.MessageFriendCode});
 
             }
+        } finally {
+            closeDatabase();
+        }
+    }
+
+    public void updateHasRead(String friendCode, boolean hasRead) {
+        try {
+            database = openDatabase();
+
+            ContentValues args = new ContentValues();
+            args.put(BRSQLiteHelper.CHAT_MESSAGE_HAS_READ, hasRead ? 1 : 0);
+            int r = database.update(BRSQLiteHelper.CHAT_MESSAGE_TABLE_NAME, args, BRSQLiteHelper.CHAT_MESSAGE_FRIENDCODE + " = ? ", new String[]{friendCode});
         } finally {
             closeDatabase();
         }
@@ -288,6 +343,7 @@ public class ChatDataSource implements BRDataSourceInterface {
                 value.put(BRSQLiteHelper.CHAT_MESSAGE_ORIENTATION, entity.MessageOrientation);
                 value.put(BRSQLiteHelper.CHAT_MESSAGE_TIMESTAMP, entity.MessageTimestamp);
                 value.put(BRSQLiteHelper.CHAT_MESSAGE_TYPE, entity.MessageType);
+                value.put(BRSQLiteHelper.CHAT_MESSAGE_SEND_STATE, entity.MessageSendState);
 
                 long l = database.insertWithOnConflict(BRSQLiteHelper.CHAT_MESSAGE_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
                 Log.d(TAG, "l:" + l);

@@ -12,4 +12,5 @@ public class MessageCacheBean {
     public int MessageOrientation;
     public String MessageFriendCode;
     public String MessageFriendIconPath;
+    public int MessageSendState;
 }

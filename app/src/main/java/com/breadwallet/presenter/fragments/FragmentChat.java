@@ -40,6 +40,7 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
     private View mAddDidView;
     private View mAddDeviceView;
     private View mJoinGroupView;
+    private View mMyQrView;
 
     private FragmentChatFriends mChatFriendsFrg;
 
@@ -74,6 +75,7 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
         mAddDidView = view.findViewById(R.id.chat_add_by_did);
         mAddDeviceView = view.findViewById(R.id.chat_add_by_device);
         mJoinGroupView = view.findViewById(R.id.chat_join_group);
+        mMyQrView = view.findViewById(R.id.chat_my_qr);
 
         List<BaseFragment> fragments = new ArrayList<>();
         fragments.add(FragmentChatMessage.newInstance(getContext().getString(R.string.My_chat_tab_message_title)));
@@ -130,6 +132,7 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
         mAddDidView.setOnClickListener(this);
         mAddDeviceView.setOnClickListener(this);
         mJoinGroupView.setOnClickListener(this);
+        mMyQrView.setOnClickListener(this);
         mPopParentView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -166,6 +169,9 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
                 break;
             case R.id.chat_join_group:
                 UiUtils.startAddFriendActivity(getActivity(), BRConstants.CHAT_GROUP_TYPE);
+                break;
+            case R.id.chat_my_qr:
+                UiUtils.startMyQrActivity(getActivity());
                 break;
             default:
                 break;

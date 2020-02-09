@@ -23,7 +23,7 @@
             android:drawableLeft="@drawable/ic_add_did"
             android:drawablePadding="10dp"
             android:gravity="center_vertical"
-            android:text="@string/My_chat_add_by_did"
+            android:text="@string/My_add_friend"
             android:textColor="#333333"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -40,6 +40,7 @@
             android:gravity="center_vertical"
             android:text="@string/My_chat_add_device"
             android:textColor="#333333"
+            android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -54,6 +55,21 @@
             android:drawablePadding="10dp"
             android:gravity="center_vertical"
             android:text="@string/My_chat_join_group"
+            android:textColor="#333333"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/chat_my_qr"
+            android:layout_width="190dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="10dp"
+            android:drawableLeft="@drawable/ic_chat_qr"
+            android:drawablePadding="10dp"
+            android:gravity="center_vertical"
+            android:text="@string/My_chat_qr_code"
             android:textColor="#333333"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
