@@ -39,6 +39,7 @@ import com.google.gson.reflect.TypeToken;
 import org.chat.lib.entity.MessageInfo;
 import org.chat.lib.presenter.FragmentChatMessage;
 import org.chat.lib.source.ChatDataSource;
+import org.chat.lib.utils.Constants;
 import org.elastos.sdk.wallet.BlockChainNode;
 import org.elastos.sdk.wallet.Did;
 import org.elastos.sdk.wallet.DidManager;
@@ -171,6 +172,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 .setTimestamp(messageInfo.getTime())
                 .setOrientation(messageInfo.getType())
                 .setFriendCode(friendCode)
+                .setSendState(Constants.CHAT_ITEM_SEND_SUCCESS)
                 .cacheMessgeInfo();
 
         EventBus.getDefault().post(new FragmentChatMessage.RefreshMessage());

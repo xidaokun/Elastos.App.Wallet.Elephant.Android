@@ -285,7 +285,6 @@ public class ChatDetailActivity extends FragmentActivity {
                 runOnUiThread(new Runnable() {  //refresh ui
                     @Override
                     public void run() {
-                        messageInfo.setSendState(Constants.CHAT_ITEM_SEND_SUCCESS);
                         messageInfos.add(messageInfo);
                         chatAdapter.add(messageInfo);
                         chatLv.scrollToPosition(chatAdapter.getCount() - 1);
@@ -320,6 +319,7 @@ public class ChatDetailActivity extends FragmentActivity {
                 .setTimestamp(time)
                 .setOrientation(Constants.CHAT_ITEM_TYPE_RIGHT)
                 .setFriendCode(mFriendCodeStr)
+                .setSendState((0!=ret)?Constants.CHAT_ITEM_SEND_ERROR:Constants.CHAT_ITEM_SEND_SUCCESS)
                 .cacheMessgeInfo();
     }
 

@@ -138,7 +138,7 @@ public class FragmentChatMessage extends BaseFragment {
 
     private void showDeletePop(View headview, int x, int y, final int position) {
         View view = getLayoutInflater().inflate(R.layout.chat_message_pop_layout, null);
-        PopupWindow popupWindow = new PopupWindow(view, Utils.dp2px(getContext(), 90), Utils.dp2px(getContext(), 120), true);
+        final PopupWindow popupWindow = new PopupWindow(view, Utils.dp2px(getContext(), 100), Utils.dp2px(getContext(), 120), true);
         popupWindow.setOutsideTouchable(true);
 
         view.findViewById(R.id.has_read_tv).setOnClickListener(new View.OnClickListener() {
@@ -148,6 +148,7 @@ public class FragmentChatMessage extends BaseFragment {
                 ChatDataSource.getInstance(getContext()).updateHasRead(friendCode, true);
                 entities.get(position).setCount(0);
                 mAdapter.notifyDataSetChanged();
+                popupWindow.dismiss();
             }
         });
 
@@ -166,6 +167,7 @@ public class FragmentChatMessage extends BaseFragment {
                 ChatDataSource.getInstance(getContext()).deleteMessageItemInfo(friendCode);
                 entities.remove(position);
                 mAdapter.notifyDataSetChanged();
+                popupWindow.dismiss();
             }
         });
 

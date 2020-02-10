@@ -20,8 +20,14 @@
 
         <ImageView
             android:id="@+id/chat_item_header"
-            android:layout_width="48dp"
+            android:layout_alignParentLeft="true"
+            android:layout_width="15dp"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:layout_width="15dp"
             android:layout_height="48dp"
+            android:visibility="invisible"
             android:layout_alignParentLeft="true" />
 
         <org.chat.lib.widget.BubbleImageView
