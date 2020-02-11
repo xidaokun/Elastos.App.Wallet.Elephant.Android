@@ -20,11 +20,6 @@
 
         <ImageView
             android:id="@+id/chat_item_header"
-            android:layout_alignParentLeft="true"
-            android:layout_width="15dp"
-            android:layout_height="wrap_content"/>
-
-        <ImageView
             android:layout_width="15dp"
             android:layout_height="48dp"
             android:visibility="invisible"
@@ -50,7 +45,7 @@
             android:padding="@dimen/content_vertical_margin"
             android:layout_toRightOf="@id/chat_item_header"
             android:gravity="left|center_vertical"
-            android:background="@drawable/chatfrom_bg_normal">
+            android:background="@drawable/chatfrom_bg_normal1">
 
             <org.chat.lib.widget.GifTextView
                 android:id="@+id/chat_item_content_text"

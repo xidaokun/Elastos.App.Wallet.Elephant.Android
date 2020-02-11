@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="@color/bg_content"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -47,7 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@color/bg_content"/>
+        android:background="@color/white"/>
 
     <include
         layout="@layout/include_reply_layout"

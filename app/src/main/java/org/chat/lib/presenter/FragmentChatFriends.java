@@ -185,7 +185,7 @@ public class FragmentChatFriends extends BaseFragment {
                 contacts.clear();
                 for (ContactInterface.FriendInfo info : friendInfos) {
                     ContactEntity contactEntity = new ContactEntity();
-                    contactEntity.setContact(StringUtils.isNullOrEmpty(info.nickname)?"Nickname":info.nickname);
+                    contactEntity.setContact(StringUtils.isNullOrEmpty(info.nickname)?"nickname":info.nickname);
                     contactEntity.setTokenAddress(info.elaAddress);
                     contactEntity.setFriendCode(info.humanCode);
                     contactEntity.setType(info.addition);

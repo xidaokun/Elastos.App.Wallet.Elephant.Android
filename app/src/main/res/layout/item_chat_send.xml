@@ -14,15 +14,12 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="40dp">
 
         <ImageView
             android:id="@+id/chat_item_header"
-            android:layout_alignParentRight="true"
-            android:layout_width="15dp"
-            android:layout_height="wrap_content"/>
-
-        <ImageView
             android:layout_width="15dp"
             android:layout_height="48dp"
             android:visibility="invisible"
