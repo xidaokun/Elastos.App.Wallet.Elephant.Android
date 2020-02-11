@@ -20,27 +20,44 @@
             android:background="@null"
             android:src="@drawable/toolbar_back_arrow" />
 
+        <org.chat.lib.widget.RoundImageView
+            android:id="@+id/chat_detail_header"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/back_button"
+            android:src="@drawable/unknow"/>
+
         <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_marginStart="16dp"
-            android:text="Unknow"
+            android:layout_toRightOf="@+id/chat_detail_header"
+            android:layout_alignTop="@+id/chat_detail_header"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="2dp"
             android:textColor="@color/black_333333"
-            android:textSize="20sp" />
+            android:text="unknow"
+            android:textSize="16sp" />
 
         <org.chat.lib.widget.BaseTextView
-            android:id="@+id/join_group"
+            android:id="@+id/chat_detail_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#ff3365"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="15dp"
-            android:visibility="gone"
-            android:text="Join Group"/>
+            android:textColor="@color/black_999999"
+            android:textSize="8sp"
+            android:layout_toRightOf="@+id/chat_detail_header"
+            android:layout_alignBottom="@+id/chat_detail_header"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="2dp"
+            android:text="DID"/>
     </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#F5F5FB"/>
 
     <org.easy.recycleview.EasyRecyclerView
         android:id="@+id/chat_list"

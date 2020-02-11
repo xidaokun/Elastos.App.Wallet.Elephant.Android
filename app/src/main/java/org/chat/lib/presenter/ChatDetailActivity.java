@@ -52,6 +52,7 @@ public class ChatDetailActivity extends FragmentActivity {
     EditText editEdt;
     TextView voiceTv;
     TextView titleTv;
+    TextView chatIdTv;
     ImageView emotionBtn;
     ImageView emotionAddIv;
     StateButton emotionSendBtn;
@@ -61,6 +62,7 @@ public class ChatDetailActivity extends FragmentActivity {
     private void initView() {
         mBackBtn = findViewById(R.id.back_button);
         titleTv = findViewById(R.id.title);
+        chatIdTv = findViewById(R.id.chat_detail_id);
         chatLv = findViewById(R.id.chat_list);
         emotionIv = findViewById(R.id.emotion_voice);
         editEdt = findViewById(R.id.edit_text);
@@ -105,6 +107,7 @@ public class ChatDetailActivity extends FragmentActivity {
 
     private void initWidget() {
         if(!StringUtil.isNullOrEmpty(mTitle)) titleTv.setText(mTitle);
+        if(!StringUtil.isNullOrEmpty(mFriendCodeStr)) chatIdTv.setText(mFriendCodeStr);
 
         fragments = new ArrayList<>();
         chatEmotionFragment = new ChatEmotionFragment();
@@ -301,14 +304,14 @@ public class ChatDetailActivity extends FragmentActivity {
         msgProtocol.content = messageInfo.getContent();
         //需要区分是single还是group
         int ret = 0;
-        if(mType.equals(BRConstants.CHAT_SINGLE_TYPE)) {
+        if(mType==null || mType.equals(BRConstants.CHAT_SINGLE_TYPE)) {
             ret = CarrierPeerNode.getInstance(ChatDetailActivity.this).sendMessage(mFriendCodeStr, new Gson().toJson(msgProtocol));
         } else if(mType.equals(BRConstants.CHAT_GROUP_TYPE)) {
             ret = CarrierPeerNode.getInstance(ChatDetailActivity.this).sendGroupMessage(mFriendCodeStr, new Gson().toJson(msgProtocol));
         }
-        if(0 != ret)  messageInfo.setSendState(Constants.CHAT_ITEM_SEND_ERROR);
+        messageInfo.setSendState((0!=ret)?Constants.CHAT_ITEM_SENDING:Constants.CHAT_ITEM_SEND_SUCCESS);
+        Log.d("xidaokun", "ChatDetailActivity#handleSend#ret:"+ret);
 
-        Log.d("xidaokun", "ChatDetailActivity#handleSend#cacheMessgeInfo#begin");
         long time = System.currentTimeMillis();
         ChatDataSource.getInstance(ChatDetailActivity.this)
                 .setType(BRConstants.CHAT_GROUP_TYPE)
@@ -319,7 +322,7 @@ public class ChatDetailActivity extends FragmentActivity {
                 .setTimestamp(time)
                 .setOrientation(Constants.CHAT_ITEM_TYPE_RIGHT)
                 .setFriendCode(mFriendCodeStr)
-                .setSendState((0!=ret)?Constants.CHAT_ITEM_SEND_ERROR:Constants.CHAT_ITEM_SEND_SUCCESS)
+                .setSendState((0!=ret)?Constants.CHAT_ITEM_SENDING:Constants.CHAT_ITEM_SEND_SUCCESS)
                 .cacheMessgeInfo();
     }
 
