@@ -230,7 +230,7 @@ public class MultiSignQrActivity extends BRActivity {
 
         Uri contentUri;
         if (Build.VERSION.SDK_INT >= 24) {
-            contentUri = FileProvider.getUriForFile(this, "com.elastos.wallet.imageprovider", newFile);
+            contentUri = FileProvider.getUriForFile(this, "elaphant.app.imageprovider", newFile);
         } else {
             contentUri = Uri.fromFile(newFile);
         }

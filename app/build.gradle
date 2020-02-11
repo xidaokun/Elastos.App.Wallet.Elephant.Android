@@ -5,7 +5,7 @@ android {
 
     defaultConfig {
         testInstrumentationRunner = 'android.support.test.runner.AndroidJUnitRunner'
-        applicationId = 'com.elastos.wallet'
+        applicationId = 'elaphant.app'
         minSdkVersion 23
         targetSdkVersion 28
         versionCode 90
@@ -53,7 +53,7 @@ android {
 
     productFlavors {
         ela {
-            applicationId = "com.elastos.wallet"
+            applicationId = "elaphant.app"
             dimension "mode"
             resValue "string", "app_name", "Elephant"
             buildConfigField "boolean", "BITCOIN_TESTNET", "false"
@@ -75,7 +75,7 @@ android {
         }
 
         elaUpgradeTest {
-            applicationId = "com.elastos.wallet"
+            applicationId = "elaphant.app"
             dimension "mode"
             resValue "string", "app_name", "Elephant"
             buildConfigField "boolean", "BITCOIN_TESTNET", "false"
@@ -97,7 +97,7 @@ android {
         }
 
         elaTestnet {
-            applicationId = "com.elastos.wallet"
+            applicationId = "elaphant.app"
             dimension "mode"
             resValue "string", "app_name", "Elephant"
             buildConfigField "boolean", "BITCOIN_TESTNET", "true"

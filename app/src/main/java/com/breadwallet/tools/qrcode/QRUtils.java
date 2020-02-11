@@ -12,6 +12,7 @@ import android.view.Display;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.wallet.WalletsMaster;
 import com.google.zxing.BarcodeFormat;
@@ -167,7 +168,7 @@ public class QRUtils {
 
         File file = saveToExternalStorage(QRUtils.encodeAsBitmap(bitcoinUri, 500), app);
         //Uri uri = Uri.fromFile(file);
-        Uri uri = FileProvider.getUriForFile(app, "com.elastos.wallet", file);
+        Uri uri = FileProvider.getUriForFile(app, BuildConfig.APPLICATION_ID, file);
 
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);

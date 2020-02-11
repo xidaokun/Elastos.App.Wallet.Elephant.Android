@@ -678,7 +678,7 @@ public class UiUtils {
     }
 
     public static void shareCapsule(Context context, String url) {
-//        Uri contentUri = FileProvider.getUriForFile(context, "com.elastos.wallet.capsuleProvider", file);
+//        Uri contentUri = FileProvider.getUriForFile(context, "elaphant.app.capsuleProvider", file);
 //        if (contentUri == null) return;
 //        Intent shareIntent = new Intent();
 //        shareIntent.setAction(Intent.ACTION_SEND);
