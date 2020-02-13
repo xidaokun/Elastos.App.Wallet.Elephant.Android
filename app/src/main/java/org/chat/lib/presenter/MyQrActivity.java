@@ -14,6 +14,7 @@ import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.util.StringUtil;
 
 import org.chat.lib.utils.Utils;
+import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
 import org.node.CarrierPeerNode;
 
 public class MyQrActivity extends BRActivity {
@@ -37,7 +38,9 @@ public class MyQrActivity extends BRActivity {
 
         String nickname = BRSharedPrefs.getNickname(this);
         mNicknameTv.setText(nickname);
-        String carrierAddr = CarrierPeerNode.getInstance(this).getUserInfo().getCurrDevCarrierAddr();
+        ContactInterface.UserInfo userInfo = CarrierPeerNode.getInstance(this).getUserInfo();
+        if(userInfo == null) return;
+        String carrierAddr = userInfo.getCurrDevCarrierAddr();
         if(!StringUtil.isNullOrEmpty(carrierAddr)) {
             Bitmap bitmap = QRUtils.encodeAsBitmap(carrierAddr, Utils.dp2px(this, 300));
             mQrImg.setImageBitmap(bitmap);

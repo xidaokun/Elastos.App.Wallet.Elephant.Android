@@ -67,12 +67,15 @@ public class CarrierPeerNode {
                         switch (request.type) {
                             case PublicKey:
                                 response = (null==mPublicKey)?null:mPublicKey.getBytes();
+                                Log.d("xidaokun", "CarrierPeerNode#setListener#PublicKey#\nmPublicKey:"+ mPublicKey);
                                 break;
                             case EncryptData:
                                 response = request.data;
+                                Log.d("xidaokun", "CarrierPeerNode#setListener#EncryptData#\nrequest.data:"+ request.data);
                                 break;
                             case DecryptData:
                                 response = request.data;
+                                Log.d("xidaokun", "CarrierPeerNode#setListener#DecryptData#\nrequest.data:"+ request.data);
                                 break;
                             case DidPropAppId:
                                 break;
@@ -81,8 +84,10 @@ public class CarrierPeerNode {
                                 break;
                             case SignData:
                                 response = signData(request.data);
+                                Log.d("xidaokun", "CarrierPeerNode#setListener#SignData#\nrequest.data:"+ "Unprocessed request");
                                 break;
                             default:
+                                Log.d("xidaokun", "CarrierPeerNode#setListener#default:"+ request.data);
                                 throw new RuntimeException("Unprocessed request: " + request);
                         }
                         return response;
@@ -90,7 +95,7 @@ public class CarrierPeerNode {
 
                     @Override
                     public void onError(int errCode, String errStr, String ext) {
-
+                        Log.d("xidaokun", "CarrierPeerNode#setListener#onError#errStr:"+ errStr + "\next:" + ext);
                     }
                 });
 
@@ -103,6 +108,7 @@ public class CarrierPeerNode {
     }
 
     public void start() {
+        Log.d("xidaokun", "CarrierPeerNode#start#mStartRet:"+ mStartRet);
         if (mStartRet != 0) throw new RuntimeException("carrier start failed :" + mStartRet);
     }
 
@@ -277,7 +283,8 @@ public class CarrierPeerNode {
     }
 
     public void setMyInfo(Contact.HumanInfo.Item item, String value) {
-        mPeerNode.setUserInfo(item, value);
+        int ret = mPeerNode.setUserInfo(item, value);
+        Log.d("xidaokun", "CarrierPeerNode#setMyInfo#======ret:"+ ret);
     }
 
     public void setFriendInfo(String humanCode, Contact.HumanInfo.Item item, String value) {
@@ -327,7 +334,6 @@ public class CarrierPeerNode {
         return mPeerNode.listFriendInfo();
     }
 
-    private static ContactInterface.UserInfo mUserInfo;
     public ContactInterface.UserInfo getUserInfo() {
         return mPeerNode.getUserInfo();
     }

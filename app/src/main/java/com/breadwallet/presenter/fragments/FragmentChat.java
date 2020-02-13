@@ -95,7 +95,7 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
         final ElaphantDialogEdit elaphantDialog = new ElaphantDialogEdit(getContext());
         elaphantDialog.setTitleStr("Set nickname to chat");
         elaphantDialog.setMessageStr("Input your nickname");
-        elaphantDialog.setPositiveStr("Save");
+        elaphantDialog.setPositiveStr("Set Now");
         elaphantDialog.setNegativeStr("Cancel");
         elaphantDialog.setPositiveListener(new ElaphantDialogEdit.OnPositiveClickListener() {
             @Override
