@@ -419,6 +419,10 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
 
+        <activity android:name="org.chat.lib.presenter.ChatWaitAcceptActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
+
         <activity android:name="org.chat.lib.presenter.FullImageActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>

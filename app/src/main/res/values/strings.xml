@@ -1194,4 +1194,5 @@
     <string name="My_chat_join_group">Join a group</string>
     <string name="My_chat_qr_code">My QR code</string>
     <string name="My_qr_code_title">My code</string>
+    <string name="My_new_friends_title">New Friends</string>
 </resources>

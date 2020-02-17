@@ -7,6 +7,16 @@ public class ContactEntity extends BaseIndexPinyinBean {
     private String friendCode;
     private String type; //single, group
     private boolean isTop;
+    private int waitAcceptCount;
+
+    public int getWaitAcceptCount() {
+        return waitAcceptCount;
+    }
+
+    public ContactEntity setWaitAcceptCount(int waitAcceptCount) {
+        this.waitAcceptCount = waitAcceptCount;
+        return this;
+    }
 
     public String getType() {
         return type;

@@ -183,18 +183,20 @@ public class FragmentChatFriends extends BaseFragment {
                 if (null == friendInfos) return;
                 List<ContactEntity> contacts = new ArrayList<>();
                 contacts.clear();
+                int waitAcceeptCount = 0;
                 for (ContactInterface.FriendInfo info : friendInfos) {
                     ContactEntity contactEntity = new ContactEntity();
                     contactEntity.setContact(StringUtils.isNullOrEmpty(info.nickname)?"nickname":info.nickname);
                     contactEntity.setTokenAddress(info.elaAddress);
                     contactEntity.setFriendCode(info.humanCode);
                     contactEntity.setType(info.addition);
+                    if(info.status == ContactInterface.Status.WaitForAccept) waitAcceeptCount++;
                     contacts.add(contactEntity);
                 }
 
                 mDatas.clear();
 
-                mDatas.add((ContactEntity) new ContactEntity("新的朋友").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
+                mDatas.add((ContactEntity) new ContactEntity("新的朋友").setTop(true).setWaitAcceptCount(waitAcceeptCount).setBaseIndexTag(INDEX_STRING_TOP));
 //                mDatas.add((ContactEntity) new ContactEntity("群聊").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
 //                mDatas.add((ContactEntity) new ContactEntity("标签").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
 //                mDatas.add((ContactEntity) new ContactEntity("公众号").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));

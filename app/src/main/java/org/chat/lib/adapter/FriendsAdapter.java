@@ -53,20 +53,29 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             final ContactEntity contactEntity = mDatas.get(position);
             viewHolder.name.setText(contactEntity.getContact());
             viewHolder.sendTokenLayout.setVisibility(View.GONE);
-            if(mDatas.get(position).isShowBottom()) viewHolder.sendTokenLayout.setVisibility(View.VISIBLE);
+            if(contactEntity.isShowBottom()) viewHolder.sendTokenLayout.setVisibility(View.VISIBLE);
             viewHolder.content.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if(null != mListener) mListener.onItemClick(v, position);
-                    if(viewHolder.sendTokenLayout.getVisibility()==View.VISIBLE) {
+                    if(position==0 || viewHolder.sendTokenLayout.getVisibility()==View.VISIBLE) {
                         viewHolder.sendTokenLayout.setVisibility(View.GONE);
-                        mDatas.get(position).setShowBottom(false);
+                        contactEntity.setShowBottom(false);
                     } else {
                         viewHolder.sendTokenLayout.setVisibility(View.VISIBLE);
-                        mDatas.get(position).setShowBottom(true);
+                        contactEntity.setShowBottom(true);
                     }
                 }
             });
+
+            int count = contactEntity.getWaitAcceptCount();
+            if(count != 0) {
+                viewHolder.waitForAcceptCount.setVisibility(View.VISIBLE);
+                viewHolder.waitForAcceptCount.setText(String.valueOf(count));
+            } else {
+                viewHolder.waitForAcceptCount.setVisibility(View.GONE);
+            }
+
             viewHolder.content.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -109,6 +118,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public class NormalViewHolder extends RecyclerView.ViewHolder {
         TextView name;
+        TextView waitForAcceptCount;
         RoundImageView logo;
         View content;
         View sendTokenLayout;
@@ -120,6 +130,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             super(itemView);
             logo = itemView.findViewById(R.id.chat_contact_item_logo);
             name = itemView.findViewById(R.id.chat_contact_item_name);
+            waitForAcceptCount = itemView.findViewById(R.id.wait_for_accept_count_tv);
             content = itemView.findViewById(R.id.content);
             sendTokenLayout = itemView.findViewById(R.id.chat_contact_send_token_view);
             sendToken = itemView.findViewById(R.id.chat_contact_item_send_token);
