@@ -9,7 +9,7 @@ android {
         minSdkVersion 23
         targetSdkVersion 28
         versionCode 90
-        versionName "1.6.1"
+        versionName "1.8.0"
         multiDexEnabled true
 
         // Similar to other properties in the defaultConfig block,
@@ -244,6 +244,7 @@ dependencies {
     implementation 'pub.devrel:easypermissions:0.2.1'
     implementation project(path: ':qupai')
     implementation project(path: ':ElastosSdkIM')
+    implementation project(path: ':alilib')
 }
 
 
