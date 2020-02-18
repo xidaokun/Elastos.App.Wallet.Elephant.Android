@@ -31,6 +31,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.elastos.jni.Utility;
+import com.push.PushClient;
 
 import org.node.CarrierPeerNode;
 
@@ -75,6 +76,9 @@ public class FragmentSetting extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        PushClient.getInstance().bindAccount(did, null);
+        PushClient.getInstance().bindAlias(did, null);
         mDidContent.setText("did:ela:"+did);
 
         mNickname = rootView.findViewById(R.id.did_alias);

@@ -3,7 +3,11 @@ package com.breadwallet.tools.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
+
+import com.ali.lib.PushService;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.EsignActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
@@ -23,6 +27,7 @@ import com.breadwallet.presenter.activities.settings.SyncBlockchainActivity;
 import com.breadwallet.presenter.activities.settings.UnlinkActivity;
 import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
+import com.breadwallet.tools.animation.ElaphantDialogEdit;
 import com.breadwallet.tools.animation.ElaphantDialogText;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -30,16 +35,17 @@ import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
+import com.push.PushRequest;
+import com.push.PushResponse;
+import com.push.Util;
 import com.tencent.bugly.beta.Beta;
-
 
 import org.chat.lib.utils.ChatUiUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-
-import static android.support.test.internal.runner.junit4.statement.UiThreadStatement.runOnUiThread;
 
 /**
  * BreadWallet
@@ -193,67 +199,91 @@ public final class SettingsUtil {
         settingsItems.add(new BRSettingsItem("测试push", "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                sendNotice(activity);
+                showPushDialog(activity);
             }
         }, false, R.drawable.ic_about));
         return settingsItems;
     }
 
-//    private static void sendNotice(final Activity activity) {
-//        final String appKey = "28357838";
-//        final String accessKeyId = "LTAI4FmvcqWxDbC8auMVkJ1J";
-//        final String accessSecret = "LTAI4FsqAH9aMgMLTRz47vDT";
-//        PushRequest pushRequest = new PushRequest(accessKeyId, accessSecret);
-//        pushRequest.setAppKey(appKey);
-//        pushRequest.setTarget("ACCOUNT");
-//        pushRequest.setTargetValue("iVapA5upT8cPaVi8BwVD5Ve6txot1C7tRk");
-//        pushRequest.setPushType("NOTICE");
-//        pushRequest.setDeviceType("ALL");
-//
-//        pushRequest.setTitle("Notice Test");
-//        pushRequest.setBody("hello");
-//
-//        pushRequest.setAndroidNotifyType("BOTH");//通知的提醒方式 "VIBRATE" : 震动 "SOUND" : 声音 "BOTH" : 声音和震动 NONE : 静音
-//        pushRequest.setAndroidOpenType("APPLICATION"); //点击通知后动作 "APPLICATION" : 打开应用 "ACTIVITY" : 打开AndroidActivity "URL" : 打开URL "NONE" : 无跳转
-//
-//        pushRequest.setAndroidNotificationChannel("1");
-//
-//        //辅助弹窗设置
-//        pushRequest.setAndroidPopupActivity("app.elaphant.pushtest.PopupPushActivity");
-//        pushRequest.setAndroidPopupTitle("wrapper title");
-//        pushRequest.setAndroidPopupBody("wrapper body");
-//
-////        String expireTime = Util.getISO8601Time(new Date(System.currentTimeMillis() + 12 * 3600 * 1000)); // 12小时后消息失效, 不会再发送
-////        pushRequest.setExpireTime(expireTime);
-////        pushRequest.setStoreOffline(true); // 离线消息是否保存,若保存, 在推送时候，用户即使不在线，下一次上线则会收到
-//        pushRequest.asyncExecute(new PushRequest.PushCallback() {
-//            @Override
-//            public void onFailure(PushRequest request, IOException e) {
-//                activity.runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        Toast.makeText(activity, "push notice failed", Toast.LENGTH_LONG).show();
-//                    }
-//                });
-//
-//                e.printStackTrace();
-//            }
-//
-//            @Override
-//            public void onResponse(PushRequest request, PushResponse response) {
-//                System.out.printf("RequestId: %s, MessageID: %s\n",
-//                        response.getRequestId(), response.getMessageId());
-//
-//                activity.runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        Toast.makeText(activity, "push notice succeeded", Toast.LENGTH_LONG).show();
-//                    }
-//                });
-//            }
-//        });
-//
-//    }
+    private static void showPushDialog(final Activity activity) {
+        final ElaphantDialogEdit elaphantDialog = new ElaphantDialogEdit(activity);
+        elaphantDialog.setTitleStr("Set nickname to chat");
+        elaphantDialog.setMessageStr("Input your nickname");
+        elaphantDialog.setPositiveStr("Set Now");
+        elaphantDialog.setNegativeStr("Cancel");
+        elaphantDialog.setPositiveListener(new ElaphantDialogEdit.OnPositiveClickListener() {
+            @Override
+            public void onClick() {
+                String did = elaphantDialog.getEditText();
+                sendNotice(activity, did);
+                elaphantDialog.dismiss();
+            }
+        });
+        elaphantDialog.setNegativeListener(new ElaphantDialogEdit.OnNegativeClickListener() {
+            @Override
+            public void onClick() {
+                elaphantDialog.dismiss();
+            }
+        });
+        elaphantDialog.show();
+    }
+
+    private static void sendNotice(final Activity activity, String targetValue) {
+        final String appKey = "28357838";
+        final String accessKeyId = "LTAI4FsqAH9aMgMLTRz47vDT";
+        final String accessSecret = "LLjjzzieTgX42Iz7ehY3tMtbCiCzMK";
+        PushRequest pushRequest = new PushRequest(accessKeyId, accessSecret);
+        pushRequest.setAppKey(appKey);
+        pushRequest.setTarget("ALL");
+        Log.d("xidaokun_push", "did:"+ targetValue);
+        pushRequest.setTargetValue(targetValue);
+        pushRequest.setPushType("NOTICE");
+        pushRequest.setDeviceType("ALL");
+
+        pushRequest.setTitle("messageTest");
+        pushRequest.setBody("hello");
+
+        pushRequest.setAndroidNotifyType("BOTH");//通知的提醒方式 "VIBRATE" : 震动 "SOUND" : 声音 "BOTH" : 声音和震动 NONE : 静音
+        pushRequest.setAndroidOpenType("APPLICATION"); //点击通知后动作 "APPLICATION" : 打开应用 "ACTIVITY" : 打开AndroidActivity "URL" : 打开URL "NONE" : 无跳转
+
+        pushRequest.setAndroidNotificationChannel("1");
+
+        //辅助弹窗设置
+        pushRequest.setAndroidPopupActivity("com.push.PopupPushActivity");
+        pushRequest.setAndroidPopupTitle("wrapper title");
+        pushRequest.setAndroidPopupBody("wrapper body");
+
+        String expireTime = Util.getISO8601Time(new Date(System.currentTimeMillis() + 12 * 3600 * 1000)); // 12小时后消息失效, 不会再发送
+        pushRequest.setExpireTime(expireTime);
+        pushRequest.setStoreOffline(true); // 离线消息是否保存,若保存, 在推送时候，用户即使不在线，下一次上线则会收到
+        pushRequest.asyncExecute(new PushRequest.PushCallback() {
+            @Override
+            public void onFailure(PushRequest request, IOException e) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(activity, "push notice failed", Toast.LENGTH_LONG).show();
+                    }
+                });
+
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(PushRequest request, PushResponse response) {
+                System.out.printf("RequestId: %s, MessageID: %s\n",
+                        response.getRequestId(), response.getMessageId());
+
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(activity, "push notice succeeded", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+
+    }
 
     public static List<BRSettingsItem> getPreferencesSettings(final Activity activity) {
         List<BRSettingsItem> items = new ArrayList<>();

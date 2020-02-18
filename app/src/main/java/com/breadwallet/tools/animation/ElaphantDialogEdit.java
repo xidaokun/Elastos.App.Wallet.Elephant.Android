@@ -85,7 +85,7 @@ public class ElaphantDialogEdit extends Dialog {
         this.mMessageStr = resource;
     }
 
-    public String getNickname() {
+    public String getEditText() {
         return mNicknameEdt.getText().toString();
     }
 

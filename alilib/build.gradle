@@ -22,4 +22,11 @@ android {
 
 dependencies {
     api fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+
+//    implementation ('com.aliyun:aliyun-java-sdk-push:3.10.1') {
+//        exclude group: 'com.sun.xml.bind.annotation.XmlLocation'
+//    }
+//    implementation ('com.aliyun:aliyun-java-sdk-core:4.3.2') {
+//        exclude group: 'com.sun.xml.bind.annotation.XmlLocation'
+//    }
 }
