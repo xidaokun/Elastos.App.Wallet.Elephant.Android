@@ -1,4 +1,4 @@
-package com.push;
+package org.chat.lib.push;
 
 import android.util.Base64;
 import android.util.Log;

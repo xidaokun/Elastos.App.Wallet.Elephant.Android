@@ -1,4 +1,4 @@
-package com.push;
+package org.chat.lib.push;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

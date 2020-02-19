@@ -339,4 +339,7 @@
     <color name="transparent2">#8000</color><!-- 透明 -->
     <color name="style_red">#ff4c41</color>
     <color name="style_divider_color">#C9C7CD</color>
+
+    <color name="new_friend_btn_bg">#FB1453</color>
+
 </resources>

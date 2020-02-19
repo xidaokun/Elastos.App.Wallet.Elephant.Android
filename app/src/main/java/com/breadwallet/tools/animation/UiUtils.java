@@ -84,6 +84,7 @@ import com.platform.sqlite.PlatformSqliteHelper;
 import org.chat.lib.presenter.ChatScanActivity;
 import org.chat.lib.presenter.ChatDetailActivity;
 import org.chat.lib.presenter.ChatGroupSelectActivity;
+import org.chat.lib.presenter.ChatWaitAcceptActivity;
 import org.chat.lib.presenter.GroupNameActivity;
 import org.chat.lib.presenter.MyQrActivity;
 import org.elastos.sdk.elephantwallet.contact.Contact;
@@ -225,6 +226,11 @@ public class UiUtils {
         Intent intent = new Intent();
         intent.setClass(context, MultiSignTxActivity.class);
         intent.setData(uri);
+        context.startActivity(intent);
+    }
+
+    public static void startWaitAcceptActivity(Context context) {
+        Intent intent = new Intent(context, ChatWaitAcceptActivity.class);
         context.startActivity(intent);
     }
 

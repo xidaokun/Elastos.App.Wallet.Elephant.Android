@@ -6,6 +6,10 @@ import android.util.Log;
 import com.alibaba.sdk.android.push.MessageReceiver;
 import com.alibaba.sdk.android.push.notification.CPushMessage;
 
+import org.chat.lib.entity.WaitAcceptBean;
+import org.chat.lib.source.ChatDataSource;
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.Map;
 
 public class PushMessageReceiver extends MessageReceiver {
@@ -16,6 +20,14 @@ public class PushMessageReceiver extends MessageReceiver {
     public void onNotification(Context context, String title, String summary, Map<String, String> extraMap) {
         // TODO 处理推送通知
         Log.d("xidaokun_push", "Receive notification, title: " + title + ", summary: " + summary + ", extraMap: " + extraMap);
+
+        WaitAcceptBean waitAcceptBean = new WaitAcceptBean();
+        waitAcceptBean.nickName = title;
+        waitAcceptBean.friendCode = summary;
+        waitAcceptBean.timeStamp = System.currentTimeMillis();
+        ChatDataSource.getInstance(context).cacheWaitAcceptFriend(waitAcceptBean);
+
+        EventBus.getDefault().post(summary);
     }
     @Override
     public void onMessage(Context context, CPushMessage cPushMessage) {

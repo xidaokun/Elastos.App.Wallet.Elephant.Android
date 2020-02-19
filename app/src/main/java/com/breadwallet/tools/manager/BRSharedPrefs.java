@@ -751,6 +751,18 @@ public class BRSharedPrefs {
         return prefs.getLong("did2Chain", 0);
     }
 
+    public static void cacheMyDid(Context context, String did) {
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("myDid", did);
+        editor.apply();
+    }
+
+    public static String getDid(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        return prefs.getString("myDid", "");
+    }
+
     public static void putRequestInfo(Context context, String value){
         SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();

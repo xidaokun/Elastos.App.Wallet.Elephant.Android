@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 
 import org.chat.lib.entity.MessageCacheBean;
 import org.chat.lib.entity.MessageItemBean;
+import org.chat.lib.entity.WaitAcceptBean;
 import org.chat.lib.utils.Constants;
 
 import java.util.ArrayList;
@@ -46,6 +47,110 @@ public class ChatDataSource implements BRDataSourceInterface {
         }
 
         return mInstance;
+    }
+
+    private final String[] waitAcceptColumns = {
+            BRSQLiteHelper.WAIT_ACCEPT_FRIENDCODE,
+            BRSQLiteHelper.WAIT_ACCEPT_NICKNAME,
+            BRSQLiteHelper.WAIT_ACCEPT_TIMESTAMP,
+            BRSQLiteHelper.WAIT_ACCEPT_HASACCEPT
+    };
+
+    private WaitAcceptBean cursorToWaitAcceptBean(Cursor cursor) {
+        WaitAcceptBean waitAcceptBean = new WaitAcceptBean();
+        waitAcceptBean.friendCode = cursor.getString(0);
+        waitAcceptBean.nickName = cursor.getString(1);
+        waitAcceptBean.timeStamp = cursor.getLong(2);
+        waitAcceptBean.hasAccept = cursor.getLong(3)==1;
+
+        return waitAcceptBean;
+    }
+
+    public List<WaitAcceptBean> getWaitAcceptFriends() {
+        List<WaitAcceptBean> waitAcceptBeans = new ArrayList<>();
+
+        Cursor cursor = null;
+        try {
+            database = openDatabase();
+            cursor = database.query(BRSQLiteHelper.WAIT_ACCEPT_TABLE_NAME, waitAcceptColumns, null, null, null, null, "waitAcceptTimestamp asc");
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                WaitAcceptBean waitAcceptBean = cursorToWaitAcceptBean(cursor);
+                waitAcceptBeans.add(waitAcceptBean);
+                cursor.moveToNext();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null)
+                cursor.close();
+            closeDatabase();
+        }
+
+        return waitAcceptBeans;
+    }
+
+    public void cacheWaitAcceptFriend(WaitAcceptBean waitAcceptBean) {
+        try {
+            database = openDatabase();
+            database.beginTransaction();
+
+            ContentValues value = new ContentValues();
+            value.put(BRSQLiteHelper.WAIT_ACCEPT_FRIENDCODE, waitAcceptBean.friendCode);
+            value.put(BRSQLiteHelper.WAIT_ACCEPT_NICKNAME, waitAcceptBean.nickName);
+            value.put(BRSQLiteHelper.WAIT_ACCEPT_TIMESTAMP, waitAcceptBean.timeStamp);
+            value.put(BRSQLiteHelper.WAIT_ACCEPT_HASACCEPT, waitAcceptBean.hasAccept?1:0);
+
+            long l = database.insertWithOnConflict(BRSQLiteHelper.WAIT_ACCEPT_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
+            database.setTransactionSuccessful();
+        } catch (Exception e) {
+            closeDatabase();
+            e.printStackTrace();
+        } finally {
+            database.endTransaction();
+            closeDatabase();
+        }
+    }
+
+
+    public void updateAcceptState(String friendCode, boolean hasAccept) {
+        try {
+            database = openDatabase();
+
+            ContentValues args = new ContentValues();
+            args.put(BRSQLiteHelper.WAIT_ACCEPT_HASACCEPT, hasAccept?1:0);
+
+            int r = database.update(BRSQLiteHelper.WAIT_ACCEPT_TABLE_NAME, args, BRSQLiteHelper.WAIT_ACCEPT_FRIENDCODE + " = ? ", new String[]{friendCode});
+            Log.d("xidaokun", "ChatDataSource#updateMessageItem#ret:"+ r);
+        } finally {
+            closeDatabase();
+        }
+    }
+
+    public void cacheWaitAcceptFriends(List<WaitAcceptBean> waitAcceptBeans) {
+        if (waitAcceptBeans == null) return;
+        try {
+            database = openDatabase();
+            database.beginTransaction();
+
+            for (WaitAcceptBean bean : waitAcceptBeans) {
+
+                ContentValues value = new ContentValues();
+                value.put(BRSQLiteHelper.WAIT_ACCEPT_FRIENDCODE, bean.friendCode);
+                value.put(BRSQLiteHelper.WAIT_ACCEPT_NICKNAME, bean.nickName);
+                value.put(BRSQLiteHelper.WAIT_ACCEPT_TIMESTAMP, bean.timeStamp);
+
+                long l = database.insertWithOnConflict(BRSQLiteHelper.WAIT_ACCEPT_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
+                Log.d(TAG, "l:" + l);
+            }
+            database.setTransactionSuccessful();
+        } catch (Exception e) {
+            closeDatabase();
+            e.printStackTrace();
+        } finally {
+            database.endTransaction();
+            closeDatabase();
+        }
     }
 
     private final String[] itemColumns = {

@@ -15,9 +15,6 @@ import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
-import com.alibaba.sdk.android.push.CloudPushService;
-import com.alibaba.sdk.android.push.CommonCallback;
-import com.alibaba.sdk.android.push.noonesdk.PushServiceFactory;
 import com.breadwallet.cache.UpgradeHandler;
 import com.breadwallet.presenter.activities.util.ApplicationLifecycleObserver;
 import com.breadwallet.presenter.activities.util.BRActivity;
@@ -31,10 +28,10 @@ import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
-import com.push.PushClient;
 import com.tencent.bugly.Bugly;
 import com.tencent.bugly.beta.Beta;
 
+import org.chat.lib.push.PushClient;
 import org.common.lib.BaseApplication;
 
 import java.io.UnsupportedEncodingException;

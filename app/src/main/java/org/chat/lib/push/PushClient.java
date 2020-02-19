@@ -1,4 +1,4 @@
-package com.push;
+package org.chat.lib.push;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;

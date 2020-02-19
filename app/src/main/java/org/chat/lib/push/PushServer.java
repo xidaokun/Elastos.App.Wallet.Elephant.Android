@@ -1,0 +1,53 @@
+package org.chat.lib.push;
+
+import android.util.Log;
+
+import java.io.IOException;
+import java.util.Date;
+
+public class PushServer {
+
+    private static final String APPKEY = "28357838";
+    private static final String ACCESSKEYID = "LTAI4FsqAH9aMgMLTRz47vDT";
+    private static final String ACCESSSECRET = "LLjjzzieTgX42Iz7ehY3tMtbCiCzMK";
+
+    public static void sendNotice(String myId, String targetValue, String nickName) {
+        PushRequest pushRequest = new PushRequest(ACCESSKEYID, ACCESSSECRET);
+        pushRequest.setAppKey(APPKEY);
+        pushRequest.setTarget("ALL");
+        Log.d("xidaokun_push", "did:"+ targetValue);
+        pushRequest.setTargetValue(targetValue);
+        pushRequest.setPushType("NOTICE");
+        pushRequest.setDeviceType("ALL");
+
+        pushRequest.setTitle(nickName);
+        pushRequest.setBody(myId);
+
+        pushRequest.setAndroidNotifyType("BOTH");//通知的提醒方式 "VIBRATE" : 震动 "SOUND" : 声音 "BOTH" : 声音和震动 NONE : 静音
+        pushRequest.setAndroidOpenType("APPLICATION"); //点击通知后动作 "APPLICATION" : 打开应用 "ACTIVITY" : 打开AndroidActivity "URL" : 打开URL "NONE" : 无跳转
+
+        pushRequest.setAndroidNotificationChannel("1");
+
+        //辅助弹窗设置
+        pushRequest.setAndroidPopupActivity("org.chat.lib.presenter.ChatWaitAcceptActivity");
+        pushRequest.setAndroidPopupTitle("wrapper title");
+        pushRequest.setAndroidPopupBody("wrapper body");
+
+        String expireTime = Util.getISO8601Time(new Date(System.currentTimeMillis() + 12 * 3600 * 1000)); // 12小时后消息失效, 不会再发送
+        pushRequest.setExpireTime(expireTime);
+        pushRequest.setStoreOffline(true); // 离线消息是否保存,若保存, 在推送时候，用户即使不在线，下一次上线则会收到
+        pushRequest.asyncExecute(new PushRequest.PushCallback() {
+            @Override
+            public void onFailure(PushRequest request, IOException e) {
+                Log.d("xidaokun_push", "failed");
+            }
+
+            @Override
+            public void onResponse(PushRequest request, PushResponse response) {
+                Log.d("xidaokun_push", "response:");
+            }
+        });
+
+    }
+
+}

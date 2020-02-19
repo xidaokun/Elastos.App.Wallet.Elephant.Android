@@ -4,6 +4,7 @@ import android.content.Context;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
@@ -11,6 +12,7 @@ import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.google.gson.Gson;
 
 import org.chat.lib.entity.MessageInfo;
+import org.chat.lib.push.PushServer;
 import org.chat.lib.utils.Constants;
 import org.elastos.sdk.elephantwallet.contact.Contact;
 import org.elastos.sdk.elephantwallet.contact.Utils;
@@ -38,6 +40,8 @@ public class CarrierPeerNode {
 
     private int mStartRet;
 
+    private Context mContext;
+
     private CarrierPeerNode(Context context) {
         if (null == mInstance) {
             init(context);
@@ -52,6 +56,7 @@ public class CarrierPeerNode {
     }
 
     private void init(final Context context) {
+        mContext = context;
         mPrivateKey = WalletElaManager.getInstance(context).getPrivateKey();
         mPublicKey = WalletElaManager.getInstance(context).getPublicKey();
         mPeerNode = PeerNode.getInstance(context.getFilesDir().getAbsolutePath(),
@@ -232,20 +237,21 @@ public class CarrierPeerNode {
         String text = "";
         switch (event.type) {
             case FriendRequest:
-                Contact.Listener.RequestEvent requestEvent = (Contact.Listener.RequestEvent) event;
-                String summary = requestEvent.summary;
-                text = requestEvent.humanCode + " request friend, said: " + summary;
-                Log.d("xidaokun", "CarrierPeerNode#handleEvent#FriendRequest#\ntext:"+ text);
-                String content = null;
-                try {
-                    JSONObject object = new JSONObject(summary);
-                    content = object.getString("content");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    RequestFriendInfo requestFriendInfo = new RequestFriendInfo(requestEvent.humanCode, content);
-                    postAddFriendEvent(requestFriendInfo);
-                }
+                //replace with IM
+//                Contact.Listener.RequestEvent requestEvent = (Contact.Listener.RequestEvent) event;
+//                String summary = requestEvent.summary;
+//                text = requestEvent.humanCode + " request friend, said: " + summary;
+//                Log.d("xidaokun", "CarrierPeerNode#handleEvent#FriendRequest#\ntext:"+ text);
+//                String content = null;
+//                try {
+//                    JSONObject object = new JSONObject(summary);
+//                    content = object.getString("content");
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                } finally {
+//                    RequestFriendInfo requestFriendInfo = new RequestFriendInfo(requestEvent.humanCode, content);
+//                    postAddFriendEvent(requestFriendInfo);
+//                }
                 break;
             case StatusChanged:
                 Contact.Listener.StatusEvent statusEvent = (Contact.Listener.StatusEvent) event;
@@ -303,7 +309,16 @@ public class CarrierPeerNode {
 
     public int addFriend(String friendCode) {
         int ret = mPeerNode.addFriend(friendCode, "{\"content\": \"" + BRConstants.CHAT_SINGLE_TYPE + "\"}");
-        if(0 == ret) setFriendInfo(friendCode, Contact.HumanInfo.Item.Addition, "{\"type\":\"chat\",\"value\":\"" + BRConstants.CHAT_SINGLE_TYPE + "\"}");
+//        if(0 == ret) {
+//            setFriendInfo(friendCode, Contact.HumanInfo.Item.Addition, "{\"type\":\"chat\",\"value\":\"" + BRConstants.CHAT_SINGLE_TYPE + "\"}");
+//            String myDid = BRSharedPrefs.getDid(mContext);
+//            String nickName = BRSharedPrefs.getNickname(mContext);
+//            PushServer.sendNotice(myDid, friendCode, nickName);
+//        }
+        setFriendInfo(friendCode, Contact.HumanInfo.Item.Addition, "{\"type\":\"chat\",\"value\":\"" + BRConstants.CHAT_SINGLE_TYPE + "\"}");
+        String myDid = BRSharedPrefs.getDid(mContext);
+        String nickName = BRSharedPrefs.getNickname(mContext);
+        PushServer.sendNotice(myDid, friendCode, nickName);
         Log.d("xidaokun", "CarrierPeerNode#addFriend#======ret:"+ ret);
         return ret;
     }

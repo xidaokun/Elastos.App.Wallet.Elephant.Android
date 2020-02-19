@@ -38,6 +38,7 @@ import com.google.gson.reflect.TypeToken;
 
 import org.chat.lib.entity.MessageInfo;
 import org.chat.lib.presenter.FragmentChatMessage;
+import org.chat.lib.push.PushClient;
 import org.chat.lib.source.ChatDataSource;
 import org.chat.lib.utils.Constants;
 import org.elastos.sdk.wallet.BlockChainNode;
@@ -134,29 +135,30 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         CarrierPeerNode.getInstance(this).start();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void acceptFriend(final CarrierPeerNode.RequestFriendInfo requestFriendInfo) {
-        Log.d("xidaokun", "HomeActivity#acceptFriend#\nhumancode:"+ requestFriendInfo.humanCode + "\ncontent:" + requestFriendInfo.content);
-        final ElaphantDialogText elaphantDialog = new ElaphantDialogText(this);
-        elaphantDialog.setMessageStr("添加好友请求");
-        elaphantDialog.setPositiveStr("接受");
-        elaphantDialog.setNegativeStr("拒绝");
-        elaphantDialog.setPositiveListener(new ElaphantDialogText.OnPositiveClickListener() {
-            @Override
-            public void onClick() {
-                CarrierPeerNode.getInstance(HomeActivity.this).acceptFriend(requestFriendInfo.humanCode, requestFriendInfo.content);
-                EventBus.getDefault().post(requestFriendInfo.humanCode);
-                elaphantDialog.dismiss();
-            }
-        });
-        elaphantDialog.setNegativeListener(new ElaphantDialogText.OnNegativeClickListener() {
-            @Override
-            public void onClick() {
-                elaphantDialog.dismiss();
-            }
-        });
-        elaphantDialog.show();
-    }
+    //replace with IM
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void acceptFriend(final CarrierPeerNode.RequestFriendInfo requestFriendInfo) {
+//        Log.d("xidaokun", "HomeActivity#acceptFriend#\nhumancode:"+ requestFriendInfo.humanCode + "\ncontent:" + requestFriendInfo.content);
+//        final ElaphantDialogText elaphantDialog = new ElaphantDialogText(this);
+//        elaphantDialog.setMessageStr("添加好友请求");
+//        elaphantDialog.setPositiveStr("接受");
+//        elaphantDialog.setNegativeStr("拒绝");
+//        elaphantDialog.setPositiveListener(new ElaphantDialogText.OnPositiveClickListener() {
+//            @Override
+//            public void onClick() {
+//                CarrierPeerNode.getInstance(HomeActivity.this).acceptFriend(requestFriendInfo.humanCode, requestFriendInfo.content);
+//                EventBus.getDefault().post(requestFriendInfo.humanCode);
+//                elaphantDialog.dismiss();
+//            }
+//        });
+//        elaphantDialog.setNegativeListener(new ElaphantDialogText.OnNegativeClickListener() {
+//            @Override
+//            public void onClick() {
+//                elaphantDialog.dismiss();
+//            }
+//        });
+//        elaphantDialog.show();
+//    }
 
     @Subscribe(threadMode = ThreadMode.MAIN, priority = 1)
     public void MessageEvent(MessageInfo messageInfo) {
@@ -257,9 +259,9 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                     String info = mDid.signInfo(mSeed, data, false);
                     if(StringUtil.isNullOrEmpty(info)) return;
                     ProfileDataSource.getInstance(HomeActivity.this).upchain(info);
-//                    String did = Utility.getInstance(HomeActivity.this).getDid(publicKey);
-//                    Log.d("xidaokun_push", "did:"+did);
-//                    PushClient.getInstance().bindAccount(did, null);
+                    String did = Utility.getInstance(HomeActivity.this).getDid(publicKey);
+                    PushClient.getInstance().bindAccount(did, null);
+                    BRSharedPrefs.cacheMyDid(HomeActivity.this, did);
                     BRSharedPrefs.putDid2ChainTime(HomeActivity.this, System.currentTimeMillis());
                 }
             }

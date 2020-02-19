@@ -31,9 +31,8 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.elastos.jni.Utility;
-import com.push.PushClient;
 
-import org.node.CarrierPeerNode;
+import org.chat.lib.push.PushClient;
 
 import java.util.ArrayList;
 import java.util.List;

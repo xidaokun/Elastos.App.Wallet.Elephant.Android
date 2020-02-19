@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 
-import org.chat.lib.entity.NewFriendEntity;
+import org.chat.lib.entity.WaitAcceptBean;
 import org.chat.lib.widget.StateButton;
 
 import java.util.List;
@@ -16,10 +16,10 @@ import java.util.List;
 public class NewFriendAdapter extends BaseAdapter {
 
     private Context mContext;
-    private List<NewFriendEntity> mData;
+    private List<WaitAcceptBean> mData;
     private OnItemListener mListener;
 
-    public NewFriendAdapter(Context context, List<NewFriendEntity> datas) {
+    public NewFriendAdapter(Context context, List<WaitAcceptBean> datas) {
         this.mContext = context;
         this.mData = datas;
     }
@@ -56,6 +56,13 @@ public class NewFriendAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
+        viewHolder.sendSb.setClickable(true);
+        viewHolder.sendSb.setText("接受");
+        if(mData.get(position).hasAccept) {
+            viewHolder.sendSb.setText("已添加");
+            viewHolder.sendSb.setClickable(false);
+        }
+
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,7 +73,7 @@ public class NewFriendAdapter extends BaseAdapter {
         viewHolder.sendSb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(null != mListener) mListener.onSend(v, position);
+                if(null != mListener) mListener.accept(v, position);
             }
         });
 
@@ -79,7 +86,7 @@ public class NewFriendAdapter extends BaseAdapter {
     }
 
     public interface OnItemListener {
-        void onSend(View view, int position);
+        void accept(View view, int position);
         void onItemClick(View view, int position);
     }
 

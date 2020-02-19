@@ -21,6 +21,8 @@ import com.elastos.jni.utils.StringUtils;
 
 import org.chat.lib.adapter.FriendsAdapter;
 import org.chat.lib.entity.ContactEntity;
+import org.chat.lib.entity.WaitAcceptBean;
+import org.chat.lib.source.ChatDataSource;
 import org.chat.lib.widget.DividerItemDecoration;
 import org.chat.lib.widget.IndexBar;
 import org.chat.lib.widget.SuspensionDecoration;
@@ -88,7 +90,9 @@ public class FragmentChatFriends extends BaseFragment {
         mAdapter.setOnClickListener(new FriendsAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Toast.makeText(getContext(), "onItemClick", Toast.LENGTH_SHORT).show();
+                if(position == 0) {
+                    UiUtils.startWaitAcceptActivity(getContext());
+                }
 //                ChatUiUtils.startMomentActivity(getContext());
             }
 
@@ -183,20 +187,22 @@ public class FragmentChatFriends extends BaseFragment {
                 if (null == friendInfos) return;
                 List<ContactEntity> contacts = new ArrayList<>();
                 contacts.clear();
-                int waitAcceeptCount = 0;
                 for (ContactInterface.FriendInfo info : friendInfos) {
+                    if(info.status==ContactInterface.Status.WaitForAccept ||
+                            info.status==ContactInterface.Status.Removed ||
+                            info.status==ContactInterface.Status.Invalid) continue;
                     ContactEntity contactEntity = new ContactEntity();
                     contactEntity.setContact(StringUtils.isNullOrEmpty(info.nickname)?"nickname":info.nickname);
                     contactEntity.setTokenAddress(info.elaAddress);
                     contactEntity.setFriendCode(info.humanCode);
                     contactEntity.setType(info.addition);
-                    if(info.status == ContactInterface.Status.WaitForAccept) waitAcceeptCount++;
                     contacts.add(contactEntity);
                 }
 
                 mDatas.clear();
 
-                mDatas.add((ContactEntity) new ContactEntity("新的朋友").setTop(true).setWaitAcceptCount(waitAcceeptCount).setBaseIndexTag(INDEX_STRING_TOP));
+                List<WaitAcceptBean> waitAcceptBeans = ChatDataSource.getInstance(getContext()).getWaitAcceptFriends();
+                mDatas.add((ContactEntity) new ContactEntity("新的朋友").setTop(true).setWaitAcceptCount(waitAcceptBeans.size()).setBaseIndexTag(INDEX_STRING_TOP));
 //                mDatas.add((ContactEntity) new ContactEntity("群聊").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
 //                mDatas.add((ContactEntity) new ContactEntity("标签").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
 //                mDatas.add((ContactEntity) new ContactEntity("公众号").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));

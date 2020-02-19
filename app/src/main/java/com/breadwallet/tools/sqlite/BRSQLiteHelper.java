@@ -57,6 +57,20 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static String DATABASE_NAME = "breadwallet.db";
     private static final int DATABASE_VERSION = 21;
 
+
+    public static final String WAIT_ACCEPT_TABLE_NAME = "waitAcceptTable";
+    public static final String WAIT_ACCEPT_NICKNAME = "waitAcceptNickname";
+    public static final String WAIT_ACCEPT_FRIENDCODE = "waitAcceptFriendCode";
+    public static final String WAIT_ACCEPT_TIMESTAMP = "waitAcceptTimestamp";
+    public static final String WAIT_ACCEPT_HASACCEPT = "waitAcceptHasAccept";
+
+    private static final String WAIT_ACCEPT_DATABASE_CREATE = "create table if not exists " + WAIT_ACCEPT_TABLE_NAME + " (" +
+            WAIT_ACCEPT_FRIENDCODE + " text primary key , " +
+            WAIT_ACCEPT_NICKNAME + " text," +
+            WAIT_ACCEPT_TIMESTAMP + " integer, " +
+            WAIT_ACCEPT_HASACCEPT + " integer" +
+            ");";
+
     public static final String CHAT_MESSAGE_ITEM_TABLE_NAME = "chatMessageItemTable";
     public static final String CHAT_MESSAGE_ITEM_ID = "_id";
     public static final String CHAT_MESSAGE_ITEM_FRIENDCODE = "chatMessageItemFriendCode";
@@ -398,6 +412,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
         Log.e(TAG, "onCreate: " + TX_DATABASE_CREATE);
         Log.e(TAG, "onCreate: " + PEER_DATABASE_CREATE);
         Log.e(TAG, "onCreate: " + CURRENCY_DATABASE_CREATE);
+        database.execSQL(WAIT_ACCEPT_DATABASE_CREATE);
         database.execSQL(CHAT_MESSAGE_ITEM_DATABASE_CREATE);
         database.execSQL(CHAT_MESSAGE_DATABASE_CREATE);
         database.execSQL(ADD_APPS_DATABASE_CREATE);

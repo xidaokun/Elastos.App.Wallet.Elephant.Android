@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.breadwallet.R;
 import com.breadwallet.tools.animation.ElaphantDialogEdit;
 import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 
@@ -101,6 +102,7 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
             @Override
             public void onClick() {
                 String nickName = elaphantDialog.getEditText();
+                BRSharedPrefs.putNickname(getContext(), nickName);
                 CarrierPeerNode.getInstance(getContext()).
                         setMyInfo(Contact.HumanInfo.Item.Nickname,
                                 StringUtil.isNullOrEmpty(nickName)?"nickname":nickName);
