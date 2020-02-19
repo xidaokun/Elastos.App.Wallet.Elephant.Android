@@ -5,8 +5,10 @@ import android.util.Log;
 
 import com.alibaba.sdk.android.push.MessageReceiver;
 import com.alibaba.sdk.android.push.notification.CPushMessage;
+import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 
-import org.chat.lib.entity.WaitAcceptBean;
+import org.chat.lib.entity.NewFriendBean;
 import org.chat.lib.source.ChatDataSource;
 import org.greenrobot.eventbus.EventBus;
 
@@ -21,7 +23,12 @@ public class PushMessageReceiver extends MessageReceiver {
         // TODO 处理推送通知
         Log.d("xidaokun_push", "Receive notification, title: " + title + ", summary: " + summary + ", extraMap: " + extraMap);
 
-        WaitAcceptBean waitAcceptBean = new WaitAcceptBean();
+        String carrierId = BRSharedPrefs.getCarrierId(context);
+        String did = BRSharedPrefs.getDid(context);
+        if(summary.equals(carrierId) || summary.equals(did)) {
+            return;
+        }
+        NewFriendBean waitAcceptBean = new NewFriendBean();
         waitAcceptBean.nickName = title;
         waitAcceptBean.friendCode = summary;
         waitAcceptBean.timeStamp = System.currentTimeMillis();
@@ -36,6 +43,7 @@ public class PushMessageReceiver extends MessageReceiver {
     @Override
     public void onNotificationOpened(Context context, String title, String summary, String extraMap) {
         Log.d("xidaokun_push", "onNotificationOpened, title: " + title + ", summary: " + summary + ", extraMap:" + extraMap);
+        UiUtils.startWaitAcceptActivity(context);
     }
     @Override
     protected void onNotificationClickedWithNoAction(Context context, String title, String summary, String extraMap) {

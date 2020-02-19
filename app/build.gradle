@@ -244,7 +244,11 @@ dependencies {
     implementation 'pub.devrel:easypermissions:0.2.1'
     implementation project(path: ':qupai')
     implementation project(path: ':ElastosSdkIM')
-    implementation project(path: ':alilib')
+
+    implementation 'com.aliyun.ams:alicloud-android-push:3.1.6'
+    implementation 'com.aliyun.ams:alicloud-android-third-push:3.0.10@aar'
+    implementation 'com.aliyun.ams:huawei-push:2.6.3.305'
+    implementation 'com.aliyun.ams:huawei-push-base:2.6.3.305'
 }
 
 

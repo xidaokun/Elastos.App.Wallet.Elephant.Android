@@ -1,23 +1,27 @@
 package org.chat.lib.presenter;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
+import com.alibaba.sdk.android.push.AndroidPopupActivity;
 import com.breadwallet.R;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.util.BRConstants;
 
 import org.chat.lib.adapter.NewFriendAdapter;
-import org.chat.lib.entity.WaitAcceptBean;
+import org.chat.lib.entity.NewFriendBean;
 import org.chat.lib.source.ChatDataSource;
+import org.greenrobot.eventbus.EventBus;
 import org.node.CarrierPeerNode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-public class ChatWaitAcceptActivity extends Activity implements NewFriendAdapter.OnItemListener {
+public class ChatWaitAcceptActivity extends AndroidPopupActivity implements NewFriendAdapter.OnItemListener {
 
     private ListView mListView;
     private NewFriendAdapter mAdapter;
@@ -32,7 +36,7 @@ public class ChatWaitAcceptActivity extends Activity implements NewFriendAdapter
         initData();
     }
 
-    private List<WaitAcceptBean> mWaitAcceptBeans = new ArrayList<>();
+    private List<NewFriendBean> mWaitAcceptBeans = new ArrayList<>();
     private void initView() {
         mListView = findViewById(R.id.new_friends_lv);
         mAdapter = new NewFriendAdapter(this, mWaitAcceptBeans);
@@ -41,7 +45,7 @@ public class ChatWaitAcceptActivity extends Activity implements NewFriendAdapter
 
     private void initData() {
         mWaitAcceptBeans.clear();
-        List<WaitAcceptBean> waitAcceptBeans = ChatDataSource.getInstance(this).getWaitAcceptFriends();
+        List<NewFriendBean> waitAcceptBeans = ChatDataSource.getInstance(this).getAllNewFriends();
         mWaitAcceptBeans.addAll(waitAcceptBeans);
         mAdapter.notifyDataSetChanged();
     }
@@ -57,6 +61,7 @@ public class ChatWaitAcceptActivity extends Activity implements NewFriendAdapter
         ChatDataSource.getInstance(this).updateAcceptState(friendCode, true);
         mWaitAcceptBeans.get(position).hasAccept = true;
         mAdapter.notifyDataSetChanged();
+        EventBus.getDefault().post(friendCode);
     }
 
     @Override
@@ -64,4 +69,8 @@ public class ChatWaitAcceptActivity extends Activity implements NewFriendAdapter
 
     }
 
+    @Override
+    protected void onSysNoticeOpened(String s, String s1, Map<String, String> map) {
+        Log.d("xidaokun_push", "onSysNoticeOpened, title: " + s + ", summary: " + s1 + ", extraMap: " + map);
+    }
 }

@@ -13,7 +13,7 @@ import com.google.gson.Gson;
 
 import org.chat.lib.entity.MessageCacheBean;
 import org.chat.lib.entity.MessageItemBean;
-import org.chat.lib.entity.WaitAcceptBean;
+import org.chat.lib.entity.NewFriendBean;
 import org.chat.lib.utils.Constants;
 
 import java.util.ArrayList;
@@ -56,8 +56,8 @@ public class ChatDataSource implements BRDataSourceInterface {
             BRSQLiteHelper.WAIT_ACCEPT_HASACCEPT
     };
 
-    private WaitAcceptBean cursorToWaitAcceptBean(Cursor cursor) {
-        WaitAcceptBean waitAcceptBean = new WaitAcceptBean();
+    private NewFriendBean cursorToWaitAcceptBean(Cursor cursor) {
+        NewFriendBean waitAcceptBean = new NewFriendBean();
         waitAcceptBean.friendCode = cursor.getString(0);
         waitAcceptBean.nickName = cursor.getString(1);
         waitAcceptBean.timeStamp = cursor.getLong(2);
@@ -66,8 +66,8 @@ public class ChatDataSource implements BRDataSourceInterface {
         return waitAcceptBean;
     }
 
-    public List<WaitAcceptBean> getWaitAcceptFriends() {
-        List<WaitAcceptBean> waitAcceptBeans = new ArrayList<>();
+    public List<NewFriendBean> getAllNewFriends() {
+        List<NewFriendBean> waitAcceptBeans = new ArrayList<>();
 
         Cursor cursor = null;
         try {
@@ -75,7 +75,7 @@ public class ChatDataSource implements BRDataSourceInterface {
             cursor = database.query(BRSQLiteHelper.WAIT_ACCEPT_TABLE_NAME, waitAcceptColumns, null, null, null, null, "waitAcceptTimestamp asc");
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
-                WaitAcceptBean waitAcceptBean = cursorToWaitAcceptBean(cursor);
+                NewFriendBean waitAcceptBean = cursorToWaitAcceptBean(cursor);
                 waitAcceptBeans.add(waitAcceptBean);
                 cursor.moveToNext();
             }
@@ -90,7 +90,31 @@ public class ChatDataSource implements BRDataSourceInterface {
         return waitAcceptBeans;
     }
 
-    public void cacheWaitAcceptFriend(WaitAcceptBean waitAcceptBean) {
+    public List<NewFriendBean> getAcceptOrNotFriends(boolean hasAccept) {
+        List<NewFriendBean> waitAcceptBeans = new ArrayList<>();
+        Cursor cursor = null;
+
+        try {
+            database = openDatabase();
+            cursor = database.query(BRSQLiteHelper.WAIT_ACCEPT_TABLE_NAME, waitAcceptColumns, BRSQLiteHelper.WAIT_ACCEPT_HASACCEPT + " = ? ", new String[]{hasAccept?"1":"0"}, null, null, "waitAcceptTimestamp asc");
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                NewFriendBean waitAcceptBean = cursorToWaitAcceptBean(cursor);
+                waitAcceptBeans.add(waitAcceptBean);
+                cursor.moveToNext();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null)
+                cursor.close();
+            closeDatabase();
+        }
+
+        return waitAcceptBeans;
+    }
+
+    public void cacheWaitAcceptFriend(NewFriendBean waitAcceptBean) {
         try {
             database = openDatabase();
             database.beginTransaction();
@@ -127,13 +151,13 @@ public class ChatDataSource implements BRDataSourceInterface {
         }
     }
 
-    public void cacheWaitAcceptFriends(List<WaitAcceptBean> waitAcceptBeans) {
+    public void cacheWaitAcceptFriends(List<NewFriendBean> waitAcceptBeans) {
         if (waitAcceptBeans == null) return;
         try {
             database = openDatabase();
             database.beginTransaction();
 
-            for (WaitAcceptBean bean : waitAcceptBeans) {
+            for (NewFriendBean bean : waitAcceptBeans) {
 
                 ContentValues value = new ContentValues();
                 value.put(BRSQLiteHelper.WAIT_ACCEPT_FRIENDCODE, bean.friendCode);

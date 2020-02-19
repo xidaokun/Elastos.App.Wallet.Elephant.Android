@@ -21,7 +21,7 @@ import com.elastos.jni.utils.StringUtils;
 
 import org.chat.lib.adapter.FriendsAdapter;
 import org.chat.lib.entity.ContactEntity;
-import org.chat.lib.entity.WaitAcceptBean;
+import org.chat.lib.entity.NewFriendBean;
 import org.chat.lib.source.ChatDataSource;
 import org.chat.lib.widget.DividerItemDecoration;
 import org.chat.lib.widget.IndexBar;
@@ -166,7 +166,15 @@ public class FragmentChatFriends extends BaseFragment {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                int ret = CarrierPeerNode.getInstance(getContext()).addFriend(friendCode);
+                final int ret = CarrierPeerNode.getInstance(getContext()).addFriend(friendCode);
+                if(ret != 0) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getContext(), "carrier return ret:"+ret, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
                 Log.d("xidaokun", "FragementChatFriends#addFriend#ret:"+ret);
                 refreshFriendView();
             }
@@ -182,26 +190,38 @@ public class FragmentChatFriends extends BaseFragment {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                //TODO daokun.xi
+                //TODO daokun.xi 暂注释掉通过carrier，改为通过IM
+//                List<NewFriendBean> waitAcceptBeans = ChatDataSource.getInstance(mActivity).getAcceptOrNotFriends(true);
+//                List<ContactEntity> contacts = new ArrayList<>();
+//                contacts.clear();
+//                for (NewFriendBean newFriendBean : waitAcceptBeans) {
+//                    ContactEntity contactEntity = new ContactEntity();
+//                    contactEntity.setContact(newFriendBean.nickName);
+//                    contactEntity.setTokenAddress(info.elaAddress);
+//                    contactEntity.setFriendCode(info.humanCode);
+//                    contactEntity.setType(info.addition);
+//                    contacts.add(contactEntity);
+//                }
+
                 List<ContactInterface.FriendInfo> friendInfos = CarrierPeerNode.getInstance(getContext()).getFriends();
-                if (null == friendInfos) return;
                 List<ContactEntity> contacts = new ArrayList<>();
-                contacts.clear();
-                for (ContactInterface.FriendInfo info : friendInfos) {
-                    if(info.status==ContactInterface.Status.WaitForAccept ||
-                            info.status==ContactInterface.Status.Removed ||
-                            info.status==ContactInterface.Status.Invalid) continue;
-                    ContactEntity contactEntity = new ContactEntity();
-                    contactEntity.setContact(StringUtils.isNullOrEmpty(info.nickname)?"nickname":info.nickname);
-                    contactEntity.setTokenAddress(info.elaAddress);
-                    contactEntity.setFriendCode(info.humanCode);
-                    contactEntity.setType(info.addition);
-                    contacts.add(contactEntity);
+                if (null != friendInfos) {
+                    for (ContactInterface.FriendInfo info : friendInfos) {
+                        if(info.status==ContactInterface.Status.WaitForAccept ||
+                                info.status==ContactInterface.Status.Removed ||
+                                info.status==ContactInterface.Status.Invalid) continue;
+                        ContactEntity contactEntity = new ContactEntity();
+                        contactEntity.setContact(StringUtils.isNullOrEmpty(info.nickname)?"nickname":info.nickname);
+                        contactEntity.setTokenAddress(info.elaAddress);
+                        contactEntity.setFriendCode(info.humanCode);
+                        contactEntity.setType(info.addition);
+                        contacts.add(contactEntity);
+                    }
                 }
 
                 mDatas.clear();
 
-                List<WaitAcceptBean> waitAcceptBeans = ChatDataSource.getInstance(getContext()).getWaitAcceptFriends();
+                List<NewFriendBean> waitAcceptBeans = ChatDataSource.getInstance(getContext()).getAcceptOrNotFriends(false);
                 mDatas.add((ContactEntity) new ContactEntity("新的朋友").setTop(true).setWaitAcceptCount(waitAcceptBeans.size()).setBaseIndexTag(INDEX_STRING_TOP));
 //                mDatas.add((ContactEntity) new ContactEntity("群聊").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
 //                mDatas.add((ContactEntity) new ContactEntity("标签").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));

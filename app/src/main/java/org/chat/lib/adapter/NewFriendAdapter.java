@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 
-import org.chat.lib.entity.WaitAcceptBean;
+import org.chat.lib.entity.NewFriendBean;
 import org.chat.lib.widget.StateButton;
 
 import java.util.List;
@@ -16,10 +16,10 @@ import java.util.List;
 public class NewFriendAdapter extends BaseAdapter {
 
     private Context mContext;
-    private List<WaitAcceptBean> mData;
+    private List<NewFriendBean> mData;
     private OnItemListener mListener;
 
-    public NewFriendAdapter(Context context, List<WaitAcceptBean> datas) {
+    public NewFriendAdapter(Context context, List<NewFriendBean> datas) {
         this.mContext = context;
         this.mData = datas;
     }

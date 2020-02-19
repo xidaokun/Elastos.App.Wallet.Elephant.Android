@@ -925,4 +925,16 @@ public class BRSharedPrefs {
         SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
         return prefs.getString("ethHost", "api-wallet-eth.elastos.org");
     }
+
+    public static void cacheCarrierId(Context context, String carrierId) {
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("carrierId", carrierId);
+        editor.apply();
+    }
+
+    public static String getCarrierId(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        return prefs.getString("carrierId", "");
+    }
 }

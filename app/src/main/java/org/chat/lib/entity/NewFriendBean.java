@@ -1,6 +1,6 @@
 package org.chat.lib.entity;
 
-public class WaitAcceptBean {
+public class NewFriendBean {
     public String friendCode;
     public long timeStamp;
     public String nickName;

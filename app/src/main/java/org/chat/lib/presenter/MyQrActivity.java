@@ -38,9 +38,10 @@ public class MyQrActivity extends BRActivity {
 
         String nickname = BRSharedPrefs.getNickname(this);
         mNicknameTv.setText(nickname);
-        ContactInterface.UserInfo userInfo = CarrierPeerNode.getInstance(this).getUserInfo();
-        if(userInfo == null) return;
-        String carrierAddr = userInfo.getCurrDevCarrierAddr();
+//        ContactInterface.UserInfo userInfo = CarrierPeerNode.getInstance(this).getUserInfo();
+//        if(userInfo == null) return;
+//        String carrierAddr = userInfo.getCurrDevCarrierAddr();
+        String carrierAddr = BRSharedPrefs.getCarrierId(this);
         if(!StringUtil.isNullOrEmpty(carrierAddr)) {
             Bitmap bitmap = QRUtils.encodeAsBitmap(carrierAddr, Utils.dp2px(this, 300));
             mQrImg.setImageBitmap(bitmap);
