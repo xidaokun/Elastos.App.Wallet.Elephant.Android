@@ -53,7 +53,7 @@ public class ChatDataSource implements BRDataSourceInterface {
             BRSQLiteHelper.WAIT_ACCEPT_FRIENDCODE,
             BRSQLiteHelper.WAIT_ACCEPT_NICKNAME,
             BRSQLiteHelper.WAIT_ACCEPT_TIMESTAMP,
-            BRSQLiteHelper.WAIT_ACCEPT_HASACCEPT
+            BRSQLiteHelper.WAIT_ACCEPT_STATUS
     };
 
     private NewFriendBean cursorToWaitAcceptBean(Cursor cursor) {
@@ -61,7 +61,7 @@ public class ChatDataSource implements BRDataSourceInterface {
         waitAcceptBean.friendCode = cursor.getString(0);
         waitAcceptBean.nickName = cursor.getString(1);
         waitAcceptBean.timeStamp = cursor.getLong(2);
-        waitAcceptBean.hasAccept = cursor.getLong(3)==1;
+        waitAcceptBean.acceptStatus = cursor.getInt(3);
 
         return waitAcceptBean;
     }
@@ -90,13 +90,13 @@ public class ChatDataSource implements BRDataSourceInterface {
         return waitAcceptBeans;
     }
 
-    public List<NewFriendBean> getAcceptOrNotFriends(boolean hasAccept) {
+    public List<NewFriendBean> getNotAcceptFriends() {
         List<NewFriendBean> waitAcceptBeans = new ArrayList<>();
         Cursor cursor = null;
 
         try {
             database = openDatabase();
-            cursor = database.query(BRSQLiteHelper.WAIT_ACCEPT_TABLE_NAME, waitAcceptColumns, BRSQLiteHelper.WAIT_ACCEPT_HASACCEPT + " = ? ", new String[]{hasAccept?"1":"0"}, null, null, "waitAcceptTimestamp asc");
+            cursor = database.query(BRSQLiteHelper.WAIT_ACCEPT_TABLE_NAME, waitAcceptColumns, BRSQLiteHelper.WAIT_ACCEPT_STATUS+" = ? OR " + BRSQLiteHelper.WAIT_ACCEPT_STATUS+" = ? ", new String[]{String.valueOf(BRConstants.RECEIVE_ACCEPT), String.valueOf(BRConstants.REQUEST_ACCEPT)}, null, null, "waitAcceptTimestamp asc");
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
                 NewFriendBean waitAcceptBean = cursorToWaitAcceptBean(cursor);
@@ -123,7 +123,7 @@ public class ChatDataSource implements BRDataSourceInterface {
             value.put(BRSQLiteHelper.WAIT_ACCEPT_FRIENDCODE, waitAcceptBean.friendCode);
             value.put(BRSQLiteHelper.WAIT_ACCEPT_NICKNAME, waitAcceptBean.nickName);
             value.put(BRSQLiteHelper.WAIT_ACCEPT_TIMESTAMP, waitAcceptBean.timeStamp);
-            value.put(BRSQLiteHelper.WAIT_ACCEPT_HASACCEPT, waitAcceptBean.hasAccept?1:0);
+            value.put(BRSQLiteHelper.WAIT_ACCEPT_STATUS, waitAcceptBean.acceptStatus);
 
             long l = database.insertWithOnConflict(BRSQLiteHelper.WAIT_ACCEPT_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
             database.setTransactionSuccessful();
@@ -137,12 +137,12 @@ public class ChatDataSource implements BRDataSourceInterface {
     }
 
 
-    public void updateAcceptState(String friendCode, boolean hasAccept) {
+    public void updateAcceptState(String friendCode, int acceptStatus) {
         try {
             database = openDatabase();
 
             ContentValues args = new ContentValues();
-            args.put(BRSQLiteHelper.WAIT_ACCEPT_HASACCEPT, hasAccept?1:0);
+            args.put(BRSQLiteHelper.WAIT_ACCEPT_STATUS, acceptStatus);
 
             int r = database.update(BRSQLiteHelper.WAIT_ACCEPT_TABLE_NAME, args, BRSQLiteHelper.WAIT_ACCEPT_FRIENDCODE + " = ? ", new String[]{friendCode});
             Log.d("xidaokun", "ChatDataSource#updateMessageItem#ret:"+ r);
@@ -163,6 +163,7 @@ public class ChatDataSource implements BRDataSourceInterface {
                 value.put(BRSQLiteHelper.WAIT_ACCEPT_FRIENDCODE, bean.friendCode);
                 value.put(BRSQLiteHelper.WAIT_ACCEPT_NICKNAME, bean.nickName);
                 value.put(BRSQLiteHelper.WAIT_ACCEPT_TIMESTAMP, bean.timeStamp);
+                value.put(BRSQLiteHelper.WAIT_ACCEPT_STATUS, bean.acceptStatus);
 
                 long l = database.insertWithOnConflict(BRSQLiteHelper.WAIT_ACCEPT_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
                 Log.d(TAG, "l:" + l);

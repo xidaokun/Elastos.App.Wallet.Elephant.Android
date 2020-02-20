@@ -84,10 +84,9 @@ import com.platform.sqlite.PlatformSqliteHelper;
 import org.chat.lib.presenter.ChatScanActivity;
 import org.chat.lib.presenter.ChatDetailActivity;
 import org.chat.lib.presenter.ChatGroupSelectActivity;
-import org.chat.lib.presenter.ChatWaitAcceptActivity;
+import org.chat.lib.presenter.NewFriendListActivity;
 import org.chat.lib.presenter.GroupNameActivity;
 import org.chat.lib.presenter.MyQrActivity;
-import org.elastos.sdk.elephantwallet.contact.Contact;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -230,7 +229,7 @@ public class UiUtils {
     }
 
     public static void startWaitAcceptActivity(Context context) {
-        Intent intent = new Intent(context, ChatWaitAcceptActivity.class);
+        Intent intent = new Intent(context, NewFriendListActivity.class);
         context.startActivity(intent);
     }
 

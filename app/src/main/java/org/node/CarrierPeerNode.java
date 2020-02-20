@@ -275,7 +275,7 @@ public class CarrierPeerNode {
                 break;
             case HumanInfoChanged:
                 Contact.Listener.InfoEvent infoEvent = (Contact.Listener.InfoEvent) event;
-                text = event.humanCode + " info changed: " + infoEvent.toString();
+                text = event.humanCode + " info changed: " + infoEvent.toString() + infoEvent.humanInfo.status;
                 Log.d("xidaokun", "CarrierPeerNode#handleEvent#HumanInfoChanged#\ntext:"+ text);
                 HumanChangeInfo humanChangeInfo = new HumanChangeInfo(event.humanCode, infoEvent.toString());
                 postHumanInfoChangeEvent(humanChangeInfo);
@@ -284,6 +284,7 @@ public class CarrierPeerNode {
                 return;
         }
     }
+
 
     public void postAddFriendEvent(RequestFriendInfo requestFriendInfo) {
         EventBus.getDefault().post(requestFriendInfo);
@@ -368,14 +369,14 @@ public class CarrierPeerNode {
 
     public int sendMessage(String friendCode, String content) {
         Log.d("xidaokun", "CarrierPeerNode#sendMessage\n#friendCode:"+ friendCode + "\n#content:" + content);
-        int ret = mConnector.sendMessage(friendCode, content);
+        int ret = mConnector.sendMessage(friendCode, Contact.Channel.Carrier, content);
         Log.d("xidaokun", "CarrierPeerNode#sendMessage#ret:"+ ret);
         return ret;
     }
 
     public int sendGroupMessage(String friendCode, String content) {
         Log.d("xidaokun", "CarrierPeerNode#sendGroupMessage\n#friendCode:"+ friendCode + "\n#content:" + content);
-        int ret = mGroupConnector.sendMessage(friendCode, content);
+        int ret = mGroupConnector.sendMessage(friendCode, Contact.Channel.Carrier,content);
         Log.d("xidaokun", "CarrierPeerNode#sendGroupMessage#ret:"+ ret);
         return ret;
     }

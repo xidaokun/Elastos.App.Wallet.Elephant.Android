@@ -447,7 +447,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
 
-        <activity android:name="org.chat.lib.presenter.ChatWaitAcceptActivity"
+        <activity android:name="org.chat.lib.presenter.NewFriendListActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
 

@@ -29,7 +29,7 @@ public class PushServer {
         pushRequest.setAndroidNotificationChannel("1");
 
         //辅助弹窗设置
-        pushRequest.setAndroidPopupActivity("org.chat.lib.presenter.ChatWaitAcceptActivity");
+        pushRequest.setAndroidPopupActivity("org.chat.lib.presenter.NewFriendListActivity");
         pushRequest.setAndroidPopupTitle("wrapper title");
         pushRequest.setAndroidPopupBody("wrapper body");
 

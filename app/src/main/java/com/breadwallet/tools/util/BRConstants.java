@@ -166,6 +166,10 @@ public final class BRConstants {
     public static final String CHAT_SINGLE_TYPE = "chatSingleType";
     public static final String CHAT_GROUP_TYPE = "chatGroupType";
 
+    public static final int REQUEST_ACCEPT = 0;
+    public static final int RECEIVE_ACCEPT = 1;
+    public static final int ACCEPTED = 2;
+
     private BRConstants() {
     }
 

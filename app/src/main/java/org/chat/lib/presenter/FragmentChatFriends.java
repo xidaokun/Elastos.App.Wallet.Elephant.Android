@@ -182,7 +182,13 @@ public class FragmentChatFriends extends BaseFragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void acceptFriendEvent(String friendCode) {
+    public void receiveAddAcceptEvent(CarrierPeerNode.FriendStatusInfo friendStatusInfo) {
+        ChatDataSource.getInstance(getContext()).updateAcceptState(friendStatusInfo.humanCode, BRConstants.ACCEPTED);
+        refreshFriendView();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void receiveAddRequestEvent(String friendCode) {
         refreshFriendView();
     }
 
@@ -190,24 +196,12 @@ public class FragmentChatFriends extends BaseFragment {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                //TODO daokun.xi 暂注释掉通过carrier，改为通过IM
-//                List<NewFriendBean> waitAcceptBeans = ChatDataSource.getInstance(mActivity).getAcceptOrNotFriends(true);
-//                List<ContactEntity> contacts = new ArrayList<>();
-//                contacts.clear();
-//                for (NewFriendBean newFriendBean : waitAcceptBeans) {
-//                    ContactEntity contactEntity = new ContactEntity();
-//                    contactEntity.setContact(newFriendBean.nickName);
-//                    contactEntity.setTokenAddress(info.elaAddress);
-//                    contactEntity.setFriendCode(info.humanCode);
-//                    contactEntity.setType(info.addition);
-//                    contacts.add(contactEntity);
-//                }
-
                 List<ContactInterface.FriendInfo> friendInfos = CarrierPeerNode.getInstance(getContext()).getFriends();
                 List<ContactEntity> contacts = new ArrayList<>();
                 if (null != friendInfos) {
                     for (ContactInterface.FriendInfo info : friendInfos) {
-                        if(info.status==ContactInterface.Status.Removed ||
+                        if(info.status==ContactInterface.Status.WaitForAccept ||
+                                info.status==ContactInterface.Status.Removed ||
                                 info.status==ContactInterface.Status.Invalid) continue;
                         ContactEntity contactEntity = new ContactEntity();
                         contactEntity.setContact(StringUtils.isNullOrEmpty(info.nickname)?"nickname":info.nickname);
@@ -220,7 +214,7 @@ public class FragmentChatFriends extends BaseFragment {
 
                 mDatas.clear();
 
-                List<NewFriendBean> waitAcceptBeans = ChatDataSource.getInstance(getContext()).getAcceptOrNotFriends(false);
+                List<NewFriendBean> waitAcceptBeans = ChatDataSource.getInstance(getContext()).getNotAcceptFriends();
                 mDatas.add((ContactEntity) new ContactEntity("新的朋友").setTop(true).setWaitAcceptCount(waitAcceptBeans.size()).setBaseIndexTag(INDEX_STRING_TOP));
 //                mDatas.add((ContactEntity) new ContactEntity("群聊").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
 //                mDatas.add((ContactEntity) new ContactEntity("标签").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));

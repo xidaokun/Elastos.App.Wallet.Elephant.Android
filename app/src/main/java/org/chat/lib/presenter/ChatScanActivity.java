@@ -24,6 +24,7 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.qrcode.QRCodeReaderView;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.google.gson.Gson;
@@ -31,6 +32,8 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import com.platform.tools.BRBitId;
 
+import org.chat.lib.entity.NewFriendBean;
+import org.chat.lib.source.ChatDataSource;
 import org.chat.lib.widget.BaseTextView;
 import org.elastos.sdk.elephantwallet.contact.Contact;
 import org.node.CarrierPeerNode;
@@ -72,6 +75,7 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
         mType = getIntent().getStringExtra("type");
 
         initView();
+        initListener();
     }
 
     private void initView() {
@@ -88,7 +92,6 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
 
         if (android.support.v4.app.ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
-            Log.d("scanTest", "checkSelfPermission");
             initQRCodeReaderView();
         }
 
@@ -100,7 +103,9 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
                 SpringAnimator.showExpandCameraGuide(cameraGuide);
             }
         }, 400);
+    }
 
+    private void initListener() {
         mPasteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -109,15 +114,11 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
                     Toast.makeText(ChatScanActivity.this, "id empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                Intent returnIntent = new Intent();
-                returnIntent.putExtra("result", text);
-                returnIntent.putExtra("type", mType);
-                setResult(Activity.RESULT_OK, returnIntent);
-                finish();
+
+                showNicknameDialog(text);
             }
         });
     }
-
 
     @Override
     protected void onResume() {
@@ -156,8 +157,14 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
     }
 
     private void setResult(String friendCode, String type, String nickname) {
-        CarrierPeerNode.getInstance(ChatScanActivity.this).
-                setFriendInfo(friendCode, Contact.HumanInfo.Item.Nickname, nickname);
+
+        NewFriendBean waitAcceptBean = new NewFriendBean();
+        waitAcceptBean.nickName = nickname;
+        waitAcceptBean.friendCode = friendCode;
+        waitAcceptBean.acceptStatus = BRConstants.REQUEST_ACCEPT;
+        waitAcceptBean.timeStamp = System.currentTimeMillis();
+        ChatDataSource.getInstance(this).cacheWaitAcceptFriend(waitAcceptBean);
+
         Intent returnIntent = new Intent();
         returnIntent.putExtra("result", friendCode);
         returnIntent.putExtra("type", type);

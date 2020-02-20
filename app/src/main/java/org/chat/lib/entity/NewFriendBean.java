@@ -4,5 +4,5 @@ public class NewFriendBean {
     public String friendCode;
     public long timeStamp;
     public String nickName;
-    public boolean hasAccept; //1 true 0 false
+    public int acceptStatus; // 0 requestAccept, 1 receiveAccept, 2 accepted
 }

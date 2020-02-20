@@ -7,6 +7,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.util.BRConstants;
 
 import org.chat.lib.entity.NewFriendBean;
 import org.chat.lib.widget.StateButton;
@@ -56,9 +57,16 @@ public class NewFriendAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        viewHolder.sendSb.setClickable(true);
-        viewHolder.sendSb.setText("接受");
-        if(mData.get(position).hasAccept) {
+        viewHolder.nameTv.setText(mData.get(position).nickName);
+        viewHolder.sendSb.setClickable(false);
+        viewHolder.sendSb.setText("");
+        if(mData.get(position).acceptStatus == BRConstants.RECEIVE_ACCEPT) {
+            viewHolder.sendSb.setText("接受");
+            viewHolder.sendSb.setClickable(true);
+        } else if(mData.get(position).acceptStatus == BRConstants.REQUEST_ACCEPT) {
+            viewHolder.sendSb.setText("待对方确认");
+            viewHolder.sendSb.setClickable(false);
+        } else if(mData.get(position).acceptStatus == BRConstants.ACCEPTED) {
             viewHolder.sendSb.setText("已添加");
             viewHolder.sendSb.setClickable(false);
         }

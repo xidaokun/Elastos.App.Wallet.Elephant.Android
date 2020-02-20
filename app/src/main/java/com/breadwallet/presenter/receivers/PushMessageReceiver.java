@@ -7,6 +7,7 @@ import com.alibaba.sdk.android.push.MessageReceiver;
 import com.alibaba.sdk.android.push.notification.CPushMessage;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.util.BRConstants;
 
 import org.chat.lib.entity.NewFriendBean;
 import org.chat.lib.source.ChatDataSource;
@@ -23,11 +24,10 @@ public class PushMessageReceiver extends MessageReceiver {
         // TODO 处理推送通知
         Log.d("xidaokun_push", "Receive notification, title: " + title + ", summary: " + summary + ", extraMap: " + extraMap);
 
-        String carrierId = BRSharedPrefs.getCarrierId(context);
-        String did = BRSharedPrefs.getDid(context);
         NewFriendBean waitAcceptBean = new NewFriendBean();
         waitAcceptBean.nickName = title;
         waitAcceptBean.friendCode = summary;
+        waitAcceptBean.acceptStatus = BRConstants.RECEIVE_ACCEPT;
         waitAcceptBean.timeStamp = System.currentTimeMillis();
         ChatDataSource.getInstance(context).cacheWaitAcceptFriend(waitAcceptBean);
 
