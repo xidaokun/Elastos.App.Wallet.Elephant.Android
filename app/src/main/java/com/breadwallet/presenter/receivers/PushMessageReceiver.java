@@ -25,9 +25,6 @@ public class PushMessageReceiver extends MessageReceiver {
 
         String carrierId = BRSharedPrefs.getCarrierId(context);
         String did = BRSharedPrefs.getDid(context);
-        if(summary.equals(carrierId) || summary.equals(did)) {
-            return;
-        }
         NewFriendBean waitAcceptBean = new NewFriendBean();
         waitAcceptBean.nickName = title;
         waitAcceptBean.friendCode = summary;

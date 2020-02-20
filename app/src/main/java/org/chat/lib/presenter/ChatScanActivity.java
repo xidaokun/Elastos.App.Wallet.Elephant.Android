@@ -19,8 +19,10 @@ import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.tools.animation.ElaphantDialogEdit;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.qrcode.QRCodeReaderView;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.wallet.util.CryptoUriParser;
@@ -30,6 +32,8 @@ import com.google.gson.JsonSyntaxException;
 import com.platform.tools.BRBitId;
 
 import org.chat.lib.widget.BaseTextView;
+import org.elastos.sdk.elephantwallet.contact.Contact;
+import org.node.CarrierPeerNode;
 
 import java.security.NoSuchAlgorithmException;
 
@@ -125,6 +129,42 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
         }
     }
 
+    ElaphantDialogEdit mElaphantDialog = null;
+    private void showNicknameDialog(final String friendCode) {
+        if(mElaphantDialog == null) mElaphantDialog = new ElaphantDialogEdit(ChatScanActivity.this);
+        mElaphantDialog.setTitleStr("Set nickname to chat");
+        mElaphantDialog.setMessageStr("Input Other nickname");
+        mElaphantDialog.setPositiveStr("Set Now");
+        mElaphantDialog.setNegativeStr("Cancel");
+        mElaphantDialog.setPositiveListener(new ElaphantDialogEdit.OnPositiveClickListener() {
+            @Override
+            public void onClick() {
+                String nickName = mElaphantDialog.getEditText();
+                mElaphantDialog.dismiss();
+                setResult(friendCode, mType, nickName);
+
+            }
+        });
+        mElaphantDialog.setNegativeListener(new ElaphantDialogEdit.OnNegativeClickListener() {
+            @Override
+            public void onClick() {
+                mElaphantDialog.dismiss();
+                setResult(friendCode, mType, friendCode);
+            }
+        });
+        if(!mElaphantDialog.isShowing()) mElaphantDialog.show();
+    }
+
+    private void setResult(String friendCode, String type, String nickname) {
+        CarrierPeerNode.getInstance(ChatScanActivity.this).
+                setFriendInfo(friendCode, Contact.HumanInfo.Item.Nickname, nickname);
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("result", friendCode);
+        returnIntent.putExtra("type", type);
+        setResult(Activity.RESULT_OK, returnIntent);
+        finish();
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -205,12 +245,9 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
 //                        cameraGuide.setImageResource(R.drawable.cameraguide_red);
 //                        lastUpdated = System.currentTimeMillis();
 //                        descriptionText.setText("Not a valid address or scheme" );
+
                         mPasteEdit.setText(text);
-                        Intent returnIntent = new Intent();
-                        returnIntent.putExtra("result", text);
-                        returnIntent.putExtra("type", mType);
-                        setResult(Activity.RESULT_OK, returnIntent);
-                        finish();
+                        showNicknameDialog(text);
                     } finally {
                         handlingCode = false;
                     }

@@ -92,7 +92,10 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
         if(userInfo == null) return;
         String nickName = userInfo.nickname;
         if(!StringUtil.isNullOrEmpty(nickName)) return;
+        showNicknameDialog();
+    }
 
+    private void showNicknameDialog() {
         final ElaphantDialogEdit elaphantDialog = new ElaphantDialogEdit(getContext());
         elaphantDialog.setTitleStr("Set nickname to chat");
         elaphantDialog.setMessageStr("Input your nickname");

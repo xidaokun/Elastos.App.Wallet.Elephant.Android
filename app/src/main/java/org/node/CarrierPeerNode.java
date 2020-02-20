@@ -112,6 +112,7 @@ public class CarrierPeerNode {
                     String carrierAddr = userInfo.getCurrDevCarrierAddr();
                     if(StringUtil.isNullOrEmpty(carrierAddr)) return;
                     BRSharedPrefs.cacheCarrierId(mContext, carrierAddr);
+                    Log.d("xidaokun_push", "bind carrierAddr:"+carrierAddr);
                     PushClient.getInstance().bindAccount(carrierAddr, null);
                 }
 
@@ -259,6 +260,11 @@ public class CarrierPeerNode {
 //                    RequestFriendInfo requestFriendInfo = new RequestFriendInfo(requestEvent.humanCode, content);
 //                    postAddFriendEvent(requestFriendInfo);
 //                }
+
+                Contact.Listener.RequestEvent requestEvent = (Contact.Listener.RequestEvent) event;
+                String summary = requestEvent.summary;
+                text = requestEvent.humanCode + " request friend, said: " + summary;
+                Log.d("xidaokun", "CarrierPeerNode#handleEvent#FriendRequest#\ntext:"+ text);
                 break;
             case StatusChanged:
                 Contact.Listener.StatusEvent statusEvent = (Contact.Listener.StatusEvent) event;

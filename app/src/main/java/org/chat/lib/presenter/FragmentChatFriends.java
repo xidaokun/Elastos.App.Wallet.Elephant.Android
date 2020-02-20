@@ -207,8 +207,7 @@ public class FragmentChatFriends extends BaseFragment {
                 List<ContactEntity> contacts = new ArrayList<>();
                 if (null != friendInfos) {
                     for (ContactInterface.FriendInfo info : friendInfos) {
-                        if(info.status==ContactInterface.Status.WaitForAccept ||
-                                info.status==ContactInterface.Status.Removed ||
+                        if(info.status==ContactInterface.Status.Removed ||
                                 info.status==ContactInterface.Status.Invalid) continue;
                         ContactEntity contactEntity = new ContactEntity();
                         contactEntity.setContact(StringUtils.isNullOrEmpty(info.nickname)?"nickname":info.nickname);

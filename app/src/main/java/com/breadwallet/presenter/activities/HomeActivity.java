@@ -260,7 +260,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                     if(StringUtil.isNullOrEmpty(info)) return;
                     ProfileDataSource.getInstance(HomeActivity.this).upchain(info);
                     String did = Utility.getInstance(HomeActivity.this).getDid(publicKey);
-                    PushClient.getInstance().bindAccount(did, null);
+//                    Log.d("xidaokun_push", "bind did:"+did);
+//                    PushClient.getInstance().bindAccount(did, null);
                     BRSharedPrefs.cacheMyDid(HomeActivity.this, did);
                     BRSharedPrefs.putDid2ChainTime(HomeActivity.this, System.currentTimeMillis());
                 }
