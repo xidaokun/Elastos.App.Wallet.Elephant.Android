@@ -27,6 +27,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.SettingsUtil;
+import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -65,19 +66,19 @@ public class FragmentSetting extends Fragment {
     private TextView mNickname;
     private void setTitleAndList(View rootView) {
         mDidContent = rootView.findViewById(R.id.did_content);
-        String did = "";
-        try {
-            byte[] phrase = BRKeyStore.getPhrase(getContext(), 0);
-            String publickey = Utility.getInstance(getContext()).getSinglePublicKey(new String(phrase));
-            if(publickey != null) {
-                did = Utility.getInstance(getContext()).getDid(publickey);
+        String did = BRSharedPrefs.getMyDid(getContext());
+        if(StringUtil.isNullOrEmpty(did)) {
+            try {
+                byte[] phrase = BRKeyStore.getPhrase(getContext(), 0);
+                String publickey = Utility.getInstance(getContext()).getSinglePublicKey(new String(phrase));
+                if(publickey != null) {
+                    did = Utility.getInstance(getContext()).getDid(publickey);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
-        PushClient.getInstance().bindAccount(did, null);
-        PushClient.getInstance().bindAlias(did, null);
         mDidContent.setText("did:ela:"+did);
 
         mNickname = rootView.findViewById(R.id.did_alias);

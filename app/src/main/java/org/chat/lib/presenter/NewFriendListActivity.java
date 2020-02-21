@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
@@ -33,6 +34,8 @@ public class NewFriendListActivity extends BRActivity implements NewFriendAdapte
         initView();
         initListener();
         refreshData();
+
+        EventBus.getDefault().register(this);
     }
 
     private List<NewFriendBean> mWaitAcceptBeans = new ArrayList<>();
@@ -51,16 +54,26 @@ public class NewFriendListActivity extends BRActivity implements NewFriendAdapte
 
     private void initListener() {
         mAdapter.setOnItemListener(this);
+        findViewById(R.id.back_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     @Override
     public void accept(View view, int position) {
         String friendCode = mWaitAcceptBeans.get(position).friendCode;
-        CarrierPeerNode.getInstance(this).acceptFriend(friendCode, BRConstants.CHAT_SINGLE_TYPE);
-        ChatDataSource.getInstance(this).updateAcceptState(friendCode, BRConstants.ACCEPTED);
-        mWaitAcceptBeans.get(position).acceptStatus = BRConstants.ACCEPTED;
-        mAdapter.notifyDataSetChanged();
-        EventBus.getDefault().post(friendCode);
+        int ret = CarrierPeerNode.getInstance(this).acceptFriend(friendCode, BRConstants.CHAT_SINGLE_TYPE);
+        if(0 == ret) {
+            ChatDataSource.getInstance(this).updateAcceptState(friendCode, BRConstants.ACCEPTED);
+            mWaitAcceptBeans.get(position).acceptStatus = BRConstants.ACCEPTED;
+            mAdapter.notifyDataSetChanged();
+            EventBus.getDefault().post(friendCode);
+        } else {
+            Toast.makeText(this, "CarrierPeerNode accept failed ret:" + ret, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -72,5 +85,11 @@ public class NewFriendListActivity extends BRActivity implements NewFriendAdapte
     public void receiveAddAcceptEvent(CarrierPeerNode.FriendStatusInfo friendStatusInfo) {
         ChatDataSource.getInstance(this).updateAcceptState(friendStatusInfo.humanCode, BRConstants.ACCEPTED);
         refreshData();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }

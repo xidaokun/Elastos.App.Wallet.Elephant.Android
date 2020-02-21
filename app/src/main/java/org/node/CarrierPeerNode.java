@@ -302,9 +302,10 @@ public class CarrierPeerNode {
         EventBus.getDefault().post(messageInfo);
     }
 
-    public void setMyInfo(Contact.HumanInfo.Item item, String value) {
+    public int setMyInfo(Contact.HumanInfo.Item item, String value) {
         int ret = mPeerNode.setUserInfo(item, value);
         Log.d("xidaokun", "CarrierPeerNode#setMyInfo#======ret:"+ ret);
+        return ret;
     }
 
     public void setFriendInfo(String humanCode, Contact.HumanInfo.Item item, String value) {
@@ -325,7 +326,7 @@ public class CarrierPeerNode {
         int ret = mPeerNode.addFriend(friendCode, "{\"content\": \"" + BRConstants.CHAT_SINGLE_TYPE + "\"}");
         if(0 == ret) {
             setFriendInfo(friendCode, Contact.HumanInfo.Item.Addition, "{\"type\":\"chat\",\"value\":\"" + BRConstants.CHAT_SINGLE_TYPE + "\"}");
-            String myDid = BRSharedPrefs.getDid(mContext);
+            String myDid = BRSharedPrefs.getMyDid(mContext);
             String nickName = BRSharedPrefs.getNickname(mContext);
             PushServer.sendNotice(myDid, friendCode, nickName);
         }

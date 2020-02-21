@@ -17,7 +17,9 @@ import org.chat.lib.entity.NewFriendBean;
 import org.chat.lib.utils.Constants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ChatDataSource implements BRDataSourceInterface {
 
@@ -88,6 +90,30 @@ public class ChatDataSource implements BRDataSourceInterface {
         }
 
         return waitAcceptBeans;
+    }
+
+    public Map<String,String> getAllFriendName() {
+        Map<String, String> hashMap = new HashMap();
+
+
+        Cursor cursor = null;
+        try {
+            database = openDatabase();
+            cursor = database.query(BRSQLiteHelper.WAIT_ACCEPT_TABLE_NAME, waitAcceptColumns, null, null, null, null, "waitAcceptTimestamp asc");
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                hashMap.put(cursor.getString(0), cursor.getString(1));
+                cursor.moveToNext();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null)
+                cursor.close();
+            closeDatabase();
+        }
+
+        return hashMap;
     }
 
     public List<NewFriendBean> getNotAcceptFriends() {

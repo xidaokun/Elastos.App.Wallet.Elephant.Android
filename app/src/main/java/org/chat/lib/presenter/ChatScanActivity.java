@@ -133,8 +133,8 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
     ElaphantDialogEdit mElaphantDialog = null;
     private void showNicknameDialog(final String friendCode) {
         if(mElaphantDialog == null) mElaphantDialog = new ElaphantDialogEdit(ChatScanActivity.this);
-        mElaphantDialog.setTitleStr("Set nickname to chat");
-        mElaphantDialog.setMessageStr("Input Other nickname");
+        mElaphantDialog.setTitleStr("Set friend nickname to chat");
+        mElaphantDialog.setMessageStr("Input friend nickname");
         mElaphantDialog.setPositiveStr("Set Now");
         mElaphantDialog.setNegativeStr("Cancel");
         mElaphantDialog.setPositiveListener(new ElaphantDialogEdit.OnPositiveClickListener() {

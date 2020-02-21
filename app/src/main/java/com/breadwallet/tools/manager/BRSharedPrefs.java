@@ -758,7 +758,7 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
-    public static String getDid(Context context) {
+    public static String getMyDid(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
         return prefs.getString("myDid", "");
     }

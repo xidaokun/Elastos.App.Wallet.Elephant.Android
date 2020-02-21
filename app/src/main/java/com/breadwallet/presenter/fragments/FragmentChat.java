@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.tools.animation.ElaphantDialogEdit;
@@ -106,9 +107,12 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
             public void onClick() {
                 String nickName = elaphantDialog.getEditText();
                 BRSharedPrefs.putNickname(getContext(), nickName);
-                CarrierPeerNode.getInstance(getContext()).
+                int ret = CarrierPeerNode.getInstance(getContext()).
                         setMyInfo(Contact.HumanInfo.Item.Nickname,
                                 StringUtil.isNullOrEmpty(nickName)?"nickname":nickName);
+                if(0 != ret) {
+                    Toast.makeText(getContext(), "set nickname fialed ret:"+ret, Toast.LENGTH_SHORT).show();
+                }
                 elaphantDialog.dismiss();
             }
         });

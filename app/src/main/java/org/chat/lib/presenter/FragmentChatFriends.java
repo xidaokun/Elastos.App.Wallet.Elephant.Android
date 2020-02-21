@@ -26,6 +26,7 @@ import org.chat.lib.source.ChatDataSource;
 import org.chat.lib.widget.DividerItemDecoration;
 import org.chat.lib.widget.IndexBar;
 import org.chat.lib.widget.SuspensionDecoration;
+import org.elastos.sdk.elephantwallet.contact.Contact;
 import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -34,6 +35,7 @@ import org.node.CarrierPeerNode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class FragmentChatFriends extends BaseFragment {
     private static final String TAG = FragmentChatFriends.class.getSimpleName() + "_log";
@@ -183,13 +185,28 @@ public class FragmentChatFriends extends BaseFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void receiveAddAcceptEvent(CarrierPeerNode.FriendStatusInfo friendStatusInfo) {
+        Log.d("xidaokun", "FragementChatFriends#receiveAddAcceptEvent#friendCode:"+friendStatusInfo.humanCode+"\n#status:"+friendStatusInfo.status);
         ChatDataSource.getInstance(getContext()).updateAcceptState(friendStatusInfo.humanCode, BRConstants.ACCEPTED);
         refreshFriendView();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void receiveAddRequestEvent(String friendCode) {
+        Log.d("xidaokun", "FragementChatFriends#receiveAddRequestEvent#friendCode:"+friendCode);
         refreshFriendView();
+    }
+
+    private String getFriendNickname(Map<String,String> friends, String humancode, List<Contact.HumanInfo.CarrierInfo> carrierInfos) {
+        String nickname = null;
+        nickname = friends.get(humancode);
+        if(StringUtil.isNullOrEmpty(nickname)) {
+            for(Contact.HumanInfo.CarrierInfo carrierInfo : carrierInfos) {
+                nickname = friends.get(carrierInfo.usrAddr);
+                if(!StringUtil.isNullOrEmpty(nickname)) return nickname;
+            }
+        }
+
+        return nickname;
     }
 
     private void refreshFriendView() {
@@ -197,6 +214,7 @@ public class FragmentChatFriends extends BaseFragment {
             @Override
             public void run() {
                 List<ContactInterface.FriendInfo> friendInfos = CarrierPeerNode.getInstance(getContext()).getFriends();
+                Map<String, String> friendsNickname = ChatDataSource.getInstance(getContext()).getAllFriendName();
                 List<ContactEntity> contacts = new ArrayList<>();
                 if (null != friendInfos) {
                     for (ContactInterface.FriendInfo info : friendInfos) {
@@ -204,7 +222,8 @@ public class FragmentChatFriends extends BaseFragment {
                                 info.status==ContactInterface.Status.Removed ||
                                 info.status==ContactInterface.Status.Invalid) continue;
                         ContactEntity contactEntity = new ContactEntity();
-                        contactEntity.setContact(StringUtils.isNullOrEmpty(info.nickname)?"nickname":info.nickname);
+                        String nickname = getFriendNickname(friendsNickname, info.humanCode, info.boundCarrierArray);
+                        contactEntity.setContact(StringUtils.isNullOrEmpty(nickname)?"nickname":nickname);
                         contactEntity.setTokenAddress(info.elaAddress);
                         contactEntity.setFriendCode(info.humanCode);
                         contactEntity.setType(info.addition);
@@ -235,7 +254,6 @@ public class FragmentChatFriends extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        CarrierPeerNode.getInstance(getContext()).stop();
         EventBus.getDefault().unregister(this);
     }
 }

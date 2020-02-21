@@ -23,7 +23,6 @@ import com.breadwallet.presenter.fragments.FragmentChat;
 import com.breadwallet.presenter.fragments.FragmentExplore;
 import com.breadwallet.presenter.fragments.FragmentSetting;
 import com.breadwallet.presenter.fragments.FragmentWallet;
-import com.breadwallet.tools.animation.ElaphantDialogText;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -235,6 +234,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             mDid = didManager.createDid(0);
             mDid.setNode(node);
             publicKey = Utility.getInstance(HomeActivity.this).getSinglePublicKey(mnemonic);
+            bindDid();
         }
     }
 
@@ -259,14 +259,25 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                     String info = mDid.signInfo(mSeed, data, false);
                     if(StringUtil.isNullOrEmpty(info)) return;
                     ProfileDataSource.getInstance(HomeActivity.this).upchain(info);
-                    String did = Utility.getInstance(HomeActivity.this).getDid(publicKey);
-//                    Log.d("xidaokun_push", "bind did:"+did);
-//                    PushClient.getInstance().bindAccount(did, null);
-                    BRSharedPrefs.cacheMyDid(HomeActivity.this, did);
+                    String did = BRSharedPrefs.getMyDid(HomeActivity.this);
+                    if(StringUtil.isNullOrEmpty(did)) {
+                        did = Utility.getInstance(HomeActivity.this).getDid(publicKey);
+                        BRSharedPrefs.cacheMyDid(HomeActivity.this, did);
+                    }
                     BRSharedPrefs.putDid2ChainTime(HomeActivity.this, System.currentTimeMillis());
                 }
             }
         });
+    }
+
+    private void bindDid() {
+        String did = BRSharedPrefs.getMyDid(HomeActivity.this);
+        if(StringUtil.isNullOrEmpty(did)) {
+            did = Utility.getInstance(HomeActivity.this).getDid(publicKey);
+            BRSharedPrefs.cacheMyDid(HomeActivity.this, did);
+        }
+        Log.d("xidaokun_push", "bind did:"+did);
+        PushClient.getInstance().bindAccount(did, null);
     }
 
     private String getMn(){
