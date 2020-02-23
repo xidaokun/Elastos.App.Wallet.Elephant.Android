@@ -90,6 +90,22 @@
             android:background="#cccccc"/>
 
         <TextView
+            android:id="@+id/chat_contact_item_edit_nickname"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="#007aff"
+            android:text="Edit"/>
+
+        <View
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="#cccccc"/>
+
+        <TextView
             android:id="@+id/chat_contact_item_delete"
             android:layout_width="0dp"
             android:layout_height="match_parent"

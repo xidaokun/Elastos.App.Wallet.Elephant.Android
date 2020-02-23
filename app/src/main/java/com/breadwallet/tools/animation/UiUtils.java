@@ -41,6 +41,7 @@ import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.LoginActivity;
 import com.breadwallet.presenter.activities.MultiSignCreateActivity;
 import com.breadwallet.presenter.activities.MultiSignTxActivity;
+import com.breadwallet.presenter.activities.ProfileActivity;
 import com.breadwallet.presenter.activities.VoteActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.WalletNameActivity;
@@ -84,6 +85,7 @@ import com.platform.sqlite.PlatformSqliteHelper;
 import org.chat.lib.presenter.ChatScanActivity;
 import org.chat.lib.presenter.ChatDetailActivity;
 import org.chat.lib.presenter.ChatGroupSelectActivity;
+import org.chat.lib.presenter.FriendProfileEditActivity;
 import org.chat.lib.presenter.NewFriendListActivity;
 import org.chat.lib.presenter.GroupNameActivity;
 import org.chat.lib.presenter.MyQrActivity;
@@ -533,6 +535,12 @@ public class UiUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void startProfileEditActivity(Context context, String friendCode) {
+        Intent intent = new Intent(context, FriendProfileEditActivity.class);
+        intent.putExtra("tokenAddress", friendCode);
+        context.startActivity(intent);
     }
 
     public static void startChatDetailActivity(Context context, String friendCode, String type, String chatName) {

@@ -95,6 +95,12 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     if(null != mListener) mListener.sendMessage(v, position);
                 }
             });
+            viewHolder.editNickname.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(null != mListener) mListener.editNickname(v, position);
+                }
+            });
             viewHolder.delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -124,6 +130,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         View sendTokenLayout;
         View sendToken;
         View sendMessage;
+        View editNickname;
         View delete;
 
         public NormalViewHolder(View itemView) {
@@ -135,6 +142,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             sendTokenLayout = itemView.findViewById(R.id.chat_contact_send_token_view);
             sendToken = itemView.findViewById(R.id.chat_contact_item_send_token);
             sendMessage = itemView.findViewById(R.id.chat_contact_item_send_message);
+            editNickname = itemView.findViewById(R.id.chat_contact_item_edit_nickname);
             delete = itemView.findViewById(R.id.chat_contact_item_delete);
         }
     }
@@ -151,6 +159,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         void onItemClick(View view, int position);
         void sendToken(View view, int position);
         void sendMessage(View view, int position);
+        void editNickname(View view, int position);
         void deleteFriends(View view, int position);
     }
 }

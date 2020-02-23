@@ -177,6 +177,38 @@ public class ChatDataSource implements BRDataSourceInterface {
         }
     }
 
+    public boolean isFriendExit(String friendCode) {
+        Cursor cursor = null;
+
+        try {
+            database = openDatabase();
+            cursor = database.query(BRSQLiteHelper.WAIT_ACCEPT_TABLE_NAME, waitAcceptColumns, BRSQLiteHelper.WAIT_ACCEPT_FRIENDCODE + " = ? ", new String[]{friendCode}, null, null, null);
+            return cursor.getCount()>0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null)
+                cursor.close();
+            closeDatabase();
+        }
+
+        return false;
+    }
+
+    public void updateFriendName(String friendCode, String nickname) {
+        try {
+            database = openDatabase();
+
+            ContentValues args = new ContentValues();
+            args.put(BRSQLiteHelper.WAIT_ACCEPT_NICKNAME, nickname);
+
+            int r = database.update(BRSQLiteHelper.WAIT_ACCEPT_TABLE_NAME, args, BRSQLiteHelper.WAIT_ACCEPT_FRIENDCODE + " = ? ", new String[]{friendCode});
+            Log.d("xidaokun", "ChatDataSource#updateMessageItem#ret:"+ r);
+        } finally {
+            closeDatabase();
+        }
+    }
+
     public void cacheWaitAcceptFriends(List<NewFriendBean> waitAcceptBeans) {
         if (waitAcceptBeans == null) return;
         try {

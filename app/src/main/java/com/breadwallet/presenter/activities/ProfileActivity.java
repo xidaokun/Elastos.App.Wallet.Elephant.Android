@@ -26,7 +26,6 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.SettingsUtil;
 import com.breadwallet.tools.util.StringUtil;
-import com.elastos.jni.Utility;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
