@@ -52,6 +52,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             final NormalViewHolder viewHolder = ((NormalViewHolder)holder);
             final ContactEntity contactEntity = mDatas.get(position);
             viewHolder.name.setText(contactEntity.getContact());
+            viewHolder.alias.setText(contactEntity.getContact().substring(0, 1));
             viewHolder.sendTokenLayout.setVisibility(View.GONE);
             if(contactEntity.isShowBottom()) viewHolder.sendTokenLayout.setVisibility(View.VISIBLE);
             viewHolder.content.setOnClickListener(new View.OnClickListener() {
@@ -107,7 +108,12 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     if(null != mListener) mListener.deleteFriends(v, position);
                 }
             });
-            viewHolder.logo.setImageResource(R.drawable.emotion_duoyun);
+            if(contactEntity.isTop()) {
+                viewHolder.logo.setImageResource(R.drawable.chat_head_online_bg);
+            } else {
+                viewHolder.logo.setImageResource(R.drawable.chat_head_online_bg);
+            }
+
         }
     }
 
@@ -124,6 +130,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public class NormalViewHolder extends RecyclerView.ViewHolder {
         TextView name;
+        TextView alias;
         TextView waitForAcceptCount;
         RoundImageView logo;
         View content;
@@ -137,6 +144,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             super(itemView);
             logo = itemView.findViewById(R.id.chat_contact_item_logo);
             name = itemView.findViewById(R.id.chat_contact_item_name);
+            alias = itemView.findViewById(R.id.alias);
             waitForAcceptCount = itemView.findViewById(R.id.wait_for_accept_count_tv);
             content = itemView.findViewById(R.id.content);
             sendTokenLayout = itemView.findViewById(R.id.chat_contact_send_token_view);

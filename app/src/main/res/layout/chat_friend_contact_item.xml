@@ -1,27 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <RelativeLayout
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:gravity="center_vertical">
 
-        <org.chat.lib.widget.RoundImageView
-            android:id="@+id/chat_contact_item_logo"
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/roundimage_layout"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/emotion_aiqing" />
+            android:layout_centerVertical="true">
+
+            <org.chat.lib.widget.RoundImageView
+                android:id="@+id/chat_contact_item_logo"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:scaleType="center"
+                android:src="@drawable/chat_head_offline_bg"/>
+
+            <TextView
+                android:id="@+id/alias"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="名"
+                android:textSize="11sp"
+                android:textColor="@color/black"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_alignTop="@+id/chat_contact_item_logo"
+                android:layout_alignBottom="@+id/chat_contact_item_logo"
+                android:layout_alignBaseline="@+id/chat_contact_item_logo"/>
+
+        </android.support.constraint.ConstraintLayout>
 
         <TextView
             android:id="@+id/chat_contact_item_name"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:lines="1"
-            android:layout_toRightOf="@+id/chat_contact_item_logo"
+            android:layout_toRightOf="@+id/roundimage_layout"
             android:gravity="center_vertical"
             android:paddingLeft="15dp"
             android:layout_marginRight="15dp"
