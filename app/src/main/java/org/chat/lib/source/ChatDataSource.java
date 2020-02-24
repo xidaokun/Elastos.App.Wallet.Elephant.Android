@@ -9,12 +9,16 @@ import android.util.Log;
 import com.breadwallet.tools.sqlite.BRDataSourceInterface;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.StringUtil;
 import com.google.gson.Gson;
 
 import org.chat.lib.entity.MessageCacheBean;
 import org.chat.lib.entity.MessageItemBean;
 import org.chat.lib.entity.NewFriendBean;
 import org.chat.lib.utils.Constants;
+import org.elastos.sdk.elephantwallet.contact.Contact;
+import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
+import org.node.CarrierPeerNode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -433,6 +437,20 @@ public class ChatDataSource implements BRDataSourceInterface {
         messageCacheBean.MessageFriendIconPath = cursor.getString(9);
 
         return messageCacheBean;
+    }
+
+    public String getNickname(String friendCode) {
+        Map<String, String> friendsNickname = ChatDataSource.getInstance(mContext).getAllFriendName();
+        ContactInterface.FriendInfo friendInfo = CarrierPeerNode.getInstance(mContext).getFriendInfo(friendCode);
+        if(null == friendInfo) return null;
+        String nickname = friendsNickname.get(friendInfo.humanCode);
+        if(!StringUtil.isNullOrEmpty(nickname)) return nickname;
+        for(Contact.HumanInfo.CarrierInfo carrierInfo : friendInfo.boundCarrierArray) {
+            nickname = friendsNickname.get(carrierInfo.usrAddr);
+            if(!StringUtil.isNullOrEmpty(nickname)) return nickname;
+        }
+
+        return null;
     }
 
     public List<MessageCacheBean> getMessage(String selection, String[] selectionArgs) {

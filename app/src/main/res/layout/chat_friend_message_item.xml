@@ -33,12 +33,14 @@
 
         <TextView
             android:id="@+id/chat_item_msg"
-            android:layout_width="wrap_content"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:textColor="#cccccc"
+            android:lines="1"
+            android:ellipsize="end"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/chat_item_logo" />
+            app:layout_constraintLeft_toRightOf="@+id/chat_item_logo"/>
 
         <TextView
             android:id="@+id/chat_item_time"

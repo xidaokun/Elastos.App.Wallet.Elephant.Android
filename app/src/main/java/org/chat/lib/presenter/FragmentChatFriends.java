@@ -232,6 +232,7 @@ public class FragmentChatFriends extends BaseFragment {
                         contactEntity.setContact(StringUtils.isNullOrEmpty(nickname)?"nickname":nickname);
                         contactEntity.setTokenAddress(info.elaAddress);
                         contactEntity.setFriendCode(info.humanCode);
+                        contactEntity.setOnline(info.status==ContactInterface.Status.Online);
                         contactEntity.setType(info.addition);
                         contacts.add(contactEntity);
                     }

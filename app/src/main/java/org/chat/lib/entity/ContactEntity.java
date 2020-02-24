@@ -6,6 +6,7 @@ public class ContactEntity extends BaseIndexPinyinBean {
     private String tokenAddress;
     private String friendCode;
     private String type; //single, group
+    private boolean online;
     private boolean isTop;
     private int waitAcceptCount;
 
@@ -16,6 +17,14 @@ public class ContactEntity extends BaseIndexPinyinBean {
     public ContactEntity setWaitAcceptCount(int waitAcceptCount) {
         this.waitAcceptCount = waitAcceptCount;
         return this;
+    }
+
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
     }
 
     public String getType() {

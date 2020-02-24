@@ -162,6 +162,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     @Subscribe(threadMode = ThreadMode.MAIN, priority = 1)
     public void MessageEvent(MessageInfo messageInfo) {
         String friendCode = messageInfo.getFriendCode();
+
         if(StringUtil.isNullOrEmpty(friendCode)) return; //only receive message
         Log.d("xidaokun", "HomeActivity#MessageEvent#cacheMessgeInfo#begin");
         ChatDataSource.getInstance(this)

@@ -52,6 +52,11 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             final NormalViewHolder viewHolder = ((NormalViewHolder)holder);
             final ContactEntity contactEntity = mDatas.get(position);
             viewHolder.name.setText(contactEntity.getContact());
+            if(contactEntity.isTop()) {
+                viewHolder.alias.setVisibility(View.GONE);
+            } else {
+                viewHolder.alias.setVisibility(View.VISIBLE);
+            }
             viewHolder.alias.setText(contactEntity.getContact().substring(0, 1));
             viewHolder.sendTokenLayout.setVisibility(View.GONE);
             if(contactEntity.isShowBottom()) viewHolder.sendTokenLayout.setVisibility(View.VISIBLE);
@@ -109,9 +114,11 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
             });
             if(contactEntity.isTop()) {
+                viewHolder.logo.setImageResource(R.drawable.new_friend);
+            } else if(mDatas.get(position).isOnline()) {
                 viewHolder.logo.setImageResource(R.drawable.chat_head_online_bg);
             } else {
-                viewHolder.logo.setImageResource(R.drawable.chat_head_online_bg);
+                viewHolder.logo.setImageResource(R.drawable.chat_head_offline_bg);
             }
 
         }

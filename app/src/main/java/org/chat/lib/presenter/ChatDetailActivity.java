@@ -33,8 +33,10 @@ import org.chat.lib.utils.Constants;
 import org.chat.lib.utils.GlobalOnItemClickListener;
 import org.chat.lib.widget.EmotionInputDetector;
 import org.chat.lib.widget.NoScrollViewPager;
+import org.chat.lib.widget.RoundImageView;
 import org.chat.lib.widget.StateButton;
 import org.easy.recycleview.EasyRecyclerView;
+import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -47,6 +49,8 @@ import java.util.List;
 public class ChatDetailActivity extends BRActivity {
 
     View mBackBtn;
+    RoundImageView mHeaderImg;
+    TextView mAliasTv;
     EasyRecyclerView chatLv;
     ImageView emotionIv;
     EditText editEdt;
@@ -61,6 +65,8 @@ public class ChatDetailActivity extends BRActivity {
 
     private void initView() {
         mBackBtn = findViewById(R.id.back_button);
+        mAliasTv = findViewById(R.id.chat_detail_alias);
+        mHeaderImg = findViewById(R.id.chat_detail_header);
         titleTv = findViewById(R.id.title);
         chatIdTv = findViewById(R.id.chat_detail_id);
         chatLv = findViewById(R.id.chat_list);
@@ -72,6 +78,13 @@ public class ChatDetailActivity extends BRActivity {
         emotionSendBtn = findViewById(R.id.emotion_send);
         viewpager = findViewById(R.id.viewpager);
         emotionLayout = findViewById(R.id.emotion_layout);
+
+       ContactInterface.Status status = CarrierPeerNode.getInstance(this).getFriendStatus(mFriendCodeStr);
+       if(status!=null && status==ContactInterface.Status.Online) {
+           mHeaderImg.setImageResource(R.drawable.chat_head_online_bg);
+       } else {
+           mHeaderImg.setImageResource(R.drawable.chat_head_offline_bg);
+       }
     }
 
     private EmotionInputDetector mDetector;
@@ -106,7 +119,10 @@ public class ChatDetailActivity extends BRActivity {
     }
 
     private void initWidget() {
-        if(!StringUtil.isNullOrEmpty(mTitle)) titleTv.setText(mTitle);
+        if(!StringUtil.isNullOrEmpty(mTitle)) {
+            titleTv.setText(mTitle);
+            mAliasTv.setText(mTitle.substring(0, 1));
+        }
         if(!StringUtil.isNullOrEmpty(mFriendCodeStr)) chatIdTv.setText(mFriendCodeStr);
 
         fragments = new ArrayList<>();

@@ -360,6 +360,24 @@ public class CarrierPeerNode {
         return mPeerNode.listFriendInfo();
     }
 
+    public ContactInterface.FriendInfo getFriendInfo(String friendCode) {
+        List<ContactInterface.FriendInfo> friendInfos =getFriends();
+        if(friendInfos == null) return null;
+        for(ContactInterface.FriendInfo friendInfo : friendInfos) {
+            if(friendInfo.humanCode.equals(friendCode)) {
+                return friendInfo;
+            }
+            List<Contact.HumanInfo.CarrierInfo> boundCarrierArray = friendInfo.boundCarrierArray;
+            for(Contact.HumanInfo.CarrierInfo carrierInfo : boundCarrierArray) {
+                if(carrierInfo.usrAddr.equals(friendCode)) {
+                    return friendInfo;
+                }
+            }
+        }
+
+        return null;
+    }
+
     public ContactInterface.UserInfo getUserInfo() {
         return mPeerNode.getUserInfo();
     }

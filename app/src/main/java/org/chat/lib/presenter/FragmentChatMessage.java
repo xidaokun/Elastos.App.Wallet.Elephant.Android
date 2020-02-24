@@ -81,7 +81,8 @@ public class FragmentChatMessage extends BaseFragment {
                     MessageCacheBean lastBean = allMessageCacheBeans.get(count - 1);
                     ChatMsgEntity entity = new ChatMsgEntity();
                     //TODO daokun.xi
-                    entity.setName(StringUtils.isNullOrEmpty(lastBean.MessageNickname)?"Nickname":lastBean.MessageNickname);
+                    String nickname = ChatDataSource.getInstance(getContext()).getNickname(lastBean.MessageFriendCode);
+                    entity.setName(StringUtils.isNullOrEmpty(nickname)?lastBean.MessageFriendCode:nickname);
                     entity.setMessage(lastBean.MessageContent);
                     entity.setTimeStamp(lastBean.MessageTimestamp);
                     entity.setFriendCode(lastBean.MessageFriendCode);

@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="true"
     android:background="@color/white"
     android:orientation="vertical">
@@ -20,21 +21,44 @@
             android:background="@null"
             android:src="@drawable/toolbar_back_arrow" />
 
-        <org.chat.lib.widget.RoundImageView
-            android:id="@+id/chat_detail_header"
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/header_layout"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@+id/back_button"
-            android:src="@drawable/unknow"/>
+            android:background="@null"
+            android:layout_toRightOf="@+id/back_button">
+
+            <org.chat.lib.widget.RoundImageView
+                android:id="@+id/chat_detail_header"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:scaleType="center"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:src="@drawable/chat_head_online_bg"/>
+
+            <TextView
+                android:id="@+id/chat_detail_alias"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="11sp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:textColor="@color/black"/>
+        </android.support.constraint.ConstraintLayout>
 
         <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/chat_detail_header"
-            android:layout_alignTop="@+id/chat_detail_header"
+            android:layout_toRightOf="@+id/header_layout"
+            android:layout_alignTop="@+id/header_layout"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="2dp"
             android:textColor="@color/black_333333"
@@ -47,8 +71,8 @@
             android:layout_height="wrap_content"
             android:textColor="@color/black_999999"
             android:textSize="8sp"
-            android:layout_toRightOf="@+id/chat_detail_header"
-            android:layout_alignBottom="@+id/chat_detail_header"
+            android:layout_toRightOf="@+id/header_layout"
+            android:layout_alignBottom="@+id/header_layout"
             android:layout_marginLeft="10dp"
             android:layout_marginBottom="2dp"
             android:text="DID"/>
