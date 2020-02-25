@@ -50,6 +50,15 @@ public class ChatMsgEntity {
     private String iconUrl;
     private String friendCode;
     private String type;//single, group
+    private boolean online;
+
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
+    }
 
     public String getType() {
         return type;

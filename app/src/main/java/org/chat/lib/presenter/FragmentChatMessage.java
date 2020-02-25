@@ -21,9 +21,11 @@ import org.chat.lib.entity.MessageCacheBean;
 import org.chat.lib.entity.MessageItemBean;
 import org.chat.lib.source.ChatDataSource;
 import org.chat.lib.utils.Utils;
+import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.node.CarrierPeerNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,6 +89,8 @@ public class FragmentChatMessage extends BaseFragment {
                     entity.setTimeStamp(lastBean.MessageTimestamp);
                     entity.setFriendCode(lastBean.MessageFriendCode);
                     entity.setType(lastBean.MessageType);
+                    ContactInterface.FriendInfo friendInfo = CarrierPeerNode.getInstance(getContext()).getFriendInfo(lastBean.MessageFriendCode);
+                    entity.setOnline((friendInfo!=null&&(friendInfo.status==ContactInterface.Status.Online)));
                     entity.setCount((null!=hasNotReadCacheBeans && hasNotReadCacheBeans.size()>0)? hasNotReadCacheBeans.size() : 0);
 
                     entities.add(entity);

@@ -11,15 +11,36 @@
         android:layout_centerVertical="true"
         android:orientation="horizontal">
 
-        <com.breadwallet.presenter.customviews.RoundImageView
-            android:id="@+id/chat_item_logo"
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/chat_item_logo_layout"
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_marginLeft="15dp"
-            android:src="@drawable/icon_head"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <org.chat.lib.widget.RoundImageView
+                android:id="@+id/chat_item_logo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/chat_head_offline_bg"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
+
+            <TextView
+                android:id="@+id/chat_item_alias"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
+
+        </android.support.constraint.ConstraintLayout>
 
         <TextView
             android:id="@+id/chat_item_name"
@@ -28,7 +49,7 @@
             android:layout_marginLeft="10dp"
             android:lines="1"
             android:textColor="#333333"
-            app:layout_constraintLeft_toRightOf="@+id/chat_item_logo"
+            app:layout_constraintLeft_toRightOf="@+id/chat_item_logo_layout"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -40,7 +61,7 @@
             android:lines="1"
             android:ellipsize="end"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@+id/chat_item_logo"/>
+            app:layout_constraintLeft_toRightOf="@+id/chat_item_logo_layout"/>
 
         <TextView
             android:id="@+id/chat_item_time"

@@ -57,7 +57,9 @@ public class ChatMessageAdapter extends BaseAdapter {
         if (null == convertView) {
             convertView = View.inflate(mContext, R.layout.chat_friend_message_item, null);
             viewHolder = new ViewHolder();
+            viewHolder.logoImag = convertView.findViewById(R.id.chat_item_logo);
             viewHolder.nameTv = convertView.findViewById(R.id.chat_item_name);
+            viewHolder.aliasTv = convertView.findViewById(R.id.chat_item_alias);
             viewHolder.msgTv = convertView.findViewById(R.id.chat_item_msg);
             viewHolder.timeTv = convertView.findViewById(R.id.chat_item_time);
             viewHolder.countTv = convertView.findViewById(R.id.chat_item_count);
@@ -65,7 +67,9 @@ public class ChatMessageAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        viewHolder.nameTv.setText(mEntities.get(position).getName());
+        String name = mEntities.get(position).getName();
+        viewHolder.nameTv.setText(name);
+        viewHolder.aliasTv.setText(name.substring(0, 1));
         viewHolder.msgTv.setText(mEntities.get(position).getMessage());
         viewHolder.timeTv.setText(BRDateUtil.getFormatDate(mEntities.get(position).getTimeStamp(), "yyyy-MM-dd hh:mm:ss"));
         convertView.setOnClickListener(new View.OnClickListener() {
@@ -112,11 +116,19 @@ public class ChatMessageAdapter extends BaseAdapter {
             viewHolder.countTv.setVisibility(View.VISIBLE);
             viewHolder.countTv.setText(String.valueOf(count));
         }
+
+        if(mEntities.get(position).isOnline()) {
+            viewHolder.logoImag.setImageResource(R.drawable.chat_head_online_bg);
+        } else {
+            viewHolder.logoImag.setImageResource(R.drawable.chat_head_offline_bg);
+        }
+
         return convertView;
     }
 
     class ViewHolder {
         public RoundImageView logoImag;
+        public TextView aliasTv;
         public TextView nameTv;
         public TextView msgTv;
         public TextView timeTv;
