@@ -82,16 +82,17 @@ public class FriendProfileEditActivity extends BRActivity {
     }
 
     private String getFriendCode(Map<String,String> friends, String humancode, List<Contact.HumanInfo.CarrierInfo> carrierInfos) {
-        String nickname = null;
-        nickname = friends.get(humancode);
-        if(StringUtil.isNullOrEmpty(nickname)) {
+        String nickname = friends.get(humancode);
+        if(!StringUtil.isNullOrEmpty(nickname)) {
+            return humancode;
+        } else {
             for(Contact.HumanInfo.CarrierInfo carrierInfo : carrierInfos) {
                 nickname = friends.get(carrierInfo.usrAddr);
                 if(!StringUtil.isNullOrEmpty(nickname)) return carrierInfo.usrAddr;
             }
         }
 
-        return nickname;
+        return null;
     }
 
 }

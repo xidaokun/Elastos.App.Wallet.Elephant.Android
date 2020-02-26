@@ -539,7 +539,7 @@ public class UiUtils {
 
     public static void startProfileEditActivity(Context context, String friendCode) {
         Intent intent = new Intent(context, FriendProfileEditActivity.class);
-        intent.putExtra("tokenAddress", friendCode);
+        intent.putExtra("friendCode", friendCode);
         context.startActivity(intent);
     }
 

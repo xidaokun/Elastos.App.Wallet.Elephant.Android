@@ -62,6 +62,11 @@ public class FragmentChatMessage extends BaseFragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    public void friendStatusChange(CarrierPeerNode.FriendStatusInfo friendStatusInfo) {
+        refreshData();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void receiveMessageEvent(RefreshMessage refreshMessage) {
         refreshData();
     }
