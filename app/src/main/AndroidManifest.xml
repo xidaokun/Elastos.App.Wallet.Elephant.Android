@@ -330,7 +330,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".presenter.activities.ProfileActivity"
+            android:name=".presenter.activities.MyProfileActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 

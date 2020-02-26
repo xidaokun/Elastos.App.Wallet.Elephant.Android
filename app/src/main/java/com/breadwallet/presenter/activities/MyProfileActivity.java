@@ -40,9 +40,9 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class ProfileActivity extends BRActivity {
+public class MyProfileActivity extends BRActivity {
 
-    private static final String TAG = ProfileActivity.class.getSimpleName();
+    private static final String TAG = MyProfileActivity.class.getSimpleName();
 
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler(){
@@ -51,7 +51,7 @@ public class ProfileActivity extends BRActivity {
             super.handleMessage(msg);
             Log.i("ProfileFunction", "adapter notify");
             mData.clear();
-            mData.addAll(SettingsUtil.getProfileSettings(ProfileActivity.this));
+            mData.addAll(SettingsUtil.getProfileSettings(MyProfileActivity.this));
             mAdapter.notifyDataSetChanged();
             int count = getCompleteCount();
             mCountTv.setText(String.valueOf(count));
@@ -102,7 +102,7 @@ public class ProfileActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_layout);
         ListView listView = findViewById(R.id.profile_list);
-//        mData.addAll(SettingsUtil.getProfileSettings(ProfileActivity.this));
+//        mData.addAll(SettingsUtil.getProfileSettings(MyProfileActivity.this));
         mAdapter = new SettingsAdapter(this, R.layout.settings_list_item, mData);
         listView.setAdapter(mAdapter);
         findViewById(R.id.back_button).setOnClickListener(new View.OnClickListener() {
@@ -252,6 +252,10 @@ public class ProfileActivity extends BRActivity {
     }
 
     private void initProfile(){
+        String nickname = BRSharedPrefs.getNickname(this);
+        if(!StringUtil.isNullOrEmpty(nickname)) {
+            BRSharedPrefs.putProfileState(MyProfileActivity.this, BRSharedPrefs.NICKNAME_STATE, SettingsUtil.IS_COMPLETED);
+        }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -260,35 +264,35 @@ public class ProfileActivity extends BRActivity {
                 PayloadInfo payloadInfo = null;
                 String nickname = mDid.getInfo(APPID+"/Nickname", false, mSeed);
                 payloadInfo = getPayloadInfo(nickname);
-                String nickTxid = BRSharedPrefs.getCacheTxid(ProfileActivity.this, BRSharedPrefs.NICKNAME_txid);
+                String nickTxid = BRSharedPrefs.getCacheTxid(MyProfileActivity.this, BRSharedPrefs.NICKNAME_txid);
                 if(null!=payloadInfo && (StringUtil.isNullOrEmpty(nickTxid) || nickTxid.equals(payloadInfo.txid))){
-                    BRSharedPrefs.putNickname(ProfileActivity.this, payloadInfo.value);
-                    BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.NICKNAME_STATE, SettingsUtil.IS_COMPLETED);
+                    BRSharedPrefs.putNickname(MyProfileActivity.this, payloadInfo.value);
+                    BRSharedPrefs.putProfileState(MyProfileActivity.this, BRSharedPrefs.NICKNAME_STATE, SettingsUtil.IS_COMPLETED);
                 }
 
                 String email = mDid.getInfo(APPID+"/Email", false, mSeed);
                 payloadInfo = getPayloadInfo(email);
-                String emailTxid = BRSharedPrefs.getCacheTxid(ProfileActivity.this, BRSharedPrefs.EMAIL_txid);
+                String emailTxid = BRSharedPrefs.getCacheTxid(MyProfileActivity.this, BRSharedPrefs.EMAIL_txid);
                 if(null!=payloadInfo && (StringUtil.isNullOrEmpty(emailTxid) || emailTxid.equals(payloadInfo.txid))) {
-                    BRSharedPrefs.putEmail(ProfileActivity.this, payloadInfo.value);
-                    BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.EMAIL_STATE, SettingsUtil.IS_COMPLETED);
+                    BRSharedPrefs.putEmail(MyProfileActivity.this, payloadInfo.value);
+                    BRSharedPrefs.putProfileState(MyProfileActivity.this, BRSharedPrefs.EMAIL_STATE, SettingsUtil.IS_COMPLETED);
                 }
 
                 String mobile = mDid.getInfo(APPID+"/Mobile", false, mSeed);
                 payloadInfo = getPayloadInfo(mobile);
-                String mobileTxid = BRSharedPrefs.getCacheTxid(ProfileActivity.this, BRSharedPrefs.MOBILE_txid);
+                String mobileTxid = BRSharedPrefs.getCacheTxid(MyProfileActivity.this, BRSharedPrefs.MOBILE_txid);
                 if(null!=payloadInfo && (StringUtil.isNullOrEmpty(mobileTxid) || mobileTxid.equals(payloadInfo.txid))) {
-                    BRSharedPrefs.putMobile(ProfileActivity.this, payloadInfo.value);
-                    BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.MOBILE_STATE, SettingsUtil.IS_COMPLETED);
+                    BRSharedPrefs.putMobile(MyProfileActivity.this, payloadInfo.value);
+                    BRSharedPrefs.putProfileState(MyProfileActivity.this, BRSharedPrefs.MOBILE_STATE, SettingsUtil.IS_COMPLETED);
                 }
 
                 String idCard = mDid.getInfo(APPID+"/ChineseIDCard", false, mSeed);
                 PayloadInfoId payloadInfoId = getPayloadInfoId(idCard);
-                String idTxid = BRSharedPrefs.getCacheTxid(ProfileActivity.this, BRSharedPrefs.ID_txid);
+                String idTxid = BRSharedPrefs.getCacheTxid(MyProfileActivity.this, BRSharedPrefs.ID_txid);
                 if(null!=payloadInfoId && null!=payloadInfoId.value && (StringUtil.isNullOrEmpty(idTxid) || idTxid.equals(payloadInfo.txid))) {
-                    BRSharedPrefs.putRealname(ProfileActivity.this, payloadInfoId.value.name);
-                    BRSharedPrefs.putID(ProfileActivity.this, payloadInfoId.value.code);
-                    BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.ID_STATE, SettingsUtil.IS_COMPLETED);
+                    BRSharedPrefs.putRealname(MyProfileActivity.this, payloadInfoId.value.name);
+                    BRSharedPrefs.putID(MyProfileActivity.this, payloadInfoId.value.code);
+                    BRSharedPrefs.putProfileState(MyProfileActivity.this, BRSharedPrefs.ID_STATE, SettingsUtil.IS_COMPLETED);
                 }
                 mHandler.sendEmptyMessage(0x01);
             }
@@ -300,7 +304,7 @@ public class ProfileActivity extends BRActivity {
         if(null == mDid) return null;
         String info = mDid.signInfo(mSeed, data, false);
         Log.i("ProfileFunction", "sign info:"+info);
-        String txid = ProfileDataSource.getInstance(ProfileActivity.this).upchain(info);
+        String txid = ProfileDataSource.getInstance(MyProfileActivity.this).upchain(info);
         Log.i("ProfileFunction", "txid:"+txid);
 
         return txid;
@@ -333,16 +337,16 @@ public class ProfileActivity extends BRActivity {
                     if(!StringUtil.isNullOrEmpty(txid) || !BuildConfig.CAN_UPLOAD.contains("nickname")){
                         canRefresh = true;
                         if(nickname.equals("")){//处理清空操作
-                            BRSharedPrefs.putNickname(ProfileActivity.this, "Your Nickname");
-                            BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.NICKNAME_STATE,
+                            BRSharedPrefs.putNickname(MyProfileActivity.this, "Your Nickname");
+                            BRSharedPrefs.putProfileState(MyProfileActivity.this, BRSharedPrefs.NICKNAME_STATE,
                                     BuildConfig.CAN_UPLOAD.contains("nickname")?SettingsUtil.IS_SAVING:SettingsUtil.IS_PENDING);
                         } else {
-                            BRSharedPrefs.putNickname(ProfileActivity.this, nickname);
-                            BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.NICKNAME_STATE,
+                            BRSharedPrefs.putNickname(MyProfileActivity.this, nickname);
+                            BRSharedPrefs.putProfileState(MyProfileActivity.this, BRSharedPrefs.NICKNAME_STATE,
                                     BuildConfig.CAN_UPLOAD.contains("nickname")?SettingsUtil.IS_SAVING:SettingsUtil.IS_COMPLETED);
                         }
 
-                        BRSharedPrefs.putCacheTxid(ProfileActivity.this, BRSharedPrefs.NICKNAME_txid, txid);
+                        BRSharedPrefs.putCacheTxid(MyProfileActivity.this, BRSharedPrefs.NICKNAME_txid, txid);
                     }
 
                 } else if(BRConstants.PROFILE_REQUEST_EMAIL == requestCode){
@@ -353,15 +357,15 @@ public class ProfileActivity extends BRActivity {
                     if(BuildConfig.CAN_UPLOAD.contains("email")) txid = uploadData(data);
                     if(!StringUtil.isNullOrEmpty(txid) || !BuildConfig.CAN_UPLOAD.contains("email")){
                         canRefresh = true;
-                        BRSharedPrefs.putEmail(ProfileActivity.this, email);
+                        BRSharedPrefs.putEmail(MyProfileActivity.this, email);
                         if(email.equals("")){
-                            BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.EMAIL_STATE,
+                            BRSharedPrefs.putProfileState(MyProfileActivity.this, BRSharedPrefs.EMAIL_STATE,
                                     BuildConfig.CAN_UPLOAD.contains("email")?SettingsUtil.IS_SAVING:SettingsUtil.IS_PENDING);
                         } else {
-                            BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.EMAIL_STATE,
+                            BRSharedPrefs.putProfileState(MyProfileActivity.this, BRSharedPrefs.EMAIL_STATE,
                                     BuildConfig.CAN_UPLOAD.contains("email")?SettingsUtil.IS_SAVING:SettingsUtil.IS_COMPLETED);
                         }
-                        BRSharedPrefs.putCacheTxid(ProfileActivity.this, BRSharedPrefs.EMAIL_txid, txid);
+                        BRSharedPrefs.putCacheTxid(MyProfileActivity.this, BRSharedPrefs.EMAIL_txid, txid);
                     }
 
                 } else if(BRConstants.PROFILE_REQUEST_MOBILE == requestCode){
@@ -373,16 +377,16 @@ public class ProfileActivity extends BRActivity {
                     if(BuildConfig.CAN_UPLOAD.contains("mobile")) txid = uploadData(data);
                     if(!StringUtil.isNullOrEmpty(txid) || !BuildConfig.CAN_UPLOAD.contains("mobile")){
                         canRefresh = true;
-                        BRSharedPrefs.putArea(ProfileActivity.this, area);
-                        BRSharedPrefs.putMobile(ProfileActivity.this, mobile);
+                        BRSharedPrefs.putArea(MyProfileActivity.this, area);
+                        BRSharedPrefs.putMobile(MyProfileActivity.this, mobile);
                         if(mobile.equals("")){
-                            BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.MOBILE_STATE,
+                            BRSharedPrefs.putProfileState(MyProfileActivity.this, BRSharedPrefs.MOBILE_STATE,
                                     BuildConfig.CAN_UPLOAD.contains("mobile")?SettingsUtil.IS_SAVING:SettingsUtil.IS_PENDING);
                         } else {
-                            BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.MOBILE_STATE,
+                            BRSharedPrefs.putProfileState(MyProfileActivity.this, BRSharedPrefs.MOBILE_STATE,
                                     BuildConfig.CAN_UPLOAD.contains("mobile")?SettingsUtil.IS_SAVING:SettingsUtil.IS_COMPLETED);
                         }
-                        BRSharedPrefs.putCacheTxid(ProfileActivity.this, BRSharedPrefs.MOBILE_txid, txid);
+                        BRSharedPrefs.putCacheTxid(MyProfileActivity.this, BRSharedPrefs.MOBILE_txid, txid);
                     }
 
                 } else if(BRConstants.PROFILE_REQUEST_ID == requestCode){
@@ -395,16 +399,16 @@ public class ProfileActivity extends BRActivity {
                     if(BuildConfig.CAN_UPLOAD.contains("ChineseIDCard")) txid = uploadData(data);
                     if(!StringUtil.isNullOrEmpty(txid) || !BuildConfig.CAN_UPLOAD.contains("ChineseIDCard")){
                         canRefresh = true;
-                        BRSharedPrefs.putRealname(ProfileActivity.this, realname);
-                        BRSharedPrefs.putID(ProfileActivity.this, idcard);
+                        BRSharedPrefs.putRealname(MyProfileActivity.this, realname);
+                        BRSharedPrefs.putID(MyProfileActivity.this, idcard);
                         if(realname.equals("") || idcard.equals("")){
-                            BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.ID_STATE,
+                            BRSharedPrefs.putProfileState(MyProfileActivity.this, BRSharedPrefs.ID_STATE,
                                     BuildConfig.CAN_UPLOAD.contains("ChineseIDCard")?SettingsUtil.IS_SAVING:SettingsUtil.IS_PENDING);
                         } else {
-                            BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.ID_STATE,
+                            BRSharedPrefs.putProfileState(MyProfileActivity.this, BRSharedPrefs.ID_STATE,
                                     BuildConfig.CAN_UPLOAD.contains("ChineseIDCard")?SettingsUtil.IS_SAVING:SettingsUtil.IS_COMPLETED);
                         }
-                        BRSharedPrefs.putCacheTxid(ProfileActivity.this, BRSharedPrefs.ID_txid, txid);
+                        BRSharedPrefs.putCacheTxid(MyProfileActivity.this, BRSharedPrefs.ID_txid, txid);
                     }
                 }
 
@@ -451,32 +455,32 @@ public class ProfileActivity extends BRActivity {
         if(BRSharedPrefs.getProfileState(this, BRSharedPrefs.NICKNAME_STATE) == SettingsUtil.IS_SAVING){
             String txid  = BRSharedPrefs.getCacheTxid(this, BRSharedPrefs.NICKNAME_txid);
             if(!StringUtil.isNullOrEmpty(txid)) {
-                isExit = ProfileDataSource.getInstance(ProfileActivity.this).isTxExit(txid);
-                if(isExit) BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.NICKNAME_STATE, SettingsUtil.IS_COMPLETED);
+                isExit = ProfileDataSource.getInstance(MyProfileActivity.this).isTxExit(txid);
+                if(isExit) BRSharedPrefs.putProfileState(MyProfileActivity.this, BRSharedPrefs.NICKNAME_STATE, SettingsUtil.IS_COMPLETED);
             }
         }
 
         if(BRSharedPrefs.getProfileState(this, BRSharedPrefs.EMAIL_STATE) == SettingsUtil.IS_SAVING){
             String txid  = BRSharedPrefs.getCacheTxid(this, BRSharedPrefs.EMAIL_txid);
             if(!StringUtil.isNullOrEmpty(txid)) {
-                isExit = ProfileDataSource.getInstance(ProfileActivity.this).isTxExit(txid);
-                if(isExit) BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.EMAIL_STATE, SettingsUtil.IS_COMPLETED);
+                isExit = ProfileDataSource.getInstance(MyProfileActivity.this).isTxExit(txid);
+                if(isExit) BRSharedPrefs.putProfileState(MyProfileActivity.this, BRSharedPrefs.EMAIL_STATE, SettingsUtil.IS_COMPLETED);
             }
         }
 
         if(BRSharedPrefs.getProfileState(this, BRSharedPrefs.MOBILE_STATE) == SettingsUtil.IS_SAVING){
             String txid  = BRSharedPrefs.getCacheTxid(this, BRSharedPrefs.MOBILE_txid);
             if(!StringUtil.isNullOrEmpty(txid)) {
-                isExit = ProfileDataSource.getInstance(ProfileActivity.this).isTxExit(txid);
-                if(isExit) BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.MOBILE_STATE, SettingsUtil.IS_COMPLETED);
+                isExit = ProfileDataSource.getInstance(MyProfileActivity.this).isTxExit(txid);
+                if(isExit) BRSharedPrefs.putProfileState(MyProfileActivity.this, BRSharedPrefs.MOBILE_STATE, SettingsUtil.IS_COMPLETED);
             }
         }
 
         if(BRSharedPrefs.getProfileState(this, BRSharedPrefs.ID_STATE) == SettingsUtil.IS_SAVING){
             String txid  = BRSharedPrefs.getCacheTxid(this, BRSharedPrefs.ID_txid);
             if(!StringUtil.isNullOrEmpty(txid)) {
-                isExit = ProfileDataSource.getInstance(ProfileActivity.this).isTxExit(txid);
-                if(isExit) BRSharedPrefs.putProfileState(ProfileActivity.this, BRSharedPrefs.ID_STATE, SettingsUtil.IS_COMPLETED);
+                isExit = ProfileDataSource.getInstance(MyProfileActivity.this).isTxExit(txid);
+                if(isExit) BRSharedPrefs.putProfileState(MyProfileActivity.this, BRSharedPrefs.ID_STATE, SettingsUtil.IS_COMPLETED);
             }
         }
         if(!isExit) return;

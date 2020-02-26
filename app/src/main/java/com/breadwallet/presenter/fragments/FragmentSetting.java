@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.ProfileActivity;
+import com.breadwallet.presenter.activities.MyProfileActivity;
 import com.breadwallet.presenter.activities.did.DidQuestionActivity;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.customviews.BaseTextView;
@@ -32,8 +32,6 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.elastos.jni.Utility;
-
-import org.chat.lib.push.PushClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -129,7 +127,7 @@ public class FragmentSetting extends Fragment {
         rootView.findViewById(R.id.enter_nick_view).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), ProfileActivity.class);
+                Intent intent = new Intent(getActivity(), MyProfileActivity.class);
                 getActivity().startActivity(intent);
                 getActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }

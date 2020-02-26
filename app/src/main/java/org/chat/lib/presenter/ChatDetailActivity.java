@@ -327,6 +327,7 @@ public class ChatDetailActivity extends BRActivity {
         }
         messageInfo.setSendState((0!=ret)?Constants.CHAT_ITEM_SENDING:Constants.CHAT_ITEM_SEND_SUCCESS);
         Log.d("xidaokun", "ChatDetailActivity#handleSend#ret:"+ret);
+        Toast.makeText(this, "sendMessage ret:"+ret, Toast.LENGTH_SHORT).show();
 
         long time = System.currentTimeMillis();
         ChatDataSource.getInstance(ChatDetailActivity.this)

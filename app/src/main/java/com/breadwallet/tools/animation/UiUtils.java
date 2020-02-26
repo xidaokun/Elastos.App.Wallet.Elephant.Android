@@ -41,7 +41,6 @@ import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.LoginActivity;
 import com.breadwallet.presenter.activities.MultiSignCreateActivity;
 import com.breadwallet.presenter.activities.MultiSignTxActivity;
-import com.breadwallet.presenter.activities.ProfileActivity;
 import com.breadwallet.presenter.activities.VoteActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.WalletNameActivity;
