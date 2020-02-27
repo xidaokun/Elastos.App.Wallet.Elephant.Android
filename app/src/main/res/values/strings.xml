@@ -1186,7 +1186,7 @@
     <string name="elapay_request_params_error">Request parameter error</string>
 
     <string name="My_chat_title">Chat</string>
-    <string name="My_chat_tab_message_title">MESSAFE</string>
+    <string name="My_chat_tab_message_title">MESSAGE</string>
     <string name="My_chat_tab_friends_title">FRIENDS</string>
 
     <string name="My_add_friend">Add friend</string>

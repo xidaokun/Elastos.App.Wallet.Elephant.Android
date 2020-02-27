@@ -316,18 +316,24 @@ public class ChatDetailActivity extends BRActivity {
     private void handleSend(MessageInfo messageInfo) {
         messageInfo.setSendState(Constants.CHAT_ITEM_SENDING);
         messageInfo.setHeader("https://xidaokun.github.io/im_boy.png");
-        MsgProtocol msgProtocol = new MsgProtocol();
-        msgProtocol.content = messageInfo.getContent();
-        //需要区分是single还是group
+//        MsgProtocol msgProtocol = new MsgProtocol();
+//        msgProtocol.content = messageInfo.getContent();
         int ret = 0;
         if(mType==null || mType.equals(BRConstants.CHAT_SINGLE_TYPE)) {
-            ret = CarrierPeerNode.getInstance(ChatDetailActivity.this).sendMessage(mFriendCodeStr, new Gson().toJson(msgProtocol));
+            ret = CarrierPeerNode.getInstance(ChatDetailActivity.this).sendMessage(mFriendCodeStr, /*new Gson().toJson(msgProtocol)*/messageInfo.getContent());
         } else if(mType.equals(BRConstants.CHAT_GROUP_TYPE)) {
-            ret = CarrierPeerNode.getInstance(ChatDetailActivity.this).sendGroupMessage(mFriendCodeStr, new Gson().toJson(msgProtocol));
+            ret = CarrierPeerNode.getInstance(ChatDetailActivity.this).sendGroupMessage(mFriendCodeStr, /*new Gson().toJson(msgProtocol)*/messageInfo.getContent());
         }
         messageInfo.setSendState((0!=ret)?Constants.CHAT_ITEM_SENDING:Constants.CHAT_ITEM_SEND_SUCCESS);
         Log.d("xidaokun", "ChatDetailActivity#handleSend#ret:"+ret);
-        Toast.makeText(this, "sendMessage ret:"+ret, Toast.LENGTH_SHORT).show();
+        //TODO daokun.xi test log
+        final int finalRet = ret;
+        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(ChatDetailActivity.this, "sendMessage ret:"+ finalRet, Toast.LENGTH_SHORT).show();
+            }
+        });
 
         long time = System.currentTimeMillis();
         ChatDataSource.getInstance(ChatDetailActivity.this)

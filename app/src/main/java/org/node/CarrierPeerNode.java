@@ -9,7 +9,6 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
-import com.google.gson.Gson;
 
 import org.chat.lib.entity.MessageInfo;
 import org.chat.lib.push.PushClient;
@@ -20,7 +19,6 @@ import org.elastos.sdk.elephantwallet.contact.Utils;
 import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
 import org.elastos.sdk.keypair.ElastosKeypair;
 import org.greenrobot.eventbus.EventBus;
-import org.node.bean.MsgProtocol;
 
 import java.util.List;
 
@@ -203,11 +201,11 @@ public class CarrierPeerNode {
     }
 
     private void handleGroupMessage(String humanCode, Contact.Message message) {
-        GroupMessage groupMessage = new Gson().fromJson(message.data.toString(), GroupMessage.class);
-        Log.d("xidaokun", "CarrierPeerNode#handleMessage#\nhumanCode:"+ humanCode + "\nmessage:"+groupMessage.content);
+//        GroupMessage groupMessage = new Gson().fromJson(message.data.toString(), GroupMessage.class);
+        Log.d("xidaokun", "CarrierPeerNode#handleMessage#\nhumanCode:"+ humanCode + "\ncontent:"+message.data.toString());
 
         MessageInfo messageInfo = new MessageInfo();
-        messageInfo.setContent(groupMessage.content);
+        messageInfo.setContent(message.data.toString());
         messageInfo.setFriendCode(humanCode);
         messageInfo.setTime(message.nanoTime/1000000);
         messageInfo.setMsgId(message.nanoTime/1000000);
@@ -220,16 +218,15 @@ public class CarrierPeerNode {
     private void handleMessage(String humanCode, Contact.Message message) {
         MessageInfo messageInfo = new MessageInfo();
 
-        String data = message.data.toString();
-        if(StringUtil.isNullOrEmpty(data)) return;
+        String content = message.data.toString();
+        if(StringUtil.isNullOrEmpty(content)) return;
 
-        Log.d("xidaokun", "CarrierPeerNode#handleMessage#\nhumanCode:"+ humanCode + "\nmessage:"+data);
+        Log.d("xidaokun", "CarrierPeerNode#handleMessage#\nhumanCode:"+ humanCode + "\ncontent:"+content);
 
-        MsgProtocol msgProtocol = new Gson().fromJson(data, MsgProtocol.class);
-        messageInfo.setContent(msgProtocol.content);
+        messageInfo.setContent(content);
         messageInfo.setFriendCode(humanCode);
 
-        messageInfo.setNickName(msgProtocol.nickName);
+        messageInfo.setNickName(null);
         messageInfo.setTime(message.nanoTime/1000000);
         messageInfo.setMsgId(message.nanoTime/1000000);
         messageInfo.setHeader("https://xidaokun.github.io/im_boy.png");
