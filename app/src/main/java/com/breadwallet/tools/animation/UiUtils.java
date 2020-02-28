@@ -536,9 +536,10 @@ public class UiUtils {
         }
     }
 
-    public static void startProfileEditActivity(Context context, String friendCode) {
+    public static void startProfileEditActivity(Context context, String friendCode, String nickname) {
         Intent intent = new Intent(context, FriendProfileEditActivity.class);
         intent.putExtra("friendCode", friendCode);
+        intent.putExtra("nickname", nickname);
         context.startActivity(intent);
     }
 

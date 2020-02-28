@@ -41,7 +41,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.node.CarrierPeerNode;
-import org.node.bean.MsgProtocol;
 
 import java.util.ArrayList;
 import java.util.List;

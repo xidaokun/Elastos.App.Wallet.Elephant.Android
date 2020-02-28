@@ -37,7 +37,7 @@
         android:background="@drawable/my_qr_shape"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:layout_marginTop="92dp">
+        android:layout_marginTop="82dp">
 
         <org.chat.lib.widget.BaseTextView
             android:id="@+id/my_nickname"
@@ -74,6 +74,7 @@
             android:layout_marginTop="16dp"
             android:layout_centerHorizontal="true"
             android:text="Scan the code to add me as friend."
+            android:layout_marginBottom="5dp"
             android:layout_below="@+id/my_qr_img_layout"/>
 
     </RelativeLayout>
@@ -82,7 +83,7 @@
     <org.chat.lib.widget.RoundImageView
         android:layout_width="88dp"
         android:layout_height="88dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="38dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/toolbar"
         android:src="@drawable/unknow"/>

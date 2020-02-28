@@ -139,7 +139,8 @@ public class FragmentChatFriends extends BaseFragment {
             @Override
             public void editNickname(View view, int position) {
                 String friendCode = mDatas.get(position).getFriendCode();
-                UiUtils.startProfileEditActivity(getContext(), friendCode);
+                String nickname = mDatas.get(position).getContact();
+                UiUtils.startProfileEditActivity(getContext(), friendCode, nickname);
             }
 
             @Override

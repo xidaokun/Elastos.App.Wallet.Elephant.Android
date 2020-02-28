@@ -96,8 +96,9 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
         showNicknameDialog();
     }
 
+    ElaphantDialogEdit elaphantDialog = null;
     private void showNicknameDialog() {
-        final ElaphantDialogEdit elaphantDialog = new ElaphantDialogEdit(getContext());
+        if(elaphantDialog == null) elaphantDialog = new ElaphantDialogEdit(getContext());
         elaphantDialog.setTitleStr("Set nickname to chat");
         elaphantDialog.setMessageStr("Input your nickname");
         elaphantDialog.setPositiveStr("Set Now");
@@ -106,14 +107,18 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
             @Override
             public void onClick() {
                 String nickName = elaphantDialog.getEditText();
-                BRSharedPrefs.putNickname(getContext(), nickName);
-                int ret = CarrierPeerNode.getInstance(getContext()).
-                        setMyInfo(Contact.HumanInfo.Item.Nickname,
-                                StringUtil.isNullOrEmpty(nickName)?"nickname":nickName);
-                if(0 != ret) {
-                    Toast.makeText(getContext(), "set nickname fialed ret:"+ret, Toast.LENGTH_SHORT).show();
+                if(StringUtil.isNullOrEmpty(nickName)) {
+                    elaphantDialog.setRequireTvVisiable(View.VISIBLE);
+                } else {
+                    BRSharedPrefs.putNickname(getContext(), nickName);
+                    int ret = CarrierPeerNode.getInstance(getContext()).
+                            setMyInfo(Contact.HumanInfo.Item.Nickname,
+                                    StringUtil.isNullOrEmpty(nickName)?"nickname":nickName);
+                    if(0 != ret) {
+                        Toast.makeText(getContext(), "set nickname fialed ret:"+ret, Toast.LENGTH_SHORT).show();
+                    }
+                    elaphantDialog.dismiss();
                 }
-                elaphantDialog.dismiss();
             }
         });
         elaphantDialog.setNegativeListener(new ElaphantDialogEdit.OnNegativeClickListener() {
@@ -122,7 +127,7 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
                 elaphantDialog.dismiss();
             }
         });
-        elaphantDialog.show();
+        if(!elaphantDialog.isShowing()) elaphantDialog.show();
     }
 
     private void initListener() {

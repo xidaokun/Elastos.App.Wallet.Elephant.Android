@@ -410,7 +410,7 @@ public class ChatDataSource implements BRDataSourceInterface {
     }
 
 
-    private final String[] allColumns = {
+    private final String[] messageColumns = {
             BRSQLiteHelper.CHAT_MESSAGE_TYPE,
             BRSQLiteHelper.CHAT_MESSAGE_HUMANCODE,
             BRSQLiteHelper.CHAT_MESSAGE_TIMESTAMP,
@@ -458,7 +458,7 @@ public class ChatDataSource implements BRDataSourceInterface {
         Cursor cursor = null;
         try {
             database = openDatabase();
-            cursor = database.query(BRSQLiteHelper.CHAT_MESSAGE_TABLE_NAME, allColumns, selection, selectionArgs, null, null, "chatMessageTimestamp asc");
+            cursor = database.query(BRSQLiteHelper.CHAT_MESSAGE_TABLE_NAME, messageColumns, selection, selectionArgs, null, null, "chatMessageTimestamp asc");
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
                 MessageCacheBean messageInfo = cursorToMessageInfo(cursor);
@@ -474,6 +474,30 @@ public class ChatDataSource implements BRDataSourceInterface {
         }
 
         return messageInfos;
+    }
+
+    public List<MessageCacheBean> getFailedMessage() {
+        List<MessageCacheBean> messageCacheBeans = new ArrayList<>();
+        Cursor cursor = null;
+
+        try {
+            database = openDatabase();
+            cursor = database.query(BRSQLiteHelper.CHAT_MESSAGE_TABLE_NAME, messageColumns, BRSQLiteHelper.CHAT_MESSAGE_SEND_STATE+" = ? ", new String[]{String.valueOf(Constants.CHAT_ITEM_SENDING)}, null, null, "chatMessageTimestamp asc");
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                MessageCacheBean messageCacheBean = cursorToMessageInfo(cursor);
+                messageCacheBeans.add(messageCacheBean);
+                cursor.moveToNext();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null)
+                cursor.close();
+            closeDatabase();
+        }
+
+        return messageCacheBeans;
     }
 
     public void deleteMessage(String friendCode) {

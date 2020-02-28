@@ -180,6 +180,11 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         EventBus.getDefault().post(new FragmentChatMessage.RefreshMessage());
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void friendStatusChange(CarrierPeerNode.FriendStatusInfo friendStatusInfo) {
+
+    }
+
     @Override
     protected void onResume() {
         super.onResume();

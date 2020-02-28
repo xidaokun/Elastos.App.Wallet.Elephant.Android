@@ -45,6 +45,9 @@ public class FriendProfileEditActivity extends BRActivity {
         mSaveTv = findViewById(R.id.close_button);
 
         mTitleTv.setText(R.string.My_Profile_Nickname);
+
+        String nickname = getIntent().getStringExtra("nickname");
+        mNicknameEdt.setText(nickname);
     }
 
     private void initListener() {
@@ -77,6 +80,12 @@ public class FriendProfileEditActivity extends BRActivity {
                 } else {
                     Toast.makeText(FriendProfileEditActivity.this, "can not find friendCode", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+        findViewById(R.id.back_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
     }
