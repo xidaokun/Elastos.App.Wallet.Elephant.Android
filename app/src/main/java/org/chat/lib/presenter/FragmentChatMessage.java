@@ -127,6 +127,10 @@ public class FragmentChatMessage extends BaseFragment {
             }
 
             @Override
+            public void onMove(View view, int position) {
+            }
+
+            @Override
             public void onClick(View view, final int position) {
                 String friendCode = entities.get(position).getFriendCode();
                 String type = entities.get(position).getType();
@@ -146,40 +150,52 @@ public class FragmentChatMessage extends BaseFragment {
         });
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(!isVisibleToUser) dismissPop();
+    }
+
+    private void dismissPop() {
+        if(null != popupWindow) popupWindow.dismiss();
+    }
+
+    PopupWindow popupWindow = null;
     private void showDeletePop(View headview, int x, int y, final int position) {
-        View view = getLayoutInflater().inflate(R.layout.chat_message_pop_layout, null);
-        final PopupWindow popupWindow = new PopupWindow(view, Utils.dp2px(getContext(), 100), Utils.dp2px(getContext(), 120), true);
-        popupWindow.setOutsideTouchable(true);
+        if(popupWindow == null) {
+            View view = getLayoutInflater().inflate(R.layout.chat_message_pop_layout, null);
+            popupWindow = new PopupWindow(view, Utils.dp2px(getContext(), 100), Utils.dp2px(getContext(), 120), true);
+            popupWindow.setOutsideTouchable(true);
+            view.findViewById(R.id.has_read_tv).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String friendCode = entities.get(position).getFriendCode();
+                    ChatDataSource.getInstance(getContext()).updateHasRead(friendCode, true);
+                    entities.get(position).setCount(0);
+                    mAdapter.notifyDataSetChanged();
+                    popupWindow.dismiss();
+                }
+            });
 
-        view.findViewById(R.id.has_read_tv).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String friendCode = entities.get(position).getFriendCode();
-                ChatDataSource.getInstance(getContext()).updateHasRead(friendCode, true);
-                entities.get(position).setCount(0);
-                mAdapter.notifyDataSetChanged();
-                popupWindow.dismiss();
-            }
-        });
+            view.findViewById(R.id.roof_placement_tv).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-        view.findViewById(R.id.roof_placement_tv).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                }
+            });
 
-            }
-        });
-
-        view.findViewById(R.id.delete_message_tv).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String friendCode = entities.get(position).getFriendCode();
-                ChatDataSource.getInstance(getContext()).deleteMessage(friendCode);
-                ChatDataSource.getInstance(getContext()).deleteMessageItemInfo(friendCode);
-                entities.remove(position);
-                mAdapter.notifyDataSetChanged();
-                popupWindow.dismiss();
-            }
-        });
+            view.findViewById(R.id.delete_message_tv).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String friendCode = entities.get(position).getFriendCode();
+                    ChatDataSource.getInstance(getContext()).deleteMessage(friendCode);
+                    ChatDataSource.getInstance(getContext()).deleteMessageItemInfo(friendCode);
+                    entities.remove(position);
+                    mAdapter.notifyDataSetChanged();
+                    popupWindow.dismiss();
+                }
+            });
+        }
 
         if (popupWindow.isShowing()) {
             popupWindow.dismiss();

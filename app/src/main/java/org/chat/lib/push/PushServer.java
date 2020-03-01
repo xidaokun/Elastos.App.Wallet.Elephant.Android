@@ -14,7 +14,7 @@ public class PushServer {
     public static void sendNotice(String myId, String targetValue, String nickName) {
         PushRequest pushRequest = new PushRequest(ACCESSKEYID, ACCESSSECRET);
         pushRequest.setAppKey(APPKEY);
-        pushRequest.setTarget("ACCOUNT");
+        pushRequest.setTarget("ALIAS");
         Log.d("xidaokun_push", "targetValue:"+ targetValue);
         pushRequest.setTargetValue(targetValue);
         pushRequest.setPushType("NOTICE");

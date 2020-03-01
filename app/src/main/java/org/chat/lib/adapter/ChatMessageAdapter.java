@@ -105,6 +105,10 @@ public class ChatMessageAdapter extends BaseAdapter {
                     }).start();
                 } else if (event.getAction()==MotionEvent.ACTION_UP) {
                     mLongPress = false;
+                } else if(event.getAction()==MotionEvent.ACTION_MOVE) {
+                    final float x = event.getX();
+                    final float y = event.getY();
+                    if(mListener != null) mListener.onMove(v, position);
                 }
                 return false;
             }
@@ -137,6 +141,7 @@ public class ChatMessageAdapter extends BaseAdapter {
 
     public interface OnItemListener {
         void onLongPress(View view, int position, float x, float y);
+        void onMove(View view, int position);
         void onClick(View view, int position);
     }
 }

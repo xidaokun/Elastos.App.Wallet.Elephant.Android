@@ -111,7 +111,7 @@ public class CarrierPeerNode {
                     if(StringUtil.isNullOrEmpty(carrierAddr)) return;
                     BRSharedPrefs.cacheCarrierId(mContext, carrierAddr);
                     Log.d("xidaokun_push", "bind carrierAddr:"+carrierAddr);
-                    PushClient.getInstance().bindAccount(carrierAddr, null);
+                    PushClient.getInstance().bindAlias(carrierAddr, null);
                 }
 
             }

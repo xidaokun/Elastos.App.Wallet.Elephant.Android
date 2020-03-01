@@ -283,7 +283,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             BRSharedPrefs.cacheMyDid(HomeActivity.this, did);
         }
         Log.d("xidaokun_push", "bind did:"+did);
-        PushClient.getInstance().bindAccount(did, null);
+        PushClient.getInstance().bindAlias(did, null);
     }
 
     private String getMn(){
