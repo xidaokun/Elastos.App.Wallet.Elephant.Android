@@ -164,10 +164,6 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
-        <activity android:name="com.push.PopupPushActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"/>
-
         <activity
             android:name=".presenter.activities.intro.RecoverActivity"
             android:launchMode="singleTask"

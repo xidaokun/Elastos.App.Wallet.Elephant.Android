@@ -76,6 +76,10 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
             holder.mTitle.setText(item.name_en);
         }
 
+        if(StringUtil.isNullOrEmpty(item.name_zh_CN) && StringUtil.isNullOrEmpty(item.name_en)) {
+            holder.mTitle.setText(item.name);
+        }
+
         holder.mDeveloper.setText(item.developer);
         Bitmap bitmap = null;
         if(!StringUtil.isNullOrEmpty(item.icon)){

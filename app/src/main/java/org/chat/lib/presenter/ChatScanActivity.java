@@ -2,6 +2,7 @@ package org.chat.lib.presenter;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.PointF;
@@ -18,10 +19,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.EsignActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.ElaphantDialogEdit;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.qrcode.QRCodeReaderView;
 import com.breadwallet.tools.util.BRConstants;
@@ -109,6 +112,7 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
         mPasteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String content = BRClipboardManager.getClipboard(ChatScanActivity.this);
                 String text = mPasteEdit.getText().toString();
                 if(StringUtil.isNullOrEmpty(text)) {
                     Toast.makeText(ChatScanActivity.this, "id empty", Toast.LENGTH_SHORT).show();
