@@ -1193,6 +1193,31 @@
     <string name="My_chat_add_device">Add carrier device</string>
     <string name="My_chat_join_group">Join a group</string>
     <string name="My_chat_qr_code">My QR code</string>
-    <string name="My_qr_code_title">My code</string>
+    <string name="My_qr_code_title">My QR</string>
     <string name="My_new_friends_title">New Friends</string>
+
+    <string name="My_chat_pop_title">Set nickname to chat</string>
+    <string name="My_chat_pop_hint">Input your nickname</string>
+    <string name="My_chat_pop_store_hint">Nickname will not be stored on blockchain.</string>
+
+    <string name="My_chat_pop_cancel">Cancel</string>
+    <string name="My_chat_pop_set_now">Set Now</string>
+
+    <string name="My_chat_scan_hint">Enter DID or Carrier address</string>
+    <string name="My_chat_scan_paste">Paste</string>
+    <string name="My_chat_QR_hint">Scan the code to add me as friend.</string>
+
+    <string name="My_chat_new_accept">Accept</string>
+    <string name="My_chat_new_waitforaccept">WaitForAccept</string>
+    <string name="My_chat_new_accepted">Accepted</string>
+
+    <string name="My_chat_friends_send_token">Send Token</string>
+    <string name="My_chat_friends_message">Message</string>
+    <string name="My_chat_friends_edit">Edit</string>
+    <string name="My_chat_friends_delete">Delete</string>
+
+    <string name="My_chat_nickname_title">Nickname</string>
+    <string name="My_chat_nickname_save">Save</string>
+
+    <string name="My_chat_detail_send">Send</string>
 </resources>

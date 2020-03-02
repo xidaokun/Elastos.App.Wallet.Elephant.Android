@@ -52,7 +52,7 @@
             android:paddingRight="30dp"
             android:paddingLeft="10dp"
             android:textSize="14sp"
-            android:hint="Enter DID or Carrier address"/>
+            android:hint="@string/My_chat_QR_hint"/>
 
         <org.chat.lib.widget.BaseTextView
             android:id="@+id/add_friend_paste_btn"
@@ -61,7 +61,7 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="16dp"
-            android:text="@string/esign_paste_btn"
+            android:text="@string/My_chat_scan_paste"
             android:textColor="#ff3365"
             android:textSize="15sp" />
     </RelativeLayout>

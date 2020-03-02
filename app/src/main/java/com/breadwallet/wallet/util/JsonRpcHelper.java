@@ -110,14 +110,24 @@ public class JsonRpcHelper {
 
     public static String createLogsUrl(String address, String contract, String event) {
 
-        return PROTOCOL + "://" + BreadApp.HOST + BRD_ETH_TX_ENDPOINT + "query?"
-                + "module=logs&action=getLogs"
+        //https://api-eth.elaphant.app/api/1/eth/getLogs?fromBlock=0&toBlock=latest&topic0=0xf0ee6b27b759c9893ce4f094b49ad28fd15a23e4&topic1=0x000000000000000000000000BAE4229e6d7D7404c9AaE150ccA99ae53FebAdBF&topic1_2_opr=or&topic2=0x000000000000000000000000BAE4229e6d7D7404c9AaE150ccA99ae53FebAdBF
+
+        return "https://api-eth.elaphant.app/api/1/eth/getLogs?"
                 + "&fromBlock=0&toBlock=latest"
                 + (null == contract ? "" : ("&address=" + contract))
                 + "&topic0=" + event
                 + "&topic1=" + address
                 + "&topic1_2_opr=or"
                 + "&topic2=" + address;
+
+//        return PROTOCOL + "://" + BreadApp.HOST + BRD_ETH_TX_ENDPOINT + "query?"
+//                + "module=logs&action=getLogs"
+//                + "&fromBlock=0&toBlock=latest"
+//                + (null == contract ? "" : ("&address=" + contract))
+//                + "&topic0=" + event
+//                + "&topic1=" + address
+//                + "&topic1_2_opr=or"
+//                + "&topic2=" + address;
     }
 
     ///api/1/eth/getLogs?fromBlock=0&toBlock=latest&topic0=0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359&topic1=0x000000000000000000000000e418a0e203f36cb843079f6ebf0b367e48774ac1&topic1_2_opr=or&topic2=0x000000000000000000000000829bd824b016326a401d083b33d092293333a830

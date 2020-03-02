@@ -1178,4 +1178,40 @@
     <string name="clear_cache_negative_btn">取消</string>
 
     <string name="elapay_request_params_error">请求参数错误</string>
+
+    <string name="My_chat_title">聊天</string>
+    <string name="My_chat_tab_message_title">消息</string>
+    <string name="My_chat_tab_friends_title">好友</string>
+
+    <string name="My_add_friend">添加好友</string>
+    <string name="My_chat_add_device">加好友</string>
+    <string name="My_chat_join_group">入群</string>
+    <string name="My_chat_qr_code">我的QR</string>
+    <string name="My_qr_code_title">我的QR</string>
+    <string name="My_new_friends_title">新的朋友</string>
+
+    <string name="My_chat_pop_title">设置聊天昵称</string>
+    <string name="My_chat_pop_hint">输入昵称</string>
+    <string name="My_chat_pop_store_hint">昵称将存储在区块链上。</string>
+
+    <string name="My_chat_pop_cancel">取消</string>
+    <string name="My_chat_pop_set_now">立即设置</string>
+
+    <string name="My_chat_scan_hint">输入DID或Carrier地址</string>
+    <string name="My_chat_scan_paste">粘贴</string>
+    <string name="My_chat_QR_hint">扫码加我为好友</string>
+
+    <string name="My_chat_new_accept">接受</string>
+    <string name="My_chat_new_waitforaccept">等待接受</string>
+    <string name="My_chat_new_accepted">已接受</string>
+
+    <string name="My_chat_friends_send_token">转账</string>
+    <string name="My_chat_friends_message">消息</string>
+    <string name="My_chat_friends_edit">编辑</string>
+    <string name="My_chat_friends_delete">删除</string>
+
+    <string name="My_chat_nickname_title">昵称</string>
+    <string name="My_chat_nickname_save">保存</string>
+
+    <string name="My_chat_detail_send">发送</string>
 </resources>

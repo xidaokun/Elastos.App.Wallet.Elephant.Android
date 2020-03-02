@@ -61,13 +61,13 @@ public class NewFriendAdapter extends BaseAdapter {
         viewHolder.sendSb.setClickable(false);
         viewHolder.sendSb.setText("");
         if(mData.get(position).acceptStatus == BRConstants.RECEIVE_ACCEPT) {
-            viewHolder.sendSb.setText("接受");
+            viewHolder.sendSb.setText(mContext.getString(R.string.My_chat_new_accept));
             viewHolder.sendSb.setClickable(true);
         } else if(mData.get(position).acceptStatus == BRConstants.REQUEST_ACCEPT) {
-            viewHolder.sendSb.setText("待对方确认");
+            viewHolder.sendSb.setText(mContext.getString(R.string.My_chat_new_waitforaccept));
             viewHolder.sendSb.setClickable(false);
         } else if(mData.get(position).acceptStatus == BRConstants.ACCEPTED) {
-            viewHolder.sendSb.setText("已添加");
+            viewHolder.sendSb.setText(mContext.getString(R.string.My_chat_new_accepted));
             viewHolder.sendSb.setClickable(false);
         }
 

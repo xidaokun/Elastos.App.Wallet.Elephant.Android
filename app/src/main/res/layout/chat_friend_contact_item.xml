@@ -92,7 +92,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:textColor="#007aff"
-            android:text="Send Token"/>
+            android:text="@string/My_chat_friends_send_token"/>
 
         <View
             android:layout_width="0.5dp"
@@ -108,7 +108,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:textColor="#007aff"
-            android:text="Message"/>
+            android:text="@string/My_chat_friends_message"/>
 
         <View
             android:layout_width="0.5dp"
@@ -124,7 +124,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:textColor="#007aff"
-            android:text="Edit"/>
+            android:text="@string/My_chat_friends_edit"/>
 
         <View
             android:layout_width="0.5dp"
@@ -140,7 +140,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:textColor="#eb4d3d"
-            android:text="Delete"/>
+            android:text="@string/My_chat_friends_delete"/>
     </LinearLayout>
 
     <View

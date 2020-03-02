@@ -99,10 +99,10 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
     ElaphantDialogEdit elaphantDialog = null;
     private void showNicknameDialog() {
         if(elaphantDialog == null) elaphantDialog = new ElaphantDialogEdit(getContext());
-        elaphantDialog.setTitleStr("Set nickname to chat");
-        elaphantDialog.setMessageStr("Input your nickname");
-        elaphantDialog.setPositiveStr("Set Now");
-        elaphantDialog.setNegativeStr("Cancel");
+        elaphantDialog.setTitleStr(getString(R.string.My_chat_pop_title));
+        elaphantDialog.setMessageStr(getString(R.string.My_chat_pop_hint));
+        elaphantDialog.setPositiveStr(getString(R.string.My_chat_pop_set_now));
+        elaphantDialog.setNegativeStr(getString(R.string.My_chat_pop_cancel));
         elaphantDialog.setPositiveListener(new ElaphantDialogEdit.OnPositiveClickListener() {
             @Override
             public void onClick() {
