@@ -108,6 +108,7 @@ public class ChatMessageAdapter extends BaseAdapter {
                 } else if(event.getAction()==MotionEvent.ACTION_MOVE) {
                     final float x = event.getX();
                     final float y = event.getY();
+
                     if(mListener != null) mListener.onMove(v, position);
                 }
                 return false;

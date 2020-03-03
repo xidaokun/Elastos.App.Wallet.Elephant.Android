@@ -153,16 +153,21 @@ public class FragmentChatFriends extends BaseFragment {
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {
+                        String friendCode = mDatas.get(position).getFriendCode();
+                        if(StringUtil.isNullOrEmpty(friendCode)) return;
                         int ret = CarrierPeerNode.getInstance(getContext()).removeFriend(mDatas.get(position).getFriendCode());
                         Log.d("xidaokun", "FragementChatFriends#deleteFriends#ret:"+ret);
                         if(0 != ret) {
                             return;
                         }
+                        ChatDataSource.getInstance(getContext()).deleteMessage(friendCode);
+                        ChatDataSource.getInstance(getContext()).deleteMessageItemInfo(friendCode);
                         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                             @Override
                             public void run() {
                                 mDatas.remove(position);
                                 mAdapter.notifyDataSetChanged();
+                                EventBus.getDefault().post(new FragmentChatMessage.RefreshMessage());
                             }
                         });
                     }

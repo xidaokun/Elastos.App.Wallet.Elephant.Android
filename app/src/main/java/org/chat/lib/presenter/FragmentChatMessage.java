@@ -99,13 +99,13 @@ public class FragmentChatMessage extends BaseFragment {
                     entity.setCount((null!=hasNotReadCacheBeans && hasNotReadCacheBeans.size()>0)? hasNotReadCacheBeans.size() : 0);
 
                     entities.add(entity);
-                    getActivity().getWindow().getDecorView().post(new Runnable() {
-                        @Override
-                        public void run() {
-                            mAdapter.notifyDataSetChanged();
-                        }
-                    });
                 }
+                getActivity().getWindow().getDecorView().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
             }
 
         }
@@ -128,6 +128,7 @@ public class FragmentChatMessage extends BaseFragment {
 
             @Override
             public void onMove(View view, int position) {
+
             }
 
             @Override
@@ -150,11 +151,6 @@ public class FragmentChatMessage extends BaseFragment {
         });
     }
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if(!isVisibleToUser) dismissPop();
-    }
 
     private void dismissPop() {
         if(null != popupWindow) popupWindow.dismiss();
@@ -206,6 +202,7 @@ public class FragmentChatMessage extends BaseFragment {
             popupWindow.showAsDropDown(headview, x, y - headViewH);
         }
     }
+
 
     @Override
     public void onDestroy() {

@@ -113,6 +113,7 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
             @Override
             public void onClick(View v) {
                 String content = BRClipboardManager.getClipboard(ChatScanActivity.this);
+                mPasteEdit.setText(content);
                 String text = mPasteEdit.getText().toString();
                 if(StringUtil.isNullOrEmpty(text)) {
                     Toast.makeText(ChatScanActivity.this, "id empty", Toast.LENGTH_SHORT).show();
