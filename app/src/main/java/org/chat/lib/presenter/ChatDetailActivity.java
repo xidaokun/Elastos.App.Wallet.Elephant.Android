@@ -318,10 +318,12 @@ public class ChatDetailActivity extends BRActivity {
 //        MsgProtocol msgProtocol = new MsgProtocol();
 //        msgProtocol.content = messageInfo.getContent();
         int ret = 0;
-        if(mType==null || mType.equals(BRConstants.CHAT_SINGLE_TYPE)) {
+        if(mType==null || mType.contains(BRConstants.CHAT_SINGLE_TYPE)) {
             ret = CarrierPeerNode.getInstance(ChatDetailActivity.this).sendMessage(mFriendCodeStr, /*new Gson().toJson(msgProtocol)*/messageInfo.getContent());
-        } else if(mType.equals(BRConstants.CHAT_GROUP_TYPE)) {
+        } else if(mType.contains(BRConstants.CHAT_GROUP_TYPE)) {
             ret = CarrierPeerNode.getInstance(ChatDetailActivity.this).sendGroupMessage(mFriendCodeStr, /*new Gson().toJson(msgProtocol)*/messageInfo.getContent());
+        } else {
+            ret = -1;
         }
         messageInfo.setSendState((0!=ret)?Constants.CHAT_ITEM_SENDING:Constants.CHAT_ITEM_SEND_SUCCESS);
         Log.d("xidaokun", "ChatDetailActivity#handleSend#ret:"+ret);
