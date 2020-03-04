@@ -8,8 +8,8 @@ android {
         applicationId = 'elaphant.app'
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 90
-        versionName "1.8.0"
+        versionCode 1
+        versionName "2.0.0"
         multiDexEnabled true
 
         // Similar to other properties in the defaultConfig block,

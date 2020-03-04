@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/content_vertical_margin"
             android:layout_toRightOf="@id/chat_item_header"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentLeft="true"
             android:background="@drawable/chatfrom_bg_normal1">
 
             <org.chat.lib.widget.GifTextView
