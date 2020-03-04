@@ -7,13 +7,6 @@
     android:minHeight="48dp"
     android:padding="@dimen/content_vertical_margin">
 
-
-    <TextView
-        android:id="@+id/chat_item_date"
-        style="@style/text_body"
-        android:layout_gravity="center_horizontal"
-        android:visibility="gone" />
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -44,7 +37,7 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/content_vertical_margin"
             android:layout_toRightOf="@id/chat_item_header"
-            android:gravity="left|center_vertical"
+            android:layout_alignParentRight="true"
             android:background="@drawable/chatfrom_bg_normal1">
 
             <org.chat.lib.widget.GifTextView
@@ -60,6 +53,13 @@
                 android:src="@drawable/icon_voice_left3"
                 android:visibility="gone" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/chat_item_date"
+            style="@style/text_body"
+            android:layout_below="@+id/chat_item_layout_content"
+            android:layout_marginTop="5dp"
+            android:layout_alignParentRight="true"/>
 
         <TextView
             android:id="@+id/chat_item_voice_time"

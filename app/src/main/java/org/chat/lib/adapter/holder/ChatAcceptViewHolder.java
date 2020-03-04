@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.breadwallet.tools.util.BRDateUtil;
 import com.bumptech.glide.Glide;
 
 import com.breadwallet.R;
@@ -48,7 +49,7 @@ public class ChatAcceptViewHolder extends BaseViewHolder<MessageInfo> {
 
     @Override
     public void setData(MessageInfo data) {
-        chatItemDate.setText(String.valueOf(data.getTime()));
+        chatItemDate.setText(BRDateUtil.getFormatDate(data.getTime(), "MM-dd hh:mm:ss"));
 //        Glide.with(getContext()).load(data.getHeader()).into(chatItemHeader);
         chatItemHeader.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -6,12 +6,6 @@
     android:orientation="vertical"
     android:minHeight="48dp">
 
-    <TextView
-        android:id="@+id/chat_item_date"
-        style="@style/text_body"
-        android:layout_gravity="center_horizontal"
-        android:visibility="gone" />
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -48,7 +42,7 @@
                 android:id="@+id/chat_item_layout_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="right|center_vertical"
+                android:layout_alignParentRight="true"
                 android:orientation="horizontal"
                 android:padding="@dimen/content_vertical_margin"
                 android:background="@drawable/chatto_bg_normal">
@@ -68,6 +62,13 @@
                     android:scaleType="fitCenter"
                     android:visibility="gone" />
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/chat_item_date"
+                style="@style/text_body"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="5dp"
+                android:layout_below="@+id/chat_item_layout_content" />
         </RelativeLayout>
 
         <TextView

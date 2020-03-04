@@ -187,6 +187,7 @@ public class EmotionInputDetector {
                 mSendButton.setVisibility(View.GONE);
                 MessageInfo messageInfo = new MessageInfo();
                 messageInfo.setType(Constants.CHAT_ITEM_TYPE_RIGHT);
+                messageInfo.setTime(System.currentTimeMillis());
                 messageInfo.setContent(mEditText.getText().toString());
                 EventBus.getDefault().post(messageInfo);
                 mEditText.setText("");

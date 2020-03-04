@@ -276,6 +276,7 @@ public class ChatDetailActivity extends BRActivity {
         for(MessageCacheBean messageCacheBean : allMessageCacheBeans) {
             MessageInfo messageInfo = new MessageInfo();
             messageInfo.setContent(messageCacheBean.MessageContent);
+            messageInfo.setTime(messageCacheBean.MessageTimestamp);
             messageInfo.setType(messageCacheBean.MessageOrientation);
             messageInfo.setHeader("https://xidaokun.github.io/im_boy.png");
             messageInfos.add(messageInfo);
@@ -336,14 +337,13 @@ public class ChatDetailActivity extends BRActivity {
             }
         });
 
-        long time = System.currentTimeMillis();
         ChatDataSource.getInstance(ChatDetailActivity.this)
                 .setType(BRConstants.CHAT_GROUP_TYPE)
                 .setNickname(mTitle)
                 .setContentType(ChatDataSource.TYPE_MESSAGE_TEXT)
                 .setContent(messageInfo.getContent())
                 .hasRead(true)
-                .setTimestamp(time)
+                .setTimestamp(messageInfo.getTime())
                 .setOrientation(Constants.CHAT_ITEM_TYPE_RIGHT)
                 .setFriendCode(mFriendCodeStr)
                 .setSendState((0!=ret)?Constants.CHAT_ITEM_SENDING:Constants.CHAT_ITEM_SEND_SUCCESS)

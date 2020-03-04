@@ -3,10 +3,10 @@ package org.chat.lib.presenter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.PopupWindow;
 
 import com.breadwallet.R;
 import com.breadwallet.tools.animation.UiUtils;
@@ -20,7 +20,6 @@ import org.chat.lib.entity.ChatMsgEntity;
 import org.chat.lib.entity.MessageCacheBean;
 import org.chat.lib.entity.MessageItemBean;
 import org.chat.lib.source.ChatDataSource;
-import org.chat.lib.utils.Utils;
 import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -46,7 +45,7 @@ public class FragmentChatMessage extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_chat_message, container, false);
         initView(rootView);
-        initListener();
+        initListener(rootView);
         EventBus.getDefault().register(this);
         return rootView;
     }
@@ -115,15 +114,24 @@ public class FragmentChatMessage extends BaseFragment {
     ChatMessageAdapter mAdapter;
     private void initView(View view) {
         mListView = view.findViewById(R.id.side_delete_listview);
+        mMenuLayout = view.findViewById(R.id.chat_item_menu_layout);
         mAdapter = new ChatMessageAdapter(getContext(), entities);
         mListView.setAdapter(mAdapter);
     }
 
-    private void initListener() {
+    private void initListener(View rootView) {
+        rootView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                dimissMenu();
+                return false;
+            }
+        });
         mAdapter.setListener(new ChatMessageAdapter.OnItemListener() {
             @Override
             public void onLongPress(View view, int position, float x, float y) {
-                showDeletePop(view, (int) x, (int) y, position);
+//                showDeletePop(view, (int) x, (int) y, position);
+                showMenu(x, y, position);
             }
 
             @Override
@@ -133,6 +141,7 @@ public class FragmentChatMessage extends BaseFragment {
 
             @Override
             public void onClick(View view, final int position) {
+                dimissMenu();
                 String friendCode = entities.get(position).getFriendCode();
                 String type = entities.get(position).getType();
                 String nickName = entities.get(position).getName();
@@ -152,56 +161,99 @@ public class FragmentChatMessage extends BaseFragment {
     }
 
 
-    private void dismissPop() {
-        if(null != popupWindow) popupWindow.dismiss();
+//    private void dismissPop() {
+//        if(null != popupWindow) popupWindow.dismiss();
+//    }
+
+    View mMenuLayout;
+    private void showMenu(float x, float y, final int position) {
+        mMenuLayout.setVisibility(View.VISIBLE);
+        mMenuLayout.findViewById(R.id.has_read_tv).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String friendCode = entities.get(position).getFriendCode();
+                ChatDataSource.getInstance(getContext()).updateHasRead(friendCode, true);
+                entities.get(position).setCount(0);
+                mAdapter.notifyDataSetChanged();
+                dimissMenu();
+            }
+        });
+
+
+        mMenuLayout.findViewById(R.id.roof_placement_tv).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dimissMenu();
+            }
+        });
+
+        mMenuLayout.findViewById(R.id.delete_message_tv).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String friendCode = entities.get(position).getFriendCode();
+                ChatDataSource.getInstance(getContext()).deleteMessage(friendCode);
+                ChatDataSource.getInstance(getContext()).deleteMessageItemInfo(friendCode);
+                entities.remove(position);
+                mAdapter.notifyDataSetChanged();
+                dimissMenu();
+            }
+        });
+
+        mMenuLayout.setX(x);
+        mMenuLayout.setY(y);
+        mMenuLayout.setVisibility(View.VISIBLE);
     }
 
-    PopupWindow popupWindow = null;
-    private void showDeletePop(View headview, int x, int y, final int position) {
-        if(popupWindow == null) {
-            View view = getLayoutInflater().inflate(R.layout.chat_message_pop_layout, null);
-            popupWindow = new PopupWindow(view, Utils.dp2px(getContext(), 100), Utils.dp2px(getContext(), 120), true);
-            popupWindow.setOutsideTouchable(true);
-            view.findViewById(R.id.has_read_tv).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String friendCode = entities.get(position).getFriendCode();
-                    ChatDataSource.getInstance(getContext()).updateHasRead(friendCode, true);
-                    entities.get(position).setCount(0);
-                    mAdapter.notifyDataSetChanged();
-                    popupWindow.dismiss();
-                }
-            });
-
-            view.findViewById(R.id.roof_placement_tv).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                }
-            });
-
-            view.findViewById(R.id.delete_message_tv).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String friendCode = entities.get(position).getFriendCode();
-                    ChatDataSource.getInstance(getContext()).deleteMessage(friendCode);
-                    ChatDataSource.getInstance(getContext()).deleteMessageItemInfo(friendCode);
-                    entities.remove(position);
-                    mAdapter.notifyDataSetChanged();
-                    popupWindow.dismiss();
-                }
-            });
-        }
-
-        if (popupWindow.isShowing()) {
-            popupWindow.dismiss();
-        } else {
-            Log.d("xidaokun", "FragmentChatMessage#showDeletePop#x:"+x+" #y"+y);
-            int headViewH = headview.getHeight();
-            Log.d("xidaokun", "FragmentChatMessage#showDeletePop#headViewH:"+headViewH);
-            popupWindow.showAsDropDown(headview, x, y - headViewH);
-        }
+    private void dimissMenu() {
+        mMenuLayout.setVisibility(View.GONE);
     }
+
+//    PopupWindow popupWindow = null;
+//    private void showDeletePop(View headview, int x, int y, final int position) {
+//        if(popupWindow == null) {
+//            View view = getLayoutInflater().inflate(R.layout.chat_message_pop_layout, null);
+//            popupWindow = new PopupWindow(view, Utils.dp2px(getContext(), 100), Utils.dp2px(getContext(), 120), true);
+//            popupWindow.setOutsideTouchable(true);
+//            view.findViewById(R.id.has_read_tv).setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    String friendCode = entities.get(position).getFriendCode();
+//                    ChatDataSource.getInstance(getContext()).updateHasRead(friendCode, true);
+//                    entities.get(position).setCount(0);
+//                    mAdapter.notifyDataSetChanged();
+//                    popupWindow.dismiss();
+//                }
+//            });
+//
+//            view.findViewById(R.id.roof_placement_tv).setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//
+//                }
+//            });
+//
+//            view.findViewById(R.id.delete_message_tv).setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    String friendCode = entities.get(position).getFriendCode();
+//                    ChatDataSource.getInstance(getContext()).deleteMessage(friendCode);
+//                    ChatDataSource.getInstance(getContext()).deleteMessageItemInfo(friendCode);
+//                    entities.remove(position);
+//                    mAdapter.notifyDataSetChanged();
+//                    popupWindow.dismiss();
+//                }
+//            });
+//        }
+//
+//        if (popupWindow.isShowing()) {
+//            popupWindow.dismiss();
+//        } else {
+//            Log.d("xidaokun", "FragmentChatMessage#showDeletePop#x:"+x+" #y"+y);
+//            int headViewH = headview.getHeight();
+//            Log.d("xidaokun", "FragmentChatMessage#showDeletePop#headViewH:"+headViewH);
+//            popupWindow.showAsDropDown(headview, x, y - headViewH);
+//        }
+//    }
 
 
     @Override

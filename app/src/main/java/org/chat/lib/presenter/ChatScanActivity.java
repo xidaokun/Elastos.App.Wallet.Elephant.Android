@@ -138,17 +138,20 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
     ElaphantDialogEdit mElaphantDialog = null;
     private void showNicknameDialog(final String friendCode) {
         if(mElaphantDialog == null) mElaphantDialog = new ElaphantDialogEdit(ChatScanActivity.this);
-        mElaphantDialog.setTitleStr("Set friend nickname to chat");
-        mElaphantDialog.setMessageStr("Input friend nickname");
-        mElaphantDialog.setPositiveStr("Set Now");
-        mElaphantDialog.setNegativeStr("Cancel");
+        mElaphantDialog.setTitleStr(getString(R.string.My_chat_pop_title));
+        mElaphantDialog.setMessageStr(getString(R.string.My_chat_pop_hint));
+        mElaphantDialog.setPositiveStr(getString(R.string.My_chat_pop_set_now));
+        mElaphantDialog.setNegativeStr(getString(R.string.My_chat_pop_cancel));
         mElaphantDialog.setPositiveListener(new ElaphantDialogEdit.OnPositiveClickListener() {
             @Override
             public void onClick() {
                 String nickName = mElaphantDialog.getEditText();
-                mElaphantDialog.dismiss();
-                setResult(friendCode, mType, nickName);
-
+                if(StringUtil.isNullOrEmpty(nickName)) {
+                    mElaphantDialog.setRequireTvVisiable(View.VISIBLE);
+                } else {
+                    mElaphantDialog.dismiss();
+                    setResult(friendCode, mType, nickName);
+                }
             }
         });
         mElaphantDialog.setNegativeListener(new ElaphantDialogEdit.OnNegativeClickListener() {
