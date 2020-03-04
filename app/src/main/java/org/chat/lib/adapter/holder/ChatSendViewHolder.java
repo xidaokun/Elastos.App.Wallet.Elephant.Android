@@ -1,5 +1,6 @@
 package org.chat.lib.adapter.holder;
 
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,6 +69,14 @@ public class ChatSendViewHolder extends BaseViewHolder<MessageInfo> {
             chatItemContentText.setSpanText(handler, data.getContent(), true);
             chatItemVoice.setVisibility(View.GONE);
             chatItemContentText.setVisibility(View.VISIBLE);
+
+            if(data.getSendState()==Constants.CHAT_ITEM_SEND_SUCCESS) {
+                Drawable drawable = getContext().getResources().getDrawable(R.drawable.ic_send_success);
+                drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+                chatItemContentText.setCompoundDrawables(null, null, drawable, null);
+            } else {
+                chatItemContentText.setCompoundDrawables(null, null, null, null);
+            }
             chatItemLayoutContent.setVisibility(View.VISIBLE);
             chatItemVoiceTime.setVisibility(View.GONE);
             chatItemContentImage.setVisibility(View.GONE);

@@ -278,6 +278,7 @@ public class ChatDetailActivity extends BRActivity {
             messageInfo.setContent(messageCacheBean.MessageContent);
             messageInfo.setTime(messageCacheBean.MessageTimestamp);
             messageInfo.setType(messageCacheBean.MessageOrientation);
+            messageInfo.setSendState(messageCacheBean.MessageSendState);
             messageInfo.setHeader("https://xidaokun.github.io/im_boy.png");
             messageInfos.add(messageInfo);
         }

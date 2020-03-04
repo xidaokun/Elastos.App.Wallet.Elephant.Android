@@ -59,7 +59,7 @@
             style="@style/text_body"
             android:layout_below="@+id/chat_item_layout_content"
             android:layout_marginTop="5dp"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentLeft="true"/>
 
         <TextView
             android:id="@+id/chat_item_voice_time"
