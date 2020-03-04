@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.animation.ElaphantDialogText;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
@@ -149,29 +152,50 @@ public class FragmentChatFriends extends BaseFragment {
 
             @Override
             public void deleteFriends(View view, final int position) {
-                //TODO daokun.xi
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+
+                //mRemoveHint.setText(Html.fromHtml(String.format(getString(R.string.esign_remove_nini_app_hint), item.name_zh_CN)));
+
+                final ElaphantDialogText elaphantDialog = new ElaphantDialogText(getContext());
+                Spanned deleteHint = Html.fromHtml(String.format(getContext().getString(R.string.My_chat_friends_delete_pop_hint), mDatas.get(position).getContact()));
+                elaphantDialog.setMessageSpan(deleteHint);
+                elaphantDialog.setPositiveStr(getContext().getString(R.string.My_chat_friends_delete_pop_confirm));
+                elaphantDialog.setNegativeStr(getContext().getString(R.string.My_chat_friends_delete_pop_cancel));
+                elaphantDialog.setPositiveListener(new ElaphantDialogText.OnPositiveClickListener() {
                     @Override
-                    public void run() {
-                        String friendCode = mDatas.get(position).getFriendCode();
-                        if(StringUtil.isNullOrEmpty(friendCode)) return;
-                        int ret = CarrierPeerNode.getInstance(getContext()).removeFriend(mDatas.get(position).getFriendCode());
-                        Log.d("xidaokun", "FragementChatFriends#deleteFriends#ret:"+ret);
-                        if(0 != ret) {
-                            return;
-                        }
-                        ChatDataSource.getInstance(getContext()).deleteMessage(friendCode);
-                        ChatDataSource.getInstance(getContext()).deleteMessageItemInfo(friendCode);
-                        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                    public void onClick() {
+                        //TODO daokun.xi
+                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                             @Override
                             public void run() {
-                                mDatas.remove(position);
-                                mAdapter.notifyDataSetChanged();
-                                EventBus.getDefault().post(new FragmentChatMessage.RefreshMessage());
+                                String friendCode = mDatas.get(position).getFriendCode();
+                                if(StringUtil.isNullOrEmpty(friendCode)) return;
+                                int ret = CarrierPeerNode.getInstance(getContext()).removeFriend(mDatas.get(position).getFriendCode());
+                                Log.d("xidaokun", "FragementChatFriends#deleteFriends#ret:"+ret);
+                                if(0 != ret) {
+                                    return;
+                                }
+                                ChatDataSource.getInstance(getContext()).deleteMessage(friendCode);
+                                ChatDataSource.getInstance(getContext()).deleteMessageItemInfo(friendCode);
+                                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mDatas.remove(position);
+                                        mAdapter.notifyDataSetChanged();
+                                        EventBus.getDefault().post(new FragmentChatMessage.RefreshMessage());
+                                    }
+                                });
                             }
                         });
                     }
                 });
+                elaphantDialog.setNegativeListener(new ElaphantDialogText.OnNegativeClickListener() {
+                    @Override
+                    public void onClick() {
+                        elaphantDialog.dismiss();
+                    }
+                });
+                elaphantDialog.show();
+
             }
         });
     }

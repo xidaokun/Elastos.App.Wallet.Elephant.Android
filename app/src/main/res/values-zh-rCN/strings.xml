@@ -1214,4 +1214,8 @@
     <string name="My_chat_nickname_save">保存</string>
 
     <string name="My_chat_detail_send">发送</string>
+
+    <string name="My_chat_friends_delete_pop_hint">将删除联系人<Data><![CDATA[<font color="#ff3365">%1$s</font>]]></Data>，同时删除与该联系人的聊天记录。</string>
+    <string name="My_chat_friends_delete_pop_cancel">取消</string>
+    <string name="My_chat_friends_delete_pop_confirm">确认</string>
 </resources>

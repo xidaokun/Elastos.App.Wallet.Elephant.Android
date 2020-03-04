@@ -35,10 +35,12 @@
             android:id="@+id/chat_item_layout_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/content_vertical_margin"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
             android:layout_toRightOf="@id/chat_item_header"
             android:layout_alignParentLeft="true"
-            android:background="@drawable/chatfrom_bg_normal1">
+            android:background="@drawable/chatfrom_bg_normal">
 
             <org.chat.lib.widget.GifTextView
                 android:id="@+id/chat_item_content_text"
@@ -59,6 +61,7 @@
             style="@style/text_body"
             android:layout_below="@+id/chat_item_layout_content"
             android:layout_marginTop="5dp"
+            android:textSize="11sp"
             android:layout_alignParentLeft="true"/>
 
         <TextView

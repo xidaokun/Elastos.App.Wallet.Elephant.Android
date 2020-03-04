@@ -3,10 +3,12 @@ package com.breadwallet.tools.animation;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Spanned;
 import android.view.View;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.util.StringUtil;
 
 public class ElaphantDialogText extends Dialog {
 
@@ -20,6 +22,7 @@ public class ElaphantDialogText extends Dialog {
 
     private String mTitleStr;
     private String mMessageStr;
+    private Spanned mMessageSpan;
     private String mPositiveStr;
     private String mNegativeStr;
 
@@ -63,7 +66,7 @@ public class ElaphantDialogText extends Dialog {
 
     private void initData() {
         mTitleTv.setText(mTitleStr);
-        mMessageTv.setText(mMessageStr);
+        mMessageTv.setText(!StringUtil.isNullOrEmpty(mMessageStr)?mMessageStr:mMessageSpan);
         mPositiveBtn.setText(mPositiveStr);
         mNegativeBtn.setText(mNegativeStr);
     }
@@ -82,6 +85,10 @@ public class ElaphantDialogText extends Dialog {
 
     public void setMessageStr(String resource) {
         this.mMessageStr = resource;
+    }
+
+    public void setMessageSpan(Spanned message) {
+        this.mMessageSpan = message;
     }
 
     public void setPositiveStr(String mPositiveStr) {

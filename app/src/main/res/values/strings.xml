@@ -1220,4 +1220,8 @@
     <string name="My_chat_nickname_save">Save</string>
 
     <string name="My_chat_detail_send">Send</string>
+
+    <string name="My_chat_friends_delete_pop_hint">Delete contact <Data><![CDATA[<font color="#ff3365">%1$s</font>]]></Data> and all associated chats.</string>
+    <string name="My_chat_friends_delete_pop_cancel">Cancel</string>
+    <string name="My_chat_friends_delete_pop_confirm">Confirm</string>
 </resources>
