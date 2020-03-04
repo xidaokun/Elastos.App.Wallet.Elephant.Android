@@ -152,6 +152,7 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
                     mElaphantDialog.dismiss();
                     setResult(friendCode, mType, nickName);
                 }
+                BRClipboardManager.putClipboard(getApplicationContext(), "");
             }
         });
         mElaphantDialog.setNegativeListener(new ElaphantDialogEdit.OnNegativeClickListener() {
@@ -159,6 +160,7 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
             public void onClick() {
                 mElaphantDialog.dismiss();
                 setResult(friendCode, mType, friendCode);
+                BRClipboardManager.putClipboard(getApplicationContext(), "");
             }
         });
         if(!mElaphantDialog.isShowing()) mElaphantDialog.show();
