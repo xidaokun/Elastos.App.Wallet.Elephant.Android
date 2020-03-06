@@ -252,10 +252,6 @@ public class MyProfileActivity extends BRActivity {
     }
 
     private void initProfile(){
-        String nickname = BRSharedPrefs.getNickname(this);
-        if(!StringUtil.isNullOrEmpty(nickname)) {
-            BRSharedPrefs.putProfileState(MyProfileActivity.this, BRSharedPrefs.NICKNAME_STATE, SettingsUtil.IS_COMPLETED);
-        }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {

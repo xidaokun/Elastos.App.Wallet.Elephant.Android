@@ -16,12 +16,14 @@ import com.breadwallet.tools.animation.ElaphantDialogEdit;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.SettingsUtil;
 import com.breadwallet.tools.util.StringUtil;
 
 import org.chat.lib.adapter.ChatPagerAdapter;
 import org.chat.lib.presenter.BaseFragment;
 import org.chat.lib.presenter.FragmentChatFriends;
 import org.chat.lib.presenter.FragmentChatMessage;
+import org.chat.lib.presenter.FriendProfileEditActivity;
 import org.elastos.sdk.elephantwallet.contact.Contact;
 import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
 import org.node.CarrierPeerNode;
@@ -110,6 +112,7 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
                 if(StringUtil.isNullOrEmpty(nickName)) {
                     elaphantDialog.setRequireTvVisiable(View.VISIBLE);
                 } else {
+                    BRSharedPrefs.putProfileState(getContext(), BRSharedPrefs.NICKNAME_STATE, SettingsUtil.IS_COMPLETED);
                     BRSharedPrefs.putNickname(getContext(), nickName);
                     int ret = CarrierPeerNode.getInstance(getContext()).
                             setMyInfo(Contact.HumanInfo.Item.Nickname,

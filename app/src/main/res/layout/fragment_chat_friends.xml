@@ -22,7 +22,6 @@
         android:layout_height="match_parent"
         android:layout_marginTop="10dp"
         android:paddingLeft="15dp"
-        android:paddingBottom="50dp"
         android:layout_below="@+id/friends_search_edt"
         android:background="@android:color/white"/>
 

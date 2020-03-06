@@ -186,8 +186,10 @@ public class FragmentChatFriends extends BaseFragment {
                                 });
                             }
                         });
+                        elaphantDialog.dismiss();
                     }
                 });
+
                 elaphantDialog.setNegativeListener(new ElaphantDialogText.OnNegativeClickListener() {
                     @Override
                     public void onClick() {

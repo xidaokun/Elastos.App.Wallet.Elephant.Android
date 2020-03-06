@@ -1224,4 +1224,6 @@
     <string name="My_chat_friends_delete_pop_hint">Delete contact <Data><![CDATA[<font color="#ff3365">%1$s</font>]]></Data> and all associated chats.</string>
     <string name="My_chat_friends_delete_pop_cancel">Cancel</string>
     <string name="My_chat_friends_delete_pop_confirm">Confirm</string>
+
+    <string name="My_chat_edit_nickname_empty_toast">nickname can not be empty</string>
 </resources>

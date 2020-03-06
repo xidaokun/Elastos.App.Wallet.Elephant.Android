@@ -71,7 +71,7 @@ public class ChatMessageAdapter extends BaseAdapter {
         viewHolder.nameTv.setText(name);
         viewHolder.aliasTv.setText(name.substring(0, 1));
         viewHolder.msgTv.setText(mEntities.get(position).getMessage());
-        viewHolder.timeTv.setText(BRDateUtil.getFormatDate(mEntities.get(position).getTimeStamp(), "yyyy-MM-dd hh:mm:ss a"));
+        viewHolder.timeTv.setText(BRDateUtil.getFormatDate(mEntities.get(position).getTimeStamp(), "MM-dd hh:mm:ss a"));
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,6 +83,7 @@ public class ChatMessageAdapter extends BaseAdapter {
             @Override
             public boolean onTouch(final View v, final MotionEvent event) {
                 if(event.getAction()==MotionEvent.ACTION_DOWN) {
+                    Log.d("xidaokun", "MotionEvent.ACTION_DOWN");
                     mLongPress = true;
                     final float x = event.getX();
                     final float y = event.getY();
@@ -90,7 +91,7 @@ public class ChatMessageAdapter extends BaseAdapter {
                         @Override
                         public void run() {
                             try {
-                                Thread.sleep(600);
+                                Thread.sleep(1000);
                                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                                     @Override
                                     public void run() {
@@ -106,9 +107,7 @@ public class ChatMessageAdapter extends BaseAdapter {
                 } else if (event.getAction()==MotionEvent.ACTION_UP) {
                     mLongPress = false;
                 } else if(event.getAction()==MotionEvent.ACTION_MOVE) {
-                    final float x = event.getX();
-                    final float y = event.getY();
-
+                    Log.d("xidaokun", "MotionEvent.ACTION_MOVE");
                     if(mListener != null) mListener.onMove(v, position);
                 }
                 return false;

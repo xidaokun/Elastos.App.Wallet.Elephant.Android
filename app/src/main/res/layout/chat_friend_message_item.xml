@@ -54,7 +54,7 @@
 
         <TextView
             android:id="@+id/chat_item_msg"
-            android:layout_width="300dp"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:textColor="#cccccc"

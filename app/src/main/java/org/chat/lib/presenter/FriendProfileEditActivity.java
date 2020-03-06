@@ -63,7 +63,7 @@ public class FriendProfileEditActivity extends BRActivity {
             public void onClick(View v) {
                 String nickname = mNicknameEdt.getText().toString();
                 if(StringUtil.isNullOrEmpty(nickname)) {
-                    Toast.makeText(FriendProfileEditActivity.this, "nickname is empty", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FriendProfileEditActivity.this, getResources().getString(R.string.My_chat_edit_nickname_empty_toast), Toast.LENGTH_SHORT).show();
                     return;
                 }
 

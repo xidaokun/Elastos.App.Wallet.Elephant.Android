@@ -4,13 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:minHeight="48dp">
+    android:minHeight="48dp"
+    android:padding="@dimen/content_vertical_margin">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="40dp">
+        android:layout_marginTop="10dp">
 
         <ImageView
             android:id="@+id/chat_item_header"
