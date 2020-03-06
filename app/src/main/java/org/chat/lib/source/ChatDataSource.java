@@ -167,18 +167,21 @@ public class ChatDataSource implements BRDataSourceInterface {
     }
 
 
-    public void updateAcceptState(String friendCode, int acceptStatus) {
+    public int updateAcceptState(String friendCode, int acceptStatus) {
+        int r = 0;
         try {
             database = openDatabase();
 
             ContentValues args = new ContentValues();
             args.put(BRSQLiteHelper.WAIT_ACCEPT_STATUS, acceptStatus);
 
-            int r = database.update(BRSQLiteHelper.WAIT_ACCEPT_TABLE_NAME, args, BRSQLiteHelper.WAIT_ACCEPT_FRIENDCODE + " = ? ", new String[]{friendCode});
+            r = database.update(BRSQLiteHelper.WAIT_ACCEPT_TABLE_NAME, args, BRSQLiteHelper.WAIT_ACCEPT_FRIENDCODE + " = ? ", new String[]{friendCode});
             Log.d("xidaokun", "ChatDataSource#updateMessageItem#ret:"+ r);
         } finally {
             closeDatabase();
         }
+
+        return r;
     }
 
     public boolean isFriendExit(String friendCode) {

@@ -161,6 +161,10 @@ public class VoteActivity extends BaseSettingsActivity {
     private void callReturnUrl(String txId){
         if(StringUtil.isNullOrEmpty(txId)) return;
         String returnUrl = uriFactory.getReturnUrl();
+        if(StringUtil.isNullOrEmpty(returnUrl)) {
+            Toast.makeText(VoteActivity.this, "returnurl is empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
         String url;
         if (returnUrl.contains("?")) {
             url = returnUrl + "&TXID=" + txId;

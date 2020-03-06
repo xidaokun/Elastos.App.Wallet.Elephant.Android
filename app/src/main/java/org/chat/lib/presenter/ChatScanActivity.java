@@ -150,6 +150,10 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
                     mElaphantDialog.setRequireTvVisiable(View.VISIBLE);
                 } else {
                     mElaphantDialog.dismiss();
+                    int ret = ChatDataSource.getInstance(ChatScanActivity.this).updateAcceptState(friendCode, BRConstants.ACCEPTED);
+                    if(ret > 0) {
+                        CarrierPeerNode.getInstance(ChatScanActivity.this).acceptFriend(friendCode, BRConstants.CHAT_SINGLE_TYPE);
+                    }
                     setResult(friendCode, mType, nickName);
                 }
                 BRClipboardManager.putClipboard(getApplicationContext(), "");

@@ -58,7 +58,7 @@ public class DidAuthListActivity extends BaseSettingsActivity {
         mAuthorList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(DidAuthListActivity.this, DidDetailActivity.class);
+                Intent intent = new Intent(DidAuthListActivity.this, AuthorDetailActivity.class);
                 intent.putExtra("did", infos.get(i).getDid());
                 intent.putExtra("appId", infos.get(i).getAppId());
                 startActivity(intent);

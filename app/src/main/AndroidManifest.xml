@@ -331,7 +331,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".presenter.activities.did.DidDetailActivity"
+            android:name=".presenter.activities.did.AuthorDetailActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 

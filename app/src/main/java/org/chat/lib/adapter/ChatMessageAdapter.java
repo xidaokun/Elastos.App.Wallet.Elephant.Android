@@ -71,7 +71,7 @@ public class ChatMessageAdapter extends BaseAdapter {
         viewHolder.nameTv.setText(name);
         viewHolder.aliasTv.setText(name.substring(0, 1));
         viewHolder.msgTv.setText(mEntities.get(position).getMessage());
-        viewHolder.timeTv.setText(BRDateUtil.getFormatDate(mEntities.get(position).getTimeStamp(), "yyyy-MM-dd hh:mm:ss"));
+        viewHolder.timeTv.setText(BRDateUtil.getFormatDate(mEntities.get(position).getTimeStamp(), "yyyy-MM-dd hh:mm:ss a"));
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

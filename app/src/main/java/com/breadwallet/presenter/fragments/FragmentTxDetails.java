@@ -232,6 +232,7 @@ public class FragmentTxDetails extends DialogFragment {
     private TxProducerAdapter mAdapter;
     private List<TxProducerEntity> mProducers = new ArrayList<>();
     private void initTxAdapter(){
+        if(mTransaction == null) return;
         List<TxProducerEntity> tmp = ElaDataSource.getInstance(getContext()).getTxProducerByTxid(mTransaction.txReversed);
         if(mTransaction.isVote() && (tmp!=null && tmp.size()>0)) {
             mVoteTitleTv.setVisibility(View.VISIBLE);
