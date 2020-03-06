@@ -174,7 +174,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 .setTimestamp(messageInfo.getTime())
                 .setOrientation(messageInfo.getType())
                 .setFriendCode(friendCode)
-                .setSendState(Constants.CHAT_ITEM_SEND_SUCCESS)
+                .setSendState(messageInfo.getSendState())
                 .cacheMessgeInfo();
 
         EventBus.getDefault().post(new FragmentChatMessage.RefreshMessage());

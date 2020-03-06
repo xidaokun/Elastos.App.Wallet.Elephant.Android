@@ -320,10 +320,13 @@ public class ChatDetailActivity extends BRActivity {
 //        MsgProtocol msgProtocol = new MsgProtocol();
 //        msgProtocol.content = messageInfo.getContent();
         int ret = 0;
+        String type = null;
         if(mType==null || mType.contains(BRConstants.CHAT_SINGLE_TYPE)) {
             ret = CarrierPeerNode.getInstance(ChatDetailActivity.this).sendMessage(mFriendCodeStr, /*new Gson().toJson(msgProtocol)*/messageInfo.getContent());
+            type = BRConstants.CHAT_SINGLE_TYPE;
         } else if(mType.contains(BRConstants.CHAT_GROUP_TYPE)) {
             ret = CarrierPeerNode.getInstance(ChatDetailActivity.this).sendGroupMessage(mFriendCodeStr, /*new Gson().toJson(msgProtocol)*/messageInfo.getContent());
+            type = BRConstants.CHAT_GROUP_TYPE;
         } else {
             ret = -1;
         }
@@ -339,7 +342,7 @@ public class ChatDetailActivity extends BRActivity {
         });
 
         ChatDataSource.getInstance(ChatDetailActivity.this)
-                .setType(BRConstants.CHAT_GROUP_TYPE)
+                .setType(type)
                 .setNickname(mTitle)
                 .setContentType(ChatDataSource.TYPE_MESSAGE_TEXT)
                 .setContent(messageInfo.getContent())

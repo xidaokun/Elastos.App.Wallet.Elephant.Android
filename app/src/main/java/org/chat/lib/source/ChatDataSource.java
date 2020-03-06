@@ -423,7 +423,8 @@ public class ChatDataSource implements BRDataSourceInterface {
             BRSQLiteHelper.CHAT_MESSAGE_ICON_PATH,
             BRSQLiteHelper.CHAT_MESSAGE_ORIENTATION,
             BRSQLiteHelper.CHAT_MESSAGE_FRIENDCODE,
-            BRSQLiteHelper.CHAT_MESSAGE_FRIEND_ICON_PATH
+            BRSQLiteHelper.CHAT_MESSAGE_FRIEND_ICON_PATH,
+            BRSQLiteHelper.CHAT_MESSAGE_SEND_STATE
     };
 
     private MessageCacheBean cursorToMessageInfo(Cursor cursor) {
@@ -438,6 +439,7 @@ public class ChatDataSource implements BRDataSourceInterface {
         messageCacheBean.MessageOrientation = cursor.getInt(7);
         messageCacheBean.MessageFriendCode = cursor.getString(8);
         messageCacheBean.MessageFriendIconPath = cursor.getString(9);
+        messageCacheBean.MessageSendState = cursor.getInt(10);
 
         return messageCacheBean;
     }
