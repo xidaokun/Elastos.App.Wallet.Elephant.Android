@@ -99,24 +99,6 @@ public class FragmentChatMessage extends BaseFragment {
                     entity.setOnline((friendInfo!=null&&(friendInfo.status==ContactInterface.Status.Online)));
                     entity.setCount((null!=hasNotReadCacheBeans && hasNotReadCacheBeans.size()>0)? hasNotReadCacheBeans.size() : 0);
 
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
                 }
                 getActivity().getWindow().getDecorView().post(new Runnable() {
                     @Override
