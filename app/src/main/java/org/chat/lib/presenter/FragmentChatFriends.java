@@ -82,7 +82,7 @@ public class FragmentChatFriends extends BaseFragment {
         mRecyclerView.setLayoutManager(mManager = new LinearLayoutManager(getContext()));
         mIndexBar = rootView.findViewById(R.id.indexBar);
         mIndexBar.setmPressedShowTextView(mSideHintTv)
-                .setNeedRealIndex(true)
+//                .setNeedRealIndex(true)
                 .setmLayoutManager(mManager);
 
         mAdapter = new FriendsAdapter(getContext(), mDatas);
