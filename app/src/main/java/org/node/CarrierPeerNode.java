@@ -19,6 +19,7 @@ import org.elastos.sdk.elephantwallet.contact.Utils;
 import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
 import org.elastos.sdk.keypair.ElastosKeypair;
 import org.greenrobot.eventbus.EventBus;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -243,24 +244,16 @@ public class CarrierPeerNode {
         switch (event.type) {
             case FriendRequest:
                 //replace with IM
-//                Contact.Listener.RequestEvent requestEvent = (Contact.Listener.RequestEvent) event;
-//                String summary = requestEvent.summary;
-//                text = requestEvent.humanCode + " request friend, said: " + summary;
-//                Log.d("xidaokun", "CarrierPeerNode#handleEvent#FriendRequest#\ntext:"+ text);
-//                String content = null;
-//                try {
-//                    JSONObject object = new JSONObject(summary);
-//                    content = object.getString("content");
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                } finally {
-//                    RequestFriendInfo requestFriendInfo = new RequestFriendInfo(requestEvent.humanCode, content);
-//                    postAddFriendEvent(requestFriendInfo);
-//                }
-
                 Contact.Listener.RequestEvent requestEvent = (Contact.Listener.RequestEvent) event;
                 String summary = requestEvent.summary;
                 text = requestEvent.humanCode + " request friend, said: " + summary;
+                Log.d("xidaokun", "CarrierPeerNode#handleEvent#FriendRequest#\ntext:"+ text);
+                RequestFriendInfo requestFriendInfo = new RequestFriendInfo(requestEvent.humanCode, summary);
+                postAddFriendEvent(requestFriendInfo);
+
+//                Contact.Listener.RequestEvent requestEvent = (Contact.Listener.RequestEvent) event;
+//                String summary = requestEvent.summary;
+//                text = requestEvent.humanCode + " request friend, said: " + summary;
                 Log.d("xidaokun", "CarrierPeerNode#handleEvent#FriendRequest#\ntext:"+ text);
                 break;
             case StatusChanged:

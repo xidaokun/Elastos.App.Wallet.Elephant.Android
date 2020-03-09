@@ -30,7 +30,7 @@
         android:layout_width="24dp"
         android:layout_height="match_parent"
         app:indexBarPressBackground="#00000000"
-        app:indexBarTextSize="16sp"
+        app:indexBarTextSize="15sp"
         android:layout_marginTop="10dp"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/friends_search_edt"/>
