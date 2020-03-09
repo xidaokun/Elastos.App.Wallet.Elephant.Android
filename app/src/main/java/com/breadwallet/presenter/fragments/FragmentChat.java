@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.breadwallet.R;
-import com.breadwallet.tools.animation.ElaphantDialogEdit;
+import com.breadwallet.tools.animation.MyNicknameDialog;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
@@ -23,7 +23,6 @@ import org.chat.lib.adapter.ChatPagerAdapter;
 import org.chat.lib.presenter.BaseFragment;
 import org.chat.lib.presenter.FragmentChatFriends;
 import org.chat.lib.presenter.FragmentChatMessage;
-import org.chat.lib.presenter.FriendProfileEditActivity;
 import org.elastos.sdk.elephantwallet.contact.Contact;
 import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
 import org.node.CarrierPeerNode;
@@ -98,14 +97,14 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
         showNicknameDialog();
     }
 
-    ElaphantDialogEdit elaphantDialog = null;
+    MyNicknameDialog elaphantDialog = null;
     private void showNicknameDialog() {
-        if(elaphantDialog == null) elaphantDialog = new ElaphantDialogEdit(getContext());
+        if(elaphantDialog == null) elaphantDialog = new MyNicknameDialog(getContext());
         elaphantDialog.setTitleStr(getString(R.string.My_chat_pop_title));
         elaphantDialog.setMessageStr(getString(R.string.My_chat_pop_hint));
         elaphantDialog.setPositiveStr(getString(R.string.My_chat_pop_set_now));
         elaphantDialog.setNegativeStr(getString(R.string.My_chat_pop_cancel));
-        elaphantDialog.setPositiveListener(new ElaphantDialogEdit.OnPositiveClickListener() {
+        elaphantDialog.setPositiveListener(new MyNicknameDialog.OnPositiveClickListener() {
             @Override
             public void onClick() {
                 String nickName = elaphantDialog.getEditText();
@@ -124,7 +123,7 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
                 }
             }
         });
-        elaphantDialog.setNegativeListener(new ElaphantDialogEdit.OnNegativeClickListener() {
+        elaphantDialog.setNegativeListener(new MyNicknameDialog.OnNegativeClickListener() {
             @Override
             public void onClick() {
                 elaphantDialog.dismiss();

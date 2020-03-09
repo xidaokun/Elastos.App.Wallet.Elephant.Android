@@ -12,30 +12,27 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.tools.util.StringUtil;
 
-public class ElaphantDialogEdit extends Dialog {
+public class FriendNicknameDialog extends Dialog {
 
     private TextView mPositiveBtn;
-    private TextView mNegativeBtn;
     private TextView mTitleTv;
     private TextView mRequireTv;
     private EditText mNicknameEdt;
 
     private OnPositiveClickListener mPositiveListener;
-    private OnNegativeClickListener mNegativeListener;
 
     private String mTitleStr;
     private String mMessageStr;
     private String mPositiveStr;
-    private String mNegativeStr;
 
-    public ElaphantDialogEdit(Context context) {
+    public FriendNicknameDialog(Context context) {
         super(context);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.elaphant_dialog_edit_layout);
+        setContentView(R.layout.friend_nickname_dialog_layout);
 
         setCanceledOnTouchOutside(false);
         initView();
@@ -45,7 +42,6 @@ public class ElaphantDialogEdit extends Dialog {
 
     private void initView() {
         mTitleTv = findViewById(R.id.title_tv);
-        mNegativeBtn = findViewById(R.id.negative_btn);
         mPositiveBtn = findViewById(R.id.positive_btn);
         mNicknameEdt = findViewById(R.id.message_edt);
         mRequireTv = findViewById(R.id.nickname_required_hint);
@@ -56,13 +52,6 @@ public class ElaphantDialogEdit extends Dialog {
             @Override
             public void onClick(View v) {
                 if(null != mPositiveListener) mPositiveListener.onClick();
-            }
-        });
-
-        mNegativeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(null != mNegativeListener) mNegativeListener.onClick();
             }
         });
 
@@ -86,19 +75,12 @@ public class ElaphantDialogEdit extends Dialog {
         });
     }
 
+
+
     private void initData() {
         mTitleTv.setText(mTitleStr);
         mNicknameEdt.setHint(mMessageStr);
         mPositiveBtn.setText(mPositiveStr);
-        mNegativeBtn.setText(mNegativeStr);
-    }
-
-    public void setPositiveListener(OnPositiveClickListener listener) {
-        this.mPositiveListener = listener;
-    }
-
-    public void setNegativeListener(OnNegativeClickListener listener) {
-        this.mNegativeListener = listener;
     }
 
     public void setTitleStr(String resource) {
@@ -121,15 +103,11 @@ public class ElaphantDialogEdit extends Dialog {
         this.mPositiveStr = mPositiveStr;
     }
 
-    public void setNegativeStr(String mNegativeStr) {
-        this.mNegativeStr = mNegativeStr;
+    public void setPositiveListener(OnPositiveClickListener listener) {
+        this.mPositiveListener = listener;
     }
 
     public interface OnPositiveClickListener {
-        void onClick();
-    }
-
-    public interface OnNegativeClickListener {
         void onClick();
     }
 }

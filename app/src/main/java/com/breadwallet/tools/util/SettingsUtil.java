@@ -198,19 +198,19 @@ public final class SettingsUtil {
     }
 
 //    private static void showPushDialog(final Activity activity) {
-//        final ElaphantDialogEdit elaphantDialog = new ElaphantDialogEdit(activity);
+//        final MyNicknameDialog elaphantDialog = new MyNicknameDialog(activity);
 //        elaphantDialog.setTitleStr("Set nickname to chat");
 //        elaphantDialog.setMessageStr("Input your nickname");
 //        elaphantDialog.setPositiveStr("Set Now");
 //        elaphantDialog.setNegativeStr("Cancel");
-//        elaphantDialog.setPositiveListener(new ElaphantDialogEdit.OnPositiveClickListener() {
+//        elaphantDialog.setPositiveListener(new MyNicknameDialog.OnPositiveClickListener() {
 //            @Override
 //            public void onClick() {
 //                String did = elaphantDialog.getEditText();
 //                elaphantDialog.dismiss();
 //            }
 //        });
-//        elaphantDialog.setNegativeListener(new ElaphantDialogEdit.OnNegativeClickListener() {
+//        elaphantDialog.setNegativeListener(new MyNicknameDialog.OnNegativeClickListener() {
 //            @Override
 //            public void onClick() {
 //                elaphantDialog.dismiss();

@@ -2,7 +2,6 @@ package org.chat.lib.presenter;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.ClipboardManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.PointF;
@@ -19,13 +18,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.EsignActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
-import com.breadwallet.tools.animation.ElaphantDialogEdit;
+import com.breadwallet.tools.animation.FriendNicknameDialog;
+import com.breadwallet.tools.animation.MyNicknameDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRClipboardManager;
-import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.qrcode.QRCodeReaderView;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
@@ -38,7 +36,6 @@ import com.platform.tools.BRBitId;
 import org.chat.lib.entity.NewFriendBean;
 import org.chat.lib.source.ChatDataSource;
 import org.chat.lib.widget.BaseTextView;
-import org.elastos.sdk.elephantwallet.contact.Contact;
 import org.node.CarrierPeerNode;
 
 import java.security.NoSuchAlgorithmException;
@@ -135,21 +132,21 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
         }
     }
 
-    ElaphantDialogEdit mElaphantDialog = null;
+    FriendNicknameDialog mFriendnickDialog = null;
     private void showNicknameDialog(final String friendCode) {
-        if(mElaphantDialog == null) mElaphantDialog = new ElaphantDialogEdit(ChatScanActivity.this);
-        mElaphantDialog.setTitleStr(getString(R.string.My_chat_pop_title));
-        mElaphantDialog.setMessageStr(getString(R.string.My_chat_pop_hint));
-        mElaphantDialog.setPositiveStr(getString(R.string.My_chat_pop_set_now));
-        mElaphantDialog.setNegativeStr(getString(R.string.My_chat_pop_cancel));
-        mElaphantDialog.setPositiveListener(new ElaphantDialogEdit.OnPositiveClickListener() {
+        if(mFriendnickDialog == null) mFriendnickDialog = new FriendNicknameDialog(ChatScanActivity.this);
+        mFriendnickDialog.setTitleStr(getString(R.string.My_chat_scan_pop_title));
+        mFriendnickDialog.setMessageStr(getString(R.string.My_chat_scan_pop_hint));
+        mFriendnickDialog.setPositiveStr(getString(R.string.My_chat_pop_set_now));
+        mFriendnickDialog.setCancelable(false);
+        mFriendnickDialog.setPositiveListener(new FriendNicknameDialog.OnPositiveClickListener() {
             @Override
             public void onClick() {
-                String nickName = mElaphantDialog.getEditText();
+                String nickName = mFriendnickDialog.getEditText();
                 if(StringUtil.isNullOrEmpty(nickName)) {
-                    mElaphantDialog.setRequireTvVisiable(View.VISIBLE);
+                    mFriendnickDialog.setRequireTvVisiable(View.VISIBLE);
                 } else {
-                    mElaphantDialog.dismiss();
+                    mFriendnickDialog.dismiss();
                     int ret = ChatDataSource.getInstance(ChatScanActivity.this).updateAcceptState(friendCode, BRConstants.ACCEPTED);
                     if(ret > 0) {
                         CarrierPeerNode.getInstance(ChatScanActivity.this).acceptFriend(friendCode, BRConstants.CHAT_SINGLE_TYPE);
@@ -159,15 +156,7 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
                 BRClipboardManager.putClipboard(getApplicationContext(), "");
             }
         });
-        mElaphantDialog.setNegativeListener(new ElaphantDialogEdit.OnNegativeClickListener() {
-            @Override
-            public void onClick() {
-                mElaphantDialog.dismiss();
-                setResult(friendCode, mType, friendCode);
-                BRClipboardManager.putClipboard(getApplicationContext(), "");
-            }
-        });
-        if(!mElaphantDialog.isShowing()) mElaphantDialog.show();
+        if(!mFriendnickDialog.isShowing()) mFriendnickDialog.show();
     }
 
     private void setResult(String friendCode, String type, String nickname) {

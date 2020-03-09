@@ -98,25 +98,6 @@ public class FragmentChatMessage extends BaseFragment {
                     ContactInterface.FriendInfo friendInfo = CarrierPeerNode.getInstance(getContext()).getFriendInfo(lastBean.MessageFriendCode);
                     entity.setOnline((friendInfo!=null&&(friendInfo.status==ContactInterface.Status.Online)));
                     entity.setCount((null!=hasNotReadCacheBeans && hasNotReadCacheBeans.size()>0)? hasNotReadCacheBeans.size() : 0);
-
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
-                    entities.add(entity);
                 }
                 getActivity().getWindow().getDecorView().post(new Runnable() {
                     @Override
@@ -141,7 +122,7 @@ public class FragmentChatMessage extends BaseFragment {
         mAdapter.setListener(new ChatMessageAdapter.OnItemListener() {
             @Override
             public void onLongPress(View view, int position, float x, float y) {
-                showDeletePop(view, (int) x, (int) y, position);
+//                showDeletePop(view, (int) x, (int) y, position);
             }
 
             @Override

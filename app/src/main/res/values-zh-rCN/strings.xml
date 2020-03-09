@@ -1220,4 +1220,7 @@
     <string name="My_chat_friends_delete_pop_confirm">确认</string>
 
     <string name="My_chat_edit_nickname_empty_toast">昵称不能为空</string>
+
+    <string name="My_chat_scan_pop_title">设置聊天好友昵称</string>
+    <string name="My_chat_scan_pop_hint">输入好友昵称</string>
 </resources>
