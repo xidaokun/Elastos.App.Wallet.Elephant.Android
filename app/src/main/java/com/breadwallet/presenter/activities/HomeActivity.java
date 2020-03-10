@@ -136,29 +136,29 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     }
 
     //replace with IM
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void acceptFriend(final CarrierPeerNode.RequestFriendInfo requestFriendInfo) {
-        Log.d("xidaokun", "HomeActivity#acceptFriend#\nhumancode:"+ requestFriendInfo.humanCode + "\ncontent:" + requestFriendInfo.content);
-        final ElaphantDialogText elaphantDialog = new ElaphantDialogText(this);
-        elaphantDialog.setMessageStr("添加好友请求");
-        elaphantDialog.setPositiveStr("接受");
-        elaphantDialog.setNegativeStr("拒绝");
-        elaphantDialog.setPositiveListener(new ElaphantDialogText.OnPositiveClickListener() {
-            @Override
-            public void onClick() {
-                CarrierPeerNode.getInstance(HomeActivity.this).acceptFriend(requestFriendInfo.humanCode, requestFriendInfo.content);
-                EventBus.getDefault().post(requestFriendInfo.humanCode);
-                elaphantDialog.dismiss();
-            }
-        });
-        elaphantDialog.setNegativeListener(new ElaphantDialogText.OnNegativeClickListener() {
-            @Override
-            public void onClick() {
-                elaphantDialog.dismiss();
-            }
-        });
-        elaphantDialog.show();
-    }
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void acceptFriend(final CarrierPeerNode.RequestFriendInfo requestFriendInfo) {
+//        Log.d("xidaokun", "HomeActivity#acceptFriend#\nhumancode:"+ requestFriendInfo.humanCode + "\ncontent:" + requestFriendInfo.content);
+//        final ElaphantDialogText elaphantDialog = new ElaphantDialogText(this);
+//        elaphantDialog.setMessageStr("添加好友请求");
+//        elaphantDialog.setPositiveStr("接受");
+//        elaphantDialog.setNegativeStr("拒绝");
+//        elaphantDialog.setPositiveListener(new ElaphantDialogText.OnPositiveClickListener() {
+//            @Override
+//            public void onClick() {
+//                CarrierPeerNode.getInstance(HomeActivity.this).acceptFriend(requestFriendInfo.humanCode, requestFriendInfo.content);
+//                EventBus.getDefault().post(requestFriendInfo.humanCode);
+//                elaphantDialog.dismiss();
+//            }
+//        });
+//        elaphantDialog.setNegativeListener(new ElaphantDialogText.OnNegativeClickListener() {
+//            @Override
+//            public void onClick() {
+//                elaphantDialog.dismiss();
+//            }
+//        });
+//        elaphantDialog.show();
+//    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void MessageEvent(MessageInfo messageInfo) {

@@ -41,7 +41,7 @@ public class MyQrActivity extends BRActivity {
         initView();
         initListener();
 
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
     }
 
     private void initView() {
@@ -132,6 +132,6 @@ public class MyQrActivity extends BRActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
     }
 }

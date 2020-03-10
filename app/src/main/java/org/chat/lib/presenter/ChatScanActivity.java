@@ -36,6 +36,7 @@ import com.platform.tools.BRBitId;
 import org.chat.lib.entity.NewFriendBean;
 import org.chat.lib.source.ChatDataSource;
 import org.chat.lib.widget.BaseTextView;
+import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
 import org.node.CarrierPeerNode;
 
 import java.security.NoSuchAlgorithmException;
@@ -268,6 +269,7 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
                         if(!StringUtil.isNullOrEmpty(text)) {
                             String address = null;
                             String nickname = null;
+
                             if(text.contains("nickname")) {
                                 DidBean didBean = new Gson().fromJson(text, DidBean.class);
                                 address = didBean.did;
@@ -275,8 +277,20 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
                             } else {
                                 address = text;
                             }
-                            mPasteEdit.setText(address);
-                            showNicknameDialog(address, nickname);
+
+                            ContactInterface.Status status = CarrierPeerNode.getInstance(ChatScanActivity.this).getFriendStatus(address);
+                            if(!StringUtil.isNullOrEmpty(address) &&
+                                    status!=null&&
+                                    status!=ContactInterface.Status.WaitForAccept&&
+                                    status!=ContactInterface.Status.Removed &&
+                                    status!=ContactInterface.Status.Invalid) {
+                                Toast.makeText(ChatScanActivity.this, getString(R.string.My_scan_has_add_friend), Toast.LENGTH_SHORT).show();
+//                                UiUtils.startChatDetailActivity(ChatScanActivity.this, address, mType, nickname);
+                                finish();
+                            } else {
+                                mPasteEdit.setText(address);
+                                showNicknameDialog(address, nickname);
+                            }
                         }
                     } finally {
                         handlingCode = false;

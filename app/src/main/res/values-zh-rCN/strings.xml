@@ -1226,4 +1226,6 @@
 
     <string name="My_qr_switch_btn_did">DID</string>
     <string name="My_qr_switch_btn_carrier_addr">Carrier地址</string>
+
+    <string name="My_scan_has_add_friend">你已经添加了该好友</string>
 </resources>

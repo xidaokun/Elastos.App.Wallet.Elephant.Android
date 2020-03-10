@@ -1234,4 +1234,6 @@
     <string name="My_qr_switch_btn_did">DID</string>
     <string name="My_qr_switch_btn_carrier_addr">Carrier Address</string>
 
+    <string name="My_scan_has_add_friend">You have added this friend</string>
+
 </resources>
