@@ -34,6 +34,7 @@
             android:layout_marginRight="15dp"
             android:background="#f5f7fa"
             android:textSize="12sp"
+            android:maxLength="20"
             android:textColor="@color/black_333333"
             android:hint="Input your nickname"
             app:layout_constraintTop_toBottomOf="@+id/title_tv"/>

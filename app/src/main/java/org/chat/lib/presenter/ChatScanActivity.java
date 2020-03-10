@@ -117,7 +117,19 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
                     return;
                 }
 
-                showNicknameDialog(text);
+                if(!StringUtil.isNullOrEmpty(text)) {
+                    String address;
+                    String nickname = null;
+                    if(text.contains("nickname")) {
+                        DidBean didBean = new Gson().fromJson(text, DidBean.class);
+                        address = didBean.did;
+                        nickname = didBean.nickname;
+                    } else {
+                        address = text;
+                    }
+                    showNicknameDialog(address, nickname);
+                }
+
             }
         });
     }
@@ -133,12 +145,12 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
     }
 
     FriendNicknameDialog mFriendnickDialog = null;
-    private void showNicknameDialog(final String friendCode) {
+    private void showNicknameDialog(final String friendCode, final String nickname) {
         if(mFriendnickDialog == null) mFriendnickDialog = new FriendNicknameDialog(ChatScanActivity.this);
         mFriendnickDialog.setTitleStr(getString(R.string.My_chat_scan_pop_title));
+        mFriendnickDialog.setNicknameStr(nickname);
         mFriendnickDialog.setMessageStr(getString(R.string.My_chat_scan_pop_hint));
         mFriendnickDialog.setPositiveStr(getString(R.string.My_chat_pop_set_now));
-        mFriendnickDialog.setCancelable(false);
         mFriendnickDialog.setPositiveListener(new FriendNicknameDialog.OnPositiveClickListener() {
             @Override
             public void onClick() {
@@ -157,6 +169,7 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
             }
         });
         if(!mFriendnickDialog.isShowing()) mFriendnickDialog.show();
+        mFriendnickDialog.refreshUI();
     }
 
     private void setResult(String friendCode, String type, String nickname) {
@@ -252,12 +265,19 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
                 @Override
                 public void run() {
                     try {
-//                        cameraGuide.setImageResource(R.drawable.cameraguide_red);
-//                        lastUpdated = System.currentTimeMillis();
-//                        descriptionText.setText("Not a valid address or scheme" );
-
-                        mPasteEdit.setText(text);
-                        showNicknameDialog(text);
+                        if(!StringUtil.isNullOrEmpty(text)) {
+                            String address = null;
+                            String nickname = null;
+                            if(text.contains("nickname")) {
+                                DidBean didBean = new Gson().fromJson(text, DidBean.class);
+                                address = didBean.did;
+                                nickname = didBean.nickname;
+                            } else {
+                                address = text;
+                            }
+                            mPasteEdit.setText(address);
+                            showNicknameDialog(address, nickname);
+                        }
                     } finally {
                         handlingCode = false;
                     }
@@ -266,6 +286,11 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
 
         }
 
+    }
+
+    static class DidBean {
+        public String nickname;
+        public String did;
     }
 
     private void handleData(final String text) {

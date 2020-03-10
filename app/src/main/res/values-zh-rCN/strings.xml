@@ -1223,4 +1223,7 @@
 
     <string name="My_chat_scan_pop_title">设置聊天好友昵称</string>
     <string name="My_chat_scan_pop_hint">输入好友昵称</string>
+
+    <string name="My_qr_switch_btn_did">DID</string>
+    <string name="My_qr_switch_btn_carrier_addr">Carrier地址</string>
 </resources>

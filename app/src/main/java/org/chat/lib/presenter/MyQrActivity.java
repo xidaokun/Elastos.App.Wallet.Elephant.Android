@@ -11,10 +11,12 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.tools.animation.ElaphantDialogText;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.util.StringUtil;
+import com.google.gson.Gson;
 
 import org.chat.lib.utils.Utils;
 import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
@@ -27,6 +29,8 @@ public class MyQrActivity extends BRActivity {
 
     private ImageView mQrImg;
     private TextView mNicknameTv;
+    private BRButton mSwitchBtn;
+    private boolean mIsDidQr;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,17 +47,39 @@ public class MyQrActivity extends BRActivity {
     private void initView() {
         mQrImg = findViewById(R.id.my_qr_img);
         mNicknameTv = findViewById(R.id.my_nickname);
+        mSwitchBtn = findViewById(R.id.my_qr_switch_btn);
 
         String nickname = BRSharedPrefs.getNickname(this);
         mNicknameTv.setText(nickname);
-//        ContactInterface.UserInfo userInfo = CarrierPeerNode.getInstance(this).getUserInfo();
-//        if(userInfo == null) return;
-//        String carrierAddr = userInfo.getCurrDevCarrierAddr();
+        showCarrierQr();
+    }
+
+    private void showCarrierQr() {
         String carrierAddr = BRSharedPrefs.getCarrierId(this);
-        if(!StringUtil.isNullOrEmpty(carrierAddr)) {
-            Bitmap bitmap = QRUtils.encodeAsBitmap(carrierAddr, Utils.dp2px(this, 300));
-            mQrImg.setImageBitmap(bitmap);
-        }
+        Bitmap bitmap = QRUtils.encodeAsBitmap(carrierAddr==null?"":carrierAddr, Utils.dp2px(this, 300));
+        mQrImg.setImageBitmap(bitmap);
+
+        mSwitchBtn.setText(getResources().getString(R.string.My_qr_switch_btn_carrier_addr));
+    }
+
+    static class DidBean {
+        public String nickname;
+        public String did;
+    }
+    private void showDidQr() {
+        String nickname = BRSharedPrefs.getNickname(this);
+        String did = BRSharedPrefs.getMyDid(this);
+
+        DidBean didBean = new DidBean();
+        didBean.nickname = nickname;
+        didBean.did = did;
+
+        String tmp = new Gson().toJson(didBean);
+
+        Bitmap bitmap = QRUtils.encodeAsBitmap(tmp==null?"":tmp, Utils.dp2px(this, 300));
+        mQrImg.setImageBitmap(bitmap);
+
+        mSwitchBtn.setText(getResources().getString(R.string.My_qr_switch_btn_did));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, priority = 1)
@@ -88,7 +114,20 @@ public class MyQrActivity extends BRActivity {
                 finish();
             }
         });
+        mSwitchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mIsDidQr = !mIsDidQr;
+                if(mIsDidQr) {
+                    showDidQr();
+                } else {
+                    showCarrierQr();
+                }
+            }
+        });
     }
+
+
 
     @Override
     protected void onDestroy() {

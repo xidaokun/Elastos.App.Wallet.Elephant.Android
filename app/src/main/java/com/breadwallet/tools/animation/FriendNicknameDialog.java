@@ -37,7 +37,7 @@ public class FriendNicknameDialog extends Dialog {
         setCanceledOnTouchOutside(false);
         initView();
         initListener();
-        initData();
+        refreshUI();
     }
 
     private void initView() {
@@ -77,14 +77,20 @@ public class FriendNicknameDialog extends Dialog {
 
 
 
-    private void initData() {
+    public void refreshUI() {
         mTitleTv.setText(mTitleStr);
         mNicknameEdt.setHint(mMessageStr);
         mPositiveBtn.setText(mPositiveStr);
+        mNicknameEdt.setText(mNicknameStr==null?"":mNicknameStr);
     }
 
     public void setTitleStr(String resource) {
         this.mTitleStr = resource;
+    }
+
+    private String mNicknameStr = null;
+    public void setNicknameStr(String nickname) {
+        mNicknameStr = nickname;
     }
 
     public void setRequireTvVisiable(int visiable) {

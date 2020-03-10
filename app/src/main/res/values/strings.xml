@@ -1230,4 +1230,8 @@
 
     <string name="My_chat_scan_pop_title">Set friend nickname to chat</string>
     <string name="My_chat_scan_pop_hint">Input friend nickname</string>
+
+    <string name="My_qr_switch_btn_did">DID</string>
+    <string name="My_qr_switch_btn_carrier_addr">Carrier Address</string>
+
 </resources>

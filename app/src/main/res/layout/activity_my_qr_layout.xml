@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#E5E6E7">
 
     <RelativeLayout
@@ -37,8 +38,7 @@
         android:background="@drawable/my_qr_shape"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:paddingBottom="20dp"
-        android:layout_marginTop="82dp">
+        android:layout_marginTop="72dp">
 
         <org.chat.lib.widget.BaseTextView
             android:id="@+id/my_nickname"
@@ -46,9 +46,9 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:textColor="@color/black_333333"
-            android:textSize="30sp"
+            android:textSize="28sp"
             android:text="nickname"
-            android:layout_marginTop="72dp"/>
+            android:layout_marginTop="62dp"/>
 
         <RelativeLayout
             android:id="@+id/my_qr_img_layout"
@@ -68,6 +68,7 @@
         </RelativeLayout>
 
         <org.chat.lib.widget.BaseTextView
+            android:id="@+id/my_qr_hint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
@@ -77,13 +78,27 @@
             android:text="@string/My_chat_QR_hint"
             android:layout_below="@+id/my_qr_img_layout"/>
 
+        <com.breadwallet.presenter.customviews.BRButton
+            android:id="@+id/my_qr_switch_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/My_qr_switch_btn_carrier_addr"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:buttonType="6"
+            app:isBreadButton="true"
+            android:gravity="center"
+            android:layout_marginTop="5dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/my_qr_hint" />
+
     </RelativeLayout>
 
 
     <org.chat.lib.widget.RoundImageView
         android:layout_width="88dp"
         android:layout_height="88dp"
-        android:layout_marginTop="38dp"
+        android:layout_marginTop="28dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/toolbar"
         android:src="@drawable/unknow"/>
