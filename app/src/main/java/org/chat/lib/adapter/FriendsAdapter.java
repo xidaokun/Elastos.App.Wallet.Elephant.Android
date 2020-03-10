@@ -22,8 +22,8 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private LayoutInflater mInflater;
     private OnItemClickListener mListener;
 
-//    public static final int TYPE_HEADER = 0;
-//    public static final int TYPE_NORMAL = 1;
+    public static final int TYPE_FOOTER = 0;
+    public static final int TYPE_NORMAL = 1;
 
     public FriendsAdapter(Context context, List<ContactEntity> datas) {
         this.mContext = context;
@@ -42,7 +42,9 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-//        if(viewType==TYPE_HEADER) return new HeaderViewHolder(mInflater.inflate(R.layout.chat_friend_contact_header_layout, null));
+        if(viewType == TYPE_FOOTER) {
+            return new FooterViewHolder(mInflater.inflate(R.layout.chat_friend_contact_footer, parent, false));
+        }
         return new NormalViewHolder(mInflater.inflate(R.layout.chat_friend_contact_item, parent, false));
     }
 
@@ -126,14 +128,16 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemCount() {
-        return (mDatas==null)? 0: mDatas.size();
+        return (mDatas==null)? 0: mDatas.size()+1;
     }
 
-//    @Override
-//    public int getItemViewType(int position) {
-//        if(position == 0) return TYPE_HEADER;
-//        return TYPE_NORMAL;
-//    }
+    @Override
+    public int getItemViewType(int position) {
+        if (position == getItemCount()-1){
+            return TYPE_FOOTER;
+        }
+        return TYPE_NORMAL;
+    }
 
     public class NormalViewHolder extends RecyclerView.ViewHolder {
         TextView name;
@@ -165,6 +169,12 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public class HeaderViewHolder extends RecyclerView.ViewHolder {
 
         public HeaderViewHolder(@NonNull View itemView) {
+            super(itemView);
+        }
+    }
+
+    public class FooterViewHolder extends RecyclerView.ViewHolder {
+        public FooterViewHolder(@NonNull View itemView) {
             super(itemView);
         }
     }
