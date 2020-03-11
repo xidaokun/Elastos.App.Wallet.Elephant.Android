@@ -53,5 +53,7 @@ public class ChatAdapter extends RecyclerArrayAdapter<MessageInfo> {
         void onImageClick(View view, int position);
 
         void onVoiceClick(ImageView imageView, int position);
+
+        void onFailedClick(View view, int position);
     }
 }

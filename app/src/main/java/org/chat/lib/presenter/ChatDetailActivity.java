@@ -235,6 +235,27 @@ public class ChatDetailActivity extends BRActivity {
 //                }
 //            });
         }
+
+        @Override
+        public void onFailedClick(View view, final int position) {
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    handleSend(messageInfos.get(position));
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            chatAdapter.notifyDataSetChanged();
+                        }
+                    });
+                }
+            });
+        }
     };
 
     private void LoadData() {
@@ -378,4 +399,5 @@ public class ChatDetailActivity extends BRActivity {
         EventBus.getDefault().removeStickyEvent(this);
         EventBus.getDefault().unregister(this);
     }
+
 }

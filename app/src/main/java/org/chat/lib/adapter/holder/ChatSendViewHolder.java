@@ -27,7 +27,7 @@ public class ChatSendViewHolder extends BaseViewHolder<MessageInfo> {
     ImageView chatItemHeader;
     GifTextView chatItemContentText;
     BubbleImageView chatItemContentImage;
-    ImageView chatItemFail;
+    TextView chatItemFail;
     ProgressBar chatItemProgress;
     ImageView chatItemVoice;
     LinearLayout chatItemLayoutContent;
@@ -54,7 +54,6 @@ public class ChatSendViewHolder extends BaseViewHolder<MessageInfo> {
         this.handler = handler;
     }
 
-
     @Override
     public void setData(MessageInfo data) {
         chatItemDate.setText(BRDateUtil.getFormatDate(data.getTime(), "MM-dd hh:mm:ss a"));
@@ -65,6 +64,18 @@ public class ChatSendViewHolder extends BaseViewHolder<MessageInfo> {
                 onItemClickListener.onHeaderClick(getDataPosition());
             }
         });
+
+        chatItemFail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(onItemClickListener != null) {
+                    onItemClickListener.onFailedClick(chatItemFail, getDataPosition());
+                    chatItemProgress.setVisibility(View.VISIBLE);
+                    chatItemFail.setVisibility(View.GONE);
+                }
+            }
+        });
+
         if (data.getContent() != null) {
             chatItemContentText.setSpanText(handler, data.getContent(), true);
             chatItemVoice.setVisibility(View.GONE);
@@ -122,4 +133,5 @@ public class ChatSendViewHolder extends BaseViewHolder<MessageInfo> {
                 break;
         }
     }
+
 }
