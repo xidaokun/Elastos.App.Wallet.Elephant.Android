@@ -330,7 +330,7 @@ public class ChatDetailActivity extends BRActivity {
         } else {
             ret = -1;
         }
-        messageInfo.setSendState((0!=ret)?Constants.CHAT_ITEM_SENDING:Constants.CHAT_ITEM_SEND_SUCCESS);
+        messageInfo.setSendState((0!=ret)?Constants.CHAT_ITEM_SEND_ERROR:Constants.CHAT_ITEM_SEND_SUCCESS);
         Log.d("xidaokun", "ChatDetailActivity#handleSend#ret:"+ret);
         //TODO daokun.xi test log
         final int finalRet = ret;
@@ -350,7 +350,7 @@ public class ChatDetailActivity extends BRActivity {
                 .setTimestamp(messageInfo.getTime())
                 .setOrientation(Constants.CHAT_ITEM_TYPE_RIGHT)
                 .setFriendCode(mFriendCodeStr)
-                .setSendState((0!=ret)?Constants.CHAT_ITEM_SENDING:Constants.CHAT_ITEM_SEND_SUCCESS)
+                .setSendState((0!=ret)?Constants.CHAT_ITEM_SEND_ERROR:Constants.CHAT_ITEM_SEND_SUCCESS)
                 .cacheMessgeInfo();
     }
 

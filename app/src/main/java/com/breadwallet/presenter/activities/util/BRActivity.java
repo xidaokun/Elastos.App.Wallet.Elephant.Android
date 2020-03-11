@@ -231,6 +231,7 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                             String result = data.getStringExtra("result");
                             String type = data.getStringExtra("type");
                             if(!StringUtil.isNullOrEmpty(type)) {
+                                if(StringUtil.isNullOrEmpty(result)) return;
                                 if(type.equals(BRConstants.CHAT_SINGLE_TYPE)) {
                                     mHomeActivity.showChatFragment(result);
                                 } else {

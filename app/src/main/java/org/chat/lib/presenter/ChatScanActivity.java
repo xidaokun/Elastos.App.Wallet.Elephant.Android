@@ -286,6 +286,9 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
                                     status!=ContactInterface.Status.Invalid) {
                                 Toast.makeText(ChatScanActivity.this, getString(R.string.My_scan_has_add_friend), Toast.LENGTH_SHORT).show();
 //                                UiUtils.startChatDetailActivity(ChatScanActivity.this, address, mType, nickname);
+                                if(status!=ContactInterface.Status.WaitForAccept) {
+                                    CarrierPeerNode.getInstance(ChatScanActivity.this).acceptFriend(address, mType);
+                                }
                                 finish();
                             } else {
                                 mPasteEdit.setText(address);
