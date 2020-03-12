@@ -56,18 +56,20 @@ public class ChatDataSource implements BRDataSourceInterface {
     }
 
     private final String[] waitAcceptColumns = {
-            BRSQLiteHelper.WAIT_ACCEPT_FRIENDCODE,
+            BRSQLiteHelper.WAIT_ACCEPT_DID,
             BRSQLiteHelper.WAIT_ACCEPT_NICKNAME,
             BRSQLiteHelper.WAIT_ACCEPT_TIMESTAMP,
-            BRSQLiteHelper.WAIT_ACCEPT_STATUS
+            BRSQLiteHelper.WAIT_ACCEPT_STATUS,
+            BRSQLiteHelper.WAIT_ACCEPT_CAEEIERADDR
     };
 
     private NewFriendBean cursorToWaitAcceptBean(Cursor cursor) {
         NewFriendBean waitAcceptBean = new NewFriendBean();
-        waitAcceptBean.friendCode = cursor.getString(0);
+        waitAcceptBean.did = cursor.getString(0);
         waitAcceptBean.nickName = cursor.getString(1);
         waitAcceptBean.timeStamp = cursor.getLong(2);
         waitAcceptBean.acceptStatus = cursor.getInt(3);
+        waitAcceptBean.carrierAddr = cursor.getString(4);
 
         return waitAcceptBean;
     }
@@ -144,16 +146,40 @@ public class ChatDataSource implements BRDataSourceInterface {
         return waitAcceptBeans;
     }
 
+    public NewFriendBean getFriendByCode(String friendCode) {
+        NewFriendBean newFriendBean = null;
+        Cursor cursor = null;
+
+        try {
+            database = openDatabase();
+            cursor = database.query(BRSQLiteHelper.WAIT_ACCEPT_TABLE_NAME, waitAcceptColumns,BRSQLiteHelper.WAIT_ACCEPT_DID +" = ? OR " + BRSQLiteHelper.WAIT_ACCEPT_CAEEIERADDR+" = ? ", new String[]{friendCode, friendCode}, null, null, "waitAcceptTimestamp asc");
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                newFriendBean = cursorToWaitAcceptBean(cursor);
+                cursor.moveToNext();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null)
+                cursor.close();
+            closeDatabase();
+        }
+
+        return newFriendBean;
+    }
+
     public void cacheWaitAcceptFriend(NewFriendBean waitAcceptBean) {
         try {
             database = openDatabase();
             database.beginTransaction();
 
             ContentValues value = new ContentValues();
-            value.put(BRSQLiteHelper.WAIT_ACCEPT_FRIENDCODE, waitAcceptBean.friendCode);
+            value.put(BRSQLiteHelper.WAIT_ACCEPT_DID, waitAcceptBean.did);
             value.put(BRSQLiteHelper.WAIT_ACCEPT_NICKNAME, waitAcceptBean.nickName);
             value.put(BRSQLiteHelper.WAIT_ACCEPT_TIMESTAMP, waitAcceptBean.timeStamp);
             value.put(BRSQLiteHelper.WAIT_ACCEPT_STATUS, waitAcceptBean.acceptStatus);
+            value.put(BRSQLiteHelper.WAIT_ACCEPT_CAEEIERADDR, waitAcceptBean.carrierAddr);
 
             long l = database.insertWithOnConflict(BRSQLiteHelper.WAIT_ACCEPT_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
             database.setTransactionSuccessful();
@@ -175,8 +201,8 @@ public class ChatDataSource implements BRDataSourceInterface {
             ContentValues args = new ContentValues();
             args.put(BRSQLiteHelper.WAIT_ACCEPT_STATUS, acceptStatus);
 
-            r = database.update(BRSQLiteHelper.WAIT_ACCEPT_TABLE_NAME, args, BRSQLiteHelper.WAIT_ACCEPT_FRIENDCODE + " = ? ", new String[]{friendCode});
-            Log.d("xidaokun", "ChatDataSource#updateMessageItem#ret:"+ r);
+            r = database.update(BRSQLiteHelper.WAIT_ACCEPT_TABLE_NAME, args, BRSQLiteHelper.WAIT_ACCEPT_DID +" = ? OR " + BRSQLiteHelper.WAIT_ACCEPT_CAEEIERADDR+" = ? ", new String[]{friendCode, friendCode});
+            Log.d("xidaokun", "ChatDataSource#updateAcceptState#ret:"+ r);
         } finally {
             closeDatabase();
         }
@@ -189,7 +215,7 @@ public class ChatDataSource implements BRDataSourceInterface {
 
         try {
             database = openDatabase();
-            cursor = database.query(BRSQLiteHelper.WAIT_ACCEPT_TABLE_NAME, waitAcceptColumns, BRSQLiteHelper.WAIT_ACCEPT_FRIENDCODE + " = ? ", new String[]{friendCode}, null, null, null);
+            cursor = database.query(BRSQLiteHelper.WAIT_ACCEPT_TABLE_NAME, waitAcceptColumns, BRSQLiteHelper.WAIT_ACCEPT_DID + " = ? ", new String[]{friendCode}, null, null, null);
             return cursor.getCount()>0;
         } catch (Exception e) {
             e.printStackTrace();
@@ -209,36 +235,9 @@ public class ChatDataSource implements BRDataSourceInterface {
             ContentValues args = new ContentValues();
             args.put(BRSQLiteHelper.WAIT_ACCEPT_NICKNAME, nickname);
 
-            int r = database.update(BRSQLiteHelper.WAIT_ACCEPT_TABLE_NAME, args, BRSQLiteHelper.WAIT_ACCEPT_FRIENDCODE + " = ? ", new String[]{friendCode});
+            int r = database.update(BRSQLiteHelper.WAIT_ACCEPT_TABLE_NAME, args, BRSQLiteHelper.WAIT_ACCEPT_DID + " = ? ", new String[]{friendCode});
             Log.d("xidaokun", "ChatDataSource#updateMessageItem#ret:"+ r);
         } finally {
-            closeDatabase();
-        }
-    }
-
-    public void cacheWaitAcceptFriends(List<NewFriendBean> waitAcceptBeans) {
-        if (waitAcceptBeans == null) return;
-        try {
-            database = openDatabase();
-            database.beginTransaction();
-
-            for (NewFriendBean bean : waitAcceptBeans) {
-
-                ContentValues value = new ContentValues();
-                value.put(BRSQLiteHelper.WAIT_ACCEPT_FRIENDCODE, bean.friendCode);
-                value.put(BRSQLiteHelper.WAIT_ACCEPT_NICKNAME, bean.nickName);
-                value.put(BRSQLiteHelper.WAIT_ACCEPT_TIMESTAMP, bean.timeStamp);
-                value.put(BRSQLiteHelper.WAIT_ACCEPT_STATUS, bean.acceptStatus);
-
-                long l = database.insertWithOnConflict(BRSQLiteHelper.WAIT_ACCEPT_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
-                Log.d(TAG, "l:" + l);
-            }
-            database.setTransactionSuccessful();
-        } catch (Exception e) {
-            closeDatabase();
-            e.printStackTrace();
-        } finally {
-            database.endTransaction();
             closeDatabase();
         }
     }

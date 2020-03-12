@@ -32,7 +32,7 @@ public class FriendProfileEditActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_profile_layout);
 
-        mFriendCode = getIntent().getStringExtra("friendCode");
+        mFriendCode = getIntent().getStringExtra("did");
 
         initView();
         initListener();
@@ -78,7 +78,7 @@ public class FriendProfileEditActivity extends BRActivity {
                     ChatDataSource.getInstance(FriendProfileEditActivity.this).updateFriendName(friendCode, nickname);
                     finish();
                 } else {
-                    Toast.makeText(FriendProfileEditActivity.this, "can not find friendCode", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FriendProfileEditActivity.this, "can not find did", Toast.LENGTH_SHORT).show();
                 }
             }
         });

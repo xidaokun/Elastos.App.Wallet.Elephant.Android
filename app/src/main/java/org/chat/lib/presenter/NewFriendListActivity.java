@@ -64,7 +64,7 @@ public class NewFriendListActivity extends BRActivity implements NewFriendAdapte
 
     @Override
     public void accept(View view, int position) {
-        String friendCode = mWaitAcceptBeans.get(position).friendCode;
+        String friendCode = mWaitAcceptBeans.get(position).did;
         int ret = CarrierPeerNode.getInstance(this).acceptFriend(friendCode, BRConstants.CHAT_SINGLE_TYPE);
         if(0 == ret) {
             ChatDataSource.getInstance(this).updateAcceptState(friendCode, BRConstants.ACCEPTED);

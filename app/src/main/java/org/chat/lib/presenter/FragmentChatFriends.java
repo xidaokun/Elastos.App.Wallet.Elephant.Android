@@ -134,7 +134,7 @@ public class FragmentChatFriends extends BaseFragment {
                 String chatName = mDatas.get(position).getContact();
                 Log.d("xidaokun", "FragementChatFriends#sendMessage#type:"+type);
                 if (!StringUtil.isNullOrEmpty(friendCode)) {
-                    Log.d("xidaokun", "FragementChatFriends#sendMessage#friendCode:"+friendCode);
+                    Log.d("xidaokun", "FragementChatFriends#sendMessage#did:"+friendCode);
                     UiUtils.startChatDetailActivity(getContext(), friendCode, type, chatName);
                 }
             }
@@ -222,15 +222,15 @@ public class FragmentChatFriends extends BaseFragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void receiveAddAcceptEvent(CarrierPeerNode.FriendStatusInfo friendStatusInfo) {
-        Log.d("xidaokun", "FragementChatFriends#receiveAddAcceptEvent#friendCode:"+friendStatusInfo.humanCode+"\n#status:"+friendStatusInfo.status);
+    public void acceptFriendEvent(CarrierPeerNode.FriendStatusInfo friendStatusInfo) {
+        Log.d("xidaokun", "FragementChatFriends#acceptFriendEvent#did:"+friendStatusInfo.humanCode+"\n#status:"+friendStatusInfo.status);
         ChatDataSource.getInstance(getContext()).updateAcceptState(friendStatusInfo.humanCode, BRConstants.ACCEPTED);
         refreshFriendView();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void receiveAddRequestEvent(String friendCode) {
-        Log.d("xidaokun", "FragementChatFriends#receiveAddRequestEvent#friendCode:"+friendCode);
+    public void requestAddEvent(String friendCode) {
+        Log.d("xidaokun", "FragementChatFriends#requestAddEvent#did:"+friendCode);
         refreshFriendView();
     }
 
@@ -248,6 +248,7 @@ public class FragmentChatFriends extends BaseFragment {
     }
 
     private void refreshFriendView() {
+        Log.d("xidaokun", "FragmentChatFriends#refreshFriendView");
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {

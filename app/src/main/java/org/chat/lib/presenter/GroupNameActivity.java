@@ -33,7 +33,7 @@ public class GroupNameActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_name_layout);
 
-        mGroupId = getIntent().getStringExtra("friendCode");
+        mGroupId = getIntent().getStringExtra("did");
         initView();
         initListener();
         initData();

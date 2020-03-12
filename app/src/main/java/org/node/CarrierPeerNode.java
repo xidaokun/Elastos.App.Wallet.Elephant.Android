@@ -317,8 +317,9 @@ public class CarrierPeerNode {
         if(0 == ret) {
             setFriendInfo(friendCode, Contact.HumanInfo.Item.Addition, "{\"type\":\"chat\",\"value\":\"" + BRConstants.CHAT_SINGLE_TYPE + "\"}");
             String myDid = BRSharedPrefs.getMyDid(mContext);
+            String myCarrierAddr = BRSharedPrefs.getCarrierId(mContext);
             String nickName = BRSharedPrefs.getNickname(mContext);
-            PushServer.sendNotice(myDid, friendCode, nickName);
+            PushServer.sendNotice(myDid, friendCode, nickName, myCarrierAddr);
         }
         Log.d("xidaokun", "CarrierPeerNode#addFriend#======ret:"+ ret);
         return ret;
@@ -377,14 +378,14 @@ public class CarrierPeerNode {
     }
 
     public int sendMessage(String friendCode, String content) {
-        Log.d("xidaokun", "CarrierPeerNode#sendMessage\n#friendCode:"+ friendCode + "\n#content:" + content);
+        Log.d("xidaokun", "CarrierPeerNode#sendMessage\n#did:"+ friendCode + "\n#content:" + content);
         int ret = mConnector.sendMessage(friendCode, Contact.Channel.Carrier, content);
         Log.d("xidaokun", "CarrierPeerNode#sendMessage#ret:"+ ret);
         return ret;
     }
 
     public int sendGroupMessage(String friendCode, String content) {
-        Log.d("xidaokun", "CarrierPeerNode#sendGroupMessage\n#friendCode:"+ friendCode + "\n#content:" + content);
+        Log.d("xidaokun", "CarrierPeerNode#sendGroupMessage\n#did:"+ friendCode + "\n#content:" + content);
         int ret = mGroupConnector.sendMessage(friendCode, Contact.Channel.Carrier,content);
         Log.d("xidaokun", "CarrierPeerNode#sendGroupMessage#ret:"+ ret);
         return ret;

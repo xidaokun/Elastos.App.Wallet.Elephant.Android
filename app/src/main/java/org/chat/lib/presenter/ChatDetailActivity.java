@@ -108,7 +108,7 @@ public class ChatDetailActivity extends BRActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_detail_layout);
-        mFriendCodeStr = getIntent().getStringExtra("friendCode");
+        mFriendCodeStr = getIntent().getStringExtra("did");
         mType = getIntent().getStringExtra("type");
         mTitle = getIntent().getStringExtra("chatName");
 
@@ -243,7 +243,7 @@ public class ChatDetailActivity extends BRActivity {
                 public void run() {
                     handleSend(messageInfos.get(position));
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

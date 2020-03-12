@@ -103,6 +103,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         disableShiftingMode(navigation);
+        disableItemScale(navigation);
 
         mFragmentManager = getSupportFragmentManager();
         mWalletFragment = FragmentWallet.newInstance("Wallet");

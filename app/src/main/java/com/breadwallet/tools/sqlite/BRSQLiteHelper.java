@@ -60,15 +60,17 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
 
     public static final String WAIT_ACCEPT_TABLE_NAME = "waitAcceptTable";
     public static final String WAIT_ACCEPT_NICKNAME = "waitAcceptNickname";
-    public static final String WAIT_ACCEPT_FRIENDCODE = "waitAcceptFriendCode";
+    public static final String WAIT_ACCEPT_DID = "waitAcceptDid";
     public static final String WAIT_ACCEPT_TIMESTAMP = "waitAcceptTimestamp";
     public static final String WAIT_ACCEPT_STATUS = "waitAcceptStatus";
+    public static final String WAIT_ACCEPT_CAEEIERADDR = "waitAcceptCarrierAddr";
 
     private static final String WAIT_ACCEPT_DATABASE_CREATE = "create table if not exists " + WAIT_ACCEPT_TABLE_NAME + " (" +
-            WAIT_ACCEPT_FRIENDCODE + " text primary key , " +
+            WAIT_ACCEPT_DID + " text primary key , " +
             WAIT_ACCEPT_NICKNAME + " text," +
             WAIT_ACCEPT_TIMESTAMP + " integer, " +
-            WAIT_ACCEPT_STATUS + " integer" +
+            WAIT_ACCEPT_STATUS + " integer, " +
+            WAIT_ACCEPT_CAEEIERADDR + " text" +
             ");";
 
     public static final String CHAT_MESSAGE_ITEM_TABLE_NAME = "chatMessageItemTable";

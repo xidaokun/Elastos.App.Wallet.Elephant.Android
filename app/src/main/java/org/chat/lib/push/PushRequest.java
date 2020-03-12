@@ -220,6 +220,11 @@ public class PushRequest {
         mQueryParameters.put("AndroidOpenType", data);
     }
 
+    public void setAndroidExtParameters(String data) {
+        if (Util.isNullOrEmpty(data)) return;
+        mQueryParameters.put("AndroidExtParameters", data);
+    }
+
     public String getAndroidOpenType() {
         return mQueryParameters.get("AndroidOpenType");
     }

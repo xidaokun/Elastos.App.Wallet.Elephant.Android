@@ -538,14 +538,14 @@ public class UiUtils {
 
     public static void startProfileEditActivity(Context context, String friendCode, String nickname) {
         Intent intent = new Intent(context, FriendProfileEditActivity.class);
-        intent.putExtra("friendCode", friendCode);
+        intent.putExtra("did", friendCode);
         intent.putExtra("nickname", nickname);
         context.startActivity(intent);
     }
 
     public static void startChatDetailActivity(Context context, String friendCode, String type, String chatName) {
         Intent intent = new Intent(context, ChatDetailActivity.class);
-        intent.putExtra("friendCode", friendCode);
+        intent.putExtra("did", friendCode);
         intent.putExtra("type", type);
         intent.putExtra("chatName", chatName);
         context.startActivity(intent);
@@ -558,13 +558,13 @@ public class UiUtils {
 
     public static void startGroupNameActivity(Context context, String friendCode) {
         Intent intent = new Intent(context, GroupNameActivity.class);
-        intent.putExtra("friendCode", friendCode);
+        intent.putExtra("did", friendCode);
         context.startActivity(intent);
     }
 
     public static void startChatGroupSelectActivity(Activity activity, List<String> friendCodes) {
         Intent intent = new Intent(activity, ChatGroupSelectActivity.class);
-        intent.putExtra("friendCode", friendCodes.toString());
+        intent.putExtra("did", friendCodes.toString());
         activity.startActivityForResult(intent, BRConstants.CHAT_GROUP_SELECT_FRIENDS);
     }
 

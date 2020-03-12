@@ -2,6 +2,8 @@ package org.chat.lib.push;
 
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import java.io.IOException;
 import java.util.Date;
 
@@ -11,7 +13,19 @@ public class PushServer {
     private static final String ACCESSKEYID = "LTAI4FsqAH9aMgMLTRz47vDT";
     private static final String ACCESSSECRET = "LLjjzzieTgX42Iz7ehY3tMtbCiCzMK";
 
-    public static void sendNotice(String myId, String targetValue, String nickName) {
+    private static class ExtParameters {
+        public String did;
+        public String carrierAddr;
+        public String nickname;
+    }
+
+    public static void sendNotice(String did, String targetValue, String nickName, String carrierAddr) {
+
+        ExtParameters extParameters = new ExtParameters();
+        extParameters.did = did;
+        extParameters.nickname = nickName;
+        extParameters.carrierAddr = carrierAddr;
+
         PushRequest pushRequest = new PushRequest(ACCESSKEYID, ACCESSSECRET);
         pushRequest.setAppKey(APPKEY);
         pushRequest.setTarget("ALIAS");
@@ -21,10 +35,12 @@ public class PushServer {
         pushRequest.setDeviceType("ALL");
 
         pushRequest.setTitle(nickName);
-        pushRequest.setBody(myId);
+        pushRequest.setBody(did);
 
         pushRequest.setAndroidNotifyType("BOTH");//通知的提醒方式 "VIBRATE" : 震动 "SOUND" : 声音 "BOTH" : 声音和震动 NONE : 静音
         pushRequest.setAndroidOpenType("APPLICATION"); //点击通知后动作 "APPLICATION" : 打开应用 "ACTIVITY" : 打开AndroidActivity "URL" : 打开URL "NONE" : 无跳转
+
+        pushRequest.setAndroidExtParameters(new Gson().toJson(extParameters));
 
         pushRequest.setAndroidNotificationChannel("1");
 

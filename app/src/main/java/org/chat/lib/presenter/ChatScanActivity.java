@@ -20,7 +20,6 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.FriendNicknameDialog;
-import com.breadwallet.tools.animation.MyNicknameDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRClipboardManager;
@@ -37,11 +36,12 @@ import org.chat.lib.entity.NewFriendBean;
 import org.chat.lib.source.ChatDataSource;
 import org.chat.lib.widget.BaseTextView;
 import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
+import org.greenrobot.eventbus.EventBus;
 import org.node.CarrierPeerNode;
 
 import java.security.NoSuchAlgorithmException;
 
-public class ChatScanActivity extends BRActivity implements ActivityCompat.OnRequestPermissionsResultCallback, QRCodeReaderView.OnQRCodeReadListener{
+public class ChatScanActivity extends Activity implements ActivityCompat.OnRequestPermissionsResultCallback, QRCodeReaderView.OnQRCodeReadListener{
 
     private static final String TAG = ChatScanActivity.class.getName();
     private ImageView cameraGuide;
@@ -77,6 +77,7 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
 
         initView();
         initListener();
+//        EventBus.getDefault().register(this);
     }
 
     private void initView() {
@@ -159,25 +160,38 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
                 if(StringUtil.isNullOrEmpty(nickName)) {
                     mFriendnickDialog.setRequireTvVisiable(View.VISIBLE);
                 } else {
-                    mFriendnickDialog.dismiss();
-                    int ret = ChatDataSource.getInstance(ChatScanActivity.this).updateAcceptState(friendCode, BRConstants.ACCEPTED);
-                    if(ret > 0) {
-                        CarrierPeerNode.getInstance(ChatScanActivity.this).acceptFriend(friendCode, BRConstants.CHAT_SINGLE_TYPE);
+                    NewFriendBean newFriendBean = ChatDataSource.getInstance(ChatScanActivity.this).getFriendByCode(friendCode);
+                    if(null!=newFriendBean) {
+                        if(newFriendBean.acceptStatus==BRConstants.RECEIVE_ACCEPT) {
+                            int ret = CarrierPeerNode.getInstance(ChatScanActivity.this).acceptFriend(friendCode, BRConstants.CHAT_SINGLE_TYPE);
+                            if(ret > 0) {
+                                postFriendChangeEvent(new CarrierPeerNode.FriendStatusInfo(friendCode, ContactInterface.Status.Online));
+                            }
+                        }
+                        finish();
+                        return;
                     }
                     setResult(friendCode, mType, nickName);
+                    mFriendnickDialog.dismiss();
                 }
                 BRClipboardManager.putClipboard(getApplicationContext(), "");
             }
         });
-        if(!mFriendnickDialog.isShowing()) mFriendnickDialog.show();
-        mFriendnickDialog.refreshUI();
+        if(!mFriendnickDialog.isShowing()) {
+            mFriendnickDialog.show();
+            mFriendnickDialog.refreshUI();
+        }
+    }
+
+    public void postFriendChangeEvent(CarrierPeerNode.FriendStatusInfo friendStatusInfo) {
+        EventBus.getDefault().post(friendStatusInfo);
     }
 
     private void setResult(String friendCode, String type, String nickname) {
 
         NewFriendBean waitAcceptBean = new NewFriendBean();
         waitAcceptBean.nickName = nickname;
-        waitAcceptBean.friendCode = friendCode;
+        waitAcceptBean.did = friendCode;
         waitAcceptBean.acceptStatus = BRConstants.REQUEST_ACCEPT;
         waitAcceptBean.timeStamp = System.currentTimeMillis();
         ChatDataSource.getInstance(this).cacheWaitAcceptFriend(waitAcceptBean);
@@ -286,10 +300,6 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
                                     status!=ContactInterface.Status.Invalid) {
                                 Toast.makeText(ChatScanActivity.this, getString(R.string.My_scan_has_add_friend), Toast.LENGTH_SHORT).show();
 //                                UiUtils.startChatDetailActivity(ChatScanActivity.this, address, mType, nickname);
-                                if(status!=ContactInterface.Status.WaitForAccept) {
-                                    CarrierPeerNode.getInstance(ChatScanActivity.this).acceptFriend(address, mType);
-                                }
-                                finish();
                             } else {
                                 mPasteEdit.setText(address);
                                 showNicknameDialog(address, nickname);
@@ -376,6 +386,12 @@ public class ChatScanActivity extends BRActivity implements ActivityCompat.OnReq
 
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+//        EventBus.getDefault().unregister(this);
     }
 
     private void initQRCodeReaderView() {
