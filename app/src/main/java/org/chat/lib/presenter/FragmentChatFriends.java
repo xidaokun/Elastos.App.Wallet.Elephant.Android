@@ -206,16 +206,27 @@ public class FragmentChatFriends extends BaseFragment {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final int ret = CarrierPeerNode.getInstance(getContext()).addFriend(friendCode);
-                if(ret != 0) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getContext(), "carrier return ret:"+ret, Toast.LENGTH_SHORT).show();
-                        }
-                    });
+
+                NewFriendBean newFriendBean = ChatDataSource.getInstance(getContext()).getFriendByCode(friendCode);
+                if(null!=newFriendBean && newFriendBean.acceptStatus==BRConstants.RECEIVE_ACCEPT) {
+                    int ret = CarrierPeerNode.getInstance(getContext()).acceptFriend(friendCode, BRConstants.CHAT_SINGLE_TYPE);
+                    if(ret == 0) {
+                        ChatDataSource.getInstance(getContext()).updateAcceptState(friendCode, BRConstants.ACCEPTED);
+                    }
+                    Log.d("xidaokun", "FragementChatFriends#acceptFriend#ret:"+ret);
+                } else {
+                    final int ret = CarrierPeerNode.getInstance(getContext()).addFriend(friendCode);
+                    Log.d("xidaokun", "FragementChatFriends#addFriend#ret:"+ret);
+                    if(ret != 0) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getContext(), "carrier return ret:"+ret, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
                 }
-                Log.d("xidaokun", "FragementChatFriends#addFriend#ret:"+ret);
+
                 refreshFriendView();
             }
         });

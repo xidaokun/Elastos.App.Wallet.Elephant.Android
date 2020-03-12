@@ -41,7 +41,7 @@ import org.node.CarrierPeerNode;
 
 import java.security.NoSuchAlgorithmException;
 
-public class ChatScanActivity extends Activity implements ActivityCompat.OnRequestPermissionsResultCallback, QRCodeReaderView.OnQRCodeReadListener{
+public class ChatScanActivity extends BRActivity implements ActivityCompat.OnRequestPermissionsResultCallback, QRCodeReaderView.OnQRCodeReadListener{
 
     private static final String TAG = ChatScanActivity.class.getName();
     private ImageView cameraGuide;
@@ -77,7 +77,6 @@ public class ChatScanActivity extends Activity implements ActivityCompat.OnReque
 
         initView();
         initListener();
-//        EventBus.getDefault().register(this);
     }
 
     private void initView() {
@@ -160,17 +159,6 @@ public class ChatScanActivity extends Activity implements ActivityCompat.OnReque
                 if(StringUtil.isNullOrEmpty(nickName)) {
                     mFriendnickDialog.setRequireTvVisiable(View.VISIBLE);
                 } else {
-                    NewFriendBean newFriendBean = ChatDataSource.getInstance(ChatScanActivity.this).getFriendByCode(friendCode);
-                    if(null!=newFriendBean) {
-                        if(newFriendBean.acceptStatus==BRConstants.RECEIVE_ACCEPT) {
-                            int ret = CarrierPeerNode.getInstance(ChatScanActivity.this).acceptFriend(friendCode, BRConstants.CHAT_SINGLE_TYPE);
-                            if(ret > 0) {
-                                postFriendChangeEvent(new CarrierPeerNode.FriendStatusInfo(friendCode, ContactInterface.Status.Online));
-                            }
-                        }
-                        finish();
-                        return;
-                    }
                     setResult(friendCode, mType, nickName);
                     mFriendnickDialog.dismiss();
                 }
@@ -183,16 +171,15 @@ public class ChatScanActivity extends Activity implements ActivityCompat.OnReque
         }
     }
 
-    public void postFriendChangeEvent(CarrierPeerNode.FriendStatusInfo friendStatusInfo) {
-        EventBus.getDefault().post(friendStatusInfo);
-    }
 
     private void setResult(String friendCode, String type, String nickname) {
 
+        NewFriendBean newFriendBean = ChatDataSource.getInstance(this).getFriendByCode(friendCode);
         NewFriendBean waitAcceptBean = new NewFriendBean();
         waitAcceptBean.nickName = nickname;
-        waitAcceptBean.did = friendCode;
-        waitAcceptBean.acceptStatus = BRConstants.REQUEST_ACCEPT;
+        waitAcceptBean.did = (newFriendBean!=null)?newFriendBean.did:friendCode;
+        waitAcceptBean.carrierAddr = (newFriendBean!=null)?newFriendBean.carrierAddr:friendCode;
+        waitAcceptBean.acceptStatus = (newFriendBean!=null)?newFriendBean.acceptStatus:BRConstants.REQUEST_ACCEPT;
         waitAcceptBean.timeStamp = System.currentTimeMillis();
         ChatDataSource.getInstance(this).cacheWaitAcceptFriend(waitAcceptBean);
 
@@ -386,12 +373,6 @@ public class ChatScanActivity extends Activity implements ActivityCompat.OnReque
 
             }
         });
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-//        EventBus.getDefault().unregister(this);
     }
 
     private void initQRCodeReaderView() {
