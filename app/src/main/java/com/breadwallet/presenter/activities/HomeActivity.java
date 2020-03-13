@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.bottomnavigation.LabelVisibilityMode;
 import android.support.design.internal.BottomNavigationItemView;
 import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.BottomNavigationView;
@@ -101,9 +102,11 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        navigation.setItemTextAppearanceActive(R.style.bottom_selected_text);
+        navigation.setItemTextAppearanceInactive(R.style.bottom_normal_text);
 
         disableShiftingMode(navigation);
-        disableItemScale(navigation);
+//        disableItemScale(navigation);
 
         mFragmentManager = getSupportFragmentManager();
         mWalletFragment = FragmentWallet.newInstance("Wallet");
@@ -356,19 +359,31 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
     @SuppressLint("RestrictedApi")
     public static void disableShiftingMode(BottomNavigationView view) {
+
+        BottomNavigationMenuView menuView = (BottomNavigationMenuView) view.getChildAt(0);
         try {
-            BottomNavigationMenuView mMenuView = (BottomNavigationMenuView) view.getChildAt(0);
-            Field mShiftingModeField = BottomNavigationMenuView.class.getDeclaredField("mShiftingMode");
-            mShiftingModeField.setAccessible(true);
-            mShiftingModeField.set(mMenuView, false);
-            for (int i = 0; i < mMenuView.getChildCount(); i++) {
-                BottomNavigationItemView itemView = (BottomNavigationItemView) mMenuView.getChildAt(i);
-                itemView.setShifting(false);
-                itemView.setChecked(itemView.getItemData().isChecked());
+            menuView.setLabelVisibilityMode(1);
+            for (int i = 0; i < menuView.getChildCount(); i++) {
+                BottomNavigationItemView item = (BottomNavigationItemView) menuView.getChildAt(i);
+                item.setShifting(false);
             }
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+
         }
+
+//        try {
+//            BottomNavigationMenuView mMenuView = (BottomNavigationMenuView) view.getChildAt(0);
+//            Field mShiftingModeField = BottomNavigationMenuView.class.getDeclaredField("mShiftingMode");
+//            mShiftingModeField.setAccessible(true);
+//            mShiftingModeField.set(mMenuView, false);
+//            for (int i = 0; i < mMenuView.getChildCount(); i++) {
+//                BottomNavigationItemView itemView = (BottomNavigationItemView) mMenuView.getChildAt(i);
+//                itemView.setShifting(false);
+//                itemView.setChecked(itemView.getItemData().isChecked());
+//            }
+//        } catch (NoSuchFieldException | IllegalAccessException e) {
+//            e.printStackTrace();
+//        }
     }
 
     @SuppressLint("RestrictedApi")
