@@ -9,17 +9,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.tools.animation.ElaphantDialogText;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.qrcode.QRUtils;
-import com.breadwallet.tools.util.StringUtil;
 import com.google.gson.Gson;
 
+import org.chat.lib.push.PushServer;
 import org.chat.lib.utils.Utils;
-import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -123,6 +121,11 @@ public class MyQrActivity extends BRActivity {
                 } else {
                     showCarrierQr();
                 }
+                String did = BRSharedPrefs.getMyDid(MyQrActivity.this);
+                String carrier = BRSharedPrefs.getCarrierId(MyQrActivity.this);
+                String nickname = BRSharedPrefs.getNickname(MyQrActivity.this);
+
+                PushServer.setIosNotice(did, "iYWSBvFruHyN39P19GVNqvikvDigDut2ez", nickname, carrier);
             }
         });
     }

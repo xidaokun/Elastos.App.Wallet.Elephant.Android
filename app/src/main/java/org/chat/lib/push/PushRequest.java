@@ -176,6 +176,11 @@ public class PushRequest {
         mQueryParameters.put("iOSMutableContent", data.toString());
     }
 
+    public void setiOSExtParameters(String data) {
+        if (data == null) return;
+        mQueryParameters.put("iOSExtParameters", data);
+    }
+
     public Boolean getIOSMutableContent() {
         String data = mQueryParameters.get("iOSMutableContent");
         if (data == null) return null;

@@ -38,7 +38,7 @@
         android:background="@drawable/my_qr_shape"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:layout_marginTop="72dp">
+        android:layout_marginTop="40dp">
 
         <org.chat.lib.widget.BaseTextView
             android:id="@+id/my_nickname"
@@ -101,6 +101,7 @@
         android:layout_marginTop="28dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/toolbar"
+        android:visibility="gone"
         android:src="@drawable/unknow"/>
 
 </RelativeLayout>

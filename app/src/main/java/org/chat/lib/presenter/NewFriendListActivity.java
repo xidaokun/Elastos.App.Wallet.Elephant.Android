@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 
 import org.chat.lib.adapter.NewFriendAdapter;
@@ -63,17 +64,32 @@ public class NewFriendListActivity extends BRActivity implements NewFriendAdapte
     }
 
     @Override
-    public void accept(View view, int position) {
-        String friendCode = mWaitAcceptBeans.get(position).did;
-        int ret = CarrierPeerNode.getInstance(this).acceptFriend(friendCode, BRConstants.CHAT_SINGLE_TYPE);
-        if(0 == ret) {
-            ChatDataSource.getInstance(this).updateAcceptState(friendCode, BRConstants.ACCEPTED);
-            mWaitAcceptBeans.get(position).acceptStatus = BRConstants.ACCEPTED;
-            mAdapter.notifyDataSetChanged();
-            EventBus.getDefault().post(friendCode);
-        } else {
-            Toast.makeText(this, "CarrierPeerNode accept failed ret:" + ret, Toast.LENGTH_SHORT).show();
-        }
+    public void accept(View view, final int position) {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                final String friendCode = mWaitAcceptBeans.get(position).did;
+                final int ret = CarrierPeerNode.getInstance(NewFriendListActivity.this).acceptFriend(friendCode, BRConstants.CHAT_SINGLE_TYPE);
+                if(0==ret || -205==ret) {
+                    ChatDataSource.getInstance(NewFriendListActivity.this).updateAcceptState(friendCode, BRConstants.ACCEPTED);
+                    mWaitAcceptBeans.get(position).acceptStatus = BRConstants.ACCEPTED;
+                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            mAdapter.notifyDataSetChanged();
+                            EventBus.getDefault().post(friendCode);
+                        }
+                    });
+                } else {
+                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(NewFriendListActivity.this, "CarrierPeerNode accept ret:" + ret, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
     }
 
     @Override
