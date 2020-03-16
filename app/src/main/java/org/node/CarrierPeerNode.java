@@ -19,7 +19,6 @@ import org.elastos.sdk.elephantwallet.contact.Utils;
 import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
 import org.elastos.sdk.keypair.ElastosKeypair;
 import org.greenrobot.eventbus.EventBus;
-import org.json.JSONObject;
 
 import java.util.List;
 
@@ -320,6 +319,7 @@ public class CarrierPeerNode {
             String myCarrierAddr = BRSharedPrefs.getCarrierId(mContext);
             String nickName = BRSharedPrefs.getNickname(mContext);
             PushServer.sendNotice(myDid, friendCode, nickName, myCarrierAddr);
+            PushServer.setIosNotice(myDid, friendCode, nickName, myCarrierAddr);
         }
         Log.d("xidaokun", "CarrierPeerNode#addFriend#======ret:"+ ret);
         return ret;

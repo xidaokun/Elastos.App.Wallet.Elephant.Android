@@ -121,11 +121,11 @@ public class MyQrActivity extends BRActivity {
                 } else {
                     showCarrierQr();
                 }
-                String did = BRSharedPrefs.getMyDid(MyQrActivity.this);
-                String carrier = BRSharedPrefs.getCarrierId(MyQrActivity.this);
-                String nickname = BRSharedPrefs.getNickname(MyQrActivity.this);
+//                String did = BRSharedPrefs.getMyDid(MyQrActivity.this);
+//                String carrier = BRSharedPrefs.getCarrierId(MyQrActivity.this);
+//                String nickname = BRSharedPrefs.getNickname(MyQrActivity.this);
 
-                PushServer.setIosNotice(did, "iYWSBvFruHyN39P19GVNqvikvDigDut2ez", nickname, carrier);
+//                PushServer.setIosNotice(did,"KVQXb5oQ7VLviqkdSbyJYPyVcsFDUKWaJGHcVeqys9rZSZjAZrGr", nickname, carrier);
             }
         });
     }

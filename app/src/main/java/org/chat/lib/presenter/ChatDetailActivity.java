@@ -77,13 +77,16 @@ public class ChatDetailActivity extends BRActivity {
         emotionSendBtn = findViewById(R.id.emotion_send);
         viewpager = findViewById(R.id.viewpager);
         emotionLayout = findViewById(R.id.emotion_layout);
+        refreshStatus();
+    }
 
-       ContactInterface.Status status = CarrierPeerNode.getInstance(this).getFriendStatus(mFriendCodeStr);
-       if(status!=null && status==ContactInterface.Status.Online) {
-           mHeaderImg.setImageResource(R.drawable.chat_head_online_bg);
-       } else {
-           mHeaderImg.setImageResource(R.drawable.chat_head_offline_bg);
-       }
+    private void refreshStatus() {
+        ContactInterface.Status status = CarrierPeerNode.getInstance(this).getFriendStatus(mFriendCodeStr);
+        if(status!=null && status==ContactInterface.Status.Online) {
+            mHeaderImg.setImageResource(R.drawable.chat_head_online_bg);
+        } else {
+            mHeaderImg.setImageResource(R.drawable.chat_head_offline_bg);
+        }
     }
 
     private EmotionInputDetector mDetector;
@@ -184,6 +187,11 @@ public class ChatDetailActivity extends BRActivity {
             }
         });
         LoadData();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void friendStatusChange(CarrierPeerNode.FriendStatusInfo friendStatusInfo) {
+        refreshStatus();
     }
 
     private ChatAdapter.onItemClickListener itemClickListener = new ChatAdapter.onItemClickListener() {
