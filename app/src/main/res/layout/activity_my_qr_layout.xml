@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#E5E6E7">
 
     <RelativeLayout
@@ -35,35 +35,35 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar"
-        android:background="@drawable/my_qr_shape"
         android:layout_marginLeft="15dp"
+        android:layout_marginTop="40dp"
         android:layout_marginRight="15dp"
-        android:layout_marginTop="40dp">
+        android:background="@drawable/my_qr_shape">
 
         <org.chat.lib.widget.BaseTextView
             android:id="@+id/my_nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:textColor="@color/black_333333"
-            android:textSize="28sp"
+            android:layout_marginTop="42dp"
             android:text="nickname"
-            android:layout_marginTop="62dp"/>
+            android:textColor="@color/black_333333"
+            android:textSize="28sp" />
 
         <RelativeLayout
             android:id="@+id/my_qr_img_layout"
             android:layout_width="260dp"
             android:layout_height="260dp"
-            android:layout_marginTop="28dp"
             android:layout_below="@+id/my_nickname"
             android:layout_centerHorizontal="true"
+            android:layout_marginTop="28dp"
             android:background="@drawable/my_qr_frame">
 
             <ImageView
                 android:id="@+id/my_qr_img"
                 android:layout_width="240dp"
                 android:layout_height="240dp"
-                android:layout_centerInParent="true"/>
+                android:layout_centerInParent="true" />
 
         </RelativeLayout>
 
@@ -71,26 +71,44 @@
             android:id="@+id/my_qr_hint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="18sp"
+            android:layout_below="@+id/my_qr_img_layout"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="16dp"
-            android:layout_centerHorizontal="true"
             android:text="@string/My_chat_QR_hint"
-            android:layout_below="@+id/my_qr_img_layout"/>
+            android:textColor="@color/black"
+            android:textSize="18sp" />
 
-        <com.breadwallet.presenter.customviews.BRButton
-            android:id="@+id/my_qr_switch_btn"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/My_qr_switch_btn_carrier_addr"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            app:buttonType="6"
-            app:isBreadButton="true"
             android:gravity="center"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:layout_centerHorizontal="true"
-            android:layout_below="@+id/my_qr_hint" />
+            android:layout_below="@+id/my_qr_hint">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:textColor="@color/black_333333"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:textSize="16sp"
+                android:text="@string/My_scan_switch_btn_hint" />
+
+            <com.breadwallet.presenter.customviews.SwitchButton
+                android:id="@+id/carrier_switch_btn"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
+                app:sb_checked="true"
+                app:sb_checked_color="#ff3365"
+                app:sb_show_indicator="false"
+                android:layout_marginRight="20dp"
+                android:layout_alignParentRight="true"
+                app:sb_uncheck_color="@color/black_cccccc" />
+
+        </RelativeLayout>
+
 
     </RelativeLayout>
 
@@ -98,10 +116,10 @@
     <org.chat.lib.widget.RoundImageView
         android:layout_width="88dp"
         android:layout_height="88dp"
-        android:layout_marginTop="28dp"
-        android:layout_centerHorizontal="true"
         android:layout_below="@+id/toolbar"
-        android:visibility="gone"
-        android:src="@drawable/unknow"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="28dp"
+        android:src="@drawable/unknow"
+        android:visibility="gone" />
 
 </RelativeLayout>
