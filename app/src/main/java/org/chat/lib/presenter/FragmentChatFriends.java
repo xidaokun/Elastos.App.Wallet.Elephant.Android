@@ -290,6 +290,56 @@ public class FragmentChatFriends extends BaseFragment {
 //                mDatas.add((ContactEntity) new ContactEntity("标签").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
 //                mDatas.add((ContactEntity) new ContactEntity("公众号").setTop(true).setBaseIndexTag(INDEX_STRING_TOP));
 
+                //TODO daokun.xi test
+//                ContactEntity contactEntitya = new ContactEntity();
+//                contactEntitya.setContact("a");
+//                contactEntitya.setFriendCode("aaaaaa");
+//                contactEntitya.setOnline(true);
+//                contactEntitya.setTokenAddress("Exxxxxxxxxxxxxxx");
+//                mDatas.add(contactEntitya);
+//
+//                ContactEntity contactEntityb = new ContactEntity();
+//                contactEntityb.setContact("b");
+//                contactEntityb.setFriendCode("bbbbb");
+//                contactEntityb.setOnline(false);
+//                contactEntityb.setTokenAddress("Exxxxxxxxxxxxxxx");
+//                mDatas.add(contactEntityb);
+//
+//                ContactEntity contactEntityc = new ContactEntity();
+//                contactEntityc.setContact("c");
+//                contactEntityc.setFriendCode("cccccc");
+//                contactEntityc.setOnline(true);
+//                contactEntityc.setTokenAddress("Exxxxxxxxxxxxxxx");
+//                mDatas.add(contactEntityc);
+//
+//                ContactEntity contactEntityd = new ContactEntity();
+//                contactEntityd.setContact("d");
+//                contactEntityd.setFriendCode("dddddd");
+//                contactEntityd.setOnline(true);
+//                contactEntityd.setTokenAddress("Exxxxxxxxxxxxxxx");
+//                mDatas.add(contactEntityd);
+//
+//                ContactEntity contactEntitye = new ContactEntity();
+//                contactEntitye.setContact("e");
+//                contactEntitye.setFriendCode("eeeeeeeee");
+//                contactEntitye.setOnline(true);
+//                contactEntitye.setTokenAddress("Exxxxxxxxxxxxxxx");
+//                mDatas.add(contactEntitye);
+//
+//                ContactEntity contactEntityf = new ContactEntity();
+//                contactEntityf.setContact("f");
+//                contactEntityf.setFriendCode("ffffff");
+//                contactEntityf.setOnline(true);
+//                contactEntityf.setTokenAddress("Exxxxxxxxxxxxxxx");
+//                mDatas.add(contactEntityf);
+//
+//                ContactEntity contactEntityg = new ContactEntity();
+//                contactEntityg.setContact("g");
+//                contactEntityg.setFriendCode("ggggg");
+//                contactEntityg.setOnline(true);
+//                contactEntityg.setTokenAddress("Exxxxxxxxxxxxxxx");
+//                mDatas.add(contactEntityg);
+
                 mDatas.addAll(contacts);
 
                 mIndexBar.setmSourceDatas(mDatas)

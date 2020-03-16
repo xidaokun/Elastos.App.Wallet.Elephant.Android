@@ -338,7 +338,7 @@ public class CarrierPeerNode {
         } else {
             setFriendInfo(friendCode, Contact.HumanInfo.Item.Addition, BRConstants.CHAT_SINGLE_TYPE);
         }
-        int ret = mPeerNode.acceptFriend(friendCode);
+        int ret = mPeerNode.addFriend(friendCode, friendCode);
         Log.d("xidaokun", "CarrierPeerNode#acceptFriend#ret:"+ ret);
         return ret;
     }

@@ -127,7 +127,7 @@ public class SuspensionDecoration extends RecyclerView.ItemDecoration {
      */
     private void drawTitleArea(Canvas c, int left, int right, View child, RecyclerView.LayoutParams params, int position) {//最先调用，绘制在最下层
         mPaint.setColor(COLOR_TITLE_BG);
-        c.drawRect(0, child.getTop() - params.topMargin - mTitleHeight, right, child.getTop() - params.topMargin, mPaint);
+        c.drawRect(left, child.getTop() - params.topMargin - mTitleHeight, right, child.getTop() - params.topMargin, mPaint);
         mPaint.setColor(COLOR_TITLE_FONT);
 /*
         Paint.FontMetricsInt fontMetrics = mPaint.getFontMetricsInt();
@@ -136,7 +136,7 @@ public class SuspensionDecoration extends RecyclerView.ItemDecoration {
         String tag = mDatas.get(position).getSuspensionTag();
         if(StringUtil.isNullOrEmpty(tag)) return;
         mPaint.getTextBounds(mDatas.get(position).getSuspensionTag(), 0, mDatas.get(position).getSuspensionTag().length(), mBounds);
-        c.drawText(mDatas.get(position).getSuspensionTag(), left, child.getTop() - params.topMargin - (mTitleHeight / 2 - mBounds.height() / 2), mPaint);
+        c.drawText(mDatas.get(position).getSuspensionTag(), child.getPaddingLeft(), child.getTop() - params.topMargin - (mTitleHeight / 2 - mBounds.height() / 2), mPaint);
     }
 
     @Override
@@ -175,7 +175,7 @@ public class SuspensionDecoration extends RecyclerView.ItemDecoration {
         if(StringUtil.isNullOrEmpty(tag)) return;
         mPaint.getTextBounds(tag, 0, tag.length(), mBounds);
         c.drawText(tag, parent.getPaddingLeft(),
-                parent.getPaddingTop() + mTitleHeight - (mTitleHeight / 2 - mBounds.height() / 2),
+                child.getPaddingTop() + mTitleHeight - (mTitleHeight / 2 - mBounds.height() / 2),
                 mPaint);
         if (flag)
             c.restore();//恢复画布到之前保存的状态
