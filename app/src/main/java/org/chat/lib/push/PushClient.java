@@ -10,6 +10,7 @@ import android.util.Log;
 import com.alibaba.sdk.android.push.CloudPushService;
 import com.alibaba.sdk.android.push.CommonCallback;
 import com.alibaba.sdk.android.push.noonesdk.PushServiceFactory;
+import com.breadwallet.BuildConfig;
 
 public class PushClient {
 
@@ -38,14 +39,16 @@ public class PushClient {
 
         PushServiceFactory.init(applicationContext);
         mPushService = PushServiceFactory.getCloudPushService();
-        mPushService.register(applicationContext, new CommonCallback() {
+        Log.d("aliConfig", "ALI_AR_APPKEY:"+BuildConfig.ALI_AR_APPKEY+"  ALI_AR_APPSECRET:"+BuildConfig.ALI_AR_APPSECRET);
+        mPushService.register(applicationContext, BuildConfig.ALI_AR_APPKEY, BuildConfig.ALI_AR_APPSECRET, new CommonCallback() {
             @Override
-            public void onSuccess(String response) {
-                Log.d(TAG, "init cloudchannel success");
+            public void onSuccess(String s) {
+
             }
+
             @Override
-            public void onFailed(String errorCode, String errorMessage) {
-                Log.d(TAG, "init cloudchannel failed -- errorcode:" + errorCode + " -- errorMessage:" + errorMessage);
+            public void onFailed(String s, String s1) {
+
             }
         });
     }

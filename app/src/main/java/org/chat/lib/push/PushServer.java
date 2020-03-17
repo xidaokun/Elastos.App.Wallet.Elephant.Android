@@ -2,16 +2,13 @@ package org.chat.lib.push;
 
 import android.util.Log;
 
+import com.breadwallet.BuildConfig;
 import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.Date;
 
 public class PushServer {
-
-    private static final String APPKEY = "28357838";
-    private static final String ACCESSKEYID = "LTAI4FsqAH9aMgMLTRz47vDT";
-    private static final String ACCESSSECRET = "LLjjzzieTgX42Iz7ehY3tMtbCiCzMK";
 
     private static class ExtParameters {
         public String did;
@@ -25,8 +22,9 @@ public class PushServer {
         extParameters.nickname = nickName;
         extParameters.carrierAddr = carrierAddr;
 
-        PushRequest pushRequest = new PushRequest("LTAI4FsqAH9aMgMLTRz47vDT", "LLjjzzieTgX42Iz7ehY3tMtbCiCzMK");
-        pushRequest.setAppKey("28435481");
+        Log.d("aliConfig", "ALI_IOS_APPKEY:"+BuildConfig.ALI_IOS_APPKEY+" ALI_IOS_ACCESSID:"+BuildConfig.ALI_IOS_ACCESSID+"  ALI_IOS_ACCESSKEY:"+BuildConfig.ALI_IOS_ACCESSKEY);
+        PushRequest pushRequest = new PushRequest(BuildConfig.ALI_IOS_ACCESSID, BuildConfig.ALI_IOS_ACCESSKEY);
+        pushRequest.setAppKey(BuildConfig.ALI_IOS_APPKEY);
         pushRequest.setTarget("ALIAS");
         Log.d("xidaokun_push", "targetValue:"+ targetValue);
         pushRequest.setTargetValue(targetValue);
@@ -69,8 +67,9 @@ public class PushServer {
         extParameters.nickname = nickName;
         extParameters.carrierAddr = carrierAddr;
 
-        PushRequest pushRequest = new PushRequest(ACCESSKEYID, ACCESSSECRET);
-        pushRequest.setAppKey(APPKEY);
+        Log.d("aliConfig", "ALI_AR_APPKEY:"+BuildConfig.ALI_AR_APPKEY+" ALI_AR_ACCESSID:"+BuildConfig.ALI_AR_ACCESSID+"  ALI_AR_ACCESSKEY:"+BuildConfig.ALI_AR_ACCESSKEY);
+        PushRequest pushRequest = new PushRequest(BuildConfig.ALI_AR_ACCESSID, BuildConfig.ALI_AR_ACCESSKEY);
+        pushRequest.setAppKey(BuildConfig.ALI_AR_APPKEY);
         pushRequest.setTarget("ALIAS");
         Log.d("xidaokun_push", "targetValue:"+ targetValue);
         pushRequest.setTargetValue(targetValue);

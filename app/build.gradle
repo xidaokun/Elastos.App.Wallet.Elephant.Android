@@ -150,6 +150,15 @@ android {
             minifyEnabled = false
             debuggable = false
 
+            buildConfigField "String", "ALI_AR_APPKEY", "${ali_android_appKey}"
+            buildConfigField "String", "ALI_AR_APPSECRET", "${ali_android_appSecret}"
+            buildConfigField "String", "ALI_AR_ACCESSID", "${ali_android_accessId}"
+            buildConfigField "String", "ALI_AR_ACCESSKEY", "${ali_android_accessSecret}"
+
+            buildConfigField "String", "ALI_IOS_APPKEY", "${ali_ios_appKey}"
+            buildConfigField "String", "ALI_IOS_ACCESSID", "${ali_ios_accessId}"
+            buildConfigField "String", "ALI_IOS_ACCESSKEY", "${ali_ios_accessSecret}"
+
             ndk {
                 minifyEnabled = false
                 debuggable = false
@@ -159,6 +168,16 @@ android {
             debuggable = true
             jniDebuggable = true
             minifyEnabled = false
+
+            buildConfigField "String", "ALI_AR_APPKEY", "${ali_android_dev_appKey}"
+            buildConfigField "String", "ALI_AR_APPSECRET", "${ali_android_dev_appSecret}"
+            buildConfigField "String", "ALI_AR_ACCESSID", "${ali_android_dev_accessId}"
+            buildConfigField "String", "ALI_AR_ACCESSKEY", "${ali_android_dev_accessSecret}"
+
+            buildConfigField "String", "ALI_IOS_APPKEY", "${ali_ios_dev_appKey}"
+            buildConfigField "String", "ALI_IOS_ACCESSID", "${ali_ios_dev_accessId}"
+            buildConfigField "String", "ALI_IOS_ACCESSKEY", "${ali_ios_dev_accessSecret}"
+
             ext.enableCrashlytics = false
             ext.alwaysUpdateBuildId = false
             externalNativeBuild {
@@ -250,5 +269,6 @@ dependencies {
     implementation 'com.aliyun.ams:huawei-push:2.6.3.305'
     implementation 'com.aliyun.ams:huawei-push-base:2.6.3.305'
 }
+
 
 

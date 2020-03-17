@@ -62,8 +62,8 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:windowSoftInputMode="stateVisible|adjustResize">
 
-        <meta-data android:name="com.alibaba.app.appkey" android:value="28357838"/>
-        <meta-data android:name="com.alibaba.app.appsecret" android:value="9a6bd1109cf85e97fdb9e7ccda8ed740"/>
+<!--        <meta-data android:name="com.alibaba.app.appkey" android:value="28357838"/>-->
+<!--        <meta-data android:name="com.alibaba.app.appsecret" android:value="9a6bd1109cf85e97fdb9e7ccda8ed740"/>-->
 
         <receiver
             android:name=".presenter.receivers.PushMessageReceiver"
