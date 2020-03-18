@@ -81,6 +81,7 @@ public class CarrierPeerNode {
                                 Log.d("xidaokun", "CarrierPeerNode#setListener#DecryptData#\nrequest.data:"+ request.data);
                                 break;
                             case DidPropAppId:
+                                response = BRConstants.ELAPHANT_APP_ID.getBytes();
                                 break;
                             case DidAgentAuthHeader:
                                 response = getAgentAuthHeader();
@@ -269,6 +270,9 @@ public class CarrierPeerNode {
                 HumanChangeInfo humanChangeInfo = new HumanChangeInfo(event.humanCode, infoEvent.toString());
                 postHumanInfoChangeEvent(humanChangeInfo);
                 break;
+            case MessageAck:
+                Contact.Listener.MsgAckEvent ackEvent = (Contact.Listener.MsgAckEvent) event;
+                break;
             default:
                 return;
         }
@@ -377,16 +381,16 @@ public class CarrierPeerNode {
         return mPeerNode.removeFriend(friendCode);
     }
 
-    public int sendMessage(String friendCode, String content) {
+    public long sendMessage(String friendCode, String content) {
         Log.d("xidaokun", "CarrierPeerNode#sendMessage\n#did:"+ friendCode + "\n#content:" + content);
-        int ret = mConnector.sendMessage(friendCode, Contact.Channel.Carrier, content);
+        long ret = mConnector.sendMessage(friendCode, Contact.Channel.Carrier, content);
         Log.d("xidaokun", "CarrierPeerNode#sendMessage#ret:"+ ret);
         return ret;
     }
 
-    public int sendGroupMessage(String friendCode, String content) {
+    public long sendGroupMessage(String friendCode, String content) {
         Log.d("xidaokun", "CarrierPeerNode#sendGroupMessage\n#did:"+ friendCode + "\n#content:" + content);
-        int ret = mGroupConnector.sendMessage(friendCode, Contact.Channel.Carrier,content);
+        long ret = mGroupConnector.sendMessage(friendCode, Contact.Channel.Carrier,content);
         Log.d("xidaokun", "CarrierPeerNode#sendGroupMessage#ret:"+ ret);
         return ret;
     }

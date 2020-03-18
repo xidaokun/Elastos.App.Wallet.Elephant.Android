@@ -348,7 +348,7 @@ public class ChatDetailActivity extends BRActivity {
         messageInfo.setHeader("https://xidaokun.github.io/im_boy.png");
 //        MsgProtocol msgProtocol = new MsgProtocol();
 //        msgProtocol.content = messageInfo.getContent();
-        int ret = 0;
+        long ret = 0;
         String type = null;
         if(mType==null || mType.contains(BRConstants.CHAT_SINGLE_TYPE)) {
             ret = CarrierPeerNode.getInstance(ChatDetailActivity.this).sendMessage(mFriendCodeStr, /*new Gson().toJson(msgProtocol)*/messageInfo.getContent());
@@ -359,10 +359,10 @@ public class ChatDetailActivity extends BRActivity {
         } else {
             ret = -1;
         }
-        messageInfo.setSendState((0!=ret)?Constants.CHAT_ITEM_SEND_ERROR:Constants.CHAT_ITEM_SEND_SUCCESS);
+        messageInfo.setSendState((0<ret)?Constants.CHAT_ITEM_SEND_ERROR:Constants.CHAT_ITEM_SEND_SUCCESS);
         Log.d("xidaokun", "ChatDetailActivity#handleSend#ret:"+ret);
         //TODO daokun.xi test log
-        final int finalRet = ret;
+        final long finalRet = ret;
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -376,10 +376,10 @@ public class ChatDetailActivity extends BRActivity {
                 .setContentType(ChatDataSource.TYPE_MESSAGE_TEXT)
                 .setContent(messageInfo.getContent())
                 .hasRead(true)
-                .setTimestamp(messageInfo.getTime())
+                .setTimestamp(ret<0?messageInfo.getTime():ret)
                 .setOrientation(Constants.CHAT_ITEM_TYPE_RIGHT)
                 .setFriendCode(mFriendCodeStr)
-                .setSendState((0!=ret)?Constants.CHAT_ITEM_SEND_ERROR:Constants.CHAT_ITEM_SEND_SUCCESS)
+                .setSendState((0<ret)?Constants.CHAT_ITEM_SEND_ERROR:Constants.CHAT_ITEM_SEND_SUCCESS)
                 .cacheMessgeInfo();
     }
 
