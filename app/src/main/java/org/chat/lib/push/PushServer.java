@@ -39,7 +39,7 @@ public class PushServer {
         pushRequest.setIOSSilentNotification(Boolean.TRUE);
         pushRequest.setIOSRemind(Boolean.TRUE);
         pushRequest.setStoreOffline(Boolean.TRUE);
-        pushRequest.setIOSApnsEnv("DEV");
+        pushRequest.setIOSApnsEnv(BuildConfig.ALI_IOS_ENV);
 
         pushRequest.setiOSExtParameters(new Gson().toJson(extParameters));
 

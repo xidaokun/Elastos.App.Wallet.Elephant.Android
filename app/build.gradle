@@ -133,6 +133,7 @@ android {
             buildConfigField "String", "ALI_AR_ACCESSID", "${ali_android_accessId}"
             buildConfigField "String", "ALI_AR_ACCESSKEY", "${ali_android_accessSecret}"
 
+            buildConfigField "String", "ALI_IOS_ENV", "${ali_ios_env}"
             buildConfigField "String", "ALI_IOS_APPKEY", "${ali_ios_appKey}"
             buildConfigField "String", "ALI_IOS_ACCESSID", "${ali_ios_accessId}"
             buildConfigField "String", "ALI_IOS_ACCESSKEY", "${ali_ios_accessSecret}"
@@ -154,6 +155,7 @@ android {
             buildConfigField "String", "ALI_AR_ACCESSID", "${ali_android_dev_accessId}"
             buildConfigField "String", "ALI_AR_ACCESSKEY", "${ali_android_dev_accessSecret}"
 
+            buildConfigField "String", "ALI_IOS_ENV", "${ali_ios_dev_env}"
             buildConfigField "String", "ALI_IOS_APPKEY", "${ali_ios_dev_appKey}"
             buildConfigField "String", "ALI_IOS_ACCESSID", "${ali_ios_dev_accessId}"
             buildConfigField "String", "ALI_IOS_ACCESSKEY", "${ali_ios_dev_accessSecret}"
