@@ -11,6 +11,7 @@ import com.alibaba.sdk.android.push.CloudPushService;
 import com.alibaba.sdk.android.push.CommonCallback;
 import com.alibaba.sdk.android.push.noonesdk.PushServiceFactory;
 import com.breadwallet.BuildConfig;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 
 public class PushClient {
 
@@ -40,6 +41,17 @@ public class PushClient {
         PushServiceFactory.init(applicationContext);
         mPushService = PushServiceFactory.getCloudPushService();
         Log.d("aliConfig", "ALI_AR_APPKEY:"+BuildConfig.ALI_AR_APPKEY+"  ALI_AR_APPSECRET:"+BuildConfig.ALI_AR_APPSECRET);
+//        mPushService.register(applicationContext, new CommonCallback() {
+//            @Override
+//            public void onSuccess(String s) {
+//                Log.d("aliConfig", "onSuccess:"+s);
+//            }
+//
+//            @Override
+//            public void onFailed(String s, String s1) {
+//                Log.d("aliConfig", "onFailed s:" + s + " s1:" + s1);
+//            }
+//        });
         mPushService.register(applicationContext, BuildConfig.ALI_AR_APPKEY, BuildConfig.ALI_AR_APPSECRET, new CommonCallback() {
             @Override
             public void onSuccess(String s) {
@@ -49,6 +61,13 @@ public class PushClient {
             @Override
             public void onFailed(String s, String s1) {
                 Log.d("aliConfig", "onFailed s:" + s + " s1:" + s1);
+            }
+        });
+
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                removeAlias();
             }
         });
     }
@@ -93,7 +112,34 @@ public class PushClient {
         });
     }
 
+    public void removeAlias() {
+        mPushService.removeAlias(null, new CommonCallback() {
+            @Override
+            public void onSuccess(String s) {
+                Log.d("xidaokun_push", "removeAlias onSuccess s:"+s);
+            }
+
+            @Override
+            public void onFailed(String s, String s1) {
+                Log.d("xidaokun_push", "removeAlias failed s:"+s+" s1:"+s1);
+            }
+        });
+    }
+
     public void bindAlias(String alias, final CommonCallback commonCallback) {
+
+        mPushService.listAliases(new CommonCallback() {
+            @Override
+            public void onSuccess(String s) {
+                Log.d("xidaokun_push", "bindAlias success s:"+s);
+            }
+
+            @Override
+            public void onFailed(String s, String s1) {
+                Log.d("xidaokun_push", "bindAlias failed s:"+s+" s1:"+s1);
+            }
+        });
+
         mPushService.addAlias(alias, new CommonCallback() {
             @Override
             public void onSuccess(String s) {
@@ -103,7 +149,7 @@ public class PushClient {
 
             @Override
             public void onFailed(String s, String s1) {
-                Log.d("xidaokun_push", "bindAlias failed s:"+s);
+                Log.d("xidaokun_push", "bindAlias failed s:"+s+" s1:"+s1);
                 if(null != commonCallback) commonCallback.onFailed(s, s1);
             }
         });

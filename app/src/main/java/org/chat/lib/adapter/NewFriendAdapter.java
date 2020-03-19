@@ -81,7 +81,8 @@ public class NewFriendAdapter extends BaseAdapter {
         viewHolder.sendSb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(null != mListener) mListener.accept(v, position);
+                int status = mData.get(position).acceptStatus;
+                if(status==BRConstants.RECEIVE_ACCEPT && null!=mListener) mListener.accept(v, position);
             }
         });
 

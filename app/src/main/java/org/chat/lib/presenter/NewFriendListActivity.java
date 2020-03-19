@@ -10,6 +10,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.StringUtil;
 
 import org.chat.lib.adapter.NewFriendAdapter;
 import org.chat.lib.entity.NewFriendBean;
@@ -65,10 +66,13 @@ public class NewFriendListActivity extends BRActivity implements NewFriendAdapte
 
     @Override
     public void accept(View view, final int position) {
+        String carrierAddr = mWaitAcceptBeans.get(position).carrierAddr;
+        String did = mWaitAcceptBeans.get(position).did;
+        if(StringUtil.isNullOrEmpty(carrierAddr) && StringUtil.isNullOrEmpty(did)) return;
+        final String friendCode = StringUtil.isNullOrEmpty(carrierAddr)?did:carrierAddr;
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String friendCode = mWaitAcceptBeans.get(position).carrierAddr;
                 final int ret = CarrierPeerNode.getInstance(NewFriendListActivity.this).acceptFriend(friendCode, BRConstants.CHAT_SINGLE_TYPE);
                 if(0==ret) {
                     ChatDataSource.getInstance(NewFriendListActivity.this).updateAcceptState(friendCode, BRConstants.ACCEPTED);
