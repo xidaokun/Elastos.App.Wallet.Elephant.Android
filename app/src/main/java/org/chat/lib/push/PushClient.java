@@ -43,12 +43,12 @@ public class PushClient {
         mPushService.register(applicationContext, BuildConfig.ALI_AR_APPKEY, BuildConfig.ALI_AR_APPSECRET, new CommonCallback() {
             @Override
             public void onSuccess(String s) {
-
+                Log.d("aliConfig", "onSuccess:"+s);
             }
 
             @Override
             public void onFailed(String s, String s1) {
-
+                Log.d("aliConfig", "onFailed s:" + s + " s1:" + s1);
             }
         });
     }

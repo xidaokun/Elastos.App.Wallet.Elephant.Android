@@ -74,28 +74,6 @@ android {
             }
         }
 
-        elaUpgradeTest {
-            applicationId = "elaphant.app"
-            dimension "mode"
-            resValue "string", "app_name", "Elephant"
-            buildConfigField "boolean", "BITCOIN_TESTNET", "false"
-            buildConfigField "boolean", "UPGRADE_TESTNET", "true"
-            buildConfigField "boolean", "RED_PACKAGE_TEST", "true"
-            buildConfigField "String", "API_KEY", "\"F4A52C81AD70EDF65094B43704BE7718F53ECFCA0DF905FB1B8181415CA174A5\""
-            buildConfigField "String", "APP_ID", "\"xxxxxxxxxxxxxxxxxxxxx\""
-            buildConfigField "String", "CAN_UPLOAD", "\"\""
-
-            externalNativeBuild {
-                cmake {
-                    // When you specify a version of CMake, as shown below,
-                    // the Android plugin searches for its binary within your
-                    // PATH environmental variable.
-                    cFlags "-DBITCOIN_TESTNET=0"
-                    targets "core"
-                }
-            }
-        }
-
         elaTestnet {
             applicationId = "elaphant.app"
             dimension "mode"
@@ -159,6 +137,8 @@ android {
             buildConfigField "String", "ALI_IOS_ACCESSID", "${ali_ios_accessId}"
             buildConfigField "String", "ALI_IOS_ACCESSKEY", "${ali_ios_accessSecret}"
 
+//            manifestPlaceholders += [aliAppKey:"${ali_android_appKey}", aliAppSecret:"${ali_android_appKey}"]
+
             ndk {
                 minifyEnabled = false
                 debuggable = false
@@ -180,11 +160,14 @@ android {
 
             ext.enableCrashlytics = false
             ext.alwaysUpdateBuildId = false
+
             externalNativeBuild {
                 cmake {
                     cFlags "-DBITCOIN_DEBUG=1"
                 }
             }
+
+//            manifestPlaceholders += [aliAppKey:"${ali_android_dev_appKey}", aliAppSecret:"${ali_android_dev_appSecret}"]
 
             ndk {
                 minifyEnabled = false

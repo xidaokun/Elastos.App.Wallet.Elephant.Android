@@ -68,9 +68,9 @@ public class NewFriendListActivity extends BRActivity implements NewFriendAdapte
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String friendCode = mWaitAcceptBeans.get(position).did;
+                final String friendCode = mWaitAcceptBeans.get(position).carrierAddr;
                 final int ret = CarrierPeerNode.getInstance(NewFriendListActivity.this).acceptFriend(friendCode, BRConstants.CHAT_SINGLE_TYPE);
-                if(0==ret || -205==ret) {
+                if(0==ret) {
                     ChatDataSource.getInstance(NewFriendListActivity.this).updateAcceptState(friendCode, BRConstants.ACCEPTED);
                     mWaitAcceptBeans.get(position).acceptStatus = BRConstants.ACCEPTED;
                     BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {

@@ -126,7 +126,7 @@ public class MyQrActivity extends BRActivity {
 //                String carrier = BRSharedPrefs.getCarrierId(MyQrActivity.this);
 //                String nickname = BRSharedPrefs.getNickname(MyQrActivity.this);
 
-//                PushServer.setIosNotice(did,"KVQXb5oQ7VLviqkdSbyJYPyVcsFDUKWaJGHcVeqys9rZSZjAZrGr", nickname, carrier);
+//                PushServer.sendIosNotice(did,"KVQXb5oQ7VLviqkdSbyJYPyVcsFDUKWaJGHcVeqys9rZSZjAZrGr", nickname, carrier);
             }
         });
 

@@ -319,11 +319,11 @@ public class CarrierPeerNode {
         int ret = mPeerNode.addFriend(friendCode, "{\"content\": \"" + BRConstants.CHAT_SINGLE_TYPE + "\"}");
         if(0 == ret) {
             setFriendInfo(friendCode, Contact.HumanInfo.Item.Addition, "{\"type\":\"chat\",\"value\":\"" + BRConstants.CHAT_SINGLE_TYPE + "\"}");
-            String myDid = BRSharedPrefs.getMyDid(mContext);
-            String myCarrierAddr = BRSharedPrefs.getCarrierId(mContext);
-            String nickName = BRSharedPrefs.getNickname(mContext);
-            PushServer.sendNotice(myDid, friendCode, nickName, myCarrierAddr);
-            PushServer.setIosNotice(myDid, friendCode, nickName, myCarrierAddr);
+//            String myDid = BRSharedPrefs.getMyDid(mContext);
+//            String myCarrierAddr = BRSharedPrefs.getCarrierId(mContext);
+//            String nickName = BRSharedPrefs.getNickname(mContext);
+//            PushServer.sendNotice(myDid, friendCode, nickName, myCarrierAddr);
+//            PushServer.sendIosNotice(myDid, friendCode, nickName, myCarrierAddr);
         }
         Log.d("xidaokun", "CarrierPeerNode#addFriend#======ret:"+ ret);
         return ret;

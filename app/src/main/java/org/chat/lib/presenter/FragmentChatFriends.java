@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.breadwallet.R;
 import com.breadwallet.tools.animation.ElaphantDialogText;
 import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
@@ -25,6 +26,7 @@ import com.elastos.jni.utils.StringUtils;
 import org.chat.lib.adapter.FriendsAdapter;
 import org.chat.lib.entity.ContactEntity;
 import org.chat.lib.entity.NewFriendBean;
+import org.chat.lib.push.PushServer;
 import org.chat.lib.source.ChatDataSource;
 import org.chat.lib.widget.DividerItemDecoration;
 import org.chat.lib.widget.IndexBar;
@@ -209,14 +211,10 @@ public class FragmentChatFriends extends BaseFragment {
 
                 NewFriendBean newFriendBean = ChatDataSource.getInstance(getContext()).getFriendByCode(friendCode);
                 if(null!=newFriendBean && newFriendBean.acceptStatus==BRConstants.RECEIVE_ACCEPT) {
-                    int ret = CarrierPeerNode.getInstance(getContext()).acceptFriend(friendCode, BRConstants.CHAT_SINGLE_TYPE);
+                    final int ret = CarrierPeerNode.getInstance(getContext()).acceptFriend(friendCode, BRConstants.CHAT_SINGLE_TYPE);
                     if(ret == 0) {
                         ChatDataSource.getInstance(getContext()).updateAcceptState(friendCode, BRConstants.ACCEPTED);
                     }
-                    Log.d("xidaokun", "FragementChatFriends#acceptFriend#ret:"+ret);
-                } else {
-                    final int ret = CarrierPeerNode.getInstance(getContext()).addFriend(friendCode);
-                    Log.d("xidaokun", "FragementChatFriends#addFriend#ret:"+ret);
                     if(ret != 0) {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
@@ -225,6 +223,23 @@ public class FragmentChatFriends extends BaseFragment {
                             }
                         });
                     }
+                    Log.d("xidaokun", "FragementChatFriends#acceptFriend#ret:"+ret);
+                } else {
+                    final int ret = CarrierPeerNode.getInstance(getContext()).addFriend(friendCode);
+                    Log.d("xidaokun", "FragementChatFriends#addFriend#ret:"+ret);
+                    String myDid = BRSharedPrefs.getMyDid(getContext());
+                    String myCarrierAddr = BRSharedPrefs.getCarrierId(getContext());
+                    String nickName = BRSharedPrefs.getNickname(getContext());
+                    PushServer.sendNotice(myDid, friendCode, nickName, myCarrierAddr);
+//                            PushServer.sendIosNotice(myDid, friendCode, nickName, myCarrierAddr);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(0 != ret) {
+                                Toast.makeText(getContext(), "carrier return ret:"+ret, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                 }
 
                 refreshFriendView();

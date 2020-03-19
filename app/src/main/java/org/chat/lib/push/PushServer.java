@@ -16,7 +16,7 @@ public class PushServer {
         public String nickname;
     }
 
-    public static void setIosNotice(String did, String targetValue, String nickName, String carrierAddr) {
+    public static void sendIosNotice(String did, String targetValue, String nickName, String carrierAddr) {
         ExtParameters extParameters = new ExtParameters();
         extParameters.did = did;
         extParameters.nickname = nickName;
@@ -67,7 +67,7 @@ public class PushServer {
         extParameters.nickname = nickName;
         extParameters.carrierAddr = carrierAddr;
 
-        Log.d("aliConfig", "ALI_AR_APPKEY:"+BuildConfig.ALI_AR_APPKEY+" ALI_AR_ACCESSID:"+BuildConfig.ALI_AR_ACCESSID+"  ALI_AR_ACCESSKEY:"+BuildConfig.ALI_AR_ACCESSKEY);
+        Log.d("xidaokun_push", "ALI_AR_APPKEY:"+BuildConfig.ALI_AR_APPKEY+" ALI_AR_ACCESSID:"+BuildConfig.ALI_AR_ACCESSID+"  ALI_AR_ACCESSKEY:"+BuildConfig.ALI_AR_ACCESSKEY);
         PushRequest pushRequest = new PushRequest(BuildConfig.ALI_AR_ACCESSID, BuildConfig.ALI_AR_ACCESSKEY);
         pushRequest.setAppKey(BuildConfig.ALI_AR_APPKEY);
         pushRequest.setTarget("ALIAS");
