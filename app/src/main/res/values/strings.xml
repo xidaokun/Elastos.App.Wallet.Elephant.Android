@@ -1071,7 +1071,7 @@
     <string name="exchange_hint1">SWFT</string>
     <string name="exchange_hint2">"New World, New Money." SWFT Blockchain is a “Next-Generation Blockchain Global Transfer Agreement.” We focus on integrating the world’s major exchanges and blockchains to effectively hedge risks and provide customers with an efficient and easy-to-use platform for cryptocurrency transfers.</string>
     <string name="double_spend">There is another transaction being processed, please try again 2 minutes later.</string>
-    
+
     <string name="sign_signature_request_title">Signature Request</string>
     <string name="sign_request_information">Request information:</string>
     <string name="sign_developer_did">Developer DID</string>
