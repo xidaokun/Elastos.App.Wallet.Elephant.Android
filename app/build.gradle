@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         testInstrumentationRunner = 'android.support.test.runner.AndroidJUnitRunner'
-        applicationId = 'elaphant.app'
+        applicationId = 'app.elaphant'
         minSdkVersion 23
         targetSdkVersion 28
         versionCode 2

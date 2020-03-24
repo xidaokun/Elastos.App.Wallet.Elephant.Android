@@ -22,7 +22,7 @@ public class PushServer {
         extParameters.nickname = nickName;
         extParameters.carrierAddr = carrierAddr;
 
-        Log.d("aliConfig", "ALI_IOS_APPKEY:"+BuildConfig.ALI_IOS_APPKEY+" ALI_IOS_ACCESSID:"+BuildConfig.ALI_IOS_ACCESSID+"  ALI_IOS_ACCESSKEY:"+BuildConfig.ALI_IOS_ACCESSKEY);
+//        Log.d("aliConfig", "ALI_IOS_APPKEY:"+BuildConfig.ALI_IOS_APPKEY+" ALI_IOS_ACCESSID:"+BuildConfig.ALI_IOS_ACCESSID+"  ALI_IOS_ACCESSKEY:"+BuildConfig.ALI_IOS_ACCESSKEY);
         PushRequest pushRequest = new PushRequest(BuildConfig.ALI_IOS_ACCESSID, BuildConfig.ALI_IOS_ACCESSKEY);
         pushRequest.setAppKey(BuildConfig.ALI_IOS_APPKEY);
         pushRequest.setTarget("ALIAS");
@@ -67,7 +67,7 @@ public class PushServer {
         extParameters.nickname = nickName;
         extParameters.carrierAddr = carrierAddr;
 
-        Log.d("xidaokun_push", "ALI_AR_APPKEY:"+BuildConfig.ALI_AR_APPKEY+" ALI_AR_ACCESSID:"+BuildConfig.ALI_AR_ACCESSID+"  ALI_AR_ACCESSKEY:"+BuildConfig.ALI_AR_ACCESSKEY);
+//        Log.d("xidaokun_push", "ALI_AR_APPKEY:"+BuildConfig.ALI_AR_APPKEY+" ALI_AR_ACCESSID:"+BuildConfig.ALI_AR_ACCESSID+"  ALI_AR_ACCESSKEY:"+BuildConfig.ALI_AR_ACCESSKEY);
         PushRequest pushRequest = new PushRequest(BuildConfig.ALI_AR_ACCESSID, BuildConfig.ALI_AR_ACCESSKEY);
         pushRequest.setAppKey(BuildConfig.ALI_AR_APPKEY);
         pushRequest.setTarget("ALIAS");

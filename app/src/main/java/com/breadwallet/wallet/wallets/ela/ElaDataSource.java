@@ -17,6 +17,8 @@ import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.vote.CrcRankEntity;
+import com.breadwallet.vote.CrcsRankEntity;
 import com.breadwallet.vote.ProducerEntity;
 import com.breadwallet.vote.ProducersEntity;
 import com.breadwallet.wallet.wallets.ela.data.HistoryTransactionEntity;
@@ -906,6 +908,18 @@ public class ElaDataSource implements BRDataSourceInterface {
         }
 
         return result;
+    }
+
+    public List<CrcRankEntity> getCrcWithRank() {
+        try {
+            String url = getUrlByVersion("crc/rank/height/241762000?state=active", "v1");
+            String result = urlGET(url);
+            return new Gson().fromJson(result, CrcsRankEntity.class).result;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public long getNodeFee() {

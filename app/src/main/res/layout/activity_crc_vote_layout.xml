@@ -54,41 +54,55 @@
             android:layout_marginTop="16dp"
             android:text="You are going to vote"/>
 
-        <TextView
-            android:id="@+id/dpos_vote_nodes_tv"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/vote_nodes_tv_layout"
+            android:layout_width="match_parent"
             android:layout_height="24dp"
-            android:layout_below="@+id/vote_hint"
-            android:textColor="@color/black_333333"
-            android:textSize="14sp"
-            android:lines="1"
-            android:gravity="center"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="3dp"
-            android:paddingBottom="3dp"
-            android:background="@drawable/dpos_vote_shape"
+            android:orientation="horizontal"
             android:layout_marginTop="11dp"
-            android:layout_marginLeft="20dp"
-            android:text="36 nodes（DPoS）"/>
+            android:layout_below="@+id/vote_hint">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="24dp"
-            android:layout_below="@+id/vote_hint"
-            android:textColor="@color/black_333333"
-            android:textSize="14sp"
-            android:lines="1"
-            android:gravity="center"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="3dp"
-            android:paddingBottom="3dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="11dp"
-            android:layout_marginRight="20dp"
-            android:background="@drawable/crc_vote_shape"
-            android:text="5 council members（CR）"/>
+            <TextView
+                android:id="@+id/dpos_vote_nodes_tv"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textColor="@color/black_333333"
+                android:textSize="14sp"
+                android:lines="1"
+                android:gravity="center"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:background="@drawable/dpos_vote_shape"
+                android:layout_marginLeft="20dp"
+                android:text="@string/crc_vote_dpos_nodes"/>
+
+            <View
+                android:id="@+id/vote_nodes_block"
+                android:layout_width="10dp"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                android:id="@+id/crc_vote_nodes_tv"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textColor="@color/black_333333"
+                android:textSize="14sp"
+                android:lines="1"
+                android:gravity="center"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/crc_vote_shape"
+                android:text="@string/crc_vote_crc_nodes"/>
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/votes_unit"
@@ -98,7 +112,7 @@
             android:layout_marginTop="15dp"
             android:textColor="@color/black_999999"
             android:textSize="14sp"
-            android:layout_below="@+id/dpos_vote_nodes_tv"
+            android:layout_below="@+id/vote_nodes_tv_layout"
             android:text="Votes:(ELA)"/>
 
         <TextView

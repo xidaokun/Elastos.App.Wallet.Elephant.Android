@@ -234,7 +234,9 @@ public class ExploreWebActivity extends BRActivity {
             UiUtils.startVoteActivity(ExploreWebActivity.this, url);
         } else if(url.contains("elaphant") && url.contains("sign")) {
             UiUtils.startSignActivity(ExploreWebActivity.this, url);
-        } else if(mHomeActivity!=null && StringUtils.isElaphantCapsule(url)) {
+        } else if(url.contains("elaphant") && url.contains("elacrcvote")) {
+            UiUtils.startCrcActivity(ExploreWebActivity.this, url);
+        }else if(mHomeActivity!=null && StringUtils.isElaphantCapsule(url)) {
             mHomeActivity.showAndDownloadCapsule(url);
             finish();
         } else {

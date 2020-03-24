@@ -377,6 +377,22 @@
                     android:scheme="elaphant" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".presenter.activities.crc.CrcVoteActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data
+                    android:host="elacrcvote"
+                    android:scheme="elaphant" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".presenter.activities.AppAboutActivity"
             android:screenOrientation="portrait" />

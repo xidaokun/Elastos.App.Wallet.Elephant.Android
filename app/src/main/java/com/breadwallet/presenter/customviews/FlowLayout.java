@@ -84,7 +84,7 @@ public class FlowLayout extends ViewGroup {
         abstract void getCover(T item, ViewHolder holder, View inflate, int position);
     }
 
-    class ViewHolder {
+    public class ViewHolder {
         View mConvertView;
 
         public ViewHolder(View mConvertView) {

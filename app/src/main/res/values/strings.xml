@@ -1237,4 +1237,6 @@
     <string name="My_scan_has_add_friend">You have added this friend</string>
     <string name="My_scan_switch_btn_hint">Show carrier address</string>
 
+    <string name="crc_vote_dpos_nodes">%1$d nodes（DPoS）</string>
+    <string name="crc_vote_crc_nodes">%1$d council members（CR）</string>
 </resources>

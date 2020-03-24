@@ -80,6 +80,14 @@ public class UriFactory {
         return getValue("RequestInfo".toLowerCase());
     }
 
+    public String getCandidates() {
+        return getValue("Candidates");
+    }
+
+    public String getVotes() {
+        return getValue("Votes");
+    }
+
     public String getCandidatePublicKeys() {
         String candidate = getValue("CandidatePublicKeys".toLowerCase());
         if (StringUtils.isNullOrEmpty(candidate)) return null;
