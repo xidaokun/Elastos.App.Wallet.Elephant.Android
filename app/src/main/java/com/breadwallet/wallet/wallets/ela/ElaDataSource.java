@@ -885,7 +885,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 
             String json = "{\"data\":" + new Gson().toJson(rawTransactions) + "}";
 
-            String tmp = /*urlPost(url, json)*/ "{\"result\":[\"a0ccbef0e7bfb00b452efd1e3c329ea16de1ed4523216c197ad27b3cb85505e7\",\"e1a228df7b1c6c747d83827835e1551435e7fcaa12115f1d6cdda5bf94121b02\",\"a0ccbef0e7bfb00b452efd1e3c329ea16de1ed4523216c197ad27b3cb85505e8\",\"a0ccbef0e7bfb00b452efd1e3c329ea16de1ed4523216c197ad27b3cb85505a9\",\"a0ccbef0e7bfb00b452efd1e3c329ea16de1ed4523216c197ad27b3cb85577e7\"],\"status\":200}";
+            String tmp = urlPost(url, json) /*"{\"result\":[\"8cf2df7d3205b286a1531d28225b7cb5d8c7834a282ba70499759eba31479024\"],\"status\":200}"*/;
             JSONObject jsonObject = new JSONObject(tmp);
             result = jsonObject.getString("result");
             if(result==null || result.contains("ERROR") || result.contains(" ")) {
