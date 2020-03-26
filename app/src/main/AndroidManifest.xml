@@ -56,7 +56,6 @@
         android:theme="@style/AppTheme.Dark"
         android:windowSoftInputMode="stateVisible|adjustResize"
         tools:replace="android:label,android:allowBackup">
-        <activity android:name=".presenter.activities.crc.CrcHistoryActivity"></activity>
         <!-- <meta-data android:name="com.alibaba.app.appkey" android:value="28357838"/> -->
         <!-- <meta-data android:name="com.alibaba.app.appsecret" android:value="9a6bd1109cf85e97fdb9e7ccda8ed740"/> -->
         <receiver
@@ -393,6 +392,9 @@
                     android:scheme="elaphant" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".presenter.activities.crc.CrcMembersActivity"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".presenter.activities.AppAboutActivity"

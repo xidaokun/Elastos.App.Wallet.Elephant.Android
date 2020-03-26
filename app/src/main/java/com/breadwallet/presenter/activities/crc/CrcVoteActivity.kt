@@ -14,6 +14,7 @@ import com.breadwallet.presenter.customviews.LoadingDialog
 import com.breadwallet.presenter.entities.VoteEntity
 import com.breadwallet.presenter.interfaces.BRAuthCompletion
 import com.breadwallet.tools.adapter.VoteNodeAdapter
+import com.breadwallet.tools.animation.UiUtils
 import com.breadwallet.tools.manager.BRSharedPrefs
 import com.breadwallet.tools.security.AuthManager
 import com.breadwallet.tools.threads.executor.BRExecutor
@@ -43,7 +44,6 @@ class CrcVoteActivity : AppCompatActivity() {
         setContentView(R.layout.activity_crc_vote_layout)
 
         mLoadingDialog = LoadingDialog(this, R.style.progressDialog)
-
         initView()
         initLinster()
         initData()
@@ -58,7 +58,6 @@ class CrcVoteActivity : AppCompatActivity() {
                 uriFactory.parse(intent.getStringExtra("crc_scheme_uri"))
             }
         }
-
     }
 
     fun initLinster() {
@@ -68,6 +67,10 @@ class CrcVoteActivity : AppCompatActivity() {
 
         findViewById<View>(R.id.vote_cancle_btn).setOnClickListener {
             finish()
+        }
+
+        findViewById<View>(R.id.view_all_members).setOnClickListener {
+            UiUtils.startCrcMembersActivity(this, uriFactory.url)
         }
 
         findViewById<View>(R.id.vote_confirm_btn).setOnClickListener {
@@ -161,13 +164,13 @@ class CrcVoteActivity : AppCompatActivity() {
         // dpos vote counts
         if(null==dposNodes || dposNodes.count() <= 0 ) {
             dposNodesTv.visibility = View.GONE
-            findViewById<View>(R.id.publickeys_title).visibility = View.GONE
+            findViewById<View>(R.id.council_title).visibility = View.GONE
             findViewById<View>(R.id.vote_paste_tv).visibility = View.GONE
-            findViewById<View>(R.id.publickeys_lv).visibility = View.GONE
+            findViewById<View>(R.id.council_lv).visibility = View.GONE
         } else {
             dposNodesTv.text = String.format(getString(R.string.crc_vote_dpos_nodes), dposNodes.count())
             val producers = ElaDataSource.getInstance(this).getProducersByPK(dposNodes)
-            findViewById<ListView>(R.id.publickeys_lv).adapter = VoteNodeAdapter(this, producers)
+            findViewById<ListView>(R.id.council_lv).adapter = VoteNodeAdapter(this, producers)
         }
         // crc counts
         crcNodesTv.text = String.format(getString(R.string.crc_vote_crc_nodes), crcNodes.count())
@@ -185,30 +188,21 @@ class CrcVoteActivity : AppCompatActivity() {
                 e.printStackTrace()
             }
         }
-
+        //crc members lv
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute {
-            var crcRankEntitys = ElaDataSource.getInstance(this).crcWithRank
+            CrcDataSource.getInstance(this).getCrcWithRank()
+
             val cityStr = readCities("city/cities") ?: return@execute
             val cities = Gson().fromJson<List<CityEntity>>(cityStr, object : TypeToken<List<CityEntity>>() {
             }.type)
+            CrcDataSource.getInstance(this).updateMessage(cities)
 
-            for (crcEntity in crcRankEntitys) {
-                for(cityEntity in cities) {
-                    if(cityEntity.code == crcEntity.Location) {
-                        //TODO 中英文适配
-                        crcEntity.Area = cityEntity.en
-                    }
-                }
-            }
-
-
-
-            BRExecutor.getInstance().forMainThreadTasks().execute {
+            BRExecutor.getInstance().forMainThreadTasks().execute{
                 findViewById<FlowLayout>(R.id.numbers_float_layout).also {
                     with(it) {
                         setAlignByCenter(FlowLayout.AlienState.CENTER)
                         setAdapter(
-                                crcRankEntitys,
+                                CrcDataSource.getInstance(this@CrcVoteActivity).getMembersByIds(crcNodes),
                                 R.layout.crc_member_layout,
                                 object : FlowLayout.ItemView<CrcRankEntity>() {
                                     override fun getCover(item: CrcRankEntity?, holder: FlowLayout.ViewHolder?, inflate: View?, position: Int) {

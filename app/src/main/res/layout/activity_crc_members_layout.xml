@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@color/primary_background"
-    tools:context="com.breadwallet.presenter.activities.crc.CrcHistoryActivity">
+    tools:context="com.breadwallet.presenter.activities.crc.CrcMembersActivity">
 
     <RelativeLayout
         android:id="@+id/toolbar"
@@ -29,7 +29,7 @@
             android:layout_centerInParent="true"
             android:layout_marginStart="16dp"
             android:gravity="center_vertical"
-            android:text="@string/vote_title"
+            android:text="Detail"
             android:textColor="@color/black_333333"
             android:textSize="20sp" />
     </RelativeLayout>
@@ -44,7 +44,7 @@
         android:background="@color/white">
 
         <TextView
-            android:id="@+id/publickeys_title"
+            android:id="@+id/council_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:lines="1"
@@ -52,7 +52,7 @@
             android:textSize="14sp"
             android:layout_marginLeft="24dp"
             android:layout_marginTop="19dp"
-            android:text="Public Key of these 36 nodes:"/>
+            android:text="@string/crc_vote_crc_nodes"/>
 
         <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/vote_paste_tv"
@@ -67,7 +67,7 @@
 
 
         <com.breadwallet.presenter.customviews.MaxHeightLv
-            android:id="@+id/publickeys_lv"
+            android:id="@+id/council_lv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="24dp"
@@ -77,7 +77,7 @@
             android:divider="@null"
             android:dividerHeight="5dp"
             android:fadeScrollbars="false"
-            android:layout_below="@+id/publickeys_title"
+            android:layout_below="@+id/council_title"
             app:maxHeight="200dp" />
 
     </RelativeLayout>

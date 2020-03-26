@@ -187,7 +187,7 @@
         android:translationZ="5dp">
 
         <TextView
-            android:id="@+id/publickeys_title"
+            android:id="@+id/council_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:lines="1"
@@ -209,7 +209,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/vote_nodes_list_title"/>
 
         <com.breadwallet.presenter.customviews.MaxHeightLv
-            android:id="@+id/publickeys_lv"
+            android:id="@+id/council_lv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="24dp"
@@ -219,7 +219,7 @@
             android:divider="@null"
             android:dividerHeight="5dp"
             android:fadeScrollbars="false"
-            android:layout_below="@+id/publickeys_title"
+            android:layout_below="@+id/council_title"
             app:maxHeight="200dp" />
 
 
@@ -227,7 +227,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:layout_below="@+id/publickeys_lv">
+            android:layout_below="@+id/council_lv">
 
             <View
                 android:id="@+id/horizontal_line1"

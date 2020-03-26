@@ -129,7 +129,13 @@ public class UriFactory {
         parse(url);
     }
 
+    private String mUrl;
+    public String getUrl() {
+        return mUrl;
+    }
+
     public void parse(String url) {
+        mUrl = url;
         try {
             if (StringUtil.isNullOrEmpty(url)) return;
             if (url.toUpperCase().contains("ELAPHANT%3A%2F%2F") || url.toUpperCase().contains("ELASTOS%3A%2F%2F")) {

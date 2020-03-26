@@ -17,8 +17,6 @@ import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.vote.CrcRankEntity;
-import com.breadwallet.vote.CrcsRankEntity;
 import com.breadwallet.vote.PayLoadEntity;
 import com.breadwallet.vote.ProducerEntity;
 import com.breadwallet.vote.ProducersEntity;
@@ -159,17 +157,6 @@ public class ElaDataSource implements BRDataSourceInterface {
             BRSQLiteHelper.ELA_COLUMN_STATUS
     };
 
-    public void deleteElaTable(){
-        try {
-            database = openDatabase();
-            database.execSQL("drop table " + BRSQLiteHelper.ELA_TX_TABLE_NAME);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            closeDatabase();
-        }
-
-    }
 
     public void deleteAllTransactions() {
         try {
@@ -182,14 +169,11 @@ public class ElaDataSource implements BRDataSourceInterface {
 
     public synchronized void cacheMultTx(List<HistoryTransactionEntity> elaTransactionEntities){
         if(elaTransactionEntities == null) return;
-//        Cursor cursor = null;
         try {
             database = openDatabase();
             database.beginTransaction();
 
             for(HistoryTransactionEntity entity : elaTransactionEntities){
-//                cursor = database.query(BRSQLiteHelper.ELA_TX_TABLE_NAME,
-//                        allColumns, BRSQLiteHelper.ELA_COLUMN_TXREVERSED + " = ? COLLATE NOCASE", new String[]{entity.txReversed}, null, null, null);
 
                 ContentValues value = new ContentValues();
                 value.put(BRSQLiteHelper.ELA_COLUMN_ISRECEIVED, entity.isReceived? 1:0);
@@ -223,30 +207,6 @@ public class ElaDataSource implements BRDataSourceInterface {
         }
 
     }
-
-//    public List<ProducerEntity> getCacheProducers(){
-//        List<ProducerEntity> producers = new ArrayList<>();
-//        Cursor cursor = null;
-//        try {
-//            database = openDatabase();
-//            cursor = database.query(BRSQLiteHelper.ELA_PRODUCER_TABLE_NAME, allColumns, null, null, null, null, "rank desc");
-//            if(null == cursor) return null;
-//            cursor.moveToFirst();
-//            while(cursor.isAfterLast()) {
-//                ProducerEntity entity = cursorToProducerEntity(cursor);
-//                producers.add(entity);
-//            }
-//            return producers;
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            if (cursor != null)
-//                cursor.close();
-//            closeDatabase();
-//        }
-//
-//        return null;
-//    }
 
     private TxProducerEntity cursorToTxProducerEntity(Cursor cursor){
         return new TxProducerEntity(cursor.getString(1),
@@ -718,18 +678,6 @@ public class ElaDataSource implements BRDataSourceInterface {
     private boolean checkSignature(ElaTransaction tx){
         if(tx == null) return false;
 
-        //        String pub = tx.Postmark.pub;
-//        String signature = tx.Postmark.signature;
-//        if(!StringUtil.isNullOrEmpty(pub) && !StringUtil.isNullOrEmpty(signature)){
-//            tx.Postmark = null;
-//            String source = new Gson().toJson(tx);
-//            boolean isValid = Utility.getInstance(mContext).verify(pub, source.getBytes(), HexUtils.hexToByteArray(signature));
-//            return isValid;
-//        }
-//
-//        return false;
-
-
         String pub = tx.Postmark.pub;
         String signature = tx.Postmark.signature;
         if(!StringUtil.isNullOrEmpty(pub) && !StringUtil.isNullOrEmpty(signature)) {
@@ -852,18 +800,6 @@ public class ElaDataSource implements BRDataSourceInterface {
         return true;
     }
 
-    public String getPublicKeyByAddress(String address){
-        String url = getUrlByVersion("pubkey/"+address, "1");
-        try {
-            String result = urlGET(url);
-            JSONObject object = new JSONObject(result);
-            return object.getString("result");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
 
     public synchronized String sendElaRawTx(final List<BRElaTransaction> transactions){
         if(transactions==null || transactions.size()<=0) return null;
@@ -932,18 +868,6 @@ public class ElaDataSource implements BRDataSourceInterface {
         }
 
         return result;
-    }
-
-    public List<CrcRankEntity> getCrcWithRank() {
-        try {
-            String url = getUrlByVersion("crc/rank/height/241762000?state=active", "v1");
-            String result = urlGET(url);
-            return new Gson().fromJson(result, CrcsRankEntity.class).result;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
     }
 
     public long getNodeFee() {
@@ -1026,15 +950,6 @@ public class ElaDataSource implements BRDataSourceInterface {
         }
 
         return entities;
-    }
-
-    public void deleteAllTxProducer() {
-        try {
-            database = openDatabase();
-            database.delete(BRSQLiteHelper.HISTORY_PRODUCER_TABLE_NAME, null, null);
-        } finally {
-            closeDatabase();
-        }
     }
 
     public void cacheMultiTxProducer(List<TxProducersEntity> entities){

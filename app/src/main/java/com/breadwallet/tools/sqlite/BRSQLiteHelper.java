@@ -58,6 +58,25 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 21;
 
 
+    public static final String CRC_VOTE_TABLE_NAME = "crcVoteTable";
+    public static final String CRC_VOTE_DID = "crcVoteDid";
+    public static final String CRC_VOTE_RANK = "crcVoteRank";
+    public static final String CRC_VOTE_NICKNAME = "crcVoteNickname";
+    public static final String CRC_VOTE_LOCATION = "crcVoteLocation";
+    public static final String CRC_VOTE_AREA = "crcVoteArea";
+    public static final String CRC_VOTE_VOTES = "crcVoteVotes";
+    public static final String CRC_VOTE_VALUE = "crcVoteValue";
+
+    private static final String CRC_VOTE_DATABASE_CREATE = "create table if not exists " + CRC_VOTE_TABLE_NAME + " (" +
+            CRC_VOTE_DID + " text primary key , " +
+            CRC_VOTE_RANK + " integer, " +
+            CRC_VOTE_NICKNAME + " text," +
+            CRC_VOTE_LOCATION + " integer, " +
+            CRC_VOTE_AREA + " text," +
+            CRC_VOTE_VOTES + " text, " +
+            CRC_VOTE_VALUE + " text" +
+            ");";
+
     public static final String WAIT_ACCEPT_TABLE_NAME = "waitAcceptTable";
     public static final String WAIT_ACCEPT_NICKNAME = "waitAcceptNickname";
     public static final String WAIT_ACCEPT_DID = "waitAcceptDid";
@@ -414,6 +433,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
         Log.e(TAG, "onCreate: " + TX_DATABASE_CREATE);
         Log.e(TAG, "onCreate: " + PEER_DATABASE_CREATE);
         Log.e(TAG, "onCreate: " + CURRENCY_DATABASE_CREATE);
+        database.execSQL(CRC_VOTE_DATABASE_CREATE);
         database.execSQL(WAIT_ACCEPT_DATABASE_CREATE);
         database.execSQL(CHAT_MESSAGE_ITEM_DATABASE_CREATE);
         database.execSQL(CHAT_MESSAGE_DATABASE_CREATE);
