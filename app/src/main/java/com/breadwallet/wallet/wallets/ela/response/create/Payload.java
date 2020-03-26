@@ -1,8 +1,12 @@
 package com.breadwallet.wallet.wallets.ela.response.create;
 
+import com.breadwallet.vote.PayLoadEntity;
+
 import java.util.List;
 
 public class Payload {
-    public String type = "delegate";
-    public List<String> candidatePublicKeys;
+    public String type = "vote";
+    public List<PayLoadEntity> candidatePublicKeys;
+    public List<PayLoadEntity> candidateCrcs;
+
 }

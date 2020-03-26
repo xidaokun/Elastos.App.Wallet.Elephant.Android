@@ -715,6 +715,18 @@ public class BRSharedPrefs {
         return prefs.getBoolean("autoVote", false);
     }
 
+    public static void cacheCrcVotes(Context context, String votes) {
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("votes", votes);
+        editor.apply();
+    }
+
+    public static String getCrcVotes(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        return prefs.getString("votes", "");
+    }
+
     public static void cacheCandidate(Context context, String candidate){
         SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();

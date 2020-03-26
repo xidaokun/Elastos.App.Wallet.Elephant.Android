@@ -81,11 +81,11 @@ public class UriFactory {
     }
 
     public String getCandidates() {
-        return getValue("Candidates");
+        return getValue("Candidates".toLowerCase());
     }
 
     public String getVotes() {
-        return getValue("Votes");
+        return getValue("Votes".toLowerCase());
     }
 
     public String getCandidatePublicKeys() {

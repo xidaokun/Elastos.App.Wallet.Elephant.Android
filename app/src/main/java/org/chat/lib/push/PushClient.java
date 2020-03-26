@@ -97,6 +97,7 @@ public class PushClient {
     }
 
     public void bindAccount(String account, final CommonCallback commonCallback) {
+        if(null == mPushService) return;
         mPushService.bindAccount(account, new CommonCallback() {
             @Override
             public void onSuccess(String s) {
@@ -113,6 +114,7 @@ public class PushClient {
     }
 
     public void removeAlias() {
+        if(null == mPushService) return;
         mPushService.removeAlias(null, new CommonCallback() {
             @Override
             public void onSuccess(String s) {
@@ -127,7 +129,7 @@ public class PushClient {
     }
 
     public void bindAlias(String alias, final CommonCallback commonCallback) {
-
+        if(null == mPushService) return;
         mPushService.listAliases(new CommonCallback() {
             @Override
             public void onSuccess(String s) {

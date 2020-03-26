@@ -147,15 +147,31 @@
             android:text="CR council members detail:"/>
 
 
-        <com.breadwallet.presenter.customviews.FlowLayout
-            android:id="@+id/numbers_float_layout"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="70dp"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="20dp"
-            android:layout_below="@+id/numbers_detail_title"/>
+            android:layout_below="@+id/numbers_detail_title">
+            <com.breadwallet.presenter.activities.crc.FlowLayout
+                android:id="@+id/numbers_float_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <com.breadwallet.presenter.customviews.BRButton
+                android:id="@+id/view_all_members"
+                android:layout_width="56dp"
+                android:layout_height="24dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:text="View all"
+                android:textColor="#ff3365"
+                android:textSize="11sp"
+                app:buttonType="3"
+                app:isBreadButton="true"/>
+        </RelativeLayout>
 
     </RelativeLayout>
 

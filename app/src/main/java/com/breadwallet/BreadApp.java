@@ -149,7 +149,7 @@ public class BreadApp extends BaseApplication {
         Bugly.init(getApplicationContext(), BuildConfig.UPGRADE_TESTNET? "8b437eefc0":"8a9b0190e0", false);
         cacheVersionCode();
 
-        PushClient.getInstance().initCloudChannel(this);
+//        PushClient.getInstance().initCloudChannel(this);
     }
 
 

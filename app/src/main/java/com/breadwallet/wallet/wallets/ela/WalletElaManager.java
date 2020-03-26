@@ -479,7 +479,8 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
             } else {
                 candidates = Utils.spliteByComma(candidatesStr);
             }
-            brElaTransactions = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno, candidates);
+            //TODO daokun.xi tmp test
+//            brElaTransactions = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno, candidates);
         } else {
             brElaTransactions = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno);
         }

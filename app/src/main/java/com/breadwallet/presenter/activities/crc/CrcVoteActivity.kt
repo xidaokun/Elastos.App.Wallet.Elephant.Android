@@ -1,33 +1,48 @@
 package com.breadwallet.presenter.activities.crc
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import android.widget.ListView
 import android.widget.TextView
+import android.widget.Toast
 import com.breadwallet.R
-import com.breadwallet.presenter.customviews.FlowLayout
+import com.breadwallet.did.DidDataSource
+import com.breadwallet.presenter.customviews.LoadingDialog
+import com.breadwallet.presenter.entities.VoteEntity
+import com.breadwallet.presenter.interfaces.BRAuthCompletion
 import com.breadwallet.tools.adapter.VoteNodeAdapter
 import com.breadwallet.tools.manager.BRSharedPrefs
+import com.breadwallet.tools.security.AuthManager
 import com.breadwallet.tools.threads.executor.BRExecutor
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.StringUtil
 import com.breadwallet.tools.util.Utils
 import com.breadwallet.vote.CityEntity
 import com.breadwallet.vote.CrcRankEntity
+import com.breadwallet.vote.PayLoadEntity
 import com.breadwallet.wallet.wallets.ela.ElaDataSource
+import com.breadwallet.wallet.wallets.ela.WalletElaManager
+import com.breadwallet.wallet.wallets.ela.response.create.ElaOutput
 import com.elastos.jni.UriFactory
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.math.BigDecimal
+import java.util.*
 
 
-class CrcVoteActivity : Activity() {
+@Suppress("UNREACHABLE_CODE")
+class CrcVoteActivity : AppCompatActivity() {
+
+    private var mLoadingDialog: LoadingDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_crc_vote_layout)
+
+        mLoadingDialog = LoadingDialog(this, R.style.progressDialog)
 
         initView()
         initLinster()
@@ -56,7 +71,78 @@ class CrcVoteActivity : Activity() {
         }
 
         findViewById<View>(R.id.vote_confirm_btn).setOnClickListener {
+            AuthManager.getInstance().authPrompt(this, this.getString(R.string.pin_author_vote), getString(R.string.pin_author_vote_msg), true, false, object : BRAuthCompletion {
+                override fun onComplete() {
+                    showDialog()
+                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(Runnable {
+                        //dpos payload
+                        val dposNodes = Utils.spliteByComma(BRSharedPrefs.getCandidate(this@CrcVoteActivity))
+                        val address = WalletElaManager.getInstance(this@CrcVoteActivity).address
+                        val amout = 0L
+                        var publickeys: ArrayList<PayLoadEntity>?
+                        if(dposNodes == null) {
+                            publickeys = null
+                        } else {
+                            publickeys = ArrayList()
+                            for(dposNode in dposNodes) {
+                                val payLoadEntity = PayLoadEntity()
+                                payLoadEntity.candidate = dposNode
+                                payLoadEntity.value = amout
+                                publickeys.add(payLoadEntity)
+                            }
+                        }
 
+                        //crc payload
+                        val crcNodes = Utils.spliteByComma(uriFactory.candidates)
+                        var crcCandidates: ArrayList<PayLoadEntity>?
+                        if(crcNodes == null) {
+                            crcCandidates = null
+                        } else {
+                            crcCandidates = ArrayList()
+                            for(i in crcNodes.indices) {
+                                val payLoadEntity = PayLoadEntity()
+                                payLoadEntity.candidate = crcNodes[i]
+                                payLoadEntity.value = amout
+                                crcCandidates.add(payLoadEntity)
+                            }
+                        }
+
+                        val transactions = ElaDataSource.getInstance(this@CrcVoteActivity).
+                                createElaTx(address, address, amout, "vote", publickeys, crcCandidates) { elaOutput: ElaOutput, payLoadEntities: MutableList<PayLoadEntity> ->
+                                   try {
+                                       val crcAmounts = Utils.spliteByComma(uriFactory.votes)?: return@createElaTx
+                                       for(i in crcAmounts.indices) {
+                                           payLoadEntities[i].value = BigDecimal(crcAmounts[i]).multiply(BigDecimal(elaOutput.amount)).divide(BigDecimal(100)).toLong()
+                                       }
+                                       Log.d("", "")
+                                   } catch (e: Exception) {
+                                       e.printStackTrace()
+                                   }
+                                }
+                        if (null == transactions) {
+                            dismissDialog()
+                            finish()
+                            return@Runnable
+                        }
+
+                        val mRwTxid = ElaDataSource.getInstance(this@CrcVoteActivity).sendElaRawTx(transactions)
+                        if (StringUtil.isNullOrEmpty(mRwTxid)) {
+                            dismissDialog()
+                            finish()
+                            return@Runnable
+                        }
+                        callBackUrl(mRwTxid)
+                        callReturnUrl(mRwTxid)
+                        BRSharedPrefs.cacheCrcVotes(this@CrcVoteActivity, uriFactory.votes)
+                        dismissDialog()
+                        finish()
+                    })
+                }
+
+                override fun onCancel() {
+                    //nothing
+                }
+            })
         }
     }
 
@@ -68,11 +154,12 @@ class CrcVoteActivity : Activity() {
         //total vote counts
         findViewById<TextView>(R.id.votes_counts).text = balance.subtract(BigDecimal(0.0001)).toLong().toString()
 
-        val dposNodes = Utils.spliteByComma(BRSharedPrefs.getCandidate(this).trim())
-        val crcNodes = Utils.spliteByComma(uriFactory.candidates.trim())
+//        if(StringUtil.isNullOrEmpty(BRSharedPrefs.getCandidate(this))) "" else BRSharedPrefs.getCandidate(this).trim()
+        val dposNodes = Utils.spliteByComma(BRSharedPrefs.getCandidate(this))
+        val crcNodes = Utils.spliteByComma(uriFactory.candidates)
 
         // dpos vote counts
-        if(dposNodes.count() <= 0 ) {
+        if(null==dposNodes || dposNodes.count() <= 0 ) {
             dposNodesTv.visibility = View.GONE
             findViewById<View>(R.id.publickeys_title).visibility = View.GONE
             findViewById<View>(R.id.vote_paste_tv).visibility = View.GONE
@@ -101,7 +188,7 @@ class CrcVoteActivity : Activity() {
 
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute {
             var crcRankEntitys = ElaDataSource.getInstance(this).crcWithRank
-            val cityStr = readCities("/city/cities")
+            val cityStr = readCities("city/cities") ?: return@execute
             val cities = Gson().fromJson<List<CityEntity>>(cityStr, object : TypeToken<List<CityEntity>>() {
             }.type)
 
@@ -114,29 +201,88 @@ class CrcVoteActivity : Activity() {
                 }
             }
 
+
+
             BRExecutor.getInstance().forMainThreadTasks().execute {
-                val mFlowLayout = findViewById<FlowLayout>(R.id.numbers_float_layout)
-                mFlowLayout.setAlignByCenter(FlowLayout.AlienState.CENTER)
-                mFlowLayout.setAdapter(crcRankEntitys, R.layout.crc_member_layout, object : FlowLayout.ItemView<CrcRankEntity>() {
-                    internal fun getCover(item: CrcRankEntity, holder: FlowLayout.ViewHolder, inflate: View, position: Int) {
-                        val content = item.Nickname + "|" + item.Area
-                        holder.setText(R.id.tv_label_name, content)
+                findViewById<FlowLayout>(R.id.numbers_float_layout).also {
+                    with(it) {
+                        setAlignByCenter(FlowLayout.AlienState.CENTER)
+                        setAdapter(
+                                crcRankEntitys,
+                                R.layout.crc_member_layout,
+                                object : FlowLayout.ItemView<CrcRankEntity>() {
+                                    override fun getCover(item: CrcRankEntity?, holder: FlowLayout.ViewHolder?, inflate: View?, position: Int) {
+                                        holder?.setText(R.id.tv_label_name, item?.Nickname + "|" + item?.Area)
+                                    }
+                                }
+                        )
                     }
-                })
+                }
             }
         }
 
     }
 
-    fun readCities(filename : String): String {
-        val inputStream = assets.open(filename)
-        val size = inputStream.available()
-        var buffer = ByteArray(size)
-        inputStream.read(buffer)
-        inputStream.close()
+    fun readCities(filename : String): String? {
+        try {
+            val inputStream = assets.open(filename)
+            val size = inputStream.available()
+            var buffer = ByteArray(size)
+            inputStream.read(buffer)
+            inputStream.close()
 
-        return String(buffer)
+            return String(buffer)
+        } catch (e : Exception) {
+            e.printStackTrace()
+        }
+
+        return null
     }
 
+    private fun dismissDialog() {
+        runOnUiThread {
+            if (!isFinishing)
+                mLoadingDialog?.dismiss()
+        }
+    }
+
+
+    private fun showDialog() {
+        runOnUiThread {
+            if (!isFinishing)
+                mLoadingDialog?.show()
+        }
+    }
+
+    private fun callReturnUrl(txId: String) {
+        if (StringUtil.isNullOrEmpty(txId)) return
+        val returnUrl = uriFactory.returnUrl
+        if (StringUtil.isNullOrEmpty(returnUrl)) {
+            Toast.makeText(this@CrcVoteActivity, "returnurl is empty", Toast.LENGTH_SHORT).show()
+            return
+        }
+        val url: String
+        if (returnUrl.contains("?")) {
+            url = "$returnUrl&TXID=$txId"
+        } else {
+            url = "$returnUrl?TXID=$txId"
+        }
+        DidDataSource.getInstance(this@CrcVoteActivity).callReturnUrl(url)
+    }
+
+    private fun callBackUrl(txid: String) {
+        try {
+            if (StringUtil.isNullOrEmpty(txid)) return
+            val backurl = uriFactory.callbackUrl
+            if (StringUtil.isNullOrEmpty(backurl)) return
+            val txEntity = VoteEntity()
+            txEntity.TXID = txid
+            val ret = DidDataSource.getInstance(this).urlPost(backurl, Gson().toJson(txEntity))
+        } catch (e: Exception) {
+            Toast.makeText(this@CrcVoteActivity, "callback error", Toast.LENGTH_SHORT)
+            e.printStackTrace()
+        }
+
+    }
 
 }

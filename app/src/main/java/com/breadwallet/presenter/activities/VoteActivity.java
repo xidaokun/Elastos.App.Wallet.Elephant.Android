@@ -26,6 +26,7 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.vote.PayLoadEntity;
 import com.breadwallet.vote.ProducerEntity;
 import com.breadwallet.wallet.wallets.ela.BRElaTransaction;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
@@ -198,8 +199,14 @@ public class VoteActivity extends BaseSettingsActivity {
                     public void run() {
                         Log.d("posvote", "mCandidatesStr:"+mCandidatesStr);
                         String address = WalletElaManager.getInstance(VoteActivity.this).getAddress();
-                        long amout = (null==mCandidates || mCandidates.size()<=0)? 100: 0L;
-                        List<BRElaTransaction> transactions = ElaDataSource.getInstance(VoteActivity.this).createElaTx(address, address, amout, "vote", mCandidates);
+                        long amout = (null==mCandidates || mCandidates.size()<=0)? 100L: 0L;
+                        List<PayLoadEntity> publickeys = new ArrayList<>();
+                        for(String candidate : mCandidates) {
+                            PayLoadEntity payLoadEntity = new PayLoadEntity();
+                            payLoadEntity.value = amout;
+                            payLoadEntity.candidate = candidate;
+                        }
+                        List<BRElaTransaction> transactions = ElaDataSource.getInstance(VoteActivity.this).createElaTx(address, address, amout, "vote", publickeys);
                         if(null == transactions) {
                             dismissDialog();
                             finish();

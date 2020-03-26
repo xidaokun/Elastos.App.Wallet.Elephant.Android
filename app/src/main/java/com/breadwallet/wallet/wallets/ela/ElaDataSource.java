@@ -19,6 +19,7 @@ import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.vote.CrcRankEntity;
 import com.breadwallet.vote.CrcsRankEntity;
+import com.breadwallet.vote.PayLoadEntity;
 import com.breadwallet.vote.ProducerEntity;
 import com.breadwallet.vote.ProducersEntity;
 import com.breadwallet.wallet.wallets.ela.data.HistoryTransactionEntity;
@@ -581,13 +582,29 @@ public class ElaDataSource implements BRDataSourceInterface {
         return false;
     }
 
-    public synchronized List<BRElaTransaction> createElaTx(final String inputAddress, final String outputsAddress, final long amount, String memo){
-        return createElaTx(inputAddress, outputsAddress, amount, memo, null);
+    public synchronized List<BRElaTransaction> createElaTx(final String inputAddress,
+                                                           final String outputsAddress,
+                                                           final long amount, String memo){
+        return createElaTx(inputAddress, outputsAddress, amount, memo, null, null, null);
+    }
+
+    public synchronized List<BRElaTransaction> createElaTx(final String inputAddress,
+                                                           final String outputsAddress,
+                                                           final long amount,
+                                                           String memo,
+                                                           List<PayLoadEntity> publickeys){
+        return createElaTx(inputAddress, outputsAddress, amount, memo, publickeys, null, null);
     }
 
     List<HistoryTransactionEntity> multiHistoryTransactionEntity = new ArrayList<>();
     List<BRElaTransaction> multiElaTransaction = new ArrayList<>();
-    public synchronized List<BRElaTransaction> createElaTx(final String inputAddress, final String outputsAddress, final long amount, String memo, List<String> payload){
+    public synchronized List<BRElaTransaction> createElaTx(final String inputAddress,
+                                                           final String outputsAddress,
+                                                           final long amount,
+                                                           String memo,
+                                                           List<PayLoadEntity> publickeys,
+                                                           List<PayLoadEntity> candidateCrcs,
+                                                           CreateTxCallBack callBack){
         if(StringUtil.isNullOrEmpty(inputAddress) || StringUtil.isNullOrEmpty(outputsAddress)) return null;
 
         if(mActivity!=null) toast(mActivity.getResources().getString(R.string.SendTransacton_sending));
@@ -643,13 +660,16 @@ public class ElaDataSource implements BRDataSourceInterface {
                     utxoInputs.privateKey  = WalletElaManager.getInstance(mContext).getPrivateKey();
                 }
 
-                if(null!=payload && payload.size()>0){
+                if((null!=publickeys && publickeys.size()>0) || (null!=candidateCrcs && candidateCrcs.size()>0)){
                     List<ElaOutput> outputsR = res.Transactions.get(i).Outputs;
                     String lastOutPutAddress = outputsR.get(outputsR.size()-1).address;
                     if(!StringUtil.isNullOrEmpty(lastOutPutAddress)) {
                         ElaOutput output = outputsR.get(outputsR.size()-1);
                         Payload tmp = new Payload();
-                        tmp.candidatePublicKeys = payload;
+                        tmp.candidatePublicKeys = publickeys;
+                        if(null!=candidateCrcs && candidateCrcs.size()>0 && callBack!=null)
+                            callBack.modifyCrcAmount(output, candidateCrcs);
+                        tmp.candidateCrcs = candidateCrcs;
                         output.payload = tmp;
                     }
                 }
@@ -670,7 +690,7 @@ public class ElaDataSource implements BRDataSourceInterface {
                 historyTransactionEntity.balanceAfterTx = 0;
                 historyTransactionEntity.timeStamp = System.currentTimeMillis()/1000;
                 historyTransactionEntity.isValid = true;
-                historyTransactionEntity.isVote = (payload!=null && payload.size()>0);
+                historyTransactionEntity.isVote = (publickeys!=null && publickeys.size()>0);
                 historyTransactionEntity.memo = memo;
                 historyTransactionEntity.status=  "pending";
 
@@ -689,6 +709,10 @@ public class ElaDataSource implements BRDataSourceInterface {
         }
 
         return multiElaTransaction;
+    }
+
+    public interface CreateTxCallBack {
+        void modifyCrcAmount(ElaOutput outputs, List<PayLoadEntity> payLoadEntities);
     }
 
     private boolean checkSignature(ElaTransaction tx){
@@ -861,7 +885,7 @@ public class ElaDataSource implements BRDataSourceInterface {
 
             String json = "{\"data\":" + new Gson().toJson(rawTransactions) + "}";
 
-            String tmp = urlPost(url, json) /*"{\"result\":[\"a0ccbef0e7bfb00b452efd1e3c329ea16de1ed4523216c197ad27b3cb85505e7\",\"e1a228df7b1c6c747d83827835e1551435e7fcaa12115f1d6cdda5bf94121b02\",\"a0ccbef0e7bfb00b452efd1e3c329ea16de1ed4523216c197ad27b3cb85505e8\",\"a0ccbef0e7bfb00b452efd1e3c329ea16de1ed4523216c197ad27b3cb85505a9\",\"a0ccbef0e7bfb00b452efd1e3c329ea16de1ed4523216c197ad27b3cb85577e7\"],\"status\":200}"*/;
+            String tmp = /*urlPost(url, json)*/ "{\"result\":[\"a0ccbef0e7bfb00b452efd1e3c329ea16de1ed4523216c197ad27b3cb85505e7\",\"e1a228df7b1c6c747d83827835e1551435e7fcaa12115f1d6cdda5bf94121b02\",\"a0ccbef0e7bfb00b452efd1e3c329ea16de1ed4523216c197ad27b3cb85505e8\",\"a0ccbef0e7bfb00b452efd1e3c329ea16de1ed4523216c197ad27b3cb85505a9\",\"a0ccbef0e7bfb00b452efd1e3c329ea16de1ed4523216c197ad27b3cb85577e7\"],\"status\":200}";
             JSONObject jsonObject = new JSONObject(tmp);
             result = jsonObject.getString("result");
             if(result==null || result.contains("ERROR") || result.contains(" ")) {

@@ -381,6 +381,7 @@
         <activity
             android:name=".presenter.activities.crc.CrcVoteActivity"
             android:screenOrientation="portrait">
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 

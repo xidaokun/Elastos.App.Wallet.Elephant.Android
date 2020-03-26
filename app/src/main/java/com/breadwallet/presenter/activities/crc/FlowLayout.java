@@ -1,4 +1,4 @@
-package com.breadwallet.presenter.customviews;
+package com.breadwallet.presenter.activities.crc;
 
 import android.content.Context;
 import android.os.Handler;
