@@ -187,7 +187,10 @@ public class FragmentChat extends Fragment implements View.OnClickListener {
                 UiUtils.startAddFriendActivity(getActivity(), BRConstants.CHAT_GROUP_TYPE);
                 break;
             case R.id.chat_my_qr:
-                UiUtils.startMyQrActivity(getActivity());
+//                UiUtils.startMyQrActivity(getActivity());
+
+                String url = "elaphant://elacrcvote?AppID=552453550a0ad3ad6cedd21a7bd47d2a3049ebb17099e892d92b93f9bd72bdeed9a439806118358422f3cb957a1ddebdc768ff667c2bd7359063d79d1618bf9c&PublicKey=02752F9483DF73C57EDEA1F84F2431DC1036B2643F9519E78CB660D8C332793EDC&DID=iiJRtAn6wyHaMSDQPS9Kkft3iiNjH5tTmi&AppName=dposvote.h5.app&ReturnUrl=https%253A%252F%252Fdposvote.elaphant.app%252F%2523%252Freturn_url&Candidates=icS954DGsXXuYJCUbRKiC8JAcoxkaeQVZg%2CibdkX3PQHwKAu6vRaeDVyo8VU9mXW2Wm8R%2CiauRDuc1cNwQEvQzcTzAGb1HPB6ZafLT8g&Votes=33.333333%2C33.3333333%2C33.333333";
+                UiUtils.startCrcActivity(getActivity(), url);
                 break;
             default:
                 break;

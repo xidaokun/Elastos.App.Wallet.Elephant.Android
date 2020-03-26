@@ -3,6 +3,7 @@ package com.breadwallet.presenter.activities.crc
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.SimpleAdapter
+import android.widget.TextView
 import com.breadwallet.R
 import com.breadwallet.presenter.customviews.MaxHeightLv
 import com.breadwallet.tools.util.Utils
@@ -29,6 +30,9 @@ class CrcMembersActivity : AppCompatActivity() {
         val crcNodes = Utils.spliteByComma(uriFactory.candidates)
         val crcRankEntities = CrcDataSource.getInstance(this).getMembersByIds(crcNodes)
         val data = ArrayList<Map<String, Any>>()
+
+        findViewById<TextView>(R.id.council_title).text = String.format(getString(R.string.crc_vote_crc_nodes), crcNodes.count())
+
         for(crcEntity in crcRankEntities) {
             val item = HashMap<String, Any>()
             item["content"] = crcEntity.Nickname + "|" + crcEntity.Area + "|" + crcEntity.Votes

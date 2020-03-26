@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import okhttp3.Request;
@@ -85,7 +86,7 @@ public class CrcDataSource implements BRDataSourceInterface {
 
         try {
             database = openDatabase();
-            cursor = database.query(BRSQLiteHelper.ELA_TX_TABLE_NAME, crcMemberColumn, null, null, null, null, "crcVoteRank " + orderBy);
+            cursor = database.query(BRSQLiteHelper.CRC_VOTE_TABLE_NAME, crcMemberColumn, null, null, null, null, "crcVoteRank " + orderBy);
 
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -124,11 +125,18 @@ public class CrcDataSource implements BRDataSourceInterface {
 
             for (CityEntity entity : cityEntities) {
                 ContentValues args = new ContentValues();
-                args.put(BRSQLiteHelper.CRC_VOTE_AREA, entity.location);
 
-                int r = database.update(BRSQLiteHelper.CHAT_MESSAGE_TABLE_NAME, args, BRSQLiteHelper.CRC_VOTE_LOCATION + " = ? ", new String[]{String.valueOf(entity.code)});
+                String languageCode = Locale.getDefault().getLanguage();
+                if(!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")){
+                    args.put(BRSQLiteHelper.CRC_VOTE_AREA, entity.zh);
+                } else {
+                    args.put(BRSQLiteHelper.CRC_VOTE_AREA, entity.en);
+                }
 
+                int r = database.update(BRSQLiteHelper.CRC_VOTE_TABLE_NAME, args, BRSQLiteHelper.CRC_VOTE_LOCATION + " = ? ", new String[]{String.valueOf(entity.code)});
             }
+        } catch(Exception e) {
+            e.printStackTrace();
         } finally {
             closeDatabase();
         }

@@ -251,7 +251,7 @@ public class UiUtils {
 
     public static void startCrcMembersActivity(Context context, String url) {
         Intent intent = new Intent(context, CrcMembersActivity.class);
-        intent.putExtra("vote_scheme_uri", url);
+        intent.putExtra("crc_scheme_uri", url);
         context.startActivity(intent);
     }
 
