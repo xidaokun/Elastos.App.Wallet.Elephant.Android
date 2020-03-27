@@ -17,10 +17,10 @@
     
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/tx_description"
-        android:layout_width="200dp"
+        android:layout_width="130dp"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:maxLines="1"
+        android:ellipsize="middle"
+        android:singleLine="true"
         android:text="sent to f94c57..."
         app:layout_constraintLeft_toRightOf="@+id/tx_status_icon"
         app:layout_constraintTop_toTopOf="parent"
@@ -30,15 +30,24 @@
         android:textSize="16sp"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
-        android:id="@+id/vote_flag"
+        android:id="@+id/dpos_vote_flag"
         android:layout_width="40dp"
         android:layout_height="16dp"
         app:layout_constraintLeft_toRightOf="@+id/tx_description"
         app:layout_constraintTop_toTopOf="@+id/tx_description"
         app:layout_constraintBottom_toBottomOf="@+id/tx_description"
         android:layout_marginLeft="10dp"
-        android:visibility="gone"
-        android:background="@drawable/vote_flag"/>
+        android:background="@drawable/ic_dpos_vote"/>
+
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/crc_vote_flag"
+        android:layout_width="40dp"
+        android:layout_height="16dp"
+        app:layout_constraintLeft_toRightOf="@+id/dpos_vote_flag"
+        app:layout_constraintTop_toTopOf="@+id/tx_description"
+        app:layout_constraintBottom_toBottomOf="@+id/tx_description"
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/ic_crc_vote"/>
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/tx_date"

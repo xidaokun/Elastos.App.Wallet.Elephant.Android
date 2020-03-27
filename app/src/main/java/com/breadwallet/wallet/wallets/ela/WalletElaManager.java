@@ -400,10 +400,12 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
                         entity.fromAddress,
                         new BigDecimal(String.valueOf(entity.balanceAfterTx))
                         ,entity.txSize
-                         ,amount
+                        ,amount
                         , entity.isValid
                         ,entity.isVote
-                        , entity.status);
+                        , entity.status
+                        , entity.type
+                        , entity.txType);
                 txUiHolder.memo = entity.memo;
                 uiTxs.add(txUiHolder);
             }

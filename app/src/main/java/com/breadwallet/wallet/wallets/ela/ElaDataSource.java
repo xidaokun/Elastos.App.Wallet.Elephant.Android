@@ -154,7 +154,9 @@ public class ElaDataSource implements BRDataSourceInterface {
             BRSQLiteHelper.ELA_COLUMN_ISVALID,
             BRSQLiteHelper.ELA_COLUMN_ISVOTE,
             BRSQLiteHelper.ELA_COLUMN_PAGENUMBER,
-            BRSQLiteHelper.ELA_COLUMN_STATUS
+            BRSQLiteHelper.ELA_COLUMN_STATUS,
+            BRSQLiteHelper.ELA_COLUMN_TPYE,
+            BRSQLiteHelper.ELA_COLUMN_TXTPYE
     };
 
 
@@ -192,6 +194,8 @@ public class ElaDataSource implements BRDataSourceInterface {
                 value.put(BRSQLiteHelper.ELA_COLUMN_ISVOTE, entity.isVote?1:0);
                 value.put(BRSQLiteHelper.ELA_COLUMN_PAGENUMBER, entity.pageNumber);
                 value.put(BRSQLiteHelper.ELA_COLUMN_STATUS, entity.status);
+                value.put(BRSQLiteHelper.ELA_COLUMN_TPYE, entity.type);
+                value.put(BRSQLiteHelper.ELA_COLUMN_TXTPYE, entity.txType);
 
                 long l = database.insertWithOnConflict(BRSQLiteHelper.ELA_TX_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
                 Log.i(TAG, "l:"+l);
@@ -295,7 +299,9 @@ public class ElaDataSource implements BRDataSourceInterface {
                 cursor.getInt(12)==1,
                 cursor.getInt(13)==1,
                 cursor.getInt(14),
-                cursor.getString(15));
+                cursor.getString(15),
+                cursor.getString(16),
+                cursor.getString(17));
     }
 
     private void toast(final String message){
@@ -398,6 +404,8 @@ public class ElaDataSource implements BRDataSourceInterface {
                 historyTransactionEntity.timeStamp = new BigDecimal(history.CreateTime).longValue();
                 historyTransactionEntity.memo = getMeno(history.Memo);
                 historyTransactionEntity.status=  history.Status;
+                historyTransactionEntity.type = history.Type;
+                historyTransactionEntity.txType = history.TxType;
                 elaTransactionEntities.add(historyTransactionEntity);
                 if(historyTransactionEntity.isVote) mVoteTxid.add(history.Txid);
             }

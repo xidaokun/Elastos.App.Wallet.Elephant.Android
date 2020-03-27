@@ -297,7 +297,24 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         String formattedAmount = CurrencyUtils.getFormattedAmount(mContext, preferredIso, amount, wm.getUiConfiguration().getMaxDecimalPlacesForUi());
         convertView.transactionAmount.setText(formattedAmount);
 
-        convertView.transactionVoteFlag.setVisibility(item.isVote() ? View.VISIBLE : View.GONE);
+        String type = item.getType();
+        String txType = item.getTxType();
+        convertView.transactionDposFlag.setVisibility(View.GONE);
+        convertView.transactionCrcFlag.setVisibility(View.GONE);
+        if(!StringUtil.isNullOrEmpty(type) && !StringUtil.isNullOrEmpty(txType)) {
+            if(type.equals("spend")) {
+                if(txType.equalsIgnoreCase("vote") || txType.equalsIgnoreCase("dpos")) {
+                    convertView.transactionDposFlag.setVisibility(View.VISIBLE);
+                    convertView.transactionCrcFlag.setVisibility(View.GONE);
+                } else if(txType.equalsIgnoreCase("crc")) {
+                    convertView.transactionDposFlag.setVisibility(View.GONE);
+                    convertView.transactionCrcFlag.setVisibility(View.VISIBLE);
+                } else if(txType.equalsIgnoreCase("voteAndCrc")) {
+                    convertView.transactionDposFlag.setVisibility(View.VISIBLE);
+                    convertView.transactionCrcFlag.setVisibility(View.VISIBLE);
+                }
+            }
+        }
 
         int blockHeight = item.getBlockHeight();
         int lastBlockHeight = BRSharedPrefs.getLastBlockHeight(mContext, wm.getIso());
@@ -493,7 +510,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         public BaseTextView transactionAmount;
         public BaseTextView transactionDetail;
         public BaseTextView transactionStatus;
-        public BaseTextView transactionVoteFlag;
+        public BaseTextView transactionDposFlag;
+        public BaseTextView transactionCrcFlag;
         public Button transactionFailed;
         public ProgressBar transactionProgress;
 
@@ -508,7 +526,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             transactionFailed = view.findViewById(R.id.tx_failed_button);
             transactionProgress = view.findViewById(R.id.tx_progress);
             transactionIcon = view.findViewById(R.id.tx_status_icon);
-            transactionVoteFlag = view.findViewById(R.id.vote_flag);
+            transactionDposFlag = view.findViewById(R.id.dpos_vote_flag);
+            transactionCrcFlag = view.findViewById(R.id.crc_vote_flag);
         }
     }
 

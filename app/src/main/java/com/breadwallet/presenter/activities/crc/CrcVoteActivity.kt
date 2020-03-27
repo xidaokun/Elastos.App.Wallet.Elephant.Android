@@ -200,7 +200,6 @@ class CrcVoteActivity : AppCompatActivity() {
             BRExecutor.getInstance().forMainThreadTasks().execute{
                 findViewById<FlowLayout>(R.id.numbers_float_layout).also {
                     with(it) {
-                        setAlignByCenter(FlowLayout.AlienState.CENTER)
                         setAdapter(
                                 CrcDataSource.getInstance(this@CrcVoteActivity).getMembersByIds(crcNodes),
                                 R.layout.crc_member_layout,

@@ -47,12 +47,36 @@ public class HistoryTransactionEntity implements Serializable {
     public boolean isVote;
     public int pageNumber;
     public String status;
+    public String type;
+    public String txType;
 
     public HistoryTransactionEntity(){}
 
     public HistoryTransactionEntity(boolean isReceived, long timeStamp, int blockHeight, byte[] hash,
                                     String txReversed, long fee, String toAddress, String fromAddress, long balanceAfterTx,
                                     int txSize, long amount, String meno, boolean isValid, boolean isVote){
+        this(isReceived,
+                timeStamp,
+                blockHeight,
+                hash,
+                txReversed,
+                fee,
+                toAddress,
+                fromAddress,
+                balanceAfterTx,
+                txSize,
+                amount,
+                meno,
+                isValid,
+                isVote,
+                null,
+                null);
+    }
+
+    public HistoryTransactionEntity(boolean isReceived, long timeStamp, int blockHeight, byte[] hash,
+                                    String txReversed, long fee, String toAddress, String fromAddress, long balanceAfterTx,
+                                    int txSize, long amount, String meno, boolean isValid, boolean isVote,
+                                    String type, String txType){
         this.isReceived = isReceived;
         this.timeStamp = timeStamp;
         this.blockHeight = blockHeight;
@@ -67,11 +91,16 @@ public class HistoryTransactionEntity implements Serializable {
         this.memo = meno;
         this.isValid = isValid;
         this.isVote = isVote;
+        this.type = type;
+        this.txType = txType;
     }
+
+
 
     public HistoryTransactionEntity(boolean isReceived, long timeStamp, int blockHeight, byte[] hash,
                                     String txReversed, long fee, String toAddress, String fromAddress, long balanceAfterTx,
-                                    int txSize, long amount, String meno, boolean isValid, boolean isVote, int pageNumber, String status){
+                                    int txSize, long amount, String meno, boolean isValid, boolean isVote,
+                                    int pageNumber, String status, String type, String txType){
         this.isReceived = isReceived;
         this.timeStamp = timeStamp;
         this.blockHeight = blockHeight;
@@ -88,5 +117,7 @@ public class HistoryTransactionEntity implements Serializable {
         this.isVote = isVote;
         this.pageNumber = pageNumber;
         this.status = status;
+        this.type = type;
+        this.txType = txType;
     }
 }
