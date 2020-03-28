@@ -81,6 +81,7 @@ import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.elastos.jni.Constants;
 import com.google.gson.Gson;
+import com.platform.APIClient;
 import com.platform.sqlite.PlatformSqliteHelper;
 
 import org.chat.lib.presenter.ChatScanActivity;
@@ -674,7 +675,7 @@ public class UiUtils {
             ElapayEntity elapayEntity = new ElapayEntity();
             elapayEntity.OrderID = WalletActivity.mOrderId;
             elapayEntity.TXID = txid;
-            ElaDataSource.getInstance(context).urlPost(WalletActivity.mCallbackUrl, new Gson().toJson(elapayEntity));
+            APIClient.urlPost(WalletActivity.mCallbackUrl, new Gson().toJson(elapayEntity));
         }
     }
 

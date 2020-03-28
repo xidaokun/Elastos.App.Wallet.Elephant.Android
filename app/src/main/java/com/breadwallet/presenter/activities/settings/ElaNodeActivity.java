@@ -32,6 +32,7 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
+import com.breadwallet.wallet.wallets.ela.ElaDataUtils;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.platform.APIClient;
 
@@ -70,7 +71,7 @@ public class ElaNodeActivity extends BRActivity {
         mSelectBtn = findViewById(R.id.node_list_btn);
         mNodeLv = findViewById(R.id.node_listview);
         mListBgView = findViewById(R.id.list_bg);
-        mCurrentNode.setText(BRSharedPrefs.getElaNode(this, ElaDataSource.ELA_NODE_KEY));
+        mCurrentNode.setText(BRSharedPrefs.getElaNode(this, ElaDataUtils.ELA_NODE_KEY));
         mConnectStatus.setText(getString(R.string.NodeSelector_connected));
 
         mSwitchBtn.setOnClickListener(new View.OnClickListener() {
@@ -154,7 +155,7 @@ public class ElaNodeActivity extends BRActivity {
 
     private void changeConnectStatus(String node, boolean success){
         if (success) {
-            BRSharedPrefs.putElaNode(ElaNodeActivity.this, ElaDataSource.ELA_NODE_KEY, node.trim());
+            BRSharedPrefs.putElaNode(ElaNodeActivity.this, ElaDataUtils.ELA_NODE_KEY, node.trim());
             wipeData();
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override

@@ -4,31 +4,22 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.annotation.WorkerThread;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.BRDataSourceInterface;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
-import com.breadwallet.tools.util.Utils;
 import com.breadwallet.vote.CityEntity;
 import com.breadwallet.vote.CrcRankEntity;
 import com.breadwallet.vote.CrcsRankEntity;
 import com.google.gson.Gson;
 import com.platform.APIClient;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class CrcDataSource implements BRDataSourceInterface {
 
@@ -156,41 +147,12 @@ public class CrcDataSource implements BRDataSourceInterface {
     public void getCrcWithRank() {
         try {
             String url = getUrlByVersion("crc/rank/height/241762000?state=active", "v1");
-            String result = urlGET(url);
+            String result = APIClient.urlGET(mContext, url);
             cacheMultMembers(new Gson().fromJson(result, CrcsRankEntity.class).result);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-
-    @WorkerThread
-    public String urlGET(String myURL) throws IOException {
-        Map<String, String> headers = BreadApp.getBreadHeaders();
-
-        Request.Builder builder = new Request.Builder()
-                .url(myURL)
-                .header("Content-Type", "application/json")
-                .header("Accept", "application/json")
-                .header("User-agent", Utils.getAgentString(mContext, "android/HttpURLConnection"))
-                .get();
-        Iterator it = headers.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            builder.header((String) pair.getKey(), (String) pair.getValue());
-        }
-
-        Request request = builder.build();
-        Response response = APIClient.elaClient.newCall(request).execute();
-
-        if (response.isSuccessful()) {
-            return response.body().string();
-        } else {
-            throw new IOException("Unexpected code " + response);
-        }
-    }
-
-
 
     public String getUrlByVersion(String api, String version) {
         String node = BRSharedPrefs.getElaNode(mContext, ELA_NODE_KEY);

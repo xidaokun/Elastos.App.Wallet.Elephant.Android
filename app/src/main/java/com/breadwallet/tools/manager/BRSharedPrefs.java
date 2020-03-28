@@ -8,6 +8,7 @@ import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
+import com.breadwallet.wallet.wallets.ela.ElaDataUtils;
 
 import org.json.JSONArray;
 
@@ -334,7 +335,7 @@ public class BRSharedPrefs {
 
     public static String getElaNode(Context context, String key){
         SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
-        return prefs.getString(key, ElaDataSource.ELA_NODE);
+        return prefs.getString(key, ElaDataUtils.ELA_NODE);
     }
 
     public static void putVersionCode(Context context, String key, int value) {

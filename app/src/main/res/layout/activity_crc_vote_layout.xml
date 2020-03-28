@@ -119,9 +119,9 @@
             android:id="@+id/votes_counts"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:textColor="@color/black_333333"
             android:textSize="34sp"
+            android:textStyle="bold"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/votes_unit"
             android:text="799"/>
@@ -160,17 +160,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-            <com.breadwallet.presenter.customviews.BRButton
+            <TextView
                 android:id="@+id/view_all_members"
                 android:layout_width="56dp"
                 android:layout_height="24dp"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
+                android:gravity="center"
                 android:text="View all"
-                android:textColor="#ff3365"
-                android:textSize="12sp"
-                app:buttonType="3"
-                app:isBreadButton="true"/>
+                android:background="@drawable/crc_view_all_shape"
+                android:textColor="#FF3365"
+                android:textSize="11sp"/>
         </RelativeLayout>
 
     </RelativeLayout>

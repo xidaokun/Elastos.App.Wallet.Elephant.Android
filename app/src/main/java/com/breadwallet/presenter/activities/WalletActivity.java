@@ -281,7 +281,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 WalletsMaster.getInstance(app).refreshBalances(app);
                 WalletsMaster.getInstance(app).getCurrentWallet(app).refreshAddress(app);
                 WalletElaManager.getInstance(app).updateTxHistory();
-                WalletElaManager.getInstance(app).checkTxHistory();
                 WalletIoexManager.getInstance(app).updateTxHistory();
                 ElaDataSource.getInstance(app).getProducerByTxid();
             }

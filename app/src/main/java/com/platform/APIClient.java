@@ -6,6 +6,7 @@ import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 import android.os.NetworkOnMainThreadException;
 import android.support.annotation.NonNull;
+import android.support.annotation.WorkerThread;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
@@ -43,6 +44,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -1018,6 +1020,47 @@ public class APIClient {
             if (isSuccessful())
                 Log.d(TAG, "BRResponse: " + logText);
             else Log.e(TAG, "BRResponse: " + logText);
+        }
+    }
+
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    public static String urlPost(String url, String json) throws Exception {
+        RequestBody body = RequestBody.create(JSON, json);
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+        Response response = APIClient.elaClient.newCall(request).execute();
+        if (response.isSuccessful()) {
+            return response.body().string();
+        } else {
+            throw new Exception("Unexpected code " + response);
+        }
+    }
+
+    @WorkerThread
+    public static String urlGET(Context context, String myURL) throws IOException {
+        Map<String, String> headers = BreadApp.getBreadHeaders();
+
+        Request.Builder builder = new Request.Builder()
+                .url(myURL)
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
+                .header("User-agent", Utils.getAgentString(context, "android/HttpURLConnection"))
+                .get();
+        Iterator it = headers.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            builder.header((String) pair.getKey(), (String) pair.getValue());
+        }
+
+        Request request = builder.build();
+        Response response = APIClient.elaClient.newCall(request).execute();
+
+        if (response.isSuccessful()) {
+            return response.body().string();
+        } else {
+            throw new IOException("Unexpected code " + response);
         }
     }
 

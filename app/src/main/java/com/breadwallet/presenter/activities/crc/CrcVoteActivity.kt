@@ -205,7 +205,7 @@ class CrcVoteActivity : AppCompatActivity() {
                                 R.layout.crc_member_layout,
                                 object : FlowLayout.ItemView<CrcRankEntity>() {
                                     override fun getCover(item: CrcRankEntity?, holder: FlowLayout.ViewHolder?, inflate: View?, position: Int) {
-                                        holder?.setText(R.id.tv_label_name, item?.Nickname + "|" + item?.Area)
+                                        holder?.setText(R.id.tv_label_name, item?.Nickname + " | " + item?.Area)
                                     }
                                 }
                         )
