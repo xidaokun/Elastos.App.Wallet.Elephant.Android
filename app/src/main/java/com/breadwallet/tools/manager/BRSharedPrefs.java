@@ -835,19 +835,7 @@ public class BRSharedPrefs {
 
     public static int getCurrentHistoryPageNumber(Context context){
         SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
-        return prefs.getInt("pageNumber", 1);
-    }
-
-    public static void putHistoryRange(Context context, int range){
-        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt("range", range);
-        editor.apply();
-    }
-
-    public static int getHistoryRange(Context context){
-        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
-        return prefs.getInt("range", 0);
+        return prefs.getInt("pageNumber", 0);
     }
 
     public static void putTotalPageNumber(Context context, int number){
@@ -949,5 +937,17 @@ public class BRSharedPrefs {
     public static String getCarrierId(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
         return prefs.getString("carrierId", "");
+    }
+
+    public static void hasCacheCity(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("hasCacheCity", true);
+        editor.apply();
+    }
+
+    public static boolean isCacheCity(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        return prefs.getBoolean("hasCacheCity", false);
     }
 }

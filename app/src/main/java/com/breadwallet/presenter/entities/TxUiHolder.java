@@ -50,7 +50,6 @@ public class TxUiHolder {
     private Object transaction;
     private boolean isReceived;
     //for ela
-    private boolean isVote;
     private String type;
     private String txType;
 
@@ -66,9 +65,9 @@ public class TxUiHolder {
 
     public TxUiHolder(Object transaction, boolean isReceived, long timeStamp, int blockHeight, byte[] hash, String txReversed,
                       BigDecimal fee,  String to, String from,
-                      BigDecimal balanceAfterTx, int txSize, BigDecimal amount, boolean isValid, boolean isVote, String status, String type, String txType){
+                      BigDecimal balanceAfterTx, int txSize, BigDecimal amount, boolean isValid, String status, String type, String txType){
         this(transaction, isReceived, timeStamp, blockHeight, hash, txReversed, fee, to, from,
-                balanceAfterTx, txSize, amount, isValid, isVote, status);
+                balanceAfterTx, txSize, amount, isValid, status);
         this.type = type;
         this.txType = txType;
     }
@@ -76,10 +75,10 @@ public class TxUiHolder {
     //todo refactor this useless class
     public TxUiHolder(Object transaction, boolean isReceived, long timeStamp, int blockHeight, byte[] hash, String txReversed,
                       BigDecimal fee,  String to, String from,
-                      BigDecimal balanceAfterTx, int txSize, BigDecimal amount, boolean isValid, boolean isVote, String status){
+                      BigDecimal balanceAfterTx, int txSize, BigDecimal amount, boolean isValid, String status){
         this(transaction, isReceived, timeStamp, blockHeight, hash, txReversed, fee, to, from,
                 balanceAfterTx, txSize, amount, isValid);
-        this.isVote = isVote;
+//        this.isVote = isVote;
         this.status = status;
     }
 
@@ -100,11 +99,6 @@ public class TxUiHolder {
         this.isValid = isValid;
         this.txSize = txSize;
     }
-
-    public boolean isVote(){
-        return isVote;
-    }
-
 
     public int getBlockHeight() {
         return blockHeight;

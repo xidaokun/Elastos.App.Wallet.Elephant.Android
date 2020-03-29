@@ -31,8 +31,8 @@ import com.breadwallet.vote.ProducerEntity;
 import com.breadwallet.wallet.wallets.ela.BRElaTransaction;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
-import com.breadwallet.wallet.wallets.ela.data.TxProducerEntity;
-import com.breadwallet.wallet.wallets.ela.data.TxProducersEntity;
+import com.breadwallet.wallet.wallets.ela.data.DposProducer;
+import com.breadwallet.wallet.wallets.ela.data.DposProducers;
 import com.elastos.jni.AuthorizeManager;
 import com.elastos.jni.UriFactory;
 import com.google.gson.Gson;
@@ -244,16 +244,16 @@ public class VoteActivity extends BaseSettingsActivity {
     private void cacheTxProducer(String txid){
         if(StringUtil.isNullOrEmpty(txid)) return;
         if(null==mProducers || mProducers.size()<=0) return;
-        List<TxProducersEntity> txProducersEntities = new ArrayList<>();
-        TxProducersEntity txProducersEntity = new TxProducersEntity();
-        txProducersEntity.Txid = txid;
-        txProducersEntity.Producer = new ArrayList<>();
+        List<DposProducers> txProducersEntities = new ArrayList<>();
+        DposProducers dposProducers = new DposProducers();
+        dposProducers.Txid = txid;
+        dposProducers.Producer = new ArrayList<>();
         for(ProducerEntity entity : mProducers){
-            TxProducerEntity txProducerEntity = new TxProducerEntity(entity.Producer_public_key, entity.Producer_public_key, entity.Nickname);
-            txProducersEntity.Producer.add(txProducerEntity);
+            DposProducer dposProducer = new DposProducer(entity.Producer_public_key, entity.Producer_public_key, entity.Nickname);
+            dposProducers.Producer.add(dposProducer);
         }
-        txProducersEntities.add(txProducersEntity);
-        ElaDataSource.getInstance(this).cacheMultiTxProducer(txProducersEntities);
+        txProducersEntities.add(dposProducers);
+        ElaDataSource.getInstance(this).cacheDposProducer(txProducersEntities);
     }
 
     private BigDecimal mAmount;
@@ -297,7 +297,7 @@ public class VoteActivity extends BaseSettingsActivity {
         mAmount = balance.subtract(new BigDecimal(0.0001));
         mVoteElaAmountTv.setText(mAmount.longValue()+"");
 
-        List<ProducerEntity> tmp = ElaDataSource.getInstance(VoteActivity.this).getProducersByPK(mCandidates);
+        List<ProducerEntity> tmp = ElaDataSource.getInstance(VoteActivity.this).queryDposProducers(mCandidates);
         if(tmp!=null && tmp.size()>0) {
             mProducers.clear();
             mProducers.addAll(tmp);

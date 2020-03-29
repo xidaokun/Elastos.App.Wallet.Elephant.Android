@@ -81,7 +81,7 @@ public class FlowLayout extends ViewGroup {
     }
 
     public abstract static class ItemView<T> {
-        abstract void getCover(T item, ViewHolder holder, View inflate, int position);
+        protected abstract void getCover(T item, ViewHolder holder, View inflate, int position);
     }
 
     public class ViewHolder {

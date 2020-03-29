@@ -21,15 +21,13 @@ import com.breadwallet.tools.threads.executor.BRExecutor
 import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.StringUtil
 import com.breadwallet.tools.util.Utils
-import com.breadwallet.vote.CityEntity
-import com.breadwallet.vote.CrcRankEntity
+import com.breadwallet.vote.CrcEntity
 import com.breadwallet.vote.PayLoadEntity
 import com.breadwallet.wallet.wallets.ela.ElaDataSource
 import com.breadwallet.wallet.wallets.ela.WalletElaManager
 import com.breadwallet.wallet.wallets.ela.response.create.ElaOutput
 import com.elastos.jni.UriFactory
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import java.math.BigDecimal
 import java.util.*
 
@@ -70,7 +68,7 @@ class CrcVoteActivity : AppCompatActivity() {
         }
 
         findViewById<View>(R.id.view_all_members).setOnClickListener {
-            UiUtils.startCrcMembersActivity(this, uriFactory.url)
+            UiUtils.startCrcMembersActivity(this, uriFactory.candidates)
         }
 
         findViewById<View>(R.id.vote_confirm_btn).setOnClickListener {
@@ -169,7 +167,7 @@ class CrcVoteActivity : AppCompatActivity() {
             findViewById<View>(R.id.council_lv).visibility = View.GONE
         } else {
             dposNodesTv.text = String.format(getString(R.string.crc_vote_dpos_nodes), dposNodes.count())
-            val producers = ElaDataSource.getInstance(this).getProducersByPK(dposNodes)
+            val producers = ElaDataSource.getInstance(this).queryDposProducers(dposNodes)
             findViewById<ListView>(R.id.council_lv).adapter = VoteNodeAdapter(this, producers)
         }
         // crc counts
@@ -189,47 +187,29 @@ class CrcVoteActivity : AppCompatActivity() {
             }
         }
         //crc members lv
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute {
-            CrcDataSource.getInstance(this).getCrcWithRank()
-
-            val cityStr = readCities("city/cities") ?: return@execute
-            val cities = Gson().fromJson<List<CityEntity>>(cityStr, object : TypeToken<List<CityEntity>>() {
-            }.type)
-            CrcDataSource.getInstance(this).updateMessage(cities)
-
-            BRExecutor.getInstance().forMainThreadTasks().execute{
-                findViewById<FlowLayout>(R.id.numbers_float_layout).also {
-                    with(it) {
-                        setAdapter(
-                                CrcDataSource.getInstance(this@CrcVoteActivity).getMembersByIds(crcNodes),
-                                R.layout.crc_member_layout,
-                                object : FlowLayout.ItemView<CrcRankEntity>() {
-                                    override fun getCover(item: CrcRankEntity?, holder: FlowLayout.ViewHolder?, inflate: View?, position: Int) {
-                                        holder?.setText(R.id.tv_label_name, item?.Nickname + " | " + item?.Area)
+        BRExecutor.getInstance().forMainThreadTasks().execute{
+            val crcs = CrcDataSource.getInstance(this@CrcVoteActivity).queryCrcsByIds(crcNodes)
+            CrcDataSource.getInstance(this@CrcVoteActivity).updateCrcsArea(crcs);
+            findViewById<FlowLayout>(R.id.numbers_flow_layout).also {
+                with(it) {
+                    setAdapter(
+                            crcs,
+                            R.layout.crc_member_layout,
+                            object : FlowLayout.ItemView<CrcEntity>() {
+                                override fun getCover(item: CrcEntity?, holder: FlowLayout.ViewHolder?, inflate: View?, position: Int) {
+                                    val languageCode = Locale.getDefault().language
+                                    if (!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")) {
+                                        holder?.setText(R.id.tv_label_name, item?.Nickname + " | " + item?.AreaZh)
+                                    } else {
+                                        holder?.setText(R.id.tv_label_name, item?.Nickname + " | " + item?.AreaEn)
                                     }
                                 }
-                        )
-                    }
+                            }
+                    )
                 }
             }
         }
 
-    }
-
-    fun readCities(filename : String): String? {
-        try {
-            val inputStream = assets.open(filename)
-            val size = inputStream.available()
-            var buffer = ByteArray(size)
-            inputStream.read(buffer)
-            inputStream.close()
-
-            return String(buffer)
-        } catch (e : Exception) {
-            e.printStackTrace()
-        }
-
-        return null
     }
 
     private fun dismissDialog() {

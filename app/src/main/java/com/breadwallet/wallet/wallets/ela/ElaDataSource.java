@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.crc.CrcProducerResult;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.BRDataSourceInterface;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
@@ -19,9 +20,9 @@ import com.breadwallet.vote.PayLoadEntity;
 import com.breadwallet.vote.ProducerEntity;
 import com.breadwallet.vote.ProducersEntity;
 import com.breadwallet.wallet.wallets.ela.data.HistoryTransactionEntity;
-import com.breadwallet.wallet.wallets.ela.data.MultiTxProducerEntity;
-import com.breadwallet.wallet.wallets.ela.data.TxProducerEntity;
-import com.breadwallet.wallet.wallets.ela.data.TxProducersEntity;
+import com.breadwallet.wallet.wallets.ela.data.DposProducerResult;
+import com.breadwallet.wallet.wallets.ela.data.DposProducer;
+import com.breadwallet.wallet.wallets.ela.data.DposProducers;
 import com.breadwallet.wallet.wallets.ela.request.CreateTx;
 import com.breadwallet.wallet.wallets.ela.request.Outputs;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaOutput;
@@ -53,37 +54,6 @@ public class ElaDataSource implements BRDataSourceInterface {
 //    hw-ela-api-test.elastos.org
 //    https://api-wallet-ela-testnet.elastos.org/api/1/currHeight
 //    https://api-wallet-did-testnet.elastos.org/api/1/currHeight
-    private static ElaDataSource mInstance;
-
-    private final BRSQLiteHelper dbHelper;
-
-    private SQLiteDatabase database;
-
-    private static Context mContext;
-
-    private static Activity mActivity;
-
-    private ElaDataSource(Context context){
-        mContext = context;
-        if(context instanceof Activity) mActivity = findActivity(context);
-        dbHelper = BRSQLiteHelper.getInstance(context);
-    }
-
-
-    private static Activity findActivity(Context context) {
-        if (context instanceof Activity) {
-            return (Activity) context;
-        }
-        return null;
-    }
-
-    public static ElaDataSource getInstance(Context context){
-        if(mInstance == null){
-            mInstance = new ElaDataSource(context);
-        }
-
-        return mInstance;
-    }
 
     public void deleteAllTransactions() {
         try {
@@ -118,11 +88,9 @@ public class ElaDataSource implements BRDataSourceInterface {
 
     }
 
-    public List<HistoryTransactionEntity> getHistoryTransactions(){
+    public List<HistoryTransactionEntity> queryHistoryTransactions(){
         List<HistoryTransactionEntity> currencies = new ArrayList<>();
         Cursor cursor = null;
-
-        int pageNumber = BRSharedPrefs.getCurrentHistoryPageNumber(mContext);
 
         try {
             database = openDatabase();
@@ -195,29 +163,48 @@ public class ElaDataSource implements BRDataSourceInterface {
         public List<String> txid;
     }
 
-    public void getProducerByTxid(){
-        if(mVoteTxid.size() <= 0) return;
-        MultiTxProducerEntity multiTxProducerEntity = null;
+    public List<String> mDposVoteTxid = new ArrayList<>();
+    public void getDposProducer(){
+        if(mDposVoteTxid.size() <= 0) return;
+        DposProducerResult dposProducerResult = null;
         try {
             ProducerTxid producerTxid = new ProducerTxid();
-            producerTxid.txid = mVoteTxid;
+            producerTxid.txid = mDposVoteTxid;
             String json = new Gson().toJson(producerTxid);
             String url = ElaDataUtils.getUrlByVersion(mContext,"dpos/transaction/producer", "1");
             String result = APIClient.urlPost(url, json);
-            multiTxProducerEntity = new Gson().fromJson(result, MultiTxProducerEntity.class);
+            dposProducerResult = new Gson().fromJson(result, DposProducerResult.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if(multiTxProducerEntity==null || multiTxProducerEntity.result==null) return;
-        cacheMultiTxProducer(multiTxProducerEntity.result);
+        if(dposProducerResult ==null || dposProducerResult.result==null) return;
+        cacheDposProducer(dposProducerResult.result);
     }
 
-    public List<String> mVoteTxid = new ArrayList<>();
+    public List<String> mCrcVoteTxid = new ArrayList<>();
+    public void getCrcProducer() {
+        if(mCrcVoteTxid.size() <= 0) return;
+        CrcProducerResult crcProducerResult = null;
+        try {
+            ProducerTxid producerTxid = new ProducerTxid();
+            producerTxid.txid = mCrcVoteTxid;
+            String json = new Gson().toJson(producerTxid);
+            String url = ElaDataUtils.getUrlByVersion(mContext,"crc/transaction/producer", "1");
+            String result = APIClient.urlPost(url, json);
+            crcProducerResult = new Gson().fromJson(result, CrcProducerResult.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if(crcProducerResult ==null || crcProducerResult.result==null) return;
+        cacheCrcProducer(crcProducerResult.result);
+    }
+
     public void refreshHistory(String address){
         if(StringUtil.isNullOrEmpty(address)) return;
-        mVoteTxid.clear();
+        mDposVoteTxid.clear();
+        mCrcVoteTxid.clear();
         try {
-            String url = ElaDataUtils.getUrlByVersion(mContext,"history/"+address +"?pageNum=1&pageSize="+ONE_PAGE_SIZE+"&order=desc", "v3");
+            String url = ElaDataUtils.getUrlByVersion(mContext,"history/"+address +"?pageNum=1&pageSize="+ONE_PAGE_SIZE+"&order=desc", "v4");
             Log.i(TAG, "history url:"+url);
             String result = APIClient.urlGET(mContext, url);
             JSONObject jsonObject = new JSONObject(result);
@@ -231,8 +218,11 @@ public class ElaDataSource implements BRDataSourceInterface {
             for(History history : transactions){
                 HistoryTransactionEntity historyTransactionEntity = ElaDataUtils.setHistoryEntity(history, 1);
                 elaTransactionEntities.add(historyTransactionEntity);
-                if(historyTransactionEntity.isVote) mVoteTxid.add(history.Txid);
+                if(ElaDataUtils.getVoteType(historyTransactionEntity.type, historyTransactionEntity.txType) == 1) mDposVoteTxid.add(history.Txid);
+                if(ElaDataUtils.getVoteType(historyTransactionEntity.type, historyTransactionEntity.txType) == 2) mCrcVoteTxid.add(history.Txid);
             }
+            getDposProducer();
+            getCrcProducer();
             if(elaTransactionEntities.size() <= 0) return;
             cacheMultTx(elaTransactionEntities);
         } catch (Exception e) {
@@ -242,12 +232,12 @@ public class ElaDataSource implements BRDataSourceInterface {
 
     public void getHistory(String address){
         if(StringUtil.isNullOrEmpty(address)) return;
-        mVoteTxid.clear();
+        mDposVoteTxid.clear();
+        mCrcVoteTxid.clear();
         try {
             int currentPageNumber = BRSharedPrefs.getCurrentHistoryPageNumber(mContext);
-            int range = BRSharedPrefs.getHistoryRange(mContext);
-            int pageNumber = currentPageNumber+range;
-            String url = ElaDataUtils.getUrlByVersion(mContext,"history/"+address +"?pageNum="+pageNumber+"&pageSize="+ONE_PAGE_SIZE+"&order=desc", "v3");
+            int pageNumber = currentPageNumber+1;
+            String url = ElaDataUtils.getUrlByVersion(mContext,"history/"+address +"?pageNum="+pageNumber+"&pageSize="+ONE_PAGE_SIZE+"&order=desc", "v4");
             Log.i(TAG, "history url:"+url);
             String result = APIClient.urlGET(mContext, url);
             JSONObject jsonObject = new JSONObject(result);
@@ -261,21 +251,21 @@ public class ElaDataSource implements BRDataSourceInterface {
             for(History history : transactions){
                 HistoryTransactionEntity historyTransactionEntity = ElaDataUtils.setHistoryEntity(history, pageNumber);
                 elaTransactionEntities.add(historyTransactionEntity);
-                if(historyTransactionEntity.isVote) mVoteTxid.add(history.Txid);
+                if(ElaDataUtils.getVoteType(historyTransactionEntity.type, historyTransactionEntity.txType) == 1) mDposVoteTxid.add(history.Txid);
+                if(ElaDataUtils.getVoteType(historyTransactionEntity.type, historyTransactionEntity.txType) == 2) mCrcVoteTxid.add(history.Txid);
             }
+            getDposProducer();
+            getCrcProducer();
             if(elaTransactionEntities.size() <= 0) {
                 BRSharedPrefs.putCurrentHistoryPageNumber(mContext, currentPageNumber);
-                BRSharedPrefs.putHistoryRange(mContext, 0);
                 return;
             }
             BRSharedPrefs.putCurrentHistoryPageNumber(mContext, pageNumber);
-            BRSharedPrefs.putHistoryRange(mContext, 0);
             cacheMultTx(elaTransactionEntities);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 
     public synchronized List<BRElaTransaction> createElaTx(final String inputAddress,
                                                            final String outputsAddress,
@@ -385,7 +375,6 @@ public class ElaDataSource implements BRDataSourceInterface {
                 historyTransactionEntity.balanceAfterTx = 0;
                 historyTransactionEntity.timeStamp = System.currentTimeMillis()/1000;
                 historyTransactionEntity.isValid = true;
-                historyTransactionEntity.isVote = (publickeys!=null && publickeys.size()>0);
                 historyTransactionEntity.memo = memo;
                 historyTransactionEntity.status=  "pending";
 
@@ -494,31 +483,31 @@ public class ElaDataSource implements BRDataSourceInterface {
         return result;
     }
 
-    public void getProducers(){
+    public void getAllDposProducers(){
         try {
             String jsonRes = APIClient.urlGET(mContext, ElaDataUtils.getUrlByVersion(mContext,"dpos/rank/height/9999999999999999", "1"));
             if(!StringUtil.isNullOrEmpty(jsonRes) && jsonRes.contains("result")) {
                 ProducersEntity producersEntity = new Gson().fromJson(jsonRes, ProducersEntity.class);
                 List list = producersEntity.result;
                 if(list==null || list.size()<=0) return;
-                cacheProducer(list);
+                cacheAllDposProducer(list);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public List<TxProducerEntity> getTxProducerByTxid(String txid){
+    public List<DposProducer> queryDposProducer(String txid){
         if(StringUtil.isNullOrEmpty(txid)) return null;
-        List<TxProducerEntity> entities = new ArrayList<>();
+        List<DposProducer> entities = new ArrayList<>();
         Cursor cursor = null;
         try {
-            cursor = database.query(BRSQLiteHelper.HISTORY_PRODUCER_TABLE_NAME,
-                    null, BRSQLiteHelper.HISTORY_PRODUCER_TXID + " = ?", new String[]{txid},
+            cursor = database.query(BRSQLiteHelper.DPOS_PRODUCER_TABLE_NAME,
+                    null, BRSQLiteHelper.DPOS_PRODUCER_TXID + " = ?", new String[]{txid},
                     null, null, null);
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
-                TxProducerEntity producerEntity = ElaDataUtils.cursorToTxProducerEntity(cursor);
+                DposProducer producerEntity = ElaDataUtils.cursorToTxProducerEntity(cursor);
                 entities.add(producerEntity);
                 cursor.moveToNext();
             }
@@ -533,7 +522,7 @@ public class ElaDataSource implements BRDataSourceInterface {
         return entities;
     }
 
-    public List<ProducerEntity> getProducersByPK(List<String> publicKeys){
+    public List<ProducerEntity> queryDposProducers(List<String> publicKeys){
         if(publicKeys==null || publicKeys.size()<=0) return null;
         List<ProducerEntity> entities = new ArrayList<>();
         Cursor cursor = null;
@@ -562,20 +551,46 @@ public class ElaDataSource implements BRDataSourceInterface {
         return entities;
     }
 
-    public void cacheMultiTxProducer(List<TxProducersEntity> entities){
+    public List<String> queryCrcProducer(String txid){
+        if(StringUtil.isNullOrEmpty(txid)) return null;
+        List<String> entities = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            cursor = database.query(BRSQLiteHelper.CRC_PRODUCER_TABLE_NAME,
+                    ElaDataUtils.crcProducerColumn, BRSQLiteHelper.CRC_PRODUCER_TXID + " = ?", new String[]{txid},
+                    null, null, null);
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                CrcProducerResult.CrcProducer producerEntity = ElaDataUtils.cursorToCrcProducer(cursor);
+                entities.add(producerEntity.Did);
+                cursor.moveToNext();
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            if (cursor != null)
+                cursor.close();
+            closeDatabase();
+        }
+
+        return entities;
+    }
+
+
+    public void cacheCrcProducer(List<CrcProducerResult.CrcProducers> entities) {
         if(entities==null || entities.size()<=0) return;
         try {
             database = openDatabase();
             database.beginTransaction();
-            for(TxProducersEntity txProducersEntity : entities){
-                if(null==txProducersEntity.Producer || StringUtil.isNullOrEmpty(txProducersEntity.Txid)) break;
-                for(TxProducerEntity txProducerEntity : txProducersEntity.Producer){
+            for(CrcProducerResult.CrcProducers crcProducers : entities){
+                if(null== crcProducers.Producer || StringUtil.isNullOrEmpty(crcProducers.Txid)) break;
+                for(CrcProducerResult.CrcProducer crcProducer : crcProducers.Producer){
                     ContentValues value = new ContentValues();
-                    value.put(BRSQLiteHelper.HISTORY_PRODUCER_TXID, txProducersEntity.Txid);
-                    value.put(BRSQLiteHelper.HISTORY_PRODUCER_OWN_PUBLICKEY, txProducerEntity.Ownerpublickey);
-                    value.put(BRSQLiteHelper.HISTORY_PRODUCER_NOD_PUBLICKEY, txProducerEntity.Nodepublickey);
-                    value.put(BRSQLiteHelper.HISTORY_PRODUCER_NICKNAME, txProducerEntity.Nickname);
-                    long l = database.insertWithOnConflict(BRSQLiteHelper.HISTORY_PRODUCER_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
+                    value.put(BRSQLiteHelper.CRC_PRODUCER_TXID, crcProducers.Txid);
+                    value.put(BRSQLiteHelper.CRC_PRODUCER_DID, crcProducer.Did);
+                    value.put(BRSQLiteHelper.CRC_PRODUCER_LOCATION, crcProducer.Location);
+                    value.put(BRSQLiteHelper.CRC_PRODUCER_STATE, crcProducer.State);
+                    long l = database.insertWithOnConflict(BRSQLiteHelper.CRC_PRODUCER_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
                 }
             }
             database.setTransactionSuccessful();
@@ -588,7 +603,33 @@ public class ElaDataSource implements BRDataSourceInterface {
         }
     }
 
-    public synchronized void cacheProducer(List<ProducerEntity> values) {
+    public void cacheDposProducer(List<DposProducers> entities){
+        if(entities==null || entities.size()<=0) return;
+        try {
+            database = openDatabase();
+            database.beginTransaction();
+            for(DposProducers dposProducers : entities){
+                if(null== dposProducers.Producer || StringUtil.isNullOrEmpty(dposProducers.Txid)) break;
+                for(DposProducer dposProducer : dposProducers.Producer){
+                    ContentValues value = new ContentValues();
+                    value.put(BRSQLiteHelper.DPOS_PRODUCER_TXID, dposProducers.Txid);
+                    value.put(BRSQLiteHelper.DPOS_PRODUCER_OWN_PUBLICKEY, dposProducer.Ownerpublickey);
+                    value.put(BRSQLiteHelper.DPOS_PRODUCER_NOD_PUBLICKEY, dposProducer.Nodepublickey);
+                    value.put(BRSQLiteHelper.DPOS_PRODUCER_NICKNAME, dposProducer.Nickname);
+                    long l = database.insertWithOnConflict(BRSQLiteHelper.DPOS_PRODUCER_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
+                }
+            }
+            database.setTransactionSuccessful();
+        } catch (Exception e) {
+            closeDatabase();
+            e.printStackTrace();
+        } finally {
+            database.endTransaction();
+            closeDatabase();
+        }
+    }
+
+    public synchronized void cacheAllDposProducer(List<ProducerEntity> values) {
         if (values == null || values.size() <= 0) return;
         try {
             database = openDatabase();
@@ -620,5 +661,37 @@ public class ElaDataSource implements BRDataSourceInterface {
     @Override
     public void closeDatabase() {
 
+    }
+
+    private static ElaDataSource mInstance;
+
+    private final BRSQLiteHelper dbHelper;
+
+    private SQLiteDatabase database;
+
+    private static Context mContext;
+
+    private static Activity mActivity;
+
+    private ElaDataSource(Context context){
+        mContext = context;
+        if(context instanceof Activity) mActivity = findActivity(context);
+        dbHelper = BRSQLiteHelper.getInstance(context);
+    }
+
+
+    private static Activity findActivity(Context context) {
+        if (context instanceof Activity) {
+            return (Activity) context;
+        }
+        return null;
+    }
+
+    public static ElaDataSource getInstance(Context context){
+        if(mInstance == null){
+            mInstance = new ElaDataSource(context);
+        }
+
+        return mInstance;
     }
 }

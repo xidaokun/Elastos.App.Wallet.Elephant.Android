@@ -104,7 +104,6 @@ public class TxManager {
             @Override
             public void onRefresh() {
                 BRSharedPrefs.putCurrentHistoryPageNumber(app, 1);
-                BRSharedPrefs.putHistoryRange(app, 0);
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {
@@ -123,7 +122,6 @@ public class TxManager {
 
     private void loadMoreData(final WalletActivity app){
         adapter.setLoadState(TransactionListAdapter.LOADING);
-        BRSharedPrefs.putHistoryRange(app, 1);
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {

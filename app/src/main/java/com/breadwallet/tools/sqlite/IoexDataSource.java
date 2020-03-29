@@ -142,7 +142,6 @@ public class IoexDataSource implements BRDataSourceInterface {
             historyTransactionEntity.balanceAfterTx = 0;
             historyTransactionEntity.timeStamp = System.currentTimeMillis()/1000;
             historyTransactionEntity.isValid = true;
-            historyTransactionEntity.isVote = false;
             historyTransactionEntity.memo = memo;
 
         } catch (Exception e) {
@@ -190,7 +189,6 @@ public class IoexDataSource implements BRDataSourceInterface {
             BRSQLiteHelper.IOEX_COLUMN_AMOUNT,
             BRSQLiteHelper.IOEX_COLUMN_MENO,
             BRSQLiteHelper.IOEX_COLUMN_ISVALID,
-            BRSQLiteHelper.IOEX_COLUMN_ISVOTE
     };
 
     public void getHistory(String address){
@@ -219,7 +217,6 @@ public class IoexDataSource implements BRDataSourceInterface {
                 historyTransactionEntity.amount = isReceived(history.Type) ? new BigDecimal(history.Value).longValue() : new BigDecimal(history.Value).subtract(new BigDecimal(history.Fee)).longValue();
                 historyTransactionEntity.balanceAfterTx = 0;
                 historyTransactionEntity.isValid = true;
-                historyTransactionEntity.isVote = false;
                 historyTransactionEntity.timeStamp = new BigDecimal(history.CreateTime).longValue();
                 historyTransactionEntity.memo = getMeno(history.Memo);
                 elaTransactionEntities.add(historyTransactionEntity);
@@ -260,7 +257,6 @@ public class IoexDataSource implements BRDataSourceInterface {
                 value.put(BRSQLiteHelper.IOEX_COLUMN_AMOUNT, entity.amount);
                 value.put(BRSQLiteHelper.IOEX_COLUMN_MENO, entity.memo);
                 value.put(BRSQLiteHelper.IOEX_COLUMN_ISVALID, entity.isValid?1:0);
-                value.put(BRSQLiteHelper.IOEX_COLUMN_ISVOTE, entity.isVote?1:0);
 
                 long l = database.insertWithOnConflict(BRSQLiteHelper.IOEX_TX_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
                 Log.i(TAG, "l:"+l);
@@ -336,8 +332,7 @@ public class IoexDataSource implements BRDataSourceInterface {
                 cursor.getInt(9),
                 cursor.getLong(10),
                 cursor.getString(11),
-                cursor.getInt(12)==1,
-                cursor.getInt(13)==1);
+                cursor.getInt(12)==1);
     }
 
     @Override

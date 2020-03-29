@@ -30,6 +30,8 @@ import android.widget.Toast;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,6 +39,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -298,6 +301,9 @@ public class Utils {
 
     public static List<String> spliteByComma(String value){
         if(StringUtil.isNullOrEmpty(value)) return null;
+        if(value.startsWith("[") && value.endsWith("]")) {
+            return new Gson().fromJson(value, new TypeToken<List<String>>(){}.getType());
+        }
         String[] trimArray = value.trim().split(",");
         return Arrays.asList(trimArray);
     }

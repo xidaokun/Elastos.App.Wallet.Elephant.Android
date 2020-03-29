@@ -34,8 +34,6 @@ import com.elastos.jni.Utility;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.elastos.sdk.keypair.ElastosKeypair;
-import org.elastos.sdk.keypair.ElastosKeypairCrypto;
 import org.elastos.sdk.keypair.ElastosKeypairDID;
 
 import java.math.BigDecimal;
@@ -375,7 +373,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public List<TxUiHolder> getTxUiHolders(Context app) {
-        List<HistoryTransactionEntity> transactionEntities = ElaDataSource.getInstance(mContext).getHistoryTransactions();
+        List<HistoryTransactionEntity> transactionEntities = ElaDataSource.getInstance(mContext).queryHistoryTransactions();
         List<TxUiHolder> uiTxs = new ArrayList<>();
         try {
             for (HistoryTransactionEntity entity : transactionEntities) {
@@ -394,7 +392,6 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
                         ,entity.txSize
                         ,amount
                         , entity.isValid
-                        ,entity.isVote
                         , entity.status
                         , entity.type
                         , entity.txType);

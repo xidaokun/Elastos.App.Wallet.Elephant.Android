@@ -343,7 +343,6 @@ public class WalletIoexManager extends BRCoreWalletManager implements BaseWallet
                         ,entity.txSize
                         ,amount
                         , entity.isValid
-                        ,entity.isVote
                         ,entity.status);
                 txUiHolder.memo = entity.memo;
                 uiTxs.add(txUiHolder);

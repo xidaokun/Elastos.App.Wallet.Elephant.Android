@@ -58,21 +58,30 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 21;
 
 
+    public static final String CRC_CIRY_TABLE_NAME = "crcCityTable";
+    public static final String CRC_CITY_CODE = "code";
+    public static final String CRC_CITY_EN = "en";
+    public static final String CRC_CITY_ZH = "zh";
+
+    private static final String CRC_CITY_DATABASE_CREATE = "create table if not exists " + CRC_CIRY_TABLE_NAME + " (" +
+            CRC_CITY_CODE + " integer primary key , " +
+            CRC_CITY_EN + " text," +
+            CRC_CITY_ZH + " text" +
+            ");";
+
     public static final String CRC_VOTE_TABLE_NAME = "crcVoteTable";
-    public static final String CRC_VOTE_DID = "crcVoteDid";
-    public static final String CRC_VOTE_RANK = "crcVoteRank";
-    public static final String CRC_VOTE_NICKNAME = "crcVoteNickname";
-    public static final String CRC_VOTE_LOCATION = "crcVoteLocation";
-    public static final String CRC_VOTE_AREA = "crcVoteArea";
-    public static final String CRC_VOTE_VOTES = "crcVoteVotes";
-    public static final String CRC_VOTE_VALUE = "crcVoteValue";
+    public static final String CRC_VOTE_DID = "did";
+    public static final String CRC_VOTE_RANK = "rank";
+    public static final String CRC_VOTE_NICKNAME = "nickname";
+    public static final String CRC_VOTE_LOCATION = "location";
+    public static final String CRC_VOTE_VOTES = "votes";
+    public static final String CRC_VOTE_VALUE = "value";
 
     private static final String CRC_VOTE_DATABASE_CREATE = "create table if not exists " + CRC_VOTE_TABLE_NAME + " (" +
             CRC_VOTE_DID + " text primary key , " +
             CRC_VOTE_RANK + " integer, " +
             CRC_VOTE_NICKNAME + " text," +
             CRC_VOTE_LOCATION + " integer, " +
-            CRC_VOTE_AREA + " text," +
             CRC_VOTE_VOTES + " text, " +
             CRC_VOTE_VALUE + " text" +
             ");";
@@ -190,20 +199,37 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             ESIGN_SIGN_DATA + " text, " +
             ESIGN_SIGNED_DATA + " text);";
 
+
     /**
-     * History Producer table
+     * Crc Producer table
      */
-    public static final String HISTORY_PRODUCER_TABLE_NAME = "historyProducerTable";
-    public static final String HISTORY_PRODUCER_TXID = "txid";
-    public static final String HISTORY_PRODUCER_OWN_PUBLICKEY = "ownPublicKey";
-    public static final String HISTORY_PRODUCER_NOD_PUBLICKEY = "nodePublicKey";
-    public static final String HISTORY_PRODUCER_NICKNAME = "nickName";
-    private static final String HISTORY_PRODUCER_DATABASE_CREATE = "create table if not exists " + HISTORY_PRODUCER_TABLE_NAME + " (" +
-            HISTORY_PRODUCER_TXID + " text, " +
-            HISTORY_PRODUCER_OWN_PUBLICKEY + " text, " +
-            HISTORY_PRODUCER_NOD_PUBLICKEY + " text, " +
-            HISTORY_PRODUCER_NICKNAME +" text, " +
-            "PRIMARY KEY (" + HISTORY_PRODUCER_TXID + ", " + HISTORY_PRODUCER_OWN_PUBLICKEY + ")" +
+    public static final String CRC_PRODUCER_TABLE_NAME = "crcProducerTable";
+    public static final String CRC_PRODUCER_TXID = "txid";
+    public static final String CRC_PRODUCER_DID = "did";
+    public static final String CRC_PRODUCER_LOCATION = "location";
+    public static final String CRC_PRODUCER_STATE = "state";
+    private static final String CRC_PRODUCER_DATABASE_CREATE = "create table if not exists " + CRC_PRODUCER_TABLE_NAME + " (" +
+            CRC_PRODUCER_TXID + " text, " +
+            CRC_PRODUCER_DID + " text primary key , " +
+            CRC_PRODUCER_LOCATION + " integer, " +
+            CRC_PRODUCER_STATE +" text" +
+            ");";
+
+
+    /**
+     * Dpos Producer table
+     */
+    public static final String DPOS_PRODUCER_TABLE_NAME = "dposProducerTable";
+    public static final String DPOS_PRODUCER_TXID = "txid";
+    public static final String DPOS_PRODUCER_OWN_PUBLICKEY = "ownPublicKey";
+    public static final String DPOS_PRODUCER_NOD_PUBLICKEY = "nodePublicKey";
+    public static final String DPOS_PRODUCER_NICKNAME = "nickName";
+    private static final String DPOS_PRODUCER_DATABASE_CREATE = "create table if not exists " + DPOS_PRODUCER_TABLE_NAME + " (" +
+            DPOS_PRODUCER_TXID + " text, " +
+            DPOS_PRODUCER_OWN_PUBLICKEY + " text, " +
+            DPOS_PRODUCER_NOD_PUBLICKEY + " text, " +
+            DPOS_PRODUCER_NICKNAME +" text, " +
+            "PRIMARY KEY (" + DPOS_PRODUCER_TXID + ", " + DPOS_PRODUCER_OWN_PUBLICKEY + ")" +
             ");";
 
     /**
@@ -291,7 +317,6 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String IOEX_COLUMN_AMOUNT ="amount";
     public static final String IOEX_COLUMN_MENO ="meno";
     public static final String IOEX_COLUMN_ISVALID ="isValid";
-    public static final String IOEX_COLUMN_ISVOTE ="isVote";
 
     private static final String IOEX_TX_DATABASE_CREATE = "create table if not exists " + IOEX_TX_TABLE_NAME + " (" +
             IOEX_COLUMN_ID + " integer, " +
@@ -307,8 +332,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             IOEX_COLUMN_TXSIZE + " integer, " +
             IOEX_COLUMN_AMOUNT + " real, " +
             IOEX_COLUMN_MENO + " text, " +
-            IOEX_COLUMN_ISVALID + " interger, " +
-            IOEX_COLUMN_ISVOTE +" integer);";
+            IOEX_COLUMN_ISVALID +" integer);";
 
     /**
      * ELA transaction table
@@ -329,7 +353,6 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String ELA_COLUMN_AMOUNT ="amount";
     public static final String ELA_COLUMN_MENO ="meno";
     public static final String ELA_COLUMN_ISVALID ="isValid";
-    public static final String ELA_COLUMN_ISVOTE ="isVote";
     public static final String ELA_COLUMN_PAGENUMBER = "pageNumber";
     public static final String ELA_COLUMN_STATUS = "status";
     public static final String ELA_COLUMN_TPYE = "tpye";
@@ -350,7 +373,6 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             ELA_COLUMN_AMOUNT + " real, " +
             ELA_COLUMN_MENO + " text, " +
             ELA_COLUMN_ISVALID + " interger, " +
-            ELA_COLUMN_ISVOTE + " interger, " +
             ELA_COLUMN_PAGENUMBER + " interger, " +
             ELA_COLUMN_TPYE + " text, " +
             ELA_COLUMN_TXTPYE + " text, " +
@@ -437,6 +459,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
         Log.e(TAG, "onCreate: " + TX_DATABASE_CREATE);
         Log.e(TAG, "onCreate: " + PEER_DATABASE_CREATE);
         Log.e(TAG, "onCreate: " + CURRENCY_DATABASE_CREATE);
+        database.execSQL(CRC_CITY_DATABASE_CREATE);
         database.execSQL(CRC_VOTE_DATABASE_CREATE);
         database.execSQL(WAIT_ACCEPT_DATABASE_CREATE);
         database.execSQL(CHAT_MESSAGE_ITEM_DATABASE_CREATE);
@@ -445,7 +468,8 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
         database.execSQL(ESIGN_HISTORY_DATABASE_CREATE);
         database.execSQL(IOEX_TX_DATABASE_CREATE);
 
-        database.execSQL(HISTORY_PRODUCER_DATABASE_CREATE);
+        database.execSQL(CRC_PRODUCER_DATABASE_CREATE);
+        database.execSQL(DPOS_PRODUCER_DATABASE_CREATE);
         database.execSQL(ELA_PRODUCER_DATABASE_CREATE);
         database.execSQL(SIGN_DATABASE_CREATE);
         database.execSQL(DID_AUTHOR_DATABASE_CREATE);

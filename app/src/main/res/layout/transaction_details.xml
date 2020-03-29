@@ -506,6 +506,7 @@
                     android:id="@+id/second_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
                     android:background="@color/white">
 
                     <com.breadwallet.presenter.customviews.BaseTextView
@@ -529,7 +530,7 @@
                         android:layout_marginBottom="20dp"
                         android:layout_below="@+id/numbers_detail_title">
                         <com.breadwallet.presenter.activities.crc.FlowLayout
-                            android:id="@+id/numbers_float_layout"
+                            android:id="@+id/numbers_flow_layout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"/>
 

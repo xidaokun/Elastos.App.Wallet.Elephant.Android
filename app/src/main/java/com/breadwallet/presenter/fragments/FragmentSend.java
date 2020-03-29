@@ -260,7 +260,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         } else {
             candidates = Utils.spliteByComma(candidatesStr);
         }
-        List<ProducerEntity> tmp = ElaDataSource.getInstance(getContext()).getProducersByPK(candidates);
+        List<ProducerEntity> tmp = ElaDataSource.getInstance(getContext()).queryDposProducers(candidates);
         if(tmp!=null && tmp.size()>0) {
             mProducers.clear();
             mProducers.addAll(tmp);

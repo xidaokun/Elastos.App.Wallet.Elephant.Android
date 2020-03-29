@@ -19,6 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.crc.CrcDataSource;
+import com.breadwallet.presenter.activities.crc.CrcUtils;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.fragments.FragmentChat;
 import com.breadwallet.presenter.fragments.FragmentExplore;
@@ -32,6 +34,7 @@ import com.breadwallet.tools.sqlite.ProfileDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
+import com.breadwallet.vote.CityEntity;
 import com.elastos.jni.Utility;
 import com.elastos.jni.utils.StringUtils;
 import com.google.gson.Gson;
@@ -111,7 +114,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mFragmentManager = getSupportFragmentManager();
         mWalletFragment = FragmentWallet.newInstance("Wallet");
         mExploreFragment = FragmentExplore.newInstance("Explore");
-        mChatFragment = FragmentChat.newInstance("Chat");
+//        mChatFragment = FragmentChat.newInstance("Chat");
         mSettingFragment = FragmentSetting.newInstance("Setting");
 
         mExploreFragment.setAboutShowListener(this);
@@ -132,6 +135,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         }
 
         initNode();
+        initCrcCities();
         EventBus.getDefault().register(this);
     }
 
@@ -139,6 +143,23 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         CarrierPeerNode.getInstance(this).start();
     }
 
+    private void initCrcCities() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                //cache crc cities
+                if(!BRSharedPrefs.isCacheCity(HomeActivity.this)) {
+                    String cityStr = CrcUtils.INSTANCE.readCities(HomeActivity.this, "city/cities");
+                    if(StringUtil.isNullOrEmpty(cityStr)) return;
+                    List<CityEntity> cityEntities = new Gson().fromJson(cityStr, new TypeToken<List<CityEntity>>(){}.getType());
+                    if(cityEntities != null) CrcDataSource.getInstance(HomeActivity.this).cacheCrcCity(cityEntities);
+                    BRSharedPrefs.hasCacheCity(HomeActivity.this);
+                }
+                // refresh crcs
+                CrcDataSource.getInstance(HomeActivity.this).getAndCacheCrcs();
+            }
+        });
+    }
     //replace with IM
 //    @Subscribe(threadMode = ThreadMode.MAIN)
 //    public void acceptFriend(final CarrierPeerNode.RequestFriendInfo requestFriendInfo) {

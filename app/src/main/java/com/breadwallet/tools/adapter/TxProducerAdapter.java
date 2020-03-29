@@ -7,15 +7,15 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.wallet.wallets.ela.data.TxProducerEntity;
+import com.breadwallet.wallet.wallets.ela.data.DposProducer;
 
 import java.util.List;
 
 public class TxProducerAdapter extends BaseAdapter {
     private Context mContext;
-    private List<TxProducerEntity> mData;
+    private List<DposProducer> mData;
 
-    public TxProducerAdapter(Context context, List<TxProducerEntity> data){
+    public TxProducerAdapter(Context context, List<DposProducer> data){
         mContext = context;
         mData = data;
     }

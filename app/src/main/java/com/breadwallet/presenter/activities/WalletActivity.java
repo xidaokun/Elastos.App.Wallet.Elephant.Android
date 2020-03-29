@@ -67,7 +67,6 @@ import com.platform.tools.KVStoreManager;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.Locale;
 
 /**
  * Created by byfieldj on 1/16/18.
@@ -282,7 +281,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 WalletsMaster.getInstance(app).getCurrentWallet(app).refreshAddress(app);
                 WalletElaManager.getInstance(app).updateTxHistory();
                 WalletIoexManager.getInstance(app).updateTxHistory();
-                ElaDataSource.getInstance(app).getProducerByTxid();
             }
         });
 

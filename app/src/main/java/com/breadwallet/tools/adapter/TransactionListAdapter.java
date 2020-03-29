@@ -28,6 +28,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
+import com.breadwallet.wallet.wallets.ela.ElaDataUtils;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.KVStoreManager;
@@ -303,13 +304,13 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         convertView.transactionCrcFlag.setVisibility(View.GONE);
         if(!StringUtil.isNullOrEmpty(type) && !StringUtil.isNullOrEmpty(txType)) {
             if(type.equals("spend")) {
-                if(txType.equalsIgnoreCase("vote") || txType.equalsIgnoreCase("dpos")) {
+                if(ElaDataUtils.getVoteType(type, txType) == 1) {
                     convertView.transactionDposFlag.setVisibility(View.VISIBLE);
                     convertView.transactionCrcFlag.setVisibility(View.GONE);
-                } else if(txType.equalsIgnoreCase("crc")) {
+                } else if(ElaDataUtils.getVoteType(type, txType) == 2) {
                     convertView.transactionDposFlag.setVisibility(View.GONE);
                     convertView.transactionCrcFlag.setVisibility(View.VISIBLE);
-                } else if(txType.equalsIgnoreCase("voteAndCrc")) {
+                } else if(ElaDataUtils.getVoteType(type, txType) == 3) {
                     convertView.transactionDposFlag.setVisibility(View.VISIBLE);
                     convertView.transactionCrcFlag.setVisibility(View.VISIBLE);
                 }

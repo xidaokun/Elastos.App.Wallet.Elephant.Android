@@ -218,7 +218,7 @@ public class BRApiManager {
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {
-                        ElaDataSource.getInstance(context).getProducers();
+                        ElaDataSource.getInstance(context).getAllDposProducers();
                     }
                 });
 

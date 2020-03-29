@@ -250,9 +250,9 @@ public class UiUtils {
         context.startActivity(intent);
     }
 
-    public static void startCrcMembersActivity(Context context, String url) {
+    public static void startCrcMembersActivity(Context context, String candidates) {
         Intent intent = new Intent(context, CrcMembersActivity.class);
-        intent.putExtra("crc_scheme_uri", url);
+        intent.putExtra("candidates", candidates);
         context.startActivity(intent);
     }
 
