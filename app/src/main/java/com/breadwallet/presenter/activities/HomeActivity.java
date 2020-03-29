@@ -87,9 +87,9 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 case R.id.navigation_explore:
                     showFragment(mExploreFragment);
                     return true;
-                case R.id.navigation_chat:
-                    showFragment(mChatFragment);
-                    return true;
+//                case R.id.navigation_chat:
+//                    showFragment(mChatFragment);
+//                    return true;
                 case R.id.navigation_notifications:
                     showFragment(mSettingFragment);
                     return true;
@@ -114,7 +114,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mFragmentManager = getSupportFragmentManager();
         mWalletFragment = FragmentWallet.newInstance("Wallet");
         mExploreFragment = FragmentExplore.newInstance("Explore");
-//        mChatFragment = FragmentChat.newInstance("Chat");
+        mChatFragment = FragmentChat.newInstance("Chat");
         mSettingFragment = FragmentSetting.newInstance("Setting");
 
         mExploreFragment.setAboutShowListener(this);

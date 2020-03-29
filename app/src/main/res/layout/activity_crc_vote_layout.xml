@@ -52,7 +52,7 @@
             android:textColor="@color/black_333333"
             android:textSize="14sp"
             android:layout_marginTop="16dp"
-            android:text="You are going to vote"/>
+            android:text="@string/crc_vote_hint"/>
 
         <LinearLayout
             android:id="@+id/vote_nodes_tv_layout"
@@ -113,7 +113,7 @@
             android:textColor="@color/black_999999"
             android:textSize="14sp"
             android:layout_below="@+id/vote_nodes_tv_layout"
-            android:text="Votes:(ELA)"/>
+            android:text="@string/crc_votes"/>
 
         <TextView
             android:id="@+id/votes_counts"
@@ -124,7 +124,7 @@
             android:textStyle="bold"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/votes_unit"
-            android:text="799"/>
+            android:text="0"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -144,7 +144,7 @@
             android:layout_marginTop="15dp"
             android:layout_marginLeft="15dp"
             android:lines="1"
-            android:text="CR council members detail:"/>
+            android:text="@string/crc_members_title"/>
 
 
         <RelativeLayout
@@ -167,7 +167,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
                 android:gravity="center"
-                android:text="View all"
+                android:text="@string/crc_view_all"
                 android:background="@drawable/crc_view_all_shape"
                 android:textColor="#FF3365"
                 android:textSize="11sp"/>
@@ -187,7 +187,7 @@
         android:translationZ="5dp">
 
         <TextView
-            android:id="@+id/council_title"
+            android:id="@+id/dpos_vote_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:lines="1"
@@ -195,7 +195,7 @@
             android:textSize="14sp"
             android:layout_marginLeft="24dp"
             android:layout_marginTop="19dp"
-            android:text="Public Key of these 36 nodes:"/>
+            android:text="@string/node_list_title"/>
 
         <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/vote_paste_tv"
@@ -209,7 +209,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/vote_nodes_list_title"/>
 
         <com.breadwallet.presenter.customviews.MaxHeightLv
-            android:id="@+id/council_lv"
+            android:id="@+id/dpos_vote_lv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="24dp"
@@ -219,7 +219,7 @@
             android:divider="@null"
             android:dividerHeight="5dp"
             android:fadeScrollbars="false"
-            android:layout_below="@+id/council_title"
+            android:layout_below="@+id/dpos_vote_title"
             app:maxHeight="200dp" />
 
 
@@ -227,7 +227,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:layout_below="@+id/council_lv">
+            android:layout_below="@+id/dpos_vote_lv">
 
             <View
                 android:id="@+id/horizontal_line1"

@@ -53,7 +53,7 @@ class CrcVoteActivity : AppCompatActivity() {
             if (!StringUtil.isNullOrEmpty(intent.action) && intent.action==Intent.ACTION_VIEW) {
                 uriFactory.parse(intent.data.toString())
             } else {
-                uriFactory.parse(intent.getStringExtra("crc_scheme_uri"))
+                uriFactory.parse(intent.getStringExtra("candidates"))
             }
         }
     }
@@ -159,16 +159,19 @@ class CrcVoteActivity : AppCompatActivity() {
         val dposNodes = Utils.spliteByComma(BRSharedPrefs.getCandidate(this))
         val crcNodes = Utils.spliteByComma(uriFactory.candidates)
 
+        findViewById<TextView>(R.id.dpos_vote_title).text = String.format(getString(R.string.node_list_title), dposNodes?.size
+                ?: 0)
+
         // dpos vote counts
         if(null==dposNodes || dposNodes.count() <= 0 ) {
             dposNodesTv.visibility = View.GONE
-            findViewById<View>(R.id.council_title).visibility = View.GONE
+            findViewById<View>(R.id.dpos_vote_title).visibility = View.GONE
             findViewById<View>(R.id.vote_paste_tv).visibility = View.GONE
-            findViewById<View>(R.id.council_lv).visibility = View.GONE
+            findViewById<View>(R.id.dpos_vote_lv).visibility = View.GONE
         } else {
             dposNodesTv.text = String.format(getString(R.string.crc_vote_dpos_nodes), dposNodes.count())
             val producers = ElaDataSource.getInstance(this).queryDposProducers(dposNodes)
-            findViewById<ListView>(R.id.council_lv).adapter = VoteNodeAdapter(this, producers)
+            findViewById<ListView>(R.id.dpos_vote_lv).adapter = VoteNodeAdapter(this, producers)
         }
         // crc counts
         crcNodesTv.text = String.format(getString(R.string.crc_vote_crc_nodes), crcNodes.count())

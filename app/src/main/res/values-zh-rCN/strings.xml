@@ -1229,4 +1229,12 @@
 
     <string name="My_scan_has_add_friend">你已经添加了该好友</string>
     <string name="My_scan_switch_btn_hint">显示carrier地址</string>
+
+    <string name="crc_vote_hint">您将要投票</string>
+    <string name="crc_votes">票数（ELA）</string>
+    <string name="crc_members_title">CR 理事会成员详情:</string>
+    <string name="crc_view_all">查看所有</string>
+    <string name="crc_vote_dpos_nodes">%1$d 个节点（DPoS）</string>
+    <string name="crc_vote_crc_nodes">%1$d 理事会成员（CR）</string>
+    <string name="crc_header_members_title">详情</string>
 </resources>

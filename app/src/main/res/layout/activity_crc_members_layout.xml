@@ -29,7 +29,7 @@
             android:layout_centerInParent="true"
             android:layout_marginStart="16dp"
             android:gravity="center_vertical"
-            android:text="Detail"
+            android:text="@string/crc_header_members_title"
             android:textColor="@color/black_333333"
             android:textSize="20sp" />
     </RelativeLayout>
@@ -67,7 +67,7 @@
 
 
         <com.breadwallet.presenter.customviews.MaxHeightLv
-            android:id="@+id/council_lv"
+            android:id="@+id/dpos_vote_lv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="24dp"
