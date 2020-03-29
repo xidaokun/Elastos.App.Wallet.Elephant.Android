@@ -53,7 +53,7 @@ class CrcVoteActivity : AppCompatActivity() {
             if (!StringUtil.isNullOrEmpty(intent.action) && intent.action==Intent.ACTION_VIEW) {
                 uriFactory.parse(intent.data.toString())
             } else {
-                uriFactory.parse(intent.getStringExtra("candidates"))
+                uriFactory.parse(intent.getStringExtra("crc_scheme_uri"))
             }
         }
     }
@@ -77,7 +77,7 @@ class CrcVoteActivity : AppCompatActivity() {
                     showDialog()
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(Runnable {
                         //dpos payload
-                        val dposNodes = Utils.spliteByComma(BRSharedPrefs.getCandidate(this@CrcVoteActivity))
+                        val dposNodes = Utils.spliteByComma(BRSharedPrefs.getDposCd(this@CrcVoteActivity))
                         val address = WalletElaManager.getInstance(this@CrcVoteActivity).address
                         val amout = 0L
                         var publickeys: ArrayList<PayLoadEntity>?
@@ -134,7 +134,7 @@ class CrcVoteActivity : AppCompatActivity() {
                         }
                         callBackUrl(mRwTxid)
                         callReturnUrl(mRwTxid)
-                        BRSharedPrefs.cacheCrcVotes(this@CrcVoteActivity, uriFactory.votes)
+                        BRSharedPrefs.cacheCrcCd(this@CrcVoteActivity, uriFactory.votes)
                         dismissDialog()
                         finish()
                     })
@@ -155,8 +155,8 @@ class CrcVoteActivity : AppCompatActivity() {
         //total vote counts
         findViewById<TextView>(R.id.votes_counts).text = balance.subtract(BigDecimal(0.0001)).toLong().toString()
 
-//        if(StringUtil.isNullOrEmpty(BRSharedPrefs.getCandidate(this))) "" else BRSharedPrefs.getCandidate(this).trim()
-        val dposNodes = Utils.spliteByComma(BRSharedPrefs.getCandidate(this))
+//        if(StringUtil.isNullOrEmpty(BRSharedPrefs.getDposCd(this))) "" else BRSharedPrefs.getDposCd(this).trim()
+        val dposNodes = Utils.spliteByComma(BRSharedPrefs.getDposCd(this))
         val crcNodes = Utils.spliteByComma(uriFactory.candidates)
 
         findViewById<TextView>(R.id.dpos_vote_title).text = String.format(getString(R.string.node_list_title), dposNodes?.size

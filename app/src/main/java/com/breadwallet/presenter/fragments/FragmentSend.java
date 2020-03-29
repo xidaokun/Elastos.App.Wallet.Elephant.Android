@@ -244,7 +244,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     private ListView mVoteNodeLv;
     private void initVoteAdapter(){
         BigDecimal balance = BRSharedPrefs.getCachedBalance(getContext(), "ELA");
-        String candidatesStr = BRSharedPrefs.getCandidate(getContext());
+        String candidatesStr = BRSharedPrefs.getDposCd(getContext());
         String iso = BRSharedPrefs.getCurrentWalletIso(getContext());
         if(StringUtil.isNullOrEmpty(iso) || !iso.equalsIgnoreCase("ELA") ||
                 balance.longValue()<1 || StringUtil.isNullOrEmpty(candidatesStr)){
@@ -743,7 +743,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             BigDecimal rawAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) || amountStr.equalsIgnoreCase(".") ? "0" : amountStr);
             BigDecimal totalAmount = rawAmount.multiply(new BigDecimal(100000000)).add(WalletElaManager.getInstance(getContext()).ELA_FEE);
             BigDecimal balance = BRSharedPrefs.getCachedBalance(getContext(), "ELA").multiply(new BigDecimal(100000000));
-            String candidatesStr = BRSharedPrefs.getCandidate(getContext());
+            String candidatesStr = BRSharedPrefs.getDposCd(getContext());
             if(balance.compareTo(new BigDecimal(100000000))>0 &&
                     totalAmount.compareTo(balance)<0 &&
                     !StringUtil.isNullOrEmpty(candidatesStr)){

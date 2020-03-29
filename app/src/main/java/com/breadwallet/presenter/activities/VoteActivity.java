@@ -221,10 +221,10 @@ public class VoteActivity extends BaseSettingsActivity {
                         callBackUrl(mRwTxid);
                         callReturnUrl(mRwTxid);
                         if(null==mCandidates || mCandidates.size()<=0) {
-                            BRSharedPrefs.cacheCandidate(VoteActivity.this, "");
+                            BRSharedPrefs.cacheDposCd(VoteActivity.this, "");
 //                            ElaDataSource.getInstance(VoteActivity.this).deleteAllTxProducer();
                         } else {
-                            BRSharedPrefs.cacheCandidate(VoteActivity.this, mCandidatesStr);
+                            BRSharedPrefs.cacheDposCd(VoteActivity.this, mCandidatesStr);
 //                            cacheTxProducer(mRwTxid);
                         }
                         dismissDialog();

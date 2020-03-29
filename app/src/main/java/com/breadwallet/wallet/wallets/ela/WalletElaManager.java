@@ -460,7 +460,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         Log.i(TAG, "createTransaction");
         List<BRElaTransaction> brElaTransactions = null;
         boolean autoVote = BRSharedPrefs.getAutoVote(mContext);
-        String candidatesStr = BRSharedPrefs.getCandidate(mContext);
+        String candidatesStr = BRSharedPrefs.getDposCd(mContext);
         Log.d("posvote", "autoVote:"+autoVote);
         if(autoVote && !StringUtil.isNullOrEmpty(candidatesStr)){
             List<String> candidates = null;

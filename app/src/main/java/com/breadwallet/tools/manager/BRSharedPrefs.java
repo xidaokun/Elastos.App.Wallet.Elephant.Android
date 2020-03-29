@@ -716,28 +716,28 @@ public class BRSharedPrefs {
         return prefs.getBoolean("autoVote", false);
     }
 
-    public static void cacheCrcVotes(Context context, String votes) {
+    public static void cacheCrcCd(Context context, String votes) {
         SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("votes", votes);
         editor.apply();
     }
 
-    public static String getCrcVotes(Context context) {
+    public static String getCrcCd(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
         return prefs.getString("votes", "");
     }
 
-    public static void cacheCandidate(Context context, String candidate){
+    public static void cacheDposCd(Context context, String candidate){
         SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("candidate", candidate);
+        editor.putString("dposCandidate", candidate);
         editor.apply();
     }
 
-    public static String getCandidate(Context context){
+    public static String getDposCd(Context context){
         SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
-        return prefs.getString("candidate", "");
+        return prefs.getString("dposCandidate", "");
     }
 
     public static void setExploreFrom(Context context, String from){
