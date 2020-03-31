@@ -322,7 +322,7 @@ public class CarrierPeerNode {
 //            String myDid = BRSharedPrefs.getMyDid(mContext);
 //            String myCarrierAddr = BRSharedPrefs.getCarrierId(mContext);
 //            String nickName = BRSharedPrefs.getNickname(mContext);
-//            PushServer.sendNotice(myDid, friendCode, nickName, myCarrierAddr);
+//            PushServer.sendAndroidNotice(myDid, friendCode, nickName, myCarrierAddr);
 //            PushServer.sendIosNotice(myDid, friendCode, nickName, myCarrierAddr);
         }
         Log.d("xidaokun", "CarrierPeerNode#addFriend#======ret:"+ ret);

@@ -131,12 +131,12 @@ public class PushClient {
         mPushService.listAliases(new CommonCallback() {
             @Override
             public void onSuccess(String s) {
-                Log.d("xidaokun_push", "bindAlias success s:"+s);
+                Log.d("xidaokun_push", "listAliases success s:"+s);
             }
 
             @Override
             public void onFailed(String s, String s1) {
-                Log.d("xidaokun_push", "bindAlias failed s:"+s+" s1:"+s1);
+                Log.d("xidaokun_push", "listAliases failed s:"+s+" s1:"+s1);
             }
         });
 

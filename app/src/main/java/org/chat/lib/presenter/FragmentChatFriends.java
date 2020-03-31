@@ -230,8 +230,13 @@ public class FragmentChatFriends extends BaseFragment {
                     String myDid = BRSharedPrefs.getMyDid(getContext());
                     String myCarrierAddr = BRSharedPrefs.getCarrierId(getContext());
                     String nickName = BRSharedPrefs.getNickname(getContext());
-                    PushServer.sendNotice(myDid, friendCode, nickName, myCarrierAddr);
-//                            PushServer.sendIosNotice(myDid, friendCode, nickName, myCarrierAddr);
+                    PushServer.sendAndroidNotice(myDid, friendCode, nickName, myCarrierAddr);
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    PushServer.sendIosNotice(myDid, friendCode, nickName, myCarrierAddr);
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

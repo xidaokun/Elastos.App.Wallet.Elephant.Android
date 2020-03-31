@@ -60,7 +60,7 @@ public class PushServer {
         });
     }
 
-    public static void sendNotice(String did, String targetValue, String nickName, String carrierAddr) {
+    public static void sendAndroidNotice(String did, String targetValue, String nickName, String carrierAddr) {
 
         ExtParameters extParameters = new ExtParameters();
         extParameters.did = did;
