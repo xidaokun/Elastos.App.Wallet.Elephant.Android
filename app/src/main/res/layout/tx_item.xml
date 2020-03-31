@@ -31,8 +31,8 @@
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/dpos_vote_flag"
-        android:layout_width="40dp"
-        android:layout_height="16dp"
+        android:layout_width="48dp"
+        android:layout_height="24dp"
         app:layout_constraintLeft_toRightOf="@+id/tx_description"
         app:layout_constraintTop_toTopOf="@+id/tx_description"
         app:layout_constraintBottom_toBottomOf="@+id/tx_description"
@@ -41,8 +41,8 @@
 
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/crc_vote_flag"
-        android:layout_width="40dp"
-        android:layout_height="16dp"
+        android:layout_width="48dp"
+        android:layout_height="24dp"
         app:layout_constraintLeft_toRightOf="@+id/dpos_vote_flag"
         app:layout_constraintTop_toTopOf="@+id/tx_description"
         app:layout_constraintBottom_toBottomOf="@+id/tx_description"
