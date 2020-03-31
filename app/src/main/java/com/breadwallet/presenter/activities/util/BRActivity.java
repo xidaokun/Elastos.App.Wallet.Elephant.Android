@@ -311,6 +311,9 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                                 case "eladposvote":
                                     UiUtils.startVoteActivity(this, url);
                                     return;
+                                case "elacrcvote":
+                                    UiUtils.startCrcActivity(this, url);
+                                    return;
                                 default:
                                     if(mHomeActivity != null) {
                                         mHomeActivity.showAndDownloadCapsule(url);
