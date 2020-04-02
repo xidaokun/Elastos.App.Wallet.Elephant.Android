@@ -351,9 +351,8 @@ public class ElaDataSource implements BRDataSourceInterface {
                     if(!StringUtil.isNullOrEmpty(lastOutPutAddress)) {
                         ElaOutput output = outputsR.get(outputsR.size()-1);
                         Payload tmp = new Payload();
+                        if(callBack!=null) callBack.modifyCrcAmount(output, candidateCrcs, publickeys);
                         tmp.candidatePublicKeys = publickeys;
-                        if(null!=candidateCrcs && candidateCrcs.size()>0 && callBack!=null)
-                            callBack.modifyCrcAmount(output, candidateCrcs);
                         tmp.candidateCrcs = candidateCrcs;
                         output.payload = tmp;
                     }
@@ -396,7 +395,7 @@ public class ElaDataSource implements BRDataSourceInterface {
     }
 
     public interface CreateTxCallBack {
-        void modifyCrcAmount(ElaOutput outputs, List<PayLoadEntity> payLoadEntities);
+        void modifyCrcAmount(ElaOutput outputs, List<PayLoadEntity> payLoadEntities, List<PayLoadEntity> publickeys);
     }
 
 

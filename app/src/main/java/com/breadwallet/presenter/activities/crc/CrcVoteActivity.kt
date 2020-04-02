@@ -3,7 +3,6 @@ package com.breadwallet.presenter.activities.crc
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.View
 import android.widget.ListView
 import android.widget.TextView
@@ -53,7 +52,7 @@ class CrcVoteActivity : AppCompatActivity() {
             if (!StringUtil.isNullOrEmpty(intent.action) && intent.action==Intent.ACTION_VIEW) {
                 uriFactory.parse(intent.data.toString())
             } else {
-                uriFactory.parse(intent.getStringExtra("crc_scheme_uri"))
+                uriFactory.parse(intent.getStringExtra("vote_scheme_uri"))
             }
         }
     }
@@ -72,79 +71,101 @@ class CrcVoteActivity : AppCompatActivity() {
         }
 
         findViewById<View>(R.id.vote_confirm_btn).setOnClickListener {
-            AuthManager.getInstance().authPrompt(this, this.getString(R.string.pin_author_vote), getString(R.string.pin_author_vote_msg), true, false, object : BRAuthCompletion {
-                override fun onComplete() {
-                    showDialog()
-                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(Runnable {
-                        //dpos payload
-                        val dposNodes = Utils.spliteByComma(BRSharedPrefs.getDposCd(this@CrcVoteActivity))
-                        val address = WalletElaManager.getInstance(this@CrcVoteActivity).address
-                        val amout = 0L
-                        var publickeys: ArrayList<PayLoadEntity>?
-                        if(dposNodes == null) {
-                            publickeys = null
-                        } else {
-                            publickeys = ArrayList()
-                            for(dposNode in dposNodes) {
-                                val payLoadEntity = PayLoadEntity()
-                                payLoadEntity.candidate = dposNode
-                                payLoadEntity.value = amout
-                                publickeys.add(payLoadEntity)
-                            }
-                        }
+            sendCrcTx()
+        }
+    }
 
-                        //crc payload
-                        val crcNodes = Utils.spliteByComma(uriFactory.candidates)
-                        var crcCandidates: ArrayList<PayLoadEntity>?
-                        if(crcNodes == null) {
-                            crcCandidates = null
-                        } else {
-                            crcCandidates = ArrayList()
-                            for(i in crcNodes.indices) {
-                                val payLoadEntity = PayLoadEntity()
-                                payLoadEntity.candidate = crcNodes[i]
-                                payLoadEntity.value = amout
-                                crcCandidates.add(payLoadEntity)
-                            }
-                        }
 
-                        val transactions = ElaDataSource.getInstance(this@CrcVoteActivity).
-                                createElaTx(address, address, amout, "vote", publickeys, crcCandidates) { elaOutput: ElaOutput, payLoadEntities: MutableList<PayLoadEntity> ->
-                                   try {
-                                       val crcAmounts = Utils.spliteByComma(uriFactory.votes)?: return@createElaTx
-                                       for(i in crcAmounts.indices) {
-                                           payLoadEntities[i].value = BigDecimal(crcAmounts[i]).multiply(BigDecimal(elaOutput.amount)).divide(BigDecimal(100)).toLong()
-                                       }
-                                       Log.d("", "")
-                                   } catch (e: Exception) {
-                                       e.printStackTrace()
-                                   }
+    fun sendCrcTx() {
+        AuthManager.getInstance().authPrompt(this, this.getString(R.string.pin_author_vote), getString(R.string.pin_author_vote_msg), true, false, object : BRAuthCompletion {
+            override fun onComplete() {
+                showDialog()
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(Runnable {
+
+                    val type = uriFactory.host
+
+                    //dpos payload
+                    val dposNodes = Utils.spliteByComma(if (type=="eladposvote") uriFactory.candidatePublicKeys else BRSharedPrefs.getDposCd(this@CrcVoteActivity))
+                    val address = WalletElaManager.getInstance(this@CrcVoteActivity).address
+                    val amout = 0L
+                    var publickeys: ArrayList<PayLoadEntity>?
+                    if(dposNodes == null) {
+                        publickeys = null
+                    } else {
+                        publickeys = ArrayList()
+                        for(dposNode in dposNodes) {
+                            val payLoadEntity = PayLoadEntity()
+                            payLoadEntity.candidate = dposNode
+                            payLoadEntity.value = amout
+                            publickeys.add(payLoadEntity)
+                        }
+                    }
+
+                    //crc payload
+                    val crcNodes = Utils.spliteByComma(if (type=="elacrcvote") uriFactory.candidates else BRSharedPrefs.getCrcCd(this@CrcVoteActivity))
+                    var crcCandidates: ArrayList<PayLoadEntity>?
+                    if(crcNodes == null) {
+                        crcCandidates = null
+                    } else {
+                        crcCandidates = ArrayList()
+                        for(i in crcNodes.indices) {
+                            val payLoadEntity = PayLoadEntity()
+                            payLoadEntity.candidate = crcNodes[i]
+                            payLoadEntity.value = amout
+                            crcCandidates.add(payLoadEntity)
+                        }
+                    }
+
+                    val transactions = ElaDataSource.getInstance(this@CrcVoteActivity).
+                            createElaTx(address, address, amout, "vote", publickeys, crcCandidates) { elaOutput: ElaOutput, candidateCrcs: MutableList<PayLoadEntity>?, publickeys: MutableList<PayLoadEntity>? ->
+                                try {
+                                    if(publickeys != null) {
+                                        for(i in publickeys.indices) {
+                                            publickeys[i].value = elaOutput.amount
+                                        }
+                                    }
+
+                                    val crcVotes = Utils.spliteByComma(
+                                            if (type=="elacrcvote")
+                                                uriFactory.votes
+                                            else
+                                                BRSharedPrefs.getCrcVotes(this@CrcVoteActivity))
+
+                                    if(null!=crcVotes && null!=candidateCrcs) {
+                                        for(i in crcVotes.indices) {
+                                            candidateCrcs[i].value = BigDecimal(crcVotes[i]).multiply(BigDecimal(elaOutput.amount)).divide(BigDecimal(100)).toLong()
+                                        }
+                                    }
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
                                 }
-                        if (null == transactions) {
-                            dismissDialog()
-                            finish()
-                            return@Runnable
-                        }
-
-                        val mRwTxid = ElaDataSource.getInstance(this@CrcVoteActivity).sendElaRawTx(transactions)
-                        if (StringUtil.isNullOrEmpty(mRwTxid)) {
-                            dismissDialog()
-                            finish()
-                            return@Runnable
-                        }
-                        callBackUrl(mRwTxid)
-                        callReturnUrl(mRwTxid)
-                        BRSharedPrefs.cacheCrcCd(this@CrcVoteActivity, uriFactory.votes)
+                            }
+                    if (null == transactions) {
                         dismissDialog()
                         finish()
-                    })
-                }
+                        return@Runnable
+                    }
 
-                override fun onCancel() {
-                    //nothing
-                }
-            })
-        }
+                    val mRwTxid = ElaDataSource.getInstance(this@CrcVoteActivity).sendElaRawTx(transactions)
+                    if (StringUtil.isNullOrEmpty(mRwTxid)) {
+                        dismissDialog()
+                        finish()
+                        return@Runnable
+                    }
+                    callBackUrl(mRwTxid)
+                    callReturnUrl(mRwTxid)
+                    BRSharedPrefs.cacheCrcCd(this@CrcVoteActivity, uriFactory.votes)
+                    BRSharedPrefs.cacheCrcVotes(this@CrcVoteActivity, uriFactory.candidates)
+                    BRSharedPrefs.cacheDposCd(this@CrcVoteActivity, uriFactory.candidatePublicKeys)
+                    dismissDialog()
+                    finish()
+                })
+            }
+
+            override fun onCancel() {
+                //nothing
+            }
+        })
     }
 
     fun initData() {
@@ -155,12 +176,12 @@ class CrcVoteActivity : AppCompatActivity() {
         //total vote counts
         findViewById<TextView>(R.id.votes_counts).text = balance.subtract(BigDecimal(0.0001)).toLong().toString()
 
-//        if(StringUtil.isNullOrEmpty(BRSharedPrefs.getDposCd(this))) "" else BRSharedPrefs.getDposCd(this).trim()
-        val dposNodes = Utils.spliteByComma(BRSharedPrefs.getDposCd(this))
-        val crcNodes = Utils.spliteByComma(uriFactory.candidates)
+        val type = uriFactory.host
+        if(type!="eladposvote" && type!="elacrcvote") return
+        val dposNodes = Utils.spliteByComma(if (type=="eladposvote") uriFactory.candidatePublicKeys else BRSharedPrefs.getDposCd(this))
+        val crcNodes = Utils.spliteByComma(if (type=="elacrcvote") uriFactory.candidates else BRSharedPrefs.getCrcCd(this))
 
-        findViewById<TextView>(R.id.dpos_vote_title).text = String.format(getString(R.string.node_list_title), dposNodes?.size
-                ?: 0)
+        if(dposNodes==null && crcNodes==null) return
 
         // dpos vote counts
         if(null==dposNodes || dposNodes.count() <= 0 ) {
@@ -169,12 +190,42 @@ class CrcVoteActivity : AppCompatActivity() {
             findViewById<View>(R.id.vote_paste_tv).visibility = View.GONE
             findViewById<View>(R.id.dpos_vote_lv).visibility = View.GONE
         } else {
+            findViewById<TextView>(R.id.dpos_vote_title).text = String.format(getString(R.string.node_list_title), dposNodes?.size)
             dposNodesTv.text = String.format(getString(R.string.crc_vote_dpos_nodes), dposNodes.count())
             val producers = ElaDataSource.getInstance(this).queryDposProducers(dposNodes)
             findViewById<ListView>(R.id.dpos_vote_lv).adapter = VoteNodeAdapter(this, producers)
         }
-        // crc counts
-        crcNodesTv.text = String.format(getString(R.string.crc_vote_crc_nodes), crcNodes.count())
+
+        if(null==crcNodes || crcNodes.count()<=0) {
+            crcNodesTv.visibility = View.GONE
+            findViewById<View>(R.id.second_card).visibility = View.GONE
+        } else {
+            // crc counts
+            crcNodesTv.text = String.format(getString(R.string.crc_vote_crc_nodes), crcNodes.count())
+            //crc members lv
+            BRExecutor.getInstance().forMainThreadTasks().execute{
+                val crcs = CrcDataSource.getInstance(this@CrcVoteActivity).queryCrcsByIds(crcNodes)
+                CrcDataSource.getInstance(this@CrcVoteActivity).updateCrcsArea(crcs);
+                findViewById<FlowLayout>(R.id.numbers_flow_layout).also {
+                    with(it) {
+                        setAdapter(
+                                crcs,
+                                R.layout.crc_member_layout,
+                                object : FlowLayout.ItemView<CrcEntity>() {
+                                    override fun getCover(item: CrcEntity?, holder: FlowLayout.ViewHolder?, inflate: View?, position: Int) {
+                                        val languageCode = Locale.getDefault().language
+                                        if (!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")) {
+                                            holder?.setText(R.id.tv_label_name, item?.Nickname + " | " + item?.AreaZh)
+                                        } else {
+                                            holder?.setText(R.id.tv_label_name, item?.Nickname + " | " + item?.AreaEn)
+                                        }
+                                    }
+                                }
+                        )
+                    }
+                }
+            }
+        }
 
         //balance
         findViewById<TextView>(R.id.vote_ela_balance).text = String.format(getString(R.string.vote_balance), balance.toString())
@@ -189,30 +240,6 @@ class CrcVoteActivity : AppCompatActivity() {
                 e.printStackTrace()
             }
         }
-        //crc members lv
-        BRExecutor.getInstance().forMainThreadTasks().execute{
-            val crcs = CrcDataSource.getInstance(this@CrcVoteActivity).queryCrcsByIds(crcNodes)
-            CrcDataSource.getInstance(this@CrcVoteActivity).updateCrcsArea(crcs);
-            findViewById<FlowLayout>(R.id.numbers_flow_layout).also {
-                with(it) {
-                    setAdapter(
-                            crcs,
-                            R.layout.crc_member_layout,
-                            object : FlowLayout.ItemView<CrcEntity>() {
-                                override fun getCover(item: CrcEntity?, holder: FlowLayout.ViewHolder?, inflate: View?, position: Int) {
-                                    val languageCode = Locale.getDefault().language
-                                    if (!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")) {
-                                        holder?.setText(R.id.tv_label_name, item?.Nickname + " | " + item?.AreaZh)
-                                    } else {
-                                        holder?.setText(R.id.tv_label_name, item?.Nickname + " | " + item?.AreaEn)
-                                    }
-                                }
-                            }
-                    )
-                }
-            }
-        }
-
     }
 
     private fun dismissDialog() {

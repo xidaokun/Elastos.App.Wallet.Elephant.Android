@@ -20,6 +20,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.SettingsUtil;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.vote.PayLoadEntity;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
@@ -469,8 +470,13 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
             } else {
                 candidates = Utils.spliteByComma(candidatesStr);
             }
-            //TODO daokun.xi tmp test
-//            brElaTransactions = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno, candidates);
+            List publickeys = new ArrayList<PayLoadEntity>();
+            for(String candidate : candidates) {
+                PayLoadEntity payLoadEntity = new PayLoadEntity();
+                payLoadEntity.candidate = candidate;
+                publickeys.add(payLoadEntity);
+            }
+            brElaTransactions = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno, publickeys);
         } else {
             brElaTransactions = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno);
         }

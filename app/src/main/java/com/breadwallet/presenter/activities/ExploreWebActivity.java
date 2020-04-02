@@ -228,14 +228,19 @@ public class ExploreWebActivity extends BRActivity {
 
         if(url.contains("elaphant") && url.contains("identity")) {
             UiUtils.startAuthorActivity(ExploreWebActivity.this, url);
+
         } else if(url.contains("elaphant") && url.contains("elapay")) {
             UiUtils.startWalletActivity(ExploreWebActivity.this, url);
+
         } else if(url.contains("elaphant") && url.contains("eladposvote")) {
-            UiUtils.startVoteActivity(ExploreWebActivity.this, url);
+            UiUtils.startCrcActivity(ExploreWebActivity.this, url);
+
         } else if(url.contains("elaphant") && url.contains("sign")) {
             UiUtils.startSignActivity(ExploreWebActivity.this, url);
+
         } else if(url.contains("elaphant") && url.contains("elacrcvote")) {
             UiUtils.startCrcActivity(ExploreWebActivity.this, url);
+
         }else if(mHomeActivity!=null && StringUtils.isElaphantCapsule(url)) {
             mHomeActivity.showAndDownloadCapsule(url);
             finish();
