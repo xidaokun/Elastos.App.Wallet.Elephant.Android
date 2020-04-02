@@ -130,12 +130,14 @@ public class ExploreWebActivity extends BRActivity {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 if(StringUtil.isNullOrEmpty(url)) return true;
                 loadUrl(url);
+                Log.d(TAG, "shouldOverrideUrlLoading:"+url);
                 return true;
             }
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
+                Log.d(TAG, "onPageStarted:"+url);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -205,7 +207,7 @@ public class ExploreWebActivity extends BRActivity {
     }
 
     private synchronized void loadUrl(String url){
-        Log.i("schemeLoadurl", "url:"+url);
+        Log.d("schemeLoadurl", "url:"+url);
         if(StringUtil.isNullOrEmpty(url)) return;
 
         Uri uri = Uri.parse(url);
@@ -225,11 +227,9 @@ public class ExploreWebActivity extends BRActivity {
         }
 
         if(url.contains("elaphant") && url.contains("identity")) {
-            AuthorizeManager.startWalletActivity(ExploreWebActivity.this, url, "com.breadwallet.presenter.activities.did.DidAuthorizeActivity");
-            finish();
+            UiUtils.startAuthorActivity(ExploreWebActivity.this, url);
         } else if(url.contains("elaphant") && url.contains("elapay")) {
-            AuthorizeManager.startWalletActivity(ExploreWebActivity.this, url, "com.breadwallet.presenter.activities.WalletActivity");
-            finish();
+            UiUtils.startWalletActivity(ExploreWebActivity.this, url);
         } else if(url.contains("elaphant") && url.contains("eladposvote")) {
             UiUtils.startVoteActivity(ExploreWebActivity.this, url);
         } else if(url.contains("elaphant") && url.contains("sign")) {

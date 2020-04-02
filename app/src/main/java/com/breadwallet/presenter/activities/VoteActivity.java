@@ -199,7 +199,7 @@ public class VoteActivity extends BaseSettingsActivity {
                     public void run() {
                         Log.d("posvote", "mCandidatesStr:"+mCandidatesStr);
                         String address = WalletElaManager.getInstance(VoteActivity.this).getAddress();
-                        long amout = (null==mCandidates || mCandidates.size()<=0)? 100L: 0L;
+                        long amout = 0L;
                         List<PayLoadEntity> publickeys = new ArrayList<>();
                         for(String candidate : mCandidates) {
                             PayLoadEntity payLoadEntity = new PayLoadEntity();

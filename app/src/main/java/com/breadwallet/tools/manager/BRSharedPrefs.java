@@ -867,6 +867,20 @@ public class BRSharedPrefs {
         return prefs.getBoolean("useFingerprint", false);
     }
 
+    public static void putVotemeDeleteStatue(Context context, boolean delete) {
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("isVotemeDelete", delete);
+        editor.apply();
+    }
+
+    public static void putMiniAppsDeleteStatue(Context context, boolean delete) {
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("isMiniAppsDelete", delete);
+        editor.apply();
+    }
+
     public static void putRedPacketDeleteStatue(Context context, boolean delete) {
         SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
@@ -893,6 +907,16 @@ public class BRSharedPrefs {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("isVoteDelete", delete);
         editor.apply();
+    }
+
+    public static boolean isVotemeDelete(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        return prefs.getBoolean("isVotemeDelete", false);
+    }
+
+    public static boolean isMiniAppsDelete(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        return prefs.getBoolean("isMiniAppsDelete", false);
     }
 
     public static boolean isRedPacketDelete(Context context) {

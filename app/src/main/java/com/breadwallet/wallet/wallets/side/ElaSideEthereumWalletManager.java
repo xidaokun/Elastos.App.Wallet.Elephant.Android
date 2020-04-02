@@ -59,6 +59,8 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
         BREthereumLightNode.Listener {
     private static final String TAG = ElaSideEthereumWalletManager.class.getSimpleName();
 
+    private static final String HOST = "https://api-esc.elaphant.app";
+
     private CryptoTransaction mWatchedTransaction;
     private OnHashUpdated mWatchListener;
 
@@ -330,7 +332,7 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
             }
         }
 
-        String jsonString = BRApiManager.urlGET(app, "https://" + BreadApp.HOST + "/fee-per-kb?currency=" + getIso());
+        String jsonString = BRApiManager.urlGET(app, "https://" + HOST+ "/fee-per-kb?currency=" + getIso());
 
         if (jsonString == null || jsonString.isEmpty()) {
             Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + jsonString);
@@ -679,7 +681,7 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String ethUrl = /*JsonRpcHelper.getEthereumRpcUrl()*/"https://api-wallet-eth.elastos.org/api/1/eth/wrap";
+                final String ethUrl = /*JsonRpcHelper.getEthereumRpcUrl()*/ HOST + "/api/1/eth/wrap";
                 Log.d(TAG, "Making rpc request to -> " + ethUrl);
 
                 final JSONObject payload = new JSONObject();
@@ -693,7 +695,7 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
                     e.printStackTrace();
                 }
 
-                JsonRpcHelper.makeRpcRequest3(BreadApp.getBreadContext(), ethUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
+                JsonRpcHelper.makeRpcRequest(BreadApp.getBreadContext(), ethUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         try {
@@ -724,7 +726,7 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String ethUrl = /*JsonRpcHelper.getEthereumRpcUrl()*/"https://api-wallet-eth.elastos.org/api/1/eth/wrap";
+                final String ethUrl = /*JsonRpcHelper.getEthereumRpcUrl()*/ HOST + "/api/1/eth/wrap";
                 Log.d(TAG, "Making rpc request to -> " + ethUrl);
 
                 final JSONObject payload = new JSONObject();
@@ -773,7 +775,7 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String eth_url = "https://api-wallet-eth.elastos.org/api/1/eth/wrap";
+                final String eth_url = HOST + "/api/1/eth/wrap";
 
                 JSONObject payload = new JSONObject();
                 JSONArray params = new JSONArray();
@@ -859,7 +861,7 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String ethRpcUrl = "https://api-wallet-eth.elastos.org/api/1/eth/history";
+                final String ethRpcUrl = HOST + "/api/1/eth/history";
 
                 final JSONObject payload = new JSONObject();
                 try {
@@ -1100,7 +1102,7 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String eth_url = /*JsonRpcHelper.getEthereumRpcUrl()*/"https://api-wallet-eth.elastos.org/api/1/eth/wrap";
+                final String eth_url = /*JsonRpcHelper.getEthereumRpcUrl()*/ HOST + "/api/1/eth/wrap";
                 Log.d(TAG, "Making rpc request to -> " + eth_url);
 
                 final JSONObject payload = new JSONObject();
@@ -1265,7 +1267,7 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String ethUrl = /*JsonRpcHelper.getEthereumRpcUrl()*/"https://api-wallet-eth.elastos.org/api/1/eth/wrap";
+                final String ethUrl = /*JsonRpcHelper.getEthereumRpcUrl()*/ HOST + "/api/1/eth/wrap";
                 Log.d(TAG, "Making rpc request to -> " + ethUrl);
 
                 final JSONObject payload = new JSONObject();
@@ -1282,7 +1284,7 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
                     e.printStackTrace();
                 }
 
-                JsonRpcHelper.makeRpcRequest3(BreadApp.getBreadContext(), ethUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
+                JsonRpcHelper.makeRpcRequest(BreadApp.getBreadContext(), ethUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         try {

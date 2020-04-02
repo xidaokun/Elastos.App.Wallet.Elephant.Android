@@ -2,7 +2,6 @@ package com.breadwallet.tools.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,11 +18,10 @@ import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.MyAppsViewHolder> implements ItemTouchHelperAdapter{
+public class MiniAppsAdapter extends RecyclerView.Adapter<MiniAppsAdapter.MyAppsViewHolder> implements ItemTouchHelperAdapter{
 
     private Context mContext;
     private List<MyAppItem> mData;
@@ -33,7 +31,7 @@ public class ExploreAppsAdapter extends RecyclerView.Adapter<ExploreAppsAdapter.
     private OnTouchMoveListener mMoveListener;
     private OnItemClickListener mItemClickListener;
 
-    public ExploreAppsAdapter(Context context, List<MyAppItem> data){
+    public MiniAppsAdapter(Context context, List<MyAppItem> data){
         this.mContext = context;
         this.mData = data;
     }
