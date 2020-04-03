@@ -518,7 +518,7 @@
                         android:layout_marginTop="15dp"
                         android:layout_marginLeft="15dp"
                         android:lines="1"
-                        android:text="CR council members detail:"/>
+                        android:text="@string/crc_members_title"/>
 
 
                     <RelativeLayout
@@ -541,7 +541,7 @@
                             android:layout_alignParentRight="true"
                             android:layout_alignParentBottom="true"
                             android:gravity="center"
-                            android:text="View all"
+                            android:text="@string/crc_view_all"
                             android:background="@drawable/crc_view_all_shape"
                             android:textColor="#FF3365"
                             android:textSize="11sp"/>

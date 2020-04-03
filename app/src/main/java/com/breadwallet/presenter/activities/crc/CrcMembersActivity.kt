@@ -3,6 +3,7 @@ package com.breadwallet.presenter.activities.crc
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.widget.ListView
 import android.widget.SimpleAdapter
 import android.widget.TextView
 import android.widget.Toast
@@ -58,7 +59,7 @@ class CrcMembersActivity : AppCompatActivity() {
 
             data.add(item)
         }
-        findViewById<MaxHeightLv>(R.id.dpos_vote_lv).also {
+        findViewById<ListView>(R.id.dpos_vote_lv).also {
             with(it) {
                 adapter = SimpleAdapter(this@CrcMembersActivity, data, R.layout.crc_member_item_layout, arrayOf("content"), intArrayOf(R.id.crc_members_detail))
 

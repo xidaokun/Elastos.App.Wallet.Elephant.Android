@@ -68,6 +68,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
         mWalletToken = tokenWallet;
         uiConfig = new WalletUiConfiguration(tokenWallet.getToken().getColorLeft(), tokenWallet.getToken().getColorRight(), false, WalletManagerHelper.MAX_DECIMAL_PLACES_FOR_UI);
         mAddress = mWalletEthManager.getAddress();
+        mContractAddr = tokenWallet.getToken().getAddress();
     }
 
     private synchronized static WalletTokenManager getTokenWallet(WalletEthManager walletEthManager, BREthereumToken token) {

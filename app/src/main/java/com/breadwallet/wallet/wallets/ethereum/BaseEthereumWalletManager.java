@@ -17,6 +17,11 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
 
     private WalletManagerHelper mWalletManagerHelper;
     protected String mAddress;
+    protected String mContractAddr;
+
+    public String getContractAddr() {
+        return mContractAddr;
+    }
 
     public BaseEthereumWalletManager() {
         mWalletManagerHelper = new WalletManagerHelper();

@@ -1562,16 +1562,16 @@ static struct BREthereumTokenRecord tokens[] = {
     },
 
     {
-            "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-            "USDT",
-            "Tether USD",
-            "",
-            6,
-            "#c59a47",
-            "#c59a47",
-            { TOKEN_BRD_DEFAULT_GAS_LIMIT },
-            { { { .u64 = {TOKEN_BRD_DEFAULT_GAS_PRICE_IN_WEI_UINT64, 0, 0, 0}}}},
-            1
+        "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        "USDT",
+        "Tether USD",
+        "",
+        6,
+        "#c59a47",
+        "#c59a47",
+        { TOKEN_BRD_DEFAULT_GAS_LIMIT },
+        { { { .u64 = {TOKEN_BRD_DEFAULT_GAS_PRICE_IN_WEI_UINT64, 0, 0, 0}}}},
+        1
     },
 
     {

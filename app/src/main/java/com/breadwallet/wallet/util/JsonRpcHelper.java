@@ -158,6 +158,20 @@ public class JsonRpcHelper {
 
     @WorkerThread
     public static void makeRpcRequest(Context app, String url, JsonRpcRequestListener listener) {
+
+        //https://api-eth.elaphant.app/api/1/eth/getLogs?fromBlock=0
+        // &toBlock=latest
+        // &topic0=0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef
+        // &topic1=0x000000000000000000000000544976511F2B6237b0b4Fe8fbd271B08164dD1b6
+        // &topic1_2_opr=or
+        // &topic2=0x000000000000000000000000544976511F2B6237b0b4Fe8fbd271B08164dD1b6
+
+        //https://api-eth.elaphant.app/api/1/eth/getLogs?fromBlock=0
+        // &toBlock=latest
+        // &topic0=0xdac17f958d2ee523a2206206994597c13d831ec7
+        // &topic1=0x000000000000000000000000544976511F2B6237b0b4Fe8fbd271B08164dD1b6
+        // &topic1_2_opr=or
+        // &topic2=0x000000000000000000000000544976511F2B6237b0b4Fe8fbd271B08164dD1b6
         Request request = new Request.Builder()
                 .url(url)
                 .header("Content-Type", "application/json; charset=utf-8")

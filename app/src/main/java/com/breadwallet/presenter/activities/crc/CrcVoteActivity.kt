@@ -154,8 +154,8 @@ class CrcVoteActivity : AppCompatActivity() {
                     }
                     callBackUrl(mRwTxid)
                     callReturnUrl(mRwTxid)
-                    BRSharedPrefs.cacheCrcCd(this@CrcVoteActivity, uriFactory.votes)
-                    BRSharedPrefs.cacheCrcVotes(this@CrcVoteActivity, uriFactory.candidates)
+                    BRSharedPrefs.cacheCrcCd(this@CrcVoteActivity, uriFactory.candidates)
+                    BRSharedPrefs.cacheCrcVotes(this@CrcVoteActivity, uriFactory.votes)
                     BRSharedPrefs.cacheDposCd(this@CrcVoteActivity, uriFactory.candidatePublicKeys)
                     dismissDialog()
                     finish()

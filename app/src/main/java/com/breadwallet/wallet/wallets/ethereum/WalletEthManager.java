@@ -105,7 +105,12 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
     private BREthereumWallet mWallet;
     public BREthereumLightNode node;
 
+    private Context mContext;
+
     private WalletEthManager(final Context app, byte[] ethPubKey, BREthereumNetwork network) {
+
+        mContext = app;
+
         mUiConfig = new WalletUiConfiguration("#5e6fa5", null,
                 true, WalletManagerHelper.MAX_DECIMAL_PLACES_FOR_UI);
         mSettingsConfig = new WalletSettingsConfiguration();
@@ -1115,8 +1120,13 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
 
     }
 
-    @Override
     public void getLogs(final String contract, final String address, final String event, final int rid) {
+        Log.d("getLogstest", "getLogstest");
+
+//        String iso = BRSharedPrefs.getCurrentWalletIso(mContext);
+//        BaseEthereumWalletManager walletManager = (BaseEthereumWalletManager) WalletsMaster.getInstance(mContext).getWalletByIso(mContext, iso);
+//        final String contractAddr = walletManager.getContractAddr();
+
         if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
             return;
         }
@@ -1125,10 +1135,20 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
             public void run() {
 //                final String ethRpcUtl = JsonRpcHelper.createLogsUrl(address, contract, event);
 
+                //https://api-eth.elaphant.app/api/1/eth/getLogs?
+                // fromBlock=0
+                // &toBlock=latest
+                // &topic0=0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef
+                // &topic1=0x000000000000000000000000544976511F2B6237b0b4Fe8fbd271B08164dD1b6
+                // &topic1_2_opr=or
+                // &topic2=0x000000000000000000000000544976511F2B6237b0b4Fe8fbd271B08164dD1b6
+
+                //https://api-eth.elaphant.app/api/1/eth/getLogs?fromBlock=0&toBlock=latest&address=0xbf3f09e4eba5f7805e5fac0ee09fd6ee8eebe4cb&topic0=0xbf3f09e4eba5f7805e5fac0ee09fd6ee8eebe4cb&topic1=0x000000000000000000000000544976511F2B6237b0b4Fe8fbd271B08164dD1b6&topic1_2_opr=or&topic2=0x000000000000000000000000544976511F2B6237b0b4Fe8fbd271B08164dD1b6
+
                 final String ethRpcUrl = HOST + "/api/1/eth/getLogs?"
-                        + "&fromBlock=0&toBlock=latest"
-                        + (null == contract ? "" : ("&address=" + contract))
-                        + "&topic0=" + event
+                        + "fromBlock=0&toBlock=latest"
+//                        + (null == contract ? "" : ("&address=" + contract))
+                        + "&topic0=" + ((StringUtil.isNullOrEmpty(contract))?"":contract.toLowerCase())
                         + "&topic1=" + address
                         + "&topic1_2_opr=or"
                         + "&topic2=" + address;

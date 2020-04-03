@@ -189,7 +189,11 @@ lightNodeThreadRoutine (BREthereumLightNode node) {
 
         // Similarly, we'll query all logs for this node's account.  We'll process these into
         // (token) transactions and associate with their wallet.
-        lightNodeUpdateLogs(node, -1, eventERC20Transfer);
+
+        for (int i = 0; i < array_count(node->wallets); i++)
+            lightNodeUpdateLogs(node, i, eventERC20Transfer);
+
+//        lightNodeUpdateLogs(node, -1, eventERC20Transfer);
 
         // For all the known wallets, get their balance.
         for (int i = 0; i < array_count(node->wallets); i++)
