@@ -1244,5 +1244,5 @@
     <string name="crc_view_all">View all</string>
     <string name="crc_vote_dpos_nodes">%1$d nodes（DPoS）</string>
     <string name="crc_vote_crc_nodes">%1$d council members（CR）</string>
-    <string name="crc_header_members_title">Detail</string>
+    <string name="crc_header_members_title">Details</string>
 </resources>
