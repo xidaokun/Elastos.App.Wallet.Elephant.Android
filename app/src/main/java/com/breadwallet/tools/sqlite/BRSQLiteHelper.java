@@ -210,9 +210,10 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String CRC_PRODUCER_STATE = "state";
     private static final String CRC_PRODUCER_DATABASE_CREATE = "create table if not exists " + CRC_PRODUCER_TABLE_NAME + " (" +
             CRC_PRODUCER_TXID + " text, " +
-            CRC_PRODUCER_DID + " text primary key , " +
+            CRC_PRODUCER_DID + " text, " +
             CRC_PRODUCER_LOCATION + " integer, " +
-            CRC_PRODUCER_STATE +" text" +
+            CRC_PRODUCER_STATE +" text, " +
+            "PRIMARY KEY (" + CRC_PRODUCER_TXID + ", " + CRC_PRODUCER_DID + ")" +
             ");";
 
 

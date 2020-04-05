@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.crc.CrcDataSource;
 import com.breadwallet.presenter.activities.crc.CrcProducerResult;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.BRDataSourceInterface;
@@ -164,12 +165,12 @@ public class ElaDataSource implements BRDataSourceInterface {
     }
 
     public List<String> mDposVoteTxid = new ArrayList<>();
-    public void getDposProducer(){
+    public void getDposProducer(List<String> txids){
         if(mDposVoteTxid.size() <= 0) return;
         DposProducerResult dposProducerResult = null;
         try {
             ProducerTxid producerTxid = new ProducerTxid();
-            producerTxid.txid = mDposVoteTxid;
+            producerTxid.txid = txids;
             String json = new Gson().toJson(producerTxid);
             String url = ElaDataUtils.getUrlByVersion(mContext,"dpos/transaction/producer", "1");
             String result = APIClient.urlPost(url, json);
@@ -182,22 +183,6 @@ public class ElaDataSource implements BRDataSourceInterface {
     }
 
     public List<String> mCrcVoteTxid = new ArrayList<>();
-    public void getCrcProducer() {
-        if(mCrcVoteTxid.size() <= 0) return;
-        CrcProducerResult crcProducerResult = null;
-        try {
-            ProducerTxid producerTxid = new ProducerTxid();
-            producerTxid.txid = mCrcVoteTxid;
-            String json = new Gson().toJson(producerTxid);
-            String url = ElaDataUtils.getUrlByVersion(mContext,"crc/transaction/producer", "1");
-            String result = APIClient.urlPost(url, json);
-            crcProducerResult = new Gson().fromJson(result, CrcProducerResult.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if(crcProducerResult ==null || crcProducerResult.result==null) return;
-        cacheCrcProducer(crcProducerResult.result);
-    }
 
     public void refreshHistory(String address){
         if(StringUtil.isNullOrEmpty(address)) return;
@@ -218,13 +203,15 @@ public class ElaDataSource implements BRDataSourceInterface {
             for(History history : transactions){
                 HistoryTransactionEntity historyTransactionEntity = ElaDataUtils.setHistoryEntity(history, 1);
                 elaTransactionEntities.add(historyTransactionEntity);
-                if(ElaDataUtils.getVoteType(historyTransactionEntity.type, historyTransactionEntity.txType) == 1) mDposVoteTxid.add(history.Txid);
-                if(ElaDataUtils.getVoteType(historyTransactionEntity.type, historyTransactionEntity.txType) == 2) mCrcVoteTxid.add(history.Txid);
+                int dposType = ElaDataUtils.getVoteType(historyTransactionEntity.type, historyTransactionEntity.txType);
+                int crcType = ElaDataUtils.getVoteType(historyTransactionEntity.type, historyTransactionEntity.txType);
+                if(dposType==1 || dposType==3) mDposVoteTxid.add(history.Txid);
+                if(crcType==2 || crcType==3) mCrcVoteTxid.add(history.Txid);
             }
-            getDposProducer();
-            getCrcProducer();
             if(elaTransactionEntities.size() <= 0) return;
             cacheMultTx(elaTransactionEntities);
+            getDposProducer(mDposVoteTxid);
+            CrcDataSource.getInstance(mContext).getCrcProducer(mCrcVoteTxid);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -251,17 +238,19 @@ public class ElaDataSource implements BRDataSourceInterface {
             for(History history : transactions){
                 HistoryTransactionEntity historyTransactionEntity = ElaDataUtils.setHistoryEntity(history, pageNumber);
                 elaTransactionEntities.add(historyTransactionEntity);
-                if(ElaDataUtils.getVoteType(historyTransactionEntity.type, historyTransactionEntity.txType) == 1) mDposVoteTxid.add(history.Txid);
-                if(ElaDataUtils.getVoteType(historyTransactionEntity.type, historyTransactionEntity.txType) == 2) mCrcVoteTxid.add(history.Txid);
+                int dposType = ElaDataUtils.getVoteType(historyTransactionEntity.type, historyTransactionEntity.txType);
+                int crcType = ElaDataUtils.getVoteType(historyTransactionEntity.type, historyTransactionEntity.txType);
+                if(dposType==1 || dposType==3) mDposVoteTxid.add(history.Txid);
+                if(crcType==2 || crcType==3) mCrcVoteTxid.add(history.Txid);
             }
-            getDposProducer();
-            getCrcProducer();
             if(elaTransactionEntities.size() <= 0) {
                 BRSharedPrefs.putCurrentHistoryPageNumber(mContext, currentPageNumber);
                 return;
             }
             BRSharedPrefs.putCurrentHistoryPageNumber(mContext, pageNumber);
             cacheMultTx(elaTransactionEntities);
+            getDposProducer(mDposVoteTxid);
+            CrcDataSource.getInstance(mContext).getCrcProducer(mCrcVoteTxid);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -548,58 +537,6 @@ public class ElaDataSource implements BRDataSourceInterface {
         }
 
         return entities;
-    }
-
-    public List<String> queryCrcProducer(String txid){
-        if(StringUtil.isNullOrEmpty(txid)) return null;
-        List<String> entities = new ArrayList<>();
-        Cursor cursor = null;
-        try {
-            cursor = database.query(BRSQLiteHelper.CRC_PRODUCER_TABLE_NAME,
-                    ElaDataUtils.crcProducerColumn, BRSQLiteHelper.CRC_PRODUCER_TXID + " = ?", new String[]{txid},
-                    null, null, null);
-            cursor.moveToFirst();
-            while (!cursor.isAfterLast()) {
-                CrcProducerResult.CrcProducer producerEntity = ElaDataUtils.cursorToCrcProducer(cursor);
-                entities.add(producerEntity.Did);
-                cursor.moveToNext();
-            }
-        } catch (Exception e){
-            e.printStackTrace();
-        } finally {
-            if (cursor != null)
-                cursor.close();
-            closeDatabase();
-        }
-
-        return entities;
-    }
-
-
-    public void cacheCrcProducer(List<CrcProducerResult.CrcProducers> entities) {
-        if(entities==null || entities.size()<=0) return;
-        try {
-            database = openDatabase();
-            database.beginTransaction();
-            for(CrcProducerResult.CrcProducers crcProducers : entities){
-                if(null== crcProducers.Producer || StringUtil.isNullOrEmpty(crcProducers.Txid)) break;
-                for(CrcProducerResult.CrcProducer crcProducer : crcProducers.Producer){
-                    ContentValues value = new ContentValues();
-                    value.put(BRSQLiteHelper.CRC_PRODUCER_TXID, crcProducers.Txid);
-                    value.put(BRSQLiteHelper.CRC_PRODUCER_DID, crcProducer.Did);
-                    value.put(BRSQLiteHelper.CRC_PRODUCER_LOCATION, crcProducer.Location);
-                    value.put(BRSQLiteHelper.CRC_PRODUCER_STATE, crcProducer.State);
-                    long l = database.insertWithOnConflict(BRSQLiteHelper.CRC_PRODUCER_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
-                }
-            }
-            database.setTransactionSuccessful();
-        } catch (Exception e) {
-            closeDatabase();
-            e.printStackTrace();
-        } finally {
-            database.endTransaction();
-            closeDatabase();
-        }
     }
 
     public void cacheDposProducer(List<DposProducers> entities){

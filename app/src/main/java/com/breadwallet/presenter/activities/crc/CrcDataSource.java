@@ -14,6 +14,8 @@ import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.vote.CityEntity;
 import com.breadwallet.vote.CrcEntity;
 import com.breadwallet.vote.CrcsEntity;
+import com.breadwallet.wallet.wallets.ela.ElaDataSource;
+import com.breadwallet.wallet.wallets.ela.ElaDataUtils;
 import com.google.gson.Gson;
 import com.platform.APIClient;
 
@@ -190,6 +192,78 @@ public class CrcDataSource implements BRDataSourceInterface {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void cacheCrcProducer(List<CrcProducerResult.CrcProducers> entities) {
+        if(entities==null || entities.size()<=0) return;
+        try {
+            database = openDatabase();
+            database.beginTransaction();
+            for(CrcProducerResult.CrcProducers crcProducers : entities){
+                if(null== crcProducers.Producer || StringUtil.isNullOrEmpty(crcProducers.Txid)) break;
+                for(CrcProducerResult.CrcProducer crcProducer : crcProducers.Producer){
+                    ContentValues value = new ContentValues();
+                    value.put(BRSQLiteHelper.CRC_PRODUCER_TXID, crcProducers.Txid);
+                    value.put(BRSQLiteHelper.CRC_PRODUCER_DID, crcProducer.Did);
+                    value.put(BRSQLiteHelper.CRC_PRODUCER_LOCATION, crcProducer.Location);
+                    value.put(BRSQLiteHelper.CRC_PRODUCER_STATE, crcProducer.State);
+                    long l = database.insertWithOnConflict(BRSQLiteHelper.CRC_PRODUCER_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
+                }
+            }
+            database.setTransactionSuccessful();
+        } catch (Exception e) {
+            closeDatabase();
+            e.printStackTrace();
+        } finally {
+            database.endTransaction();
+            closeDatabase();
+        }
+    }
+
+    public List<String> queryCrcProducer(String txid){
+        if(StringUtil.isNullOrEmpty(txid)) return null;
+        List<String> entities = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            cursor = database.query(BRSQLiteHelper.CRC_PRODUCER_TABLE_NAME,
+                    ElaDataUtils.crcProducerColumn, BRSQLiteHelper.CRC_PRODUCER_TXID + " = ?", new String[]{txid},
+                    null, null, null);
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                CrcProducerResult.CrcProducer producerEntity = ElaDataUtils.cursorToCrcProducer(cursor);
+                entities.add(producerEntity.Did);
+                cursor.moveToNext();
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            if (cursor != null)
+                cursor.close();
+            closeDatabase();
+        }
+
+        return entities;
+    }
+
+    static class ProducerTxid {
+        public List<String> txid;
+    }
+
+    public void getCrcProducer(List<String> txids) {
+        if(txids==null || txids.size() <= 0) return;
+        CrcProducerResult crcProducerResult = null;
+        try {
+            ProducerTxid producerTxid = new ProducerTxid();
+            producerTxid.txid = txids;
+            String json = new Gson().toJson(producerTxid);
+            String url = ElaDataUtils.getUrlByVersion(mContext,"crc/transaction/producer", "1");
+            String result = APIClient.urlPost(url, json);
+            crcProducerResult = new Gson().fromJson(result, CrcProducerResult.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if(crcProducerResult ==null || crcProducerResult.result==null) return;
+        cacheCrcProducer(crcProducerResult.result);
     }
 
     public String getUrlByVersion(String api, String version) {
