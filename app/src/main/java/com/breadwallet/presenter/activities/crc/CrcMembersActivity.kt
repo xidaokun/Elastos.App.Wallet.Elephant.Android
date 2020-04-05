@@ -11,8 +11,11 @@ import com.breadwallet.BuildConfig
 import com.breadwallet.R
 import com.breadwallet.presenter.customviews.MaxHeightLv
 import com.breadwallet.tools.manager.BRClipboardManager
+import com.breadwallet.tools.manager.BRSharedPrefs
+import com.breadwallet.tools.util.BRConstants
 import com.breadwallet.tools.util.StringUtil
 import com.breadwallet.tools.util.Utils
+import java.math.BigDecimal
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -42,7 +45,9 @@ class CrcMembersActivity : AppCompatActivity() {
     private val data = ArrayList<Map<String, Any>>()
     fun initData() {
         val crcNodes = Utils.spliteByComma(intent.getStringExtra("candidates")?: return)
-        val crcRankEntities = CrcDataSource.getInstance(this).queryCrcsByIds(crcNodes)
+        val votes = Utils.spliteByComma(intent.getStringExtra("votes")?: return)
+
+        val crcRankEntities = CrcDataSource.getInstance(this).queryCrcsByIds(crcNodes, votes)
         CrcDataSource.getInstance(this).updateCrcsArea(crcRankEntities)
 
         findViewById<TextView>(R.id.council_title).text = String.format(getString(R.string.crc_vote_crc_nodes), crcNodes.count())
@@ -51,10 +56,15 @@ class CrcMembersActivity : AppCompatActivity() {
             val item = HashMap<String, Any>()
 
             val languageCode = Locale.getDefault().language
+            val balance = BRSharedPrefs.getCachedBalance(this, "ELA").divide(BigDecimal(100))
             if (!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")) {
-                item["content"] = crcEntity.Nickname + " | " + crcEntity.AreaZh + " | " + crcEntity.Votes
+                item["content"] = crcEntity.Nickname + " | " + crcEntity.AreaZh + " | " +
+                        BigDecimal(crcEntity.Vote).multiply(balance).setScale(4, BRConstants.ROUNDING_MODE).toString() + " | " +
+                        crcEntity.Vote
             } else {
-                item["content"] = crcEntity.Nickname + " | " + crcEntity.AreaEn + " | " + crcEntity.Votes
+                item["content"] = crcEntity.Nickname + " | " + crcEntity.AreaEn + " | " +
+                        BigDecimal(crcEntity.Vote).multiply(balance).setScale(4, BRConstants.ROUNDING_MODE).toString() + " | " +
+                        crcEntity.Vote
             }
 
             data.add(item)

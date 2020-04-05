@@ -225,7 +225,7 @@ public class FragmentTxDetails extends DialogFragment {
             @Override
             public void onClick(View v) {
                 List<String> crcDids = ElaDataSource.getInstance(getContext()).queryCrcProducer(mTransaction.txReversed);
-                UiUtils.startCrcMembersActivity(getContext(), crcDids.toString());
+                UiUtils.startCrcMembersActivity(getContext(), crcDids.toString(), null);
             }
         });
     }

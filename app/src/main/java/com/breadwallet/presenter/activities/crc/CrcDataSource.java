@@ -97,6 +97,15 @@ public class CrcDataSource implements BRDataSourceInterface {
                 cursor.getString(5));
     }
 
+    private void cursorToMemberEntity(Cursor cursor, CrcEntity entity) {
+        entity.Did = cursor.getString(0);
+        entity.Rank = cursor.getInt(1);
+        entity.Nickname = cursor.getString(2);
+        entity.Location = cursor.getInt(3);
+        entity.Votes = cursor.getString(4);
+        entity.Value = cursor.getString(5);
+    }
+
     public synchronized void cacheCrcs(List<CrcEntity> crcEntities){
         if(crcEntities == null) return;
         try {
@@ -128,47 +137,37 @@ public class CrcDataSource implements BRDataSourceInterface {
 
     }
 
-    public List<CrcEntity> queryCrcsByRank() {
-        return queryCrcsByRank("desc");
-    }
+    public List<CrcEntity> queryCrcsByIds(List<String> ids, List<String> votes) {
+        if(ids == null) return null;
 
-    public List<CrcEntity> queryCrcsByRank(String orderBy) {
-        List<CrcEntity> currencies = new ArrayList<>();
-        Cursor cursor = null;
-
+        List<CrcEntity> result = new ArrayList<>();
+        result.clear();
         try {
             database = openDatabase();
-            cursor = database.query(BRSQLiteHelper.CRC_VOTE_TABLE_NAME, crcMemberColumn, null, null, null, null, "rank " + orderBy);
 
-            cursor.moveToFirst();
-            while (!cursor.isAfterLast()) {
-                CrcEntity curEntity = cursorToMemberEntity(cursor);
-                currencies.add(curEntity);
-                cursor.moveToNext();
+            for (int i=0; i<ids.size(); i++) {
+                Cursor cursor = database.query(BRSQLiteHelper.CRC_VOTE_TABLE_NAME, crcMemberColumn, BRSQLiteHelper.CRC_VOTE_DID + " = ? ", new String[]{ids.get(i)}, null, null, null);
+
+                cursor.moveToFirst();
+                while (!cursor.isAfterLast()) {
+                    CrcEntity entity = new CrcEntity();
+                    if(null!=votes) entity.Vote = votes.get(i);
+                    cursorToMemberEntity(cursor, entity);
+                    result.add(entity);
+
+                    cursor.moveToNext();
+                }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         } finally {
-            if (cursor != null)
-                cursor.close();
             closeDatabase();
         }
 
-        return currencies;
+        return result;
     }
 
-    public List<CrcEntity> queryCrcsByIds(List<String> ids) {
-        List<CrcEntity> memebers = new ArrayList<>();
-        List<CrcEntity> tmp = queryCrcsByRank("desc");
-        for(CrcEntity entity : tmp) {
-            for(String id : ids) {
-                if(id.equals(entity.Did)) {
-                    memebers.add(entity);
-                }
-            }
-        }
 
-        return memebers;
+    public List<CrcEntity> queryCrcsByIds(List<String> ids) {
+        return queryCrcsByIds(ids, null);
     }
 
     public void getCrcPayload(String txid) {

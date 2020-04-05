@@ -9,6 +9,7 @@ public class CrcEntity {
     public String AreaZh;
     public String Votes;
     public String Value;
+    public String Vote;
 
     public CrcEntity() {
     }

@@ -250,9 +250,10 @@ public class UiUtils {
         context.startActivity(intent);
     }
 
-    public static void startCrcMembersActivity(Context context, String candidates) {
+    public static void startCrcMembersActivity(Context context, String candidates, String votes) {
         Intent intent = new Intent(context, CrcMembersActivity.class);
         intent.putExtra("candidates", candidates);
+        intent.putExtra("votes", votes);
         context.startActivity(intent);
     }
 
