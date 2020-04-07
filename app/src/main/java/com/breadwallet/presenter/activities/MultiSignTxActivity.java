@@ -33,15 +33,13 @@ import com.breadwallet.wallet.wallets.ela.response.create.ElaTransaction;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaTransactionRes;
 import com.elastos.jni.AuthorizeManager;
 import com.elastos.jni.Utility;
-import com.elastos.jni.utils.StringUtils;
+import com.elastos.jni.utils.SchemeStringUtils;
 import com.google.gson.Gson;
 import com.platform.APIClient;
 
 import org.elastos.sdk.keypair.ElastosKeypairSign;
 import org.json.JSONObject;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -134,7 +132,7 @@ public class MultiSignTxActivity extends BRActivity {
         }
 
         String mn = getMn();
-        if (!StringUtils.isNullOrEmpty(mn)) {
+        if (!SchemeStringUtils.isNullOrEmpty(mn)) {
             mMyPublicKey = Utility.getInstance(this).getSinglePublicKey(mn);
         }
 

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class StringUtils {
+public class SchemeStringUtils {
 
     public static boolean isNullOrEmpty(String value) {
         if (value == null || value.isEmpty()) return true;
@@ -38,11 +38,13 @@ public class StringUtils {
     }
 
     public static String replaceElsProtocol(String url, String protocol){
-        if(StringUtil.isNullOrEmpty(url) || StringUtils.isNullOrEmpty(protocol)) return null;
+        if(StringUtil.isNullOrEmpty(url) || SchemeStringUtils.isNullOrEmpty(protocol)) return null;
         Uri uri = Uri.parse(url);
         String scheme = uri.getScheme();
         return url.replace(scheme+"://", protocol+"://");
     }
+
+
 
     public static List<String> asList(String value) {
         try {

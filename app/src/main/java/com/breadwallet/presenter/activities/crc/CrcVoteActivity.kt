@@ -23,6 +23,7 @@ import com.breadwallet.tools.util.Utils
 import com.breadwallet.vote.CrcEntity
 import com.breadwallet.vote.PayLoadEntity
 import com.breadwallet.wallet.wallets.ela.ElaDataSource
+import com.breadwallet.wallet.wallets.ela.ElaDataUtils
 import com.breadwallet.wallet.wallets.ela.WalletElaManager
 import com.breadwallet.wallet.wallets.ela.response.create.ElaOutput
 import com.elastos.jni.UriFactory
@@ -36,18 +37,12 @@ class CrcVoteActivity : AppCompatActivity() {
 
     private var mLoadingDialog: LoadingDialog? = null
 
+    private val uriFactory: UriFactory = UriFactory()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_crc_vote_layout)
 
-        mLoadingDialog = LoadingDialog(this, R.style.progressDialog)
-        initView()
-        initLinster()
-        initData()
-    }
-
-    private val uriFactory: UriFactory = UriFactory()
-    fun initView() {
         if (intent!=null) {
             if (!StringUtil.isNullOrEmpty(intent.action) && intent.action==Intent.ACTION_VIEW) {
                 uriFactory.parse(intent.data.toString())
@@ -55,6 +50,17 @@ class CrcVoteActivity : AppCompatActivity() {
                 uriFactory.parse(intent.getStringExtra("vote_scheme_uri"))
             }
         }
+
+        val result = ElaDataUtils.checkSchemeUrl(this, uriFactory.url)
+        if (!StringUtil.isNullOrEmpty(result) && result != "success") {
+            Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
+
+        mLoadingDialog = LoadingDialog(this, R.style.progressDialog)
+        initLinster()
+        initData()
     }
 
     fun initLinster() {

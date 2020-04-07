@@ -1060,7 +1060,7 @@
     <string name="votes_ela">Votes:(ELA)</string>
     <string name="pin_author_vote_msg">Please enter your PIN to authorize this vote</string>
     <string name="loading_hint">Loading....</string>
-    <string name="auto_vote_hint">Auto keep my last vote using my ELA balance</string>
+    <string name="auto_dpos_hint">Auto keep my last vote using my ELA balance</string>
     <string name="explore_vote_about_desc1">ELA Voting</string>
     <string name="explore_vote_about_desc2">ELA voting app will allow any ELA holder to vote up to 36 DPoS supernodes at a time.</string>
     <string name="vote_balance_not_insufficient">Your balance is less than 1 ELA.</string>
@@ -1245,4 +1245,15 @@
     <string name="crc_vote_dpos_nodes">%1$d nodes（DPoS）</string>
     <string name="crc_vote_crc_nodes">%1$d council members（CR）</string>
     <string name="crc_header_members_title">Details</string>
+    
+    <string name="crc_scheme_candidate_must_not_empty">Candidate can not be empty</string>
+    <string name="crc_scheme_candidate_parse_error">Candidate parsing error</string>
+    <string name="crc_scheme_votes_parse_error">Votes parsing error</string>
+    <string name="crc_scheme_votes_must_not_empty">Votes can not be empty</string>
+    <string name="crc_scheme_votes_duplicate_did">Duplicate did on candidate</string>
+    <string name="crc_scheme_votes_total_out">The sum of the votes cannot exceed 100</string>
+    <string name="crc_scheme_candidate_and_votes_inconsistent">The number of candidates is inconsistent with the number of votes</string>
+    <string name="crc_scheme_inactive_did">Inactive did in parameter</string>
+    <string name="crc_scheme_votes_must_positive">The votes parameter should be a positive number</string>
+
 </resources>

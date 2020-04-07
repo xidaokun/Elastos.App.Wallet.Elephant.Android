@@ -3,7 +3,7 @@ package com.elastos.jni;
 import android.net.Uri;
 
 import com.breadwallet.tools.util.StringUtil;
-import com.elastos.jni.utils.StringUtils;
+import com.elastos.jni.utils.SchemeStringUtils;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -90,7 +90,7 @@ public class UriFactory {
 
     public String getCandidatePublicKeys() {
         String candidate = getValue("CandidatePublicKeys".toLowerCase());
-        if (StringUtils.isNullOrEmpty(candidate)) return null;
+        if (SchemeStringUtils.isNullOrEmpty(candidate)) return null;
         return candidate.trim();
     }
 

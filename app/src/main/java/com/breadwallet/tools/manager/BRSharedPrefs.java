@@ -704,14 +704,26 @@ public class BRSharedPrefs {
         return prefs.getBoolean("disclaimshow", true);
     }
 
-    public static void setAutoVote(Context context, boolean is){
+    public static void setAutoCrc(Context context, boolean is){
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("autoCrc", is);
+        editor.apply();
+    }
+
+    public static boolean getAutoCrc(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        return prefs.getBoolean("autoCrc", false);
+    }
+
+    public static void setAutoDpos(Context context, boolean is){
         SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("autoVote", is);
         editor.apply();
     }
 
-    public static boolean getAutoVote(Context context){
+    public static boolean getAutoDpos(Context context){
         SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
         return prefs.getBoolean("autoVote", false);
     }

@@ -3,7 +3,6 @@ package org.chat.lib.presenter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -13,7 +12,7 @@ import com.breadwallet.R;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.elastos.jni.utils.StringUtils;
+import com.elastos.jni.utils.SchemeStringUtils;
 import com.google.gson.Gson;
 
 import org.chat.lib.adapter.ChatMessageAdapter;
@@ -90,7 +89,7 @@ public class FragmentChatMessage extends BaseFragment {
                     ChatMsgEntity entity = new ChatMsgEntity();
                     //TODO daokun.xi
                     String nickname = ChatDataSource.getInstance(getContext()).getNickname(lastBean.MessageFriendCode);
-                    entity.setName(StringUtils.isNullOrEmpty(nickname)?lastBean.MessageFriendCode:nickname);
+                    entity.setName(SchemeStringUtils.isNullOrEmpty(nickname)?lastBean.MessageFriendCode:nickname);
                     entity.setMessage(lastBean.MessageContent);
                     entity.setTimeStamp(lastBean.MessageTimestamp);
                     entity.setFriendCode(lastBean.MessageFriendCode);

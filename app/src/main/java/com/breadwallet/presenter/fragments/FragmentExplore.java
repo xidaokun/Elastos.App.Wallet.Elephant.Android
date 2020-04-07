@@ -2,7 +2,6 @@ package com.breadwallet.presenter.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -41,7 +40,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.FileHelper;
 import com.breadwallet.tools.util.StringUtil;
 import com.elastos.jni.Utility;
-import com.elastos.jni.utils.StringUtils;
+import com.elastos.jni.utils.SchemeStringUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -55,7 +54,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -668,13 +666,13 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Mi
             }
         }
 
-        if (StringUtils.isElaphantCapsule(url)) {
-            downloadCapsule(StringUtils.replaceElsProtocol(url, "http"));
-            downloadCapsule(StringUtils.replaceElsProtocol(url, "https"));
+        if (SchemeStringUtils.isElaphantCapsule(url)) {
+            downloadCapsule(SchemeStringUtils.replaceElsProtocol(url, "http"));
+            downloadCapsule(SchemeStringUtils.replaceElsProtocol(url, "https"));
             return;
         }
 
-        boolean isValid = StringUtils.isHttpCapsule(url);
+        boolean isValid = SchemeStringUtils.isHttpCapsule(url);
         if (!isValid) {
             if(isAdded())Toast.makeText(getContext(), getString(R.string.mini_app_invalid_url), Toast.LENGTH_SHORT).show();
             return;

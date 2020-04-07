@@ -14,7 +14,7 @@ import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
 import com.breadwallet.tools.adapter.AuthorAdapter;
 import com.breadwallet.tools.util.PinyinUtil;
 import com.breadwallet.tools.util.StringUtil;
-import com.elastos.jni.utils.StringUtils;
+import com.elastos.jni.utils.SchemeStringUtils;
 
 import java.text.Collator;
 import java.util.Collections;
@@ -75,7 +75,7 @@ public class DidAuthListActivity extends BaseSettingsActivity {
             Collator myCollator = Collator.getInstance(Locale.CHINESE);
 
             if(o1==null || o2==null) return 0;
-            if(StringUtils.isNullOrEmpty(o1.getAppName()) || StringUtils.isNullOrEmpty(o2.getAppName())) return 0;
+            if(SchemeStringUtils.isNullOrEmpty(o1.getAppName()) || SchemeStringUtils.isNullOrEmpty(o2.getAppName())) return 0;
 
             String appName1 = PinyinUtil.getPingYin(o1.getAppName());
             String appName2 = PinyinUtil.getPingYin(o2.getAppName());

@@ -9,13 +9,9 @@ import android.widget.ListView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
-import com.breadwallet.tools.sqlite.BRSQLiteHelper;
-import com.breadwallet.tools.util.StringUtil;
-import com.elastos.jni.utils.StringUtils;
 
 import org.chat.lib.adapter.ChatGroupSelectAdapter;
 import org.chat.lib.entity.ChatGroupSelectEntity;
-import org.chat.lib.source.ChatDataSource;
 import org.elastos.sdk.elephantwallet.contact.internal.ContactInterface;
 import org.node.CarrierPeerNode;
 

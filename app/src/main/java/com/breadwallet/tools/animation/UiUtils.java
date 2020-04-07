@@ -45,7 +45,9 @@ import com.breadwallet.presenter.activities.VoteActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.WalletNameActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
+import com.breadwallet.presenter.activities.crc.CrcDataSource;
 import com.breadwallet.presenter.activities.crc.CrcMembersActivity;
+import com.breadwallet.presenter.activities.crc.CrcProducerResult;
 import com.breadwallet.presenter.activities.crc.CrcVoteActivity;
 import com.breadwallet.presenter.activities.did.DidAuthorizeActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
@@ -79,7 +81,9 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
+import com.breadwallet.wallet.wallets.ela.ElaDataUtils;
 import com.elastos.jni.Constants;
+import com.elastos.jni.UriFactory;
 import com.google.gson.Gson;
 import com.platform.APIClient;
 import com.platform.sqlite.PlatformSqliteHelper;
@@ -257,7 +261,7 @@ public class UiUtils {
         context.startActivity(intent);
     }
 
-    public static void startCrcActivity(Context context, String url) {
+    public static void startCrcActivity(final Context context, String url) {
         Intent intent = new Intent(context, CrcVoteActivity.class);
         intent.putExtra("vote_scheme_uri", url);
         context.startActivity(intent);

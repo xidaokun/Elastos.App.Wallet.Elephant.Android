@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.bottomnavigation.LabelVisibilityMode;
 import android.support.design.internal.BottomNavigationItemView;
 import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.BottomNavigationView;
@@ -26,7 +25,6 @@ import com.breadwallet.presenter.fragments.FragmentChat;
 import com.breadwallet.presenter.fragments.FragmentExplore;
 import com.breadwallet.presenter.fragments.FragmentSetting;
 import com.breadwallet.presenter.fragments.FragmentWallet;
-import com.breadwallet.tools.animation.ElaphantDialogText;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -36,7 +34,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.vote.CityEntity;
 import com.elastos.jni.Utility;
-import com.elastos.jni.utils.StringUtils;
+import com.elastos.jni.utils.SchemeStringUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -44,7 +42,6 @@ import org.chat.lib.entity.MessageInfo;
 import org.chat.lib.presenter.FragmentChatMessage;
 import org.chat.lib.push.PushClient;
 import org.chat.lib.source.ChatDataSource;
-import org.chat.lib.utils.Constants;
 import org.elastos.sdk.wallet.BlockChainNode;
 import org.elastos.sdk.wallet.Did;
 import org.elastos.sdk.wallet.DidManager;
@@ -354,7 +351,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
     public void showAndDownloadCapsule(String url) {
         if(mExploreFragment!=null && !StringUtil.isNullOrEmpty(url)){
-            boolean isValid = StringUtils.isElaphantCapsule(url) || StringUtils.isHttpCapsule(url);
+            boolean isValid = SchemeStringUtils.isElaphantCapsule(url) || SchemeStringUtils.isHttpCapsule(url);
             if (!isValid) {
                 Toast.makeText(this, getString(R.string.mini_app_invalid_url), Toast.LENGTH_SHORT).show();
                 return;

@@ -25,8 +25,7 @@ import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.util.StringUtil;
-import com.elastos.jni.AuthorizeManager;
-import com.elastos.jni.utils.StringUtils;
+import com.elastos.jni.utils.SchemeStringUtils;
 
 public class ExploreWebActivity extends BRActivity {
     private final String TAG = ExploreWebActivity.class.getName();
@@ -241,7 +240,7 @@ public class ExploreWebActivity extends BRActivity {
         } else if(url.contains("elaphant") && url.contains("elacrcvote")) {
             UiUtils.startCrcActivity(ExploreWebActivity.this, url);
 
-        }else if(mHomeActivity!=null && StringUtils.isElaphantCapsule(url)) {
+        }else if(mHomeActivity!=null && SchemeStringUtils.isElaphantCapsule(url)) {
             mHomeActivity.showAndDownloadCapsule(url);
             finish();
         } else {

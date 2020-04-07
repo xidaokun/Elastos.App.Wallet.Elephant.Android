@@ -459,12 +459,12 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public CryptoTransaction createTransaction(BigDecimal amount, String address, String meno) {
         Log.i(TAG, "createTransaction");
-        List<BRElaTransaction> brElaTransactions = null;
-        boolean autoVote = BRSharedPrefs.getAutoVote(mContext);
+        List<BRElaTransaction> brElaTransactions;
+        boolean autoVote = BRSharedPrefs.getAutoDpos(mContext);
         String candidatesStr = BRSharedPrefs.getDposCd(mContext);
         Log.d("posvote", "autoVote:"+autoVote);
         if(autoVote && !StringUtil.isNullOrEmpty(candidatesStr)){
-            List<String> candidates = null;
+            List<String> candidates;
             if(candidatesStr.contains("[")){
                 candidates = new Gson().fromJson(candidatesStr, new TypeToken<List<String>>(){}.getType());
             } else {

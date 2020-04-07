@@ -26,7 +26,7 @@ public class FlowLayout extends ViewGroup {
     private int mUsedWidth = 0;
     private final List<Line> mLines = new ArrayList<>();
     private int isAlignByCenter = 1;
-    private int mMaxLinesCount = Integer.MAX_VALUE;
+    private int mMaxLinesCount = 2;
     boolean mNeedLayout = true;
 
     public FlowLayout(Context context) {

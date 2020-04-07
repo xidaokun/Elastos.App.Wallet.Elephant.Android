@@ -35,6 +35,8 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.WalletActivity;
+import com.breadwallet.presenter.activities.crc.CrcDataSource;
+import com.breadwallet.presenter.activities.crc.FlowLayout;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRKeyboard;
@@ -57,6 +59,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.vote.CrcEntity;
 import com.breadwallet.vote.ProducerEntity;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -71,6 +74,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static com.breadwallet.wallet.util.CryptoUriParser.parseRequest;
 import static com.platform.HTTPServer.URL_SUPPORT;
@@ -132,9 +136,16 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     private SendViewModel mViewModel;
     private ViewGroup mBackgroundLayout;
     private ViewGroup mSignalLayout;
-    private CheckBox mAutoVoteCb;
-    private BaseTextView mNodeLvTitle;
-    private BaseTextView mNodePasteTv;
+
+    private CheckBox mAutoDposCb;
+    private BaseTextView mDposLvTitle;
+    private BaseTextView mDposPasteTv;
+
+    private CheckBox mAutoCrcCb;
+    private TextView mViewAllTv;
+    private View mViewAllLayout;
+    private FlowLayout mFlowLayout;
+    private TextView mCrcTitleTv;
 
     public static boolean mFromElapay = false;
     public static boolean mIsSend = false;
@@ -168,10 +179,17 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mFeeLayout = rootView.findViewById(R.id.fee_buttons_layout);
         mFeeDescription = rootView.findViewById(R.id.fee_description);
         mEconomyFeeWarningText = rootView.findViewById(R.id.warning_text);
-        mVoteNodeLv = rootView.findViewById(R.id.send_vote_node_lv);
-        mAutoVoteCb = rootView.findViewById(R.id.auto_vote_checkbox);
-        mNodeLvTitle = rootView.findViewById(R.id.send_list_title);
-        mNodePasteTv = rootView.findViewById(R.id.send_vote_paste_tv);
+
+        mDposNodeLv = rootView.findViewById(R.id.auto_dpos_node_lv);
+        mAutoDposCb = rootView.findViewById(R.id.auto_dpos_checkbox);
+        mDposLvTitle = rootView.findViewById(R.id.send_list_title);
+        mDposPasteTv = rootView.findViewById(R.id.auto_dpos_paste_tv);
+
+        mAutoCrcCb = rootView.findViewById(R.id.auto_crc_checkbox);
+        mFlowLayout = rootView.findViewById(R.id.numbers_flow_layout);
+        mViewAllTv = rootView.findViewById(R.id.view_all_members);
+        mViewAllLayout = rootView.findViewById(R.id.view_all_layout);
+        mCrcTitleTv = rootView.findViewById(R.id.numbers_detail_title);
 
         mRegularFeeButton = rootView.findViewById(R.id.left_button);
         mEconomyFeeButton = rootView.findViewById(R.id.right_button);
@@ -187,12 +205,6 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mCurrencyCode.setTextColor(getContext().getColor(R.color.light_gray));
         mCurrencyCode.requestLayout();
         mSignalLayout.setOnTouchListener(new SlideDetector(getContext(), mSignalLayout));
-
-        mSignalLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
-        });
 
         showFeeSelectionButtons(mIsFeeButtonsShown);
 
@@ -229,28 +241,42 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         return rootView;
     }
 
-    private void showVoteView(){
-        mVoteNodeLv.setVisibility(View.VISIBLE);
-        mNodeLvTitle.setVisibility(View.VISIBLE);
-        mNodePasteTv.setVisibility(View.VISIBLE);
+    private void showCrcView() {
+        mCrcTitleTv.setVisibility(View.VISIBLE);
+        mViewAllTv.setVisibility(View.VISIBLE);
+        mViewAllLayout.setVisibility(View.VISIBLE);
+        mFlowLayout.setVisibility(View.VISIBLE);
     }
 
-    private void hideVoteView(){
-        mVoteNodeLv.setVisibility(View.GONE);
-        mNodeLvTitle.setVisibility(View.GONE);
-        mNodePasteTv.setVisibility(View.GONE);
+    private void hideCrcView() {
+        mCrcTitleTv.setVisibility(View.GONE);
+        mViewAllTv.setVisibility(View.GONE);
+        mViewAllLayout.setVisibility(View.GONE);
+        mFlowLayout.setVisibility(View.GONE);
     }
 
-    private ListView mVoteNodeLv;
-    private void initVoteAdapter(){
+    private void showDposView(){
+        mDposNodeLv.setVisibility(View.VISIBLE);
+        mDposLvTitle.setVisibility(View.VISIBLE);
+        mDposPasteTv.setVisibility(View.VISIBLE);
+    }
+
+    private void hideDposView(){
+        mDposNodeLv.setVisibility(View.GONE);
+        mDposLvTitle.setVisibility(View.GONE);
+        mDposPasteTv.setVisibility(View.GONE);
+    }
+
+    private ListView mDposNodeLv;
+    private void initDposAdapter(){
         BigDecimal balance = BRSharedPrefs.getCachedBalance(getContext(), "ELA");
         String candidatesStr = BRSharedPrefs.getDposCd(getContext());
         String iso = BRSharedPrefs.getCurrentWalletIso(getContext());
         if(StringUtil.isNullOrEmpty(iso) || !iso.equalsIgnoreCase("ELA") ||
                 balance.longValue()<1 || StringUtil.isNullOrEmpty(candidatesStr)){
-            BRSharedPrefs.setAutoVote(getContext(), false);
-            mAutoVoteCb.setVisibility(View.GONE);
-            hideVoteView();
+            BRSharedPrefs.setAutoDpos(getContext(), false);
+            mAutoDposCb.setVisibility(View.GONE);
+            hideDposView();
             return;
         }
 
@@ -264,22 +290,59 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         if(tmp!=null && tmp.size()>0) {
             mProducers.clear();
             mProducers.addAll(tmp);
-            mNodeLvTitle.setText(String.format(getString(R.string.node_list_title), tmp.size()));
+            mDposLvTitle.setText(String.format(getString(R.string.node_list_title), tmp.size()));
             mAdapter = new VoteNodeAdapter(getContext(), mProducers);
-            mVoteNodeLv.setAdapter(mAdapter);
+            mDposNodeLv.setAdapter(mAdapter);
         }
     }
 
+    private void initCrcAdapter() {
+        List<String> crcDids = Utils.spliteByComma(BRSharedPrefs.getCrcCd(getContext()));
+        if(crcDids!=null && crcDids.size()>0) {
+            List<CrcEntity> crcEntities = CrcDataSource.getInstance(getContext()).queryCrcsByIds(crcDids);
+            if(null!=crcEntities && crcEntities.size()>0) {
+                CrcDataSource.getInstance(getContext()).updateCrcsArea(crcEntities);
+                mFlowLayout.setAdapter(crcEntities, R.layout.crc_member_layout, new FlowLayout.ItemView<CrcEntity>() {
+                    @Override
+                    protected void getCover(CrcEntity item, FlowLayout.ViewHolder holder, View inflate, int position) {
+                        String languageCode = Locale.getDefault().getLanguage();
+                        if (!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")) {
+                            holder.setText(R.id.tv_label_name, item.Nickname + " | " + item.AreaZh);
+                        } else {
+                            holder.setText(R.id.tv_label_name, item.Nickname + " | " + item.AreaEn);
+                        }
+                    }
+                });
+
+                return;
+            }
+        }
+        mAutoCrcCb.setVisibility(View.GONE);
+        hideCrcView();
+    }
+
     private void setListeners() {
-        mAutoVoteCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        mAutoCrcCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                BRSharedPrefs.setAutoCrc(getContext(), isChecked);
+                if(isChecked) {
+                    showCrcView();
+                } else {
+                    hideCrcView();
+                }
+            }
+        });
+
+        mAutoDposCb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Log.i("posvote", "isChecked:"+isChecked);
-                BRSharedPrefs.setAutoVote(getContext(), isChecked);
+                BRSharedPrefs.setAutoDpos(getContext(), isChecked);
                 if(isChecked) {
-                    showVoteView();
+                    showDposView();
                 } else {
-                    hideVoteView();
+                    hideDposView();
                 }
             }
         });
@@ -712,30 +775,38 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             }
         });
 
-        mNodePasteTv.setOnClickListener(new View.OnClickListener() {
+        mDposPasteTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 copyText();
             }
         });
 
+        mViewAllTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String candidates = BRSharedPrefs.getCrcCd(getContext());
+                String votes = BRSharedPrefs.getCrcVotes(getContext());
+                UiUtils.startCrcMembersActivity(getContext(), candidates, votes);
+            }
+        });
     }
 
     private void hideVoteCheckView(){
         try {
             if(StringUtil.isNullOrEmpty(mAmountEdit.getText().toString())){
-                BRSharedPrefs.setAutoVote(getContext(), false);
-                mAutoVoteCb.setVisibility(View.GONE);
-                hideVoteView();
+                BRSharedPrefs.setAutoDpos(getContext(), false);
+                mAutoDposCb.setVisibility(View.GONE);
+                hideDposView();
                 return;
             }
 
             String iso = BRSharedPrefs.getCurrentWalletIso(getContext());
             if(StringUtil.isNullOrEmpty(iso) ||
                     !iso.equalsIgnoreCase("ELA")){
-                BRSharedPrefs.setAutoVote(getContext(), false);
-                mAutoVoteCb.setVisibility(View.GONE);
-                hideVoteView();
+                BRSharedPrefs.setAutoDpos(getContext(), false);
+                mAutoDposCb.setVisibility(View.GONE);
+                hideDposView();
                 return;
             }
 
@@ -747,12 +818,12 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             if(balance.compareTo(new BigDecimal(100000000))>0 &&
                     totalAmount.compareTo(balance)<0 &&
                     !StringUtil.isNullOrEmpty(candidatesStr)){
-                mAutoVoteCb.setVisibility(View.VISIBLE);
-                hideVoteView();
+                mAutoDposCb.setVisibility(View.VISIBLE);
+                hideDposView();
             } else {
-                BRSharedPrefs.setAutoVote(getContext(), false);
-                mAutoVoteCb.setVisibility(View.GONE);
-                hideVoteView();
+                BRSharedPrefs.setAutoDpos(getContext(), false);
+                mAutoDposCb.setVisibility(View.GONE);
+                hideDposView();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -862,15 +933,25 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mPaste.setClickable(!mFromElapay);
         mCurrencyCodeButton.setClickable(!mFromElapay);
 
-        boolean isAuto = BRSharedPrefs.getAutoVote(getContext());
-        mAutoVoteCb.setChecked(isAuto);
-        boolean isChecked = mAutoVoteCb.isChecked();
-        if(isChecked) {
-            showVoteView();
+        boolean isDposAuto = BRSharedPrefs.getAutoDpos(getContext());
+        mAutoDposCb.setChecked(isDposAuto);
+
+        boolean isCrcAuto = BRSharedPrefs.getAutoCrc(getContext());
+        mAutoCrcCb.setChecked(isCrcAuto);
+
+        if(isDposAuto) {
+            showDposView();
         } else {
-            hideVoteView();
+            hideDposView();
         }
-        initVoteAdapter();
+        initDposAdapter();
+
+        if(isCrcAuto) {
+            showCrcView();
+        } else {
+            hideCrcView();
+        }
+        initCrcAdapter();
     }
 
     @Override

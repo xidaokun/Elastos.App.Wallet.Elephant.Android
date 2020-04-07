@@ -6,19 +6,22 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.breadwallet.R;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.BRDataSourceInterface;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.vote.CityEntity;
 import com.breadwallet.vote.CrcEntity;
 import com.breadwallet.vote.CrcsEntity;
-import com.breadwallet.wallet.wallets.ela.ElaDataSource;
 import com.breadwallet.wallet.wallets.ela.ElaDataUtils;
+import com.elastos.jni.UriFactory;
 import com.google.gson.Gson;
 import com.platform.APIClient;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,34 +83,6 @@ public class CrcDataSource implements BRDataSourceInterface {
         }
     }
 
-
-    private final String[] crcMemberColumn = {
-            BRSQLiteHelper.CRC_VOTE_DID,
-            BRSQLiteHelper.CRC_VOTE_RANK,
-            BRSQLiteHelper.CRC_VOTE_NICKNAME,
-            BRSQLiteHelper.CRC_VOTE_LOCATION,
-            BRSQLiteHelper.CRC_VOTE_VOTES,
-            BRSQLiteHelper.CRC_VOTE_VALUE,
-    };
-
-    private CrcEntity cursorToMemberEntity(Cursor cursor) {
-        return new CrcEntity(cursor.getString(0),
-                cursor.getInt(1),
-                cursor.getString(2),
-                cursor.getInt(3),
-                cursor.getString(4),
-                cursor.getString(5));
-    }
-
-    private void cursorToMemberEntity(Cursor cursor, CrcEntity entity) {
-        entity.Did = cursor.getString(0);
-        entity.Rank = cursor.getInt(1);
-        entity.Nickname = cursor.getString(2);
-        entity.Location = cursor.getInt(3);
-        entity.Votes = cursor.getString(4);
-        entity.Value = cursor.getString(5);
-    }
-
     public synchronized void cacheCrcs(List<CrcEntity> crcEntities){
         if(crcEntities == null) return;
         try {
@@ -148,13 +123,13 @@ public class CrcDataSource implements BRDataSourceInterface {
             database = openDatabase();
 
             for (int i=0; i<ids.size(); i++) {
-                Cursor cursor = database.query(BRSQLiteHelper.CRC_VOTE_TABLE_NAME, crcMemberColumn, BRSQLiteHelper.CRC_VOTE_DID + " = ? ", new String[]{ids.get(i)}, null, null, null);
+                Cursor cursor = database.query(BRSQLiteHelper.CRC_VOTE_TABLE_NAME, ElaDataUtils.crcMemberColumn, BRSQLiteHelper.CRC_VOTE_DID + " = ? ", new String[]{ids.get(i)}, null, null, null);
 
                 cursor.moveToFirst();
                 while (!cursor.isAfterLast()) {
                     CrcEntity entity = new CrcEntity();
                     if(null!=votes) entity.Vote = votes.get(i);
-                    cursorToMemberEntity(cursor, entity);
+                    ElaDataUtils.cursorToMemberEntity(cursor, entity);
                     result.add(entity);
 
                     cursor.moveToNext();
@@ -220,7 +195,7 @@ public class CrcDataSource implements BRDataSourceInterface {
         }
     }
 
-    public List<String> queryCrcProducer(String txid){
+    public List<String> queryCrcProducerByTx(String txid){
         if(StringUtil.isNullOrEmpty(txid)) return null;
         List<String> entities = new ArrayList<>();
         Cursor cursor = null;
@@ -243,6 +218,31 @@ public class CrcDataSource implements BRDataSourceInterface {
         }
 
         return entities;
+    }
+
+    public List<CrcProducerResult.CrcProducer> queryCrcProducerByDid(List<String> dids) {
+        if(dids == null) return null;
+
+        List<CrcProducerResult.CrcProducer> result = new ArrayList<>();
+        result.clear();
+        try {
+            database = openDatabase();
+
+            for (int i=0; i<dids.size(); i++) {
+                Cursor cursor = database.query(BRSQLiteHelper.CRC_PRODUCER_TABLE_NAME, ElaDataUtils.crcProducerColumn, BRSQLiteHelper.CRC_PRODUCER_DID + " = ? ", new String[]{dids.get(i)}, null, null, null);
+
+                cursor.moveToFirst();
+                while (!cursor.isAfterLast()) {
+                    CrcProducerResult.CrcProducer producerEntity = ElaDataUtils.cursorToCrcProducer(cursor);
+                    result.add(producerEntity);
+                    cursor.moveToNext();
+                }
+            }
+        } finally {
+            closeDatabase();
+        }
+
+        return result;
     }
 
     static class ProducerTxid {

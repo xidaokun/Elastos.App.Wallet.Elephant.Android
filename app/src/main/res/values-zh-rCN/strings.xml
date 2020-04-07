@@ -1055,7 +1055,7 @@
     <string name="pin_author_vote_msg">请输入PIN码授权投票</string>
 
     <string name="loading_hint">请稍候....</string>
-    <string name="auto_vote_hint">自动使用ELA余额投票</string>
+    <string name="auto_dpos_hint">自动使用ELA余额投票</string>
     <string name="explore_vote_about_desc1">ELA投票</string>
     <string name="explore_vote_about_desc2">投票小程序允许你每次最多投给36个DPoS超级节点。</string>
     <string name="vote_balance_not_insufficient">ELA余额少于1</string>
@@ -1237,4 +1237,14 @@
     <string name="crc_vote_dpos_nodes">%1$d 个节点（DPoS）</string>
     <string name="crc_vote_crc_nodes">%1$d 理事会成员（CR）</string>
     <string name="crc_header_members_title">详情</string>
+
+    <string name="crc_scheme_candidate_must_not_empty">Candidate参数不能为空</string>
+    <string name="crc_scheme_candidate_parse_error">Candidate无法解析</string>
+    <string name="crc_scheme_votes_parse_error">Votes无法解析</string>
+    <string name="crc_scheme_votes_must_not_empty">Votes参数不能为空</string>
+    <string name="crc_scheme_votes_duplicate_did">Candidate参数存在重复DID</string>
+    <string name="crc_scheme_votes_total_out">Votes所有参数值的和不能超过100</string>
+    <string name="crc_scheme_candidate_and_votes_inconsistent">Candidate参数的个数和Votes参数的个数不一致</string>
+    <string name="crc_scheme_inactive_did">参数里有未激活的DID</string>
+    <string name="crc_scheme_votes_must_positive">Votes参数应为正数</string>
 </resources>

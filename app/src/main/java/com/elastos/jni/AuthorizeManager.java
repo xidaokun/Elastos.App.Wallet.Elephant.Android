@@ -8,7 +8,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 
 import com.elastos.jni.utils.HexUtils;
-import com.elastos.jni.utils.StringUtils;
+import com.elastos.jni.utils.SchemeStringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class AuthorizeManager {
 
 
     public static String sign(Context context, String pk, String source){
-        if(StringUtils.isNullOrEmpty(source)) return null;
+        if(SchemeStringUtils.isNullOrEmpty(source)) return null;
 
         byte[] signed = new byte[0];
         try {
@@ -32,8 +32,8 @@ public class AuthorizeManager {
 
     public static boolean verify(Context context, String did, String PK, String source, String signed){
 
-        if(StringUtils.isNullOrEmpty(did) || StringUtils.isNullOrEmpty(PK)
-                || StringUtils.isNullOrEmpty(signed) || StringUtils.isNullOrEmpty(source)) return false;
+        if(SchemeStringUtils.isNullOrEmpty(did) || SchemeStringUtils.isNullOrEmpty(PK)
+                || SchemeStringUtils.isNullOrEmpty(signed) || SchemeStringUtils.isNullOrEmpty(source)) return false;
 
         String tDid = Utility.getInstance(context).getDid(PK);
         boolean isValid = Utility.getInstance(context).verify(PK, source.getBytes(), HexUtils.hexToByteArray(signed));
@@ -47,7 +47,7 @@ public class AuthorizeManager {
     }
 
     public static void startWalletActivity(Context context, String extra, String fromActivity, String toActivity){
-        if(StringUtils.isNullOrEmpty(extra) || StringUtils.isNullOrEmpty(toActivity)) return;
+        if(SchemeStringUtils.isNullOrEmpty(extra) || SchemeStringUtils.isNullOrEmpty(toActivity)) return;
         Intent intent;
         if (isAppExist(context, "com.elastos.wallet")) {
             intent = new Intent();
@@ -55,7 +55,7 @@ public class AuthorizeManager {
                     toActivity);
             intent.putExtra(Constants.INTENT_EXTRA_KEY.META_EXTRA, extra);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            if(!StringUtils.isNullOrEmpty(fromActivity)){
+            if(!SchemeStringUtils.isNullOrEmpty(fromActivity)){
                 intent.putExtra(Constants.INTENT_EXTRA_KEY.PACKAGE_NAME, context.getPackageName());
                 intent.putExtra(Constants.INTENT_EXTRA_KEY.ACTIVITY_CLASS, fromActivity);
             }

@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
-import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.SwitchButton;
 import com.breadwallet.tools.animation.ElaphantDialogText;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -122,11 +121,6 @@ public class MyQrActivity extends BRActivity {
                     showCarrierQr();
                 }
                 mElepahntQr = !mElepahntQr;
-//                String did = BRSharedPrefs.getMyDid(MyQrActivity.this);
-//                String carrier = BRSharedPrefs.getCarrierId(MyQrActivity.this);
-//                String nickname = BRSharedPrefs.getNickname(MyQrActivity.this);
-
-//                PushServer.sendIosNotice(did,"KVQXb5oQ7VLviqkdSbyJYPyVcsFDUKWaJGHcVeqys9rZSZjAZrGr", nickname, carrier);
             }
         });
 

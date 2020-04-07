@@ -4,10 +4,14 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.breadwallet.R;
+import com.breadwallet.presenter.activities.crc.CrcDataSource;
 import com.breadwallet.presenter.activities.crc.CrcProducerResult;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.util.StringUtil;
+import com.breadwallet.tools.util.Utils;
+import com.breadwallet.vote.CrcEntity;
 import com.breadwallet.vote.ProducerEntity;
 import com.breadwallet.wallet.wallets.ela.data.HistoryTransactionEntity;
 import com.breadwallet.wallet.wallets.ela.data.DposProducer;
@@ -15,6 +19,7 @@ import com.breadwallet.wallet.wallets.ela.response.create.ElaOutput;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaTransaction;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaUTXOInput;
 import com.breadwallet.wallet.wallets.ela.response.history.History;
+import com.elastos.jni.UriFactory;
 import com.elastos.jni.Utility;
 import com.elastos.jni.utils.HexUtils;
 
@@ -165,6 +170,34 @@ public class ElaDataUtils {
                 cursor.getString(3),
                 cursor.getString(4),
                 cursor.getString(5));
+    }
+
+
+    private CrcEntity cursorToMemberEntity(Cursor cursor) {
+        return new CrcEntity(cursor.getString(0),
+                cursor.getInt(1),
+                cursor.getString(2),
+                cursor.getInt(3),
+                cursor.getString(4),
+                cursor.getString(5));
+    }
+
+    public static final String[] crcMemberColumn = {
+            BRSQLiteHelper.CRC_VOTE_DID,
+            BRSQLiteHelper.CRC_VOTE_RANK,
+            BRSQLiteHelper.CRC_VOTE_NICKNAME,
+            BRSQLiteHelper.CRC_VOTE_LOCATION,
+            BRSQLiteHelper.CRC_VOTE_VOTES,
+            BRSQLiteHelper.CRC_VOTE_VALUE,
+    };
+
+    public static void cursorToMemberEntity(Cursor cursor, CrcEntity entity) {
+        entity.Did = cursor.getString(0);
+        entity.Rank = cursor.getInt(1);
+        entity.Nickname = cursor.getString(2);
+        entity.Location = cursor.getInt(3);
+        entity.Votes = cursor.getString(4);
+        entity.Value = cursor.getString(5);
     }
 
     public static HistoryTransactionEntity setHistoryEntity(History history, int pageNumber) {
@@ -328,4 +361,78 @@ public class ElaDataUtils {
 
         return false;
     }
+
+    public static String checkSchemeUrl(Context context, String url) {
+        UriFactory uriFactory = new UriFactory(url);
+        String candidatesStr = uriFactory.getCandidates();
+        String votesStr = uriFactory.getVotes();
+
+        List<String> candidates = Utils.spliteByComma(candidatesStr);
+        List<String> votes = Utils.spliteByComma(votesStr);
+
+        if(StringUtil.isNullOrEmpty(candidatesStr)) {
+            return context.getString(R.string.crc_scheme_candidate_must_not_empty);
+        }
+
+        if(candidates==null) {
+            return context.getString(R.string.crc_scheme_candidate_parse_error);
+        }
+
+        if(StringUtil.isNullOrEmpty(votesStr)) {
+            return context.getString(R.string.crc_scheme_votes_must_not_empty);
+        }
+
+        if(votes==null) {
+            return context.getString(R.string.crc_scheme_votes_parse_error);
+        }
+
+        for(int i=0; i<candidates.size(); i++) {
+            int count = 0;
+            for(String candidate : candidates) {
+                if(candidate.equals(candidates.get(i))){
+                    ++count;
+                    if(count >= 2) {
+                        return context.getString(R.string.crc_scheme_votes_duplicate_did);
+                    }
+                }
+            }
+        }
+
+        BigDecimal total = new BigDecimal(0);
+        for(String vote : votes) {
+            total = total.add(new BigDecimal(vote));
+        }
+        if(total.doubleValue() > 100) {
+            return context.getString(R.string.crc_scheme_votes_total_out);
+        }
+
+        if(candidates.size() != votes.size()) {
+            return context.getString(R.string.crc_scheme_candidate_and_votes_inconsistent);
+        }
+
+        List<CrcProducerResult.CrcProducer> crcProducers = CrcDataSource.getInstance(context)
+                .queryCrcProducerByDid(candidates);
+        if(crcProducers.size() < candidates.size()) {
+            return context.getString(R.string.crc_scheme_inactive_did);
+        }
+        for(CrcProducerResult.CrcProducer crcProducer : crcProducers) {
+            if(!StringUtil.isNullOrEmpty(crcProducer.State) &&
+                    !crcProducer.State.equals("Active")) {
+                return context.getString(R.string.crc_scheme_inactive_did);
+            }
+        }
+
+        for(String vote : votes) {
+            try {
+                if(new BigDecimal(vote).doubleValue() <= 0) {
+                    return context.getString(R.string.crc_scheme_votes_must_positive);
+                }
+            } catch (Exception e) {
+                return context.getString(R.string.crc_scheme_votes_must_positive);
+            }
+        }
+
+        return "success";
+    }
+
 }

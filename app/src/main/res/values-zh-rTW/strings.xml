@@ -1056,7 +1056,7 @@
     <string name="pin_author_vote_msg">請輸入PIN碼授權投票</string>
 
     <string name="loading_hint">請稍候....</string>
-    <string name="auto_vote_hint">自動使用ELA餘額投票</string>
+    <string name="auto_dpos_hint">自動使用ELA餘額投票</string>
     <string name="explore_vote_about_desc1">ELA投票</string>
     <string name="explore_vote_about_desc2">投票小程序允許你每次最多投給36個DPoS超級節點。</string>
     <string name="vote_balance_not_insufficient">ELA余額少于1</string>

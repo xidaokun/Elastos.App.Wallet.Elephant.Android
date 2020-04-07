@@ -224,7 +224,7 @@ public class FragmentTxDetails extends DialogFragment {
         mViewAllTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<String> crcDids = CrcDataSource.getInstance(getContext()).queryCrcProducer(mTransaction.txReversed);
+                List<String> crcDids = CrcDataSource.getInstance(getContext()).queryCrcProducerByTx(mTransaction.txReversed);
                 UiUtils.startCrcMembersActivity(getContext(), crcDids.toString(), null);
             }
         });
@@ -271,7 +271,7 @@ public class FragmentTxDetails extends DialogFragment {
 
     private void initCrcAdapter() {
         if(mTransaction !=null) {
-            List<String> crcDids = CrcDataSource.getInstance(getContext()).queryCrcProducer(mTransaction.txReversed);
+            List<String> crcDids = CrcDataSource.getInstance(getContext()).queryCrcProducerByTx(mTransaction.txReversed);
             if(crcDids!=null && crcDids.size()>0) {
                 mCrcLayout.setVisibility(View.VISIBLE);
                 List<CrcEntity> crcEntities = CrcDataSource.getInstance(getContext()).queryCrcsByIds(crcDids);

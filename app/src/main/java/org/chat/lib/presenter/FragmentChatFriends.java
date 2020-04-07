@@ -21,7 +21,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
-import com.elastos.jni.utils.StringUtils;
+import com.elastos.jni.utils.SchemeStringUtils;
 
 import org.chat.lib.adapter.FriendsAdapter;
 import org.chat.lib.entity.ContactEntity;
@@ -288,7 +288,7 @@ public class FragmentChatFriends extends BaseFragment {
                                 info.status==ContactInterface.Status.Invalid) continue;
                         ContactEntity contactEntity = new ContactEntity();
                         String nickname = getFriendNickname(friendsNickname, info.humanCode, info.boundCarrierArray);
-                        contactEntity.setContact(StringUtils.isNullOrEmpty(nickname)?"nickname":nickname);
+                        contactEntity.setContact(SchemeStringUtils.isNullOrEmpty(nickname)?"nickname":nickname);
                         contactEntity.setTokenAddress(info.elaAddress);
                         contactEntity.setFriendCode(info.humanCode);
                         contactEntity.setOnline(info.status==ContactInterface.Status.Online);

@@ -40,12 +40,16 @@ class CrcMembersActivity : AppCompatActivity() {
 
             copyMembers(sb.toString())
         }
+
+        findViewById<View>(R.id.back_button).setOnClickListener {
+            finish()
+        }
     }
 
     private val data = ArrayList<Map<String, Any>>()
     fun initData() {
         val crcNodes = Utils.spliteByComma(intent.getStringExtra("candidates")?: return)
-        val votes = Utils.spliteByComma(intent.getStringExtra("votes")?: return)
+        val votes = Utils.spliteByComma(intent.getStringExtra("votes"))
 
         val crcRankEntities = CrcDataSource.getInstance(this).queryCrcsByIds(crcNodes, votes)
         CrcDataSource.getInstance(this).updateCrcsArea(crcRankEntities)
@@ -57,15 +61,18 @@ class CrcMembersActivity : AppCompatActivity() {
 
             val languageCode = Locale.getDefault().language
             val balance = BRSharedPrefs.getCachedBalance(this, "ELA").divide(BigDecimal(100))
+            var sb = StringBuilder().append(crcEntity.Nickname).append(" | ")
             if (!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")) {
-                item["content"] = crcEntity.Nickname + " | " + crcEntity.AreaZh + " | " +
-                        BigDecimal(crcEntity.Vote).multiply(balance).setScale(4, BRConstants.ROUNDING_MODE).toString() + " | " +
-                        crcEntity.Vote
+                sb.append(crcEntity.AreaZh)
             } else {
-                item["content"] = crcEntity.Nickname + " | " + crcEntity.AreaEn + " | " +
-                        BigDecimal(crcEntity.Vote).multiply(balance).setScale(4, BRConstants.ROUNDING_MODE).toString() + " | " +
-                        crcEntity.Vote
+                sb.append(crcEntity.AreaEn)
             }
+            if(votes!=null)
+                sb.append(" | ")
+                    .append(BigDecimal(crcEntity.Vote).multiply(balance).setScale(4, BRConstants.ROUNDING_MODE).toString())
+                    .append(" | ")
+                    .append(crcEntity.Vote)
+            item["content"] = sb.toString()
 
             data.add(item)
         }
