@@ -388,28 +388,29 @@
             android:hint="@string/Send.descriptionLabel"
             android:maxLength="256" />
 
+        <View
+            android:id="@+id/separator4"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/extra_light_gray"/>
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/auto_crc_checkbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="13dp"
+            android:layout_marginRight="10dp"
+            android:paddingLeft="8dp"
+            android:button="@drawable/author_check_selector"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:text="@string/crc_auto_vote_hint" />
+
         <LinearLayout
             android:id="@+id/auto_crc_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <View
-                android:id="@+id/separator4"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/extra_light_gray"/>
-
-            <android.support.v7.widget.AppCompatCheckBox
-                android:id="@+id/auto_crc_checkbox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:layout_marginLeft="13dp"
-                android:layout_marginRight="10dp"
-                android:paddingLeft="8dp"
-                android:button="@drawable/author_check_selector"
-                app:layout_constraintLeft_toLeftOf="parent"
-                android:text="@string/auto_dpos_hint" />
 
             <TextView
                 android:id="@+id/numbers_detail_title"
@@ -448,30 +449,32 @@
                     android:textColor="#FF3365"
                     android:textSize="11sp"/>
             </RelativeLayout>
-        </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/auto_dpos_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
             <View
                 android:id="@+id/separator5"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/extra_light_gray"/>
 
-            <android.support.v7.widget.AppCompatCheckBox
-                android:id="@+id/auto_dpos_checkbox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:layout_marginLeft="13dp"
-                android:layout_marginRight="10dp"
-                android:paddingLeft="8dp"
-                android:button="@drawable/author_check_selector"
-                app:layout_constraintLeft_toLeftOf="parent"
-                android:text="@string/auto_dpos_hint" />
+        </LinearLayout>
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/auto_dpos_checkbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="13dp"
+            android:layout_marginRight="10dp"
+            android:paddingLeft="8dp"
+            android:button="@drawable/author_check_selector"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:text="@string/auto_dpos_hint" />
+
+        <LinearLayout
+            android:id="@+id/auto_dpos_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
@@ -516,6 +519,12 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/vote_nodes_list_title"
                 app:maxHeight="100dp" />
+
+            <View
+                android:id="@+id/separator6"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/extra_light_gray"/>
         </LinearLayout>
 
         <com.breadwallet.presenter.customviews.BRButton

@@ -143,7 +143,6 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
     private CheckBox mAutoCrcCb;
     private TextView mViewAllTv;
-    private View mViewAllLayout;
     private FlowLayout mFlowLayout;
     private TextView mCrcTitleTv;
 
@@ -184,12 +183,13 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mAutoDposCb = rootView.findViewById(R.id.auto_dpos_checkbox);
         mDposLvTitle = rootView.findViewById(R.id.send_list_title);
         mDposPasteTv = rootView.findViewById(R.id.auto_dpos_paste_tv);
+        mDposLayout = rootView.findViewById(R.id.auto_dpos_layout);
 
         mAutoCrcCb = rootView.findViewById(R.id.auto_crc_checkbox);
         mFlowLayout = rootView.findViewById(R.id.numbers_flow_layout);
         mViewAllTv = rootView.findViewById(R.id.view_all_members);
-        mViewAllLayout = rootView.findViewById(R.id.view_all_layout);
         mCrcTitleTv = rootView.findViewById(R.id.numbers_detail_title);
+        mCrcLayout = rootView.findViewById(R.id.auto_crc_layout);
 
         mRegularFeeButton = rootView.findViewById(R.id.left_button);
         mEconomyFeeButton = rootView.findViewById(R.id.right_button);
@@ -241,30 +241,24 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         return rootView;
     }
 
+    private View mCrcLayout;
     private void showCrcView() {
-        mCrcTitleTv.setVisibility(View.VISIBLE);
-        mViewAllTv.setVisibility(View.VISIBLE);
-        mViewAllLayout.setVisibility(View.VISIBLE);
-        mFlowLayout.setVisibility(View.VISIBLE);
+        mAutoCrcCb.setVisibility(View.VISIBLE);
+        mCrcLayout.setVisibility(View.VISIBLE);
     }
 
     private void hideCrcView() {
-        mCrcTitleTv.setVisibility(View.GONE);
-        mViewAllTv.setVisibility(View.GONE);
-        mViewAllLayout.setVisibility(View.GONE);
-        mFlowLayout.setVisibility(View.GONE);
+        mCrcLayout.setVisibility(View.GONE);
     }
 
+    private View mDposLayout;
     private void showDposView(){
-        mDposNodeLv.setVisibility(View.VISIBLE);
-        mDposLvTitle.setVisibility(View.VISIBLE);
-        mDposPasteTv.setVisibility(View.VISIBLE);
+        mAutoDposCb.setVisibility(View.VISIBLE);
+        mDposLayout.setVisibility(View.VISIBLE);
     }
 
     private void hideDposView(){
-        mDposNodeLv.setVisibility(View.GONE);
-        mDposLvTitle.setVisibility(View.GONE);
-        mDposPasteTv.setVisibility(View.GONE);
+        mDposLayout.setVisibility(View.GONE);
     }
 
     private ListView mDposNodeLv;
@@ -298,7 +292,17 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
     private void initCrcAdapter() {
         List<String> crcDids = Utils.spliteByComma(BRSharedPrefs.getCrcCd(getContext()));
-        if(crcDids!=null && crcDids.size()>0) {
+        BigDecimal balance = BRSharedPrefs.getCachedBalance(getContext(), "ELA");
+        String iso = BRSharedPrefs.getCurrentWalletIso(getContext());
+        if(StringUtil.isNullOrEmpty(iso) || !iso.equalsIgnoreCase("ELA") ||
+                balance.longValue()<1 || null==crcDids){
+            BRSharedPrefs.setAutoDpos(getContext(), false);
+            mAutoCrcCb.setVisibility(View.GONE);
+            hideCrcView();
+            return;
+        }
+
+        if(crcDids.size()>0) {
             List<CrcEntity> crcEntities = CrcDataSource.getInstance(getContext()).queryCrcsByIds(crcDids);
             if(null!=crcEntities && crcEntities.size()>0) {
                 CrcDataSource.getInstance(getContext()).updateCrcsArea(crcEntities);
@@ -313,12 +317,8 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                         }
                     }
                 });
-
-                return;
             }
         }
-        mAutoCrcCb.setVisibility(View.GONE);
-        hideCrcView();
     }
 
     private void setListeners() {
@@ -423,7 +423,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
             @Override
             public void afterTextChanged(Editable s) {
-                hideVoteCheckView();
+                refreshCheckView();
             }
         });
 
@@ -792,12 +792,15 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         });
     }
 
-    private void hideVoteCheckView(){
+    private void refreshCheckView(){
         try {
+
             if(StringUtil.isNullOrEmpty(mAmountEdit.getText().toString())){
                 BRSharedPrefs.setAutoDpos(getContext(), false);
                 mAutoDposCb.setVisibility(View.GONE);
+                mAutoCrcCb.setVisibility(View.GONE);
                 hideDposView();
+                hideCrcView();
                 return;
             }
 
@@ -806,7 +809,9 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                     !iso.equalsIgnoreCase("ELA")){
                 BRSharedPrefs.setAutoDpos(getContext(), false);
                 mAutoDposCb.setVisibility(View.GONE);
+                mAutoCrcCb.setVisibility(View.GONE);
                 hideDposView();
+                hideCrcView();
                 return;
             }
 
@@ -814,16 +819,18 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             BigDecimal rawAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) || amountStr.equalsIgnoreCase(".") ? "0" : amountStr);
             BigDecimal totalAmount = rawAmount.multiply(new BigDecimal(100000000)).add(WalletElaManager.getInstance(getContext()).ELA_FEE);
             BigDecimal balance = BRSharedPrefs.getCachedBalance(getContext(), "ELA").multiply(new BigDecimal(100000000));
-            String candidatesStr = BRSharedPrefs.getDposCd(getContext());
             if(balance.compareTo(new BigDecimal(100000000))>0 &&
-                    totalAmount.compareTo(balance)<0 &&
-                    !StringUtil.isNullOrEmpty(candidatesStr)){
-                mAutoDposCb.setVisibility(View.VISIBLE);
-                hideDposView();
+                    totalAmount.compareTo(balance)<0 ){
+                String dposCd = BRSharedPrefs.getDposCd(getContext());
+                if(!StringUtil.isNullOrEmpty(dposCd)) mAutoDposCb.setVisibility(View.VISIBLE);
+                String crcCd = BRSharedPrefs.getCrcCd(getContext());
+                if(!StringUtil.isNullOrEmpty(crcCd)) mAutoCrcCb.setVisibility(View.VISIBLE);
             } else {
                 BRSharedPrefs.setAutoDpos(getContext(), false);
                 mAutoDposCb.setVisibility(View.GONE);
+                mAutoCrcCb.setVisibility(View.GONE);
                 hideDposView();
+                hideCrcView();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1119,7 +1126,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             }
         }
         mAmountEdit.setText(newAmount.toString());
-        hideVoteCheckView();
+        refreshCheckView();
     }
 
     private void setButton(boolean isRegular) {
@@ -1181,7 +1188,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             if(!Utils.isNullOrEmpty(mViewModel.getAmount())){
                 mAmountEdit.setText(mViewModel.getAmount());
                 updateText();
-                hideVoteCheckView();
+                refreshCheckView();
             }
 
 //            BaseWalletManager wm = WalletsMaster.getInstance(getContext()).getCurrentWallet(getContext());

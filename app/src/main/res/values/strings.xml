@@ -1237,7 +1237,7 @@
     <string name="My_scan_has_add_friend">You have added this friend</string>
     <string name="My_scan_switch_btn_hint">Show carrier address</string>
 
-
+    <string name="crc_auto_vote_hint">Auto keep my last crc vote using my ELA balance</string>
     <string name="crc_vote_hint">You are going to vote</string>
     <string name="crc_votes">Votes:(ELA)</string>
     <string name="crc_members_title">CR council members detail:</string>
