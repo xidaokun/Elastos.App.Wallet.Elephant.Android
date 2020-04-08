@@ -13,8 +13,8 @@ import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.vote.CrcEntity;
 import com.breadwallet.vote.ProducerEntity;
-import com.breadwallet.wallet.wallets.ela.data.HistoryTransactionEntity;
 import com.breadwallet.wallet.wallets.ela.data.DposProducer;
+import com.breadwallet.wallet.wallets.ela.data.HistoryTransactionEntity;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaOutput;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaTransaction;
 import com.breadwallet.wallet.wallets.ela.response.create.ElaUTXOInput;
@@ -410,16 +410,10 @@ public class ElaDataUtils {
             return context.getString(R.string.crc_scheme_candidate_and_votes_inconsistent);
         }
 
-        List<CrcProducerResult.CrcProducer> crcProducers = CrcDataSource.getInstance(context)
-                .queryCrcProducerByDid(candidates);
-        if(crcProducers.size() < candidates.size()) {
+        List<CrcEntity> crcEntities = CrcDataSource.getInstance(context)
+                .queryCrcsByIds(candidates);
+        if(crcEntities.size() < candidates.size()) {
             return context.getString(R.string.crc_scheme_inactive_did);
-        }
-        for(CrcProducerResult.CrcProducer crcProducer : crcProducers) {
-            if(!StringUtil.isNullOrEmpty(crcProducer.State) &&
-                    !crcProducer.State.equals("Active")) {
-                return context.getString(R.string.crc_scheme_inactive_did);
-            }
         }
 
         for(String vote : votes) {

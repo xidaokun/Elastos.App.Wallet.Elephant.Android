@@ -6,22 +6,18 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.breadwallet.R;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.BRDataSourceInterface;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
-import com.breadwallet.tools.util.Utils;
 import com.breadwallet.vote.CityEntity;
 import com.breadwallet.vote.CrcEntity;
 import com.breadwallet.vote.CrcsEntity;
 import com.breadwallet.wallet.wallets.ela.ElaDataUtils;
-import com.elastos.jni.UriFactory;
 import com.google.gson.Gson;
 import com.platform.APIClient;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
