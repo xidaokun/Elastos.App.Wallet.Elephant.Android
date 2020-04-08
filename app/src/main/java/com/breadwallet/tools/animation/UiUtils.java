@@ -798,19 +798,19 @@ public class UiUtils {
         return false;
     }
 
-    public static String getCacheProviderName(Context context, String name) {
-        if(StringUtil.isNullOrEmpty(name)) return null;
-        String hash = BRSharedPrefs.getSingleWalletHash(context);
-        if(StringUtil.isNullOrEmpty(hash)) return name;
-        if(name.equals(hash+".db")) {
-            return "breadwallet.db";
-        } else if(name.equals(hash + "_platform.db")){
-            return "platform.db";
-        } else if(name.equals("profile_" + hash)){
-            return "MyPrefsFile";
-        }
-        return name;
-    }
+//    public static String getCacheProviderName(Context context, String name) {
+//        if(StringUtil.isNullOrEmpty(name)) return null;
+//        String hash = BRSharedPrefs.getSingleWalletHash(context);
+//        if(StringUtil.isNullOrEmpty(hash)) return name;
+//        if(name.equals(hash+".db")) {
+//            return "breadwallet.db";
+//        } else if(name.equals(hash + "_platform.db")){
+//            return "platform.db";
+//        } else if(name.equals("profile_" + hash)){
+//            return "MyPrefsFile";
+//        }
+//        return name;
+//    }
 
     public static void clearCache(Context context) {
         boolean hasWroteDown = BRSharedPrefs.getPhraseWroteDown(context);
@@ -839,8 +839,8 @@ public class UiUtils {
 //                BRSharedPrefs.clearAllPrefs(context, name.replace(".xml", ""));
 //            }
 //        }
-        String databaseName = getCacheProviderName(context, BRSQLiteHelper.DATABASE_NAME);
-        String platformDbName = getCacheProviderName(context, PlatformSqliteHelper.DATABASE_NAME);
+        String databaseName = BRSQLiteHelper.DATABASE_NAME;
+        String platformDbName = BRSQLiteHelper.DATABASE_NAME;
         FileHelper.deleteFile(new File(databasePath, databaseName));
         FileHelper.deleteFile(new File(databasePath, platformDbName));
         BRSharedPrefs.clearAllPrefs(context);

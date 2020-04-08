@@ -46,7 +46,6 @@ public class PlatformSqliteHelper extends SQLiteOpenHelper {
         // Use the application context, which will ensure that you
         // don't accidentally leak an Activity's context.
         // See this article for more information: http://bit.ly/6LRzfx
-        DATABASE_NAME = UiUtils.getCacheProviderName(context, DATABASE_NAME);
         if (instance == null) {
             instance = new PlatformSqliteHelper(context.getApplicationContext());
         }
