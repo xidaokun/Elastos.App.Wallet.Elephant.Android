@@ -88,7 +88,7 @@ class CrcMembersActivity : AppCompatActivity() {
         BRClipboardManager.putClipboard(this, content)
         if (Utils.isEmulatorOrDebug(this) && BuildConfig.BITCOIN_TESTNET)
             BRClipboardManager.putClipboard(this, content)
-        Toast.makeText(this, "has copy to clipboard", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.Receive_copied), Toast.LENGTH_SHORT).show()
 
     }
 }

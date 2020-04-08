@@ -362,7 +362,8 @@ public class ElaDataUtils {
         return false;
     }
 
-    public static String checkSchemeUrl(Context context, String url) {
+    public static String checkSchemeUrl(Context context, String type, String url) {
+        if(null!=type && !type.equals("elacrcvote")) return "success";
         UriFactory uriFactory = new UriFactory(url);
         String candidatesStr = uriFactory.getCandidates();
         String votesStr = uriFactory.getVotes();

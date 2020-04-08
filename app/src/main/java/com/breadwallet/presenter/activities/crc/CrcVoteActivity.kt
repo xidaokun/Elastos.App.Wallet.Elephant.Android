@@ -51,7 +51,7 @@ class CrcVoteActivity : AppCompatActivity() {
             }
         }
 
-        val result = ElaDataUtils.checkSchemeUrl(this, uriFactory.url)
+        val result = ElaDataUtils.checkSchemeUrl(this, uriFactory.host, uriFactory.url)
         if (!StringUtil.isNullOrEmpty(result) && result != "success") {
             Toast.makeText(this, result, Toast.LENGTH_SHORT).show()
             finish()
