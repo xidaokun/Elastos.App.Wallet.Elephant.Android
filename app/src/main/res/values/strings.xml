@@ -1060,7 +1060,7 @@
     <string name="votes_ela">Votes:(ELA)</string>
     <string name="pin_author_vote_msg">Please enter your PIN to authorize this vote</string>
     <string name="loading_hint">Loading....</string>
-    <string name="auto_dpos_hint">Auto keep my last vote using my ELA balance</string>
+    <string name="auto_dpos_hint">Auto keep my last dpos vote using my ELA balance</string>
     <string name="explore_vote_about_desc1">ELA Voting</string>
     <string name="explore_vote_about_desc2">ELA voting app will allow any ELA holder to vote up to 36 DPoS supernodes at a time.</string>
     <string name="vote_balance_not_insufficient">Your balance is less than 1 ELA.</string>

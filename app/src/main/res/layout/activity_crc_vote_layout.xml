@@ -139,8 +139,8 @@
             android:id="@+id/numbers_detail_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:textColor="@color/black_666666"
+            android:textColor="@color/black"
+            android:textSize="14sp"
             android:layout_marginTop="15dp"
             android:layout_marginLeft="15dp"
             android:lines="1"
@@ -220,13 +220,12 @@
             android:dividerHeight="5dp"
             android:fadeScrollbars="false"
             android:layout_below="@+id/dpos_vote_title"
-            app:maxHeight="200dp" />
+            app:maxHeight="60dp" />
 
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
             android:layout_below="@+id/dpos_vote_lv">
 
             <View
@@ -290,7 +289,7 @@
                 android:layout_height="54dp"
                 android:layout_marginLeft="24dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginBottom="32dp"
+                android:layout_marginBottom="10dp"
                 android:text="@string/vote_cancel_btn_txt"
                 android:textColor="#ff3365"
                 android:textSize="18sp"
@@ -305,7 +304,7 @@
                 android:layout_height="54dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginRight="24dp"
-                android:layout_marginBottom="32dp"
+                android:layout_marginBottom="10dp"
                 android:text="@string/vote_confirm_btn_txt"
                 android:textColor="#ff3365"
                 android:textSize="18sp"

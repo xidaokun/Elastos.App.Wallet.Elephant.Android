@@ -106,10 +106,11 @@ public class FragmentTxDetails extends DialogFragment {
     private ImageButton mCloseButton;
     private LinearLayout mDetailsContainer;
 
-    private BaseTextView mVoteTitleTv;
+    private BaseTextView mDposTitleTv;
     private BaseTextView mPaseTv;
-    private ListView mVoteNodeLv;
-    private FlowLayout mFlowLayout;
+    private ListView mDposLv;
+    private View mDposLine;
+    private FlowLayout mFlowLt;
     private View mCrcLayout;
     private View mViewAllTv;
 
@@ -173,10 +174,11 @@ public class FragmentTxDetails extends DialogFragment {
         mGasLimitContainer = rootView.findViewById(R.id.gas_limit_container);
         mWhenSentLabel = rootView.findViewById(R.id.label_when_sent);
 
-        mVoteTitleTv = rootView.findViewById(R.id.vote_nodes_list_title);
+        mDposTitleTv = rootView.findViewById(R.id.vote_nodes_list_title);
         mPaseTv = rootView.findViewById(R.id.transaction_detail_vote_paste_tv);
-        mVoteNodeLv = rootView.findViewById(R.id.transaction_detail_vote_node_lv);
-        mFlowLayout = rootView.findViewById(R.id.numbers_flow_layout);
+        mDposLv = rootView.findViewById(R.id.transaction_detail_vote_node_lv);
+        mDposLine = rootView.findViewById(R.id.divider10);
+        mFlowLt = rootView.findViewById(R.id.numbers_flow_layout);
         mCrcLayout = rootView.findViewById(R.id.second_card);
         mViewAllTv = rootView.findViewById(R.id.view_all_members);
 
@@ -254,18 +256,19 @@ public class FragmentTxDetails extends DialogFragment {
         if(mTransaction==null) return;
         List<DposProducer> tmp = ElaDataSource.getInstance(getContext()).queryDposProducer(mTransaction.txReversed);
         if(tmp!=null && tmp.size()>0) {
-            mVoteTitleTv.setVisibility(View.VISIBLE);
+            mDposTitleTv.setVisibility(View.VISIBLE);
             mPaseTv.setVisibility(View.VISIBLE);
-            mVoteNodeLv.setVisibility(View.VISIBLE);
+            mDposLv.setVisibility(View.VISIBLE);
 
             mProducers.clear();
             mProducers.addAll(tmp);
-            mVoteTitleTv.setText(String.format(getString(R.string.node_list_title), tmp.size()));
-            mVoteNodeLv.setAdapter(new TxProducerAdapter(getContext(), mProducers));
+            mDposTitleTv.setText(String.format(getString(R.string.node_list_title), tmp.size()));
+            mDposLv.setAdapter(new TxProducerAdapter(getContext(), mProducers));
         } else {
-            mVoteTitleTv.setVisibility(View.GONE);
+            mDposTitleTv.setVisibility(View.GONE);
             mPaseTv.setVisibility(View.GONE);
-            mVoteNodeLv.setVisibility(View.GONE);
+            mDposLv.setVisibility(View.GONE);
+            mDposLine.setVisibility(View.GONE);
         }
     }
 
@@ -277,7 +280,7 @@ public class FragmentTxDetails extends DialogFragment {
                 List<CrcEntity> crcEntities = CrcDataSource.getInstance(getContext()).queryCrcsByIds(crcDids);
                 if(null!=crcEntities && crcEntities.size()>0) {
                     CrcDataSource.getInstance(getContext()).updateCrcsArea(crcEntities);
-                    mFlowLayout.setAdapter(crcEntities, R.layout.crc_member_layout, new FlowLayout.ItemView<CrcEntity>() {
+                    mFlowLt.setAdapter(crcEntities, R.layout.crc_member_layout, new FlowLayout.ItemView<CrcEntity>() {
                         @Override
                         protected void getCover(CrcEntity item, FlowLayout.ViewHolder holder, View inflate, int position) {
                             String languageCode = Locale.getDefault().getLanguage();

@@ -415,6 +415,7 @@
                     android:id="@+id/divider6"
                     android:layout_width="match_parent"
                     android:layout_height="1px"
+                    android:visibility="gone"
                     android:background="@color/light_gray" />
 
                 <android.support.constraint.ConstraintLayout
@@ -513,8 +514,8 @@
                         android:id="@+id/numbers_detail_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/settings_chevron_right"
-                        app:customTFont="CircularPro-Book.otf"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
                         android:layout_marginTop="15dp"
                         android:layout_marginLeft="15dp"
                         android:lines="1"
@@ -523,11 +524,10 @@
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="70dp"
+                        android:layout_height="100dp"
                         android:layout_marginLeft="15dp"
                         android:layout_marginRight="15dp"
                         android:layout_marginTop="8dp"
-                        android:layout_marginBottom="20dp"
                         android:layout_below="@+id/numbers_detail_title">
                         <com.breadwallet.presenter.activities.crc.FlowLayout
                             android:id="@+id/numbers_flow_layout"
@@ -539,21 +539,23 @@
                             android:layout_width="56dp"
                             android:layout_height="24dp"
                             android:layout_alignParentRight="true"
-                            android:layout_alignParentBottom="true"
+                            android:layout_below="@+id/numbers_flow_layout"
                             android:gravity="center"
                             android:text="@string/crc_view_all"
+                            android:layout_marginTop="5dp"
                             android:background="@drawable/crc_view_all_shape"
                             android:textColor="#FF3365"
                             android:textSize="11sp"/>
                     </RelativeLayout>
 
-                </RelativeLayout>
+                    <View
+                        android:id="@+id/divider9"
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:layout_alignParentBottom="true"
+                        android:background="@color/light_gray" />
 
-                <View
-                    android:id="@+id/divider9"
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:background="@color/light_gray" />
+                </RelativeLayout>
 
                 <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
@@ -599,6 +601,13 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/vote_nodes_list_title"
                     app:maxHeight="100dp" />
+
+                <View
+                    android:id="@+id/divider10"
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/light_gray" />
 
             </LinearLayout>
 

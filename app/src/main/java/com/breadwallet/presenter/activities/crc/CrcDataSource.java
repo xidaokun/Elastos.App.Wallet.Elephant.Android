@@ -196,6 +196,7 @@ public class CrcDataSource implements BRDataSourceInterface {
         List<String> entities = new ArrayList<>();
         Cursor cursor = null;
         try {
+            database = openDatabase();
             cursor = database.query(BRSQLiteHelper.CRC_PRODUCER_TABLE_NAME,
                     ElaDataUtils.crcProducerColumn, BRSQLiteHelper.CRC_PRODUCER_TXID + " = ?", new String[]{txid},
                     null, null, null);
