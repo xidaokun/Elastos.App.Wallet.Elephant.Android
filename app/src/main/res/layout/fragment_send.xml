@@ -426,11 +426,10 @@
             <RelativeLayout
                 android:id="@+id/view_all_layout"
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
+                android:layout_height="100dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="20dp"
                 android:layout_below="@+id/numbers_detail_title">
                 <com.breadwallet.presenter.activities.crc.FlowLayout
                     android:id="@+id/numbers_flow_layout"
@@ -442,9 +441,10 @@
                     android:layout_width="56dp"
                     android:layout_height="24dp"
                     android:layout_alignParentRight="true"
-                    android:layout_alignParentBottom="true"
+                    android:layout_below="@+id/numbers_flow_layout"
                     android:gravity="center"
                     android:text="@string/crc_view_all"
+                    android:layout_marginTop="5dp"
                     android:background="@drawable/crc_view_all_shape"
                     android:textColor="#FF3365"
                     android:textSize="11sp"/>
@@ -519,12 +519,6 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/vote_nodes_list_title"
                 app:maxHeight="100dp" />
-
-            <View
-                android:id="@+id/separator6"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/extra_light_gray"/>
         </LinearLayout>
 
         <com.breadwallet.presenter.customviews.BRButton

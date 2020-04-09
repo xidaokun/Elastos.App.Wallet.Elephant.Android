@@ -1232,7 +1232,7 @@
 
     <string name="crc_auto_vote_hint">自动使用ELA余额CRC投票</string>
     <string name="crc_vote_hint">您将要投票</string>
-    <string name="crc_votes">票数（ELA）</string>
+    <string name="crc_votes">票数:（ELA）</string>
     <string name="crc_members_title">CR 理事会成员详情:</string>
     <string name="crc_view_all">查看所有</string>
     <string name="crc_vote_dpos_nodes">%1$d 个节点（DPoS）</string>

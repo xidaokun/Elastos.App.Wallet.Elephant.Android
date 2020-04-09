@@ -9,6 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.breadwallet.R
 import com.breadwallet.did.DidDataSource
+import com.breadwallet.presenter.customviews.BRButton
 import com.breadwallet.presenter.customviews.LoadingDialog
 import com.breadwallet.presenter.entities.VoteEntity
 import com.breadwallet.presenter.interfaces.BRAuthCompletion
@@ -26,6 +27,7 @@ import com.breadwallet.wallet.wallets.ela.ElaDataSource
 import com.breadwallet.wallet.wallets.ela.ElaDataUtils
 import com.breadwallet.wallet.wallets.ela.WalletElaManager
 import com.breadwallet.wallet.wallets.ela.response.create.ElaOutput
+import com.elastos.jni.AuthorizeManager
 import com.elastos.jni.UriFactory
 import com.google.gson.Gson
 import java.math.BigDecimal
@@ -83,7 +85,18 @@ class CrcVoteActivity : AppCompatActivity() {
         }
 
         findViewById<View>(R.id.vote_confirm_btn).setOnClickListener {
-            sendCrcTx()
+            val balance = BRSharedPrefs.getCachedBalance(this@CrcVoteActivity, "ELA")
+            if (balance.toLong() <= 0) {
+                Toast.makeText(this@CrcVoteActivity, getString(R.string.vote_balance_not_insufficient), Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+//            if (mCandidates.size > 36) {
+//                Toast.makeText(this@CrcVoteActivity, getString(R.string.beyond_max_vote_node), Toast.LENGTH_SHORT).show()
+//                return
+//            }
+            if (verifyUri()) {
+                sendCrcTx()
+            }
         }
     }
 
@@ -185,6 +198,8 @@ class CrcVoteActivity : AppCompatActivity() {
         val crcNodesTv = findViewById<TextView>(R.id.crc_vote_nodes_tv)
         val balance = BRSharedPrefs.getCachedBalance(this, "ELA")
 
+        if(balance.toLong() <= 0) findViewById<BRButton>(R.id.vote_confirm_btn).setColor(getColor(R.color.light_gray))
+
         //total vote counts
         findViewById<TextView>(R.id.votes_counts).text = balance.subtract(BigDecimal(0.0001)).toLong().toString()
 
@@ -267,6 +282,15 @@ class CrcVoteActivity : AppCompatActivity() {
             if (!isFinishing)
                 mLoadingDialog?.show()
         }
+    }
+
+    private fun verifyUri(): Boolean {
+        val did = uriFactory.did
+        val appId = uriFactory.appID
+        val appName = uriFactory.appName
+        val PK = uriFactory.publicKey
+
+        return AuthorizeManager.verify(this, did, PK, appName, appId)
     }
 
     private fun callReturnUrl(txId: String) {

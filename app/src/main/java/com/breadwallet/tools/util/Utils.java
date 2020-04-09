@@ -300,12 +300,18 @@ public class Utils {
     }
 
     public static List<String> spliteByComma(String value){
-        if(StringUtil.isNullOrEmpty(value)) return null;
-        if(value.startsWith("[") && value.endsWith("]")) {
-            return new Gson().fromJson(value, new TypeToken<List<String>>(){}.getType());
+        try {
+            if(StringUtil.isNullOrEmpty(value)) return null;
+            if(value.startsWith("[") && value.endsWith("]")) {
+                return new Gson().fromJson(value, new TypeToken<List<String>>(){}.getType());
+            }
+            String[] trimArray = value.trim().split(",");
+            return Arrays.asList(trimArray);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        String[] trimArray = value.trim().split(",");
-        return Arrays.asList(trimArray);
+
+        return null;
     }
 
     public static void correctTextSizeIfNeeded(TextView v) {

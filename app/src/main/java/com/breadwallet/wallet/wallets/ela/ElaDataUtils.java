@@ -399,12 +399,16 @@ public class ElaDataUtils {
             }
         }
 
-        BigDecimal total = new BigDecimal(0);
-        for(String vote : votes) {
-            total = total.add(new BigDecimal(vote));
-        }
-        if(total.doubleValue() > 100) {
-            return context.getString(R.string.crc_scheme_votes_total_out);
+        try {
+            BigDecimal total = new BigDecimal(0);
+            for(String vote : votes) {
+                total = total.add(new BigDecimal(vote));
+            }
+            if(total.doubleValue() > 100) {
+                return context.getString(R.string.crc_scheme_votes_total_out);
+            }
+        } catch (Exception e) {
+            return context.getString(R.string.crc_scheme_votes_parse_error);
         }
 
         if(candidates.size() != votes.size()) {
