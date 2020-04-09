@@ -384,7 +384,7 @@ public class ElaDataSource implements BRDataSourceInterface {
     }
 
     public interface CreateTxCallBack {
-        void modifyCrcAmount(ElaOutput outputs, List<PayLoadEntity> payLoadEntities, List<PayLoadEntity> publickeys);
+        void modifyCrcAmount(ElaOutput outputs, List<PayLoadEntity> crcs, List<PayLoadEntity> dposs);
     }
 
 

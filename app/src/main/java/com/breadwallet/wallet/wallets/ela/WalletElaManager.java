@@ -31,6 +31,7 @@ import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.WalletManagerHelper;
 import com.breadwallet.wallet.wallets.ela.data.HistoryTransactionEntity;
+import com.breadwallet.wallet.wallets.ela.response.create.ElaOutput;
 import com.elastos.jni.Utility;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -459,27 +460,73 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public CryptoTransaction createTransaction(BigDecimal amount, String address, String meno) {
         Log.i(TAG, "createTransaction");
-        List<BRElaTransaction> brElaTransactions;
-        boolean autoVote = BRSharedPrefs.getAutoDpos(mContext);
-        String candidatesStr = BRSharedPrefs.getDposCd(mContext);
-        Log.d("posvote", "autoVote:"+autoVote);
-        if(autoVote && !StringUtil.isNullOrEmpty(candidatesStr)){
-            List<String> candidates;
-            if(candidatesStr.contains("[")){
-                candidates = new Gson().fromJson(candidatesStr, new TypeToken<List<String>>(){}.getType());
-            } else {
-                candidates = Utils.spliteByComma(candidatesStr);
+        List brElaTransactions;
+
+        boolean autoDposVote = BRSharedPrefs.getAutoDpos(mContext);
+//        String dposCandidatesStr = BRSharedPrefs.getDposCd(mContext);
+//        if(dposCandidatesStr.contains("[")){
+//            candidates = new Gson().fromJson(dposCandidatesStr, new TypeToken<List<String>>(){}.getType());
+//        } else {
+//            candidates = Utils.spliteByComma(dposCandidatesStr);
+//        }
+        List publickeys = null;
+        if(autoDposVote) {
+            List<String> candidates = Utils.spliteByComma(BRSharedPrefs.getDposCd(mContext));
+            if(null!=candidates && candidates.size()>0) {
+                publickeys = new ArrayList<PayLoadEntity>();
+                for(String candidate : candidates) {
+                    PayLoadEntity payLoadEntity = new PayLoadEntity();
+                    payLoadEntity.candidate = candidate;
+                    publickeys.add(payLoadEntity);
+                }
             }
-            List publickeys = new ArrayList<PayLoadEntity>();
-            for(String candidate : candidates) {
-                PayLoadEntity payLoadEntity = new PayLoadEntity();
-                payLoadEntity.candidate = candidate;
-                publickeys.add(payLoadEntity);
-            }
-            brElaTransactions = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno, publickeys);
-        } else {
-            brElaTransactions = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno);
         }
+
+        boolean autoCrcVote = BRSharedPrefs.getAutoCrc(mContext);
+        List candidateCrcs = null;
+        if(autoCrcVote) {
+            List<String> crcDids = Utils.spliteByComma(BRSharedPrefs.getCrcCd(mContext));
+            if(null!=crcDids && crcDids.size()>0) {
+                candidateCrcs = new ArrayList<PayLoadEntity>();
+                for(String did : crcDids) {
+                    PayLoadEntity payLoadEntity = new PayLoadEntity();
+                    payLoadEntity.candidate = did;
+                    candidateCrcs.add(payLoadEntity);
+                }
+            }
+        }
+
+        brElaTransactions = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno,
+                publickeys, candidateCrcs, new ElaDataSource.CreateTxCallBack() {
+            @Override
+            public void modifyCrcAmount(ElaOutput outputs, List<PayLoadEntity> crcs, List<PayLoadEntity> dposs) {
+                try {
+                    if(null != crcs) {
+                        String votesStr = BRSharedPrefs.getCrcVotes(mContext);
+                        List<String> votes = Utils.spliteByComma(votesStr);
+                        for(int i=0; i<crcs.size(); i++) {
+                            crcs.get(i).value = new BigDecimal(votes.get(i)).multiply(new BigDecimal(outputs.amount)).divide(new BigDecimal(100)).longValue();
+                        }
+                    }
+
+                    if(dposs != null) {
+                        for(int i=0; i<dposs.size(); i++) {
+                            dposs.get(i).value = outputs.amount;
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+//        Log.d("posvote", "autoVote:"+autoDposVote);
+//        if(autoDposVote && !StringUtil.isNullOrEmpty(dposCandidatesStr)){
+//
+//            brElaTransactions = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno, publickeys);
+//        } else {
+//            brElaTransactions = ElaDataSource.getInstance(mContext).createElaTx(getAddress(), address, amount.multiply(ONE_ELA_TO_SALA).longValue(), meno);
+//        }
 
         return new CryptoTransaction(brElaTransactions);
     }

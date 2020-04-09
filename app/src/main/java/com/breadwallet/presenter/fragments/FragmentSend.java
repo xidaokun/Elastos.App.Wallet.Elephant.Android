@@ -144,7 +144,6 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     private CheckBox mAutoCrcCb;
     private TextView mViewAllTv;
     private FlowLayout mFlowLayout;
-    private TextView mCrcTitleTv;
 
     public static boolean mFromElapay = false;
     public static boolean mIsSend = false;
@@ -188,7 +187,6 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mAutoCrcCb = rootView.findViewById(R.id.auto_crc_checkbox);
         mFlowLayout = rootView.findViewById(R.id.numbers_flow_layout);
         mViewAllTv = rootView.findViewById(R.id.view_all_members);
-        mCrcTitleTv = rootView.findViewById(R.id.numbers_detail_title);
         mCrcLayout = rootView.findViewById(R.id.auto_crc_layout);
 
         mRegularFeeButton = rootView.findViewById(R.id.left_button);
@@ -290,6 +288,17 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         }
     }
 
+    private FlowLayout.ItemView itemView = new FlowLayout.ItemView<CrcEntity>() {
+        @Override
+        protected void getCover(CrcEntity item, FlowLayout.ViewHolder holder, View inflate, int position) {
+            String languageCode = Locale.getDefault().getLanguage();
+            if (!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")) {
+                holder.setText(R.id.tv_label_name, item.Nickname + " | " + item.AreaZh);
+            } else {
+                holder.setText(R.id.tv_label_name, item.Nickname + " | " + item.AreaEn);
+            }
+        }
+    };
     private void initCrcAdapter() {
         List<String> crcDids = Utils.spliteByComma(BRSharedPrefs.getCrcCd(getContext()));
         BigDecimal balance = BRSharedPrefs.getCachedBalance(getContext(), "ELA");
@@ -306,17 +315,8 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             List<CrcEntity> crcEntities = CrcDataSource.getInstance(getContext()).queryCrcsByIds(crcDids);
             if(null!=crcEntities && crcEntities.size()>0) {
                 CrcDataSource.getInstance(getContext()).updateCrcsArea(crcEntities);
-                mFlowLayout.setAdapter(crcEntities, R.layout.crc_member_layout, new FlowLayout.ItemView<CrcEntity>() {
-                    @Override
-                    protected void getCover(CrcEntity item, FlowLayout.ViewHolder holder, View inflate, int position) {
-                        String languageCode = Locale.getDefault().getLanguage();
-                        if (!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")) {
-                            holder.setText(R.id.tv_label_name, item.Nickname + " | " + item.AreaZh);
-                        } else {
-                            holder.setText(R.id.tv_label_name, item.Nickname + " | " + item.AreaEn);
-                        }
-                    }
-                });
+                mFlowLayout.setAdapter(crcEntities, R.layout.crc_member_layout, itemView);
+
             }
         }
     }
