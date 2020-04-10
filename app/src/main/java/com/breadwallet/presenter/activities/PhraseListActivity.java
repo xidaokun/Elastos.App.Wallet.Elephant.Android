@@ -101,7 +101,7 @@ public class PhraseListActivity extends BRActivity implements PhraseAdapter.Wall
             }
 
             String prefName = "profile_" + hash;
-            SharedPreferences prefs = getSharedPreferences(prefName, Context.MODE_PRIVATE);
+            SharedPreferences prefs = getSharedPreferences(UiUtils.getCacheProviderName(this, prefName), Context.MODE_PRIVATE);
             boolean written =  prefs.getBoolean("phraseWritten", false);
 
             list.add(written);

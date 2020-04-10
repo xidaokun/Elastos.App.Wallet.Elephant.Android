@@ -204,11 +204,11 @@ public class IntroActivity extends BRActivity {
         }
 
         if (phrase == null) return;
-//        if(UiUtils.isSingleWallet(this, phrase) &&
-//                StringUtil.isNullOrEmpty(BRSharedPrefs.getSingleWalletHash(this))) {
-//            BRPublicSharedPrefs.putUseFingerprint(this, BRSharedPrefs.getUseFingerprint(this));
-//            BRSharedPrefs.setSingleWalletHash(this,  UiUtils.getSha256(phrase));
-//        }
+        if(UiUtils.isSingleWallet(this, phrase) &&
+                StringUtil.isNullOrEmpty(BRSharedPrefs.getSingleWalletHash(this))) {
+            BRPublicSharedPrefs.putUseFingerprint(this, BRSharedPrefs.getUseFingerprint(this));
+            BRSharedPrefs.setSingleWalletHash(this,  UiUtils.getSha256(phrase));
+        }
 
         UiUtils.setStorageName(phrase);
     }
