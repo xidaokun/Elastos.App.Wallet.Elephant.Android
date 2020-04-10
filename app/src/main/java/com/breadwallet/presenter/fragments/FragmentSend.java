@@ -786,8 +786,8 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             @Override
             public void onClick(View v) {
                 String candidates = BRSharedPrefs.getCrcCd(getContext());
-                String votes = BRSharedPrefs.getCrcVotes(getContext());
-                UiUtils.startCrcMembersActivity(getContext(), candidates, votes);
+//                String votes = BRSharedPrefs.getCrcVotes(getContext());
+                UiUtils.startCrcMembersActivity(getContext(), candidates, /*votes*/null);
             }
         });
     }

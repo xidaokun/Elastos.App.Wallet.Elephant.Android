@@ -10,7 +10,7 @@ android {
         applicationId = 'app.elaphant'
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 2
+        versionCode 30
         versionName "2.0.0"
         multiDexEnabled true
 
