@@ -31,7 +31,7 @@ import java.util.List;
 public class ElaDataUtils {
 
     public static final String ELA_NODE_KEY = "elaNodeKey";
-    public static final String ELA_NODE = "node3.elaphant.app" /*"dev.elapp.org"*/;
+    public static final String ELA_NODE = "node1.elaphant.app" /*"dev.elapp.org"*/;
 
     public static String getUrlByVersion(Context context, String api, String version) {
         String node = BRSharedPrefs.getElaNode(context, ELA_NODE_KEY);

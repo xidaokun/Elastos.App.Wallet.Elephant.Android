@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.ListView;
 
+
 public class TxDetailListView extends ListView {
     public TxDetailListView(Context context) {
         super(context);

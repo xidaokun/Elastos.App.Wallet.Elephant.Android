@@ -233,13 +233,14 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Mi
                     BRSharedPrefs.putAddedAppId(getContext(), new Gson().toJson(mAppIds));
                 }
                 mAdapter.notifyDataSetChanged();
+            } else {
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        getInterApps(tmp);
+                    }
+                });
             }
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    getInterApps(tmp);
-                }
-            });
         } catch (Exception e) {
             e.printStackTrace();
         }
