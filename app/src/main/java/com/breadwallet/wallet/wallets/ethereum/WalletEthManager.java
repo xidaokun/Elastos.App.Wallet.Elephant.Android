@@ -764,7 +764,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
             @Override
             public void run() {
 //                final String ethUrl = JsonRpcHelper.getEthereumRpcUrl();
-                final String ethUrl = HOST;
+                final String ethUrl = HOST + "/api/1/eth/wrap";
                 Log.d(TAG, "Making rpc request to -> " + ethUrl);
 
                 final JSONObject payload = new JSONObject();
@@ -810,7 +810,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
             @Override
             public void run() {
 //                final String ethUrl = JsonRpcHelper.getEthereumRpcUrl();
-                final String ethUrl = HOST;
+                final String ethUrl = HOST + "/api/1/eth/wrap";
                 Log.d(TAG, "Making rpc request to -> " + ethUrl);
 
                 final JSONObject payload = new JSONObject();
@@ -866,7 +866,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
             @Override
             public void run() {
 //                final String eth_url = JsonRpcHelper.getEthereumRpcUrl();
-                final String ethUrl = HOST;
+                final String ethUrl = HOST + "/api/1/eth/wrap";
                 Log.d(TAG, "Making rpc request to -> " + ethUrl);
 
                 JSONObject payload = new JSONObject();
@@ -1101,7 +1101,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
                                             txContract, txValue, txGas, txGasPrice, txData, txNonce, txGasUsed, txBlockNumber, txBlockHash, txBlockConfirmations, txBlockTransactionIndex, txBlockTimestamp, txIsError);
                                     Context app = BreadApp.getBreadContext();
 
-                                    int blockHeight = (int) node.getBlockHeight();
+                                    int blockHeight = (int) node.getBlockHeight()/*new BigDecimal(txBlockNumber).intValue()*/;
                                     if (app != null && blockHeight != Integer.MAX_VALUE && blockHeight > 0) {
                                         BRSharedPrefs.putLastBlockHeight(app, getIso(), blockHeight);
                                     }
@@ -1134,14 +1134,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
             @Override
             public void run() {
 //                final String ethRpcUtl = JsonRpcHelper.createLogsUrl(address, contract, event);
-
-                //https://api-eth.elaphant.app/api/1/eth/getLogs?
-                // fromBlock=0
-                // &toBlock=latest
-                // &topic0=0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef
-                // &topic1=0x000000000000000000000000544976511F2B6237b0b4Fe8fbd271B08164dD1b6
-                // &topic1_2_opr=or
-                // &topic2=0x000000000000000000000000544976511F2B6237b0b4Fe8fbd271B08164dD1b6
 
                 //https://api-eth.elaphant.app/api/1/eth/getLogs?fromBlock=0&toBlock=latest&address=0xbf3f09e4eba5f7805e5fac0ee09fd6ee8eebe4cb&topic0=0xbf3f09e4eba5f7805e5fac0ee09fd6ee8eebe4cb&topic1=0x000000000000000000000000544976511F2B6237b0b4Fe8fbd271B08164dD1b6&topic1_2_opr=or&topic2=0x000000000000000000000000544976511F2B6237b0b4Fe8fbd271B08164dD1b6
 
@@ -1214,7 +1206,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String eth_url = HOST;
+                final String eth_url = HOST + "/api/1/eth/wrap";
                 Log.d(TAG, "Making rpc request to -> " + eth_url);
 
                 final JSONObject payload = new JSONObject();
@@ -1379,7 +1371,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String ethUrl = HOST;
+                final String ethUrl = HOST + "/api/1/eth/wrap";
                 Log.d(TAG, "Making rpc request to -> " + ethUrl);
 
                 final JSONObject payload = new JSONObject();
