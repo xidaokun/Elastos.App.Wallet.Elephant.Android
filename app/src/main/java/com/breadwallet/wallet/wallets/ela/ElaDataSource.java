@@ -182,12 +182,12 @@ public class ElaDataSource implements BRDataSourceInterface {
         cacheDposProducer(dposProducerResult.result);
     }
 
-    public List<String> mCrcVoteTxid = new ArrayList<>();
+//    public List<String> mCrcVoteTxid = new ArrayList<>();
 
     public void refreshHistory(String address){
         if(StringUtil.isNullOrEmpty(address)) return;
         mDposVoteTxid.clear();
-        mCrcVoteTxid.clear();
+//        mCrcVoteTxid.clear();
         try {
             String url = ElaDataUtils.getUrlByVersion(mContext,"history/"+address +"?pageNum=1&pageSize="+ONE_PAGE_SIZE+"&order=desc", "v4");
             Log.i(TAG, "history url:"+url);
@@ -204,14 +204,14 @@ public class ElaDataSource implements BRDataSourceInterface {
                 HistoryTransactionEntity historyTransactionEntity = ElaDataUtils.setHistoryEntity(history, 1);
                 elaTransactionEntities.add(historyTransactionEntity);
                 int dposType = ElaDataUtils.getVoteType(historyTransactionEntity.type, historyTransactionEntity.txType);
-                int crcType = ElaDataUtils.getVoteType(historyTransactionEntity.type, historyTransactionEntity.txType);
+//                int crcType = ElaDataUtils.getVoteType(historyTransactionEntity.type, historyTransactionEntity.txType);
                 if(dposType==1 || dposType==3) mDposVoteTxid.add(history.Txid);
-                if(crcType==2 || crcType==3) mCrcVoteTxid.add(history.Txid);
+//                if(crcType==2 || crcType==3) mCrcVoteTxid.add(history.Txid);
             }
             if(elaTransactionEntities.size() <= 0) return;
             cacheMultTx(elaTransactionEntities);
             getDposProducer(mDposVoteTxid);
-            CrcDataSource.getInstance(mContext).getCrcProducer(mCrcVoteTxid);
+//            CrcDataSource.getInstance(mContext).getCrcProducer(mCrcVoteTxid);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -220,7 +220,7 @@ public class ElaDataSource implements BRDataSourceInterface {
     public void getHistory(String address){
         if(StringUtil.isNullOrEmpty(address)) return;
         mDposVoteTxid.clear();
-        mCrcVoteTxid.clear();
+//        mCrcVoteTxid.clear();
         try {
             int currentPageNumber = BRSharedPrefs.getCurrentHistoryPageNumber(mContext);
             int pageNumber = currentPageNumber+1;
@@ -239,9 +239,9 @@ public class ElaDataSource implements BRDataSourceInterface {
                 HistoryTransactionEntity historyTransactionEntity = ElaDataUtils.setHistoryEntity(history, pageNumber);
                 elaTransactionEntities.add(historyTransactionEntity);
                 int dposType = ElaDataUtils.getVoteType(historyTransactionEntity.type, historyTransactionEntity.txType);
-                int crcType = ElaDataUtils.getVoteType(historyTransactionEntity.type, historyTransactionEntity.txType);
+//                int crcType = ElaDataUtils.getVoteType(historyTransactionEntity.type, historyTransactionEntity.txType);
                 if(dposType==1 || dposType==3) mDposVoteTxid.add(history.Txid);
-                if(crcType==2 || crcType==3) mCrcVoteTxid.add(history.Txid);
+//                if(crcType==2 || crcType==3) mCrcVoteTxid.add(history.Txid);
             }
             if(elaTransactionEntities.size() <= 0) {
                 BRSharedPrefs.putCurrentHistoryPageNumber(mContext, currentPageNumber);
@@ -250,7 +250,7 @@ public class ElaDataSource implements BRDataSourceInterface {
             BRSharedPrefs.putCurrentHistoryPageNumber(mContext, pageNumber);
             cacheMultTx(elaTransactionEntities);
             getDposProducer(mDposVoteTxid);
-            CrcDataSource.getInstance(mContext).getCrcProducer(mCrcVoteTxid);
+//            CrcDataSource.getInstance(mContext).getCrcProducer(mCrcVoteTxid);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -295,7 +295,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         String iso = BRSharedPrefs.getCurrentWalletIso(getContext());
         if(StringUtil.isNullOrEmpty(iso) || !iso.equalsIgnoreCase("ELA") ||
                 balance.longValue()<1 || null==crcDids){
-            BRSharedPrefs.setAutoDpos(getContext(), false);
+            BRSharedPrefs.setAutoCrc(getContext(), false);
             mAutoCrcCb.setVisibility(View.GONE);
             hideCrcView();
             return;
@@ -786,8 +786,8 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             @Override
             public void onClick(View v) {
                 String candidates = BRSharedPrefs.getCrcCd(getContext());
-//                String votes = BRSharedPrefs.getCrcVotes(getContext());
-                UiUtils.startCrcMembersActivity(getContext(), candidates, /*votes*/null);
+                String votes = BRSharedPrefs.getCrcVotes(getContext());
+                UiUtils.startCrcMembersActivity(getContext(), candidates, votes);
             }
         });
     }

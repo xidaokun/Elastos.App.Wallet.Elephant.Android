@@ -199,6 +199,20 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             ESIGN_SIGN_DATA + " text, " +
             ESIGN_SIGNED_DATA + " text);";
 
+    /**
+     * crc history table
+     */
+
+    public static final String CRC_HISTORY_TABLE_NAME = "crcHistoryTable";
+    public static final String CRC_HISTORY_TXID = "txid";
+    public static final String CRC_HISTORY_DID = "did";
+    public static final String CRC_HISTORY_VOTE = "vote";
+    private static final String CRC_HISTORY_DATABASE_CREATE = "create table if not exists " + CRC_HISTORY_TABLE_NAME + " (" +
+            CRC_HISTORY_TXID + " text, " +
+            CRC_HISTORY_DID + " text, " +
+            CRC_HISTORY_VOTE +" text, " +
+            "PRIMARY KEY (" + CRC_HISTORY_TXID + ", " + CRC_HISTORY_DID + ")" +
+            ");";
 
     /**
      * Crc Producer table
@@ -469,6 +483,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
         database.execSQL(ESIGN_HISTORY_DATABASE_CREATE);
         database.execSQL(IOEX_TX_DATABASE_CREATE);
 
+        database.execSQL(CRC_HISTORY_DATABASE_CREATE);
         database.execSQL(CRC_PRODUCER_DATABASE_CREATE);
         database.execSQL(DPOS_PRODUCER_DATABASE_CREATE);
         database.execSQL(ELA_PRODUCER_DATABASE_CREATE);

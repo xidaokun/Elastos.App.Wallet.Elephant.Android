@@ -65,14 +65,14 @@
                 android:layout_height="24dp"
                 android:layout_below="@+id/vote_hint"
                 android:layout_marginTop="11dp"
+                android:gravity="center_horizontal"
                 android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/dpos_vote_nodes_tv"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="15dp"
-                    android:layout_weight="1"
                     android:background="@drawable/dpos_vote_shape"
                     android:gravity="center"
                     android:lines="1"
@@ -84,18 +84,14 @@
                     android:textColor="@color/black_333333"
                     android:textSize="14sp" />
 
-                <View
-                    android:id="@+id/vote_nodes_block"
-                    android:layout_width="15dp"
-                    android:layout_height="match_parent" />
 
                 <TextView
                     android:id="@+id/crc_vote_nodes_tv"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="15dp"
-                    android:layout_weight="1"
+                    android:layout_marginLeft="10dp"
                     android:background="@drawable/crc_vote_shape"
                     android:gravity="center"
                     android:lines="1"

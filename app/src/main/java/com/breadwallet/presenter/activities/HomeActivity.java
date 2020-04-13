@@ -131,7 +131,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             }
         }
 
-        initNode();
+//        initNode();
         initCrcCities();
         EventBus.getDefault().register(this);
     }
@@ -263,7 +263,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             mDid = didManager.createDid(0);
             mDid.setNode(node);
             publicKey = Utility.getInstance(HomeActivity.this).getSinglePublicKey(mnemonic);
-            bindDid();
+//            bindDid();
         }
     }
 

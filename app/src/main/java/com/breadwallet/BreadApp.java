@@ -25,14 +25,12 @@ import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
-import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
 import com.tencent.bugly.Bugly;
 import com.tencent.bugly.beta.Beta;
 
-import org.chat.lib.push.PushClient;
 import org.common.lib.BaseApplication;
 
 import java.io.UnsupportedEncodingException;

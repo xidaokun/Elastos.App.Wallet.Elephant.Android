@@ -34,15 +34,18 @@ import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.TxManager;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.vote.CrcEntity;
+import com.breadwallet.vote.CrcTxEntity;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.ela.ElaDataSource;
+import com.breadwallet.wallet.wallets.ela.ElaDataUtils;
 import com.breadwallet.wallet.wallets.ela.data.DposProducer;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.entities.TxMetaData;
@@ -196,7 +199,24 @@ public class FragmentTxDetails extends DialogFragment {
         initListener();
         updateUi();
         initDposAdapter();
-        initCrcAdapter();
+//        initCrcAdapter();
+
+        int crcType = ElaDataUtils.getVoteType(mTransaction.getType(), mTransaction.getTxType());
+        if(crcType==2 || crcType==3) {
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    CrcDataSource.getInstance(getContext()).getCrcPayload(mTransaction.txReversed);
+                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            initCrcAdapter();
+                        }
+                    });
+                }
+            });
+        }
+
         return rootView;
     }
 
@@ -226,8 +246,14 @@ public class FragmentTxDetails extends DialogFragment {
         mViewAllTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<String> crcDids = CrcDataSource.getInstance(getContext()).queryCrcProducerByTx(mTransaction.txReversed);
-                UiUtils.startCrcMembersActivity(getContext(), crcDids.toString(), null);
+                List<CrcTxEntity.Candidates> candidates = CrcDataSource.getInstance(getContext()).queryCrcPayload(mTransaction.txReversed);
+                StringBuilder candidateSb = new StringBuilder();
+                StringBuilder voteSb = new StringBuilder();
+                for(CrcTxEntity.Candidates candidate : candidates) {
+                    candidateSb.append(candidate.candidate);
+                    voteSb.append(candidate.votes);
+                }
+                UiUtils.startCrcMembersActivity(getContext(), candidateSb.toString(), voteSb.toString());
             }
         });
     }
@@ -274,26 +300,31 @@ public class FragmentTxDetails extends DialogFragment {
 
     private void initCrcAdapter() {
         if(mTransaction !=null) {
-            List<String> crcDids = CrcDataSource.getInstance(getContext()).queryCrcProducerByTx(mTransaction.txReversed);
-            if(crcDids!=null && crcDids.size()>0) {
-                mCrcLayout.setVisibility(View.VISIBLE);
-                List<CrcEntity> crcEntities = CrcDataSource.getInstance(getContext()).queryCrcsByIds(crcDids);
-                if(null!=crcEntities && crcEntities.size()>0) {
-                    CrcDataSource.getInstance(getContext()).updateCrcsArea(crcEntities);
-                    mFlowLt.setAdapter(crcEntities, R.layout.crc_member_layout, new FlowLayout.ItemView<CrcEntity>() {
-                        @Override
-                        protected void getCover(CrcEntity item, FlowLayout.ViewHolder holder, View inflate, int position) {
-                            String languageCode = Locale.getDefault().getLanguage();
-                            if (!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")) {
-                                holder.setText(R.id.tv_label_name, item.Nickname + " | " + item.AreaZh);
-                            } else {
-                                holder.setText(R.id.tv_label_name, item.Nickname + " | " + item.AreaEn);
-                            }
-                        }
-                    });
+            List<CrcTxEntity.Candidates> payloads = CrcDataSource.getInstance(getContext()).queryCrcPayload(mTransaction.txReversed);
+            List<String> candidates = new ArrayList<>();
+            List<String> votes = new ArrayList<>();
+            for(CrcTxEntity.Candidates candidate : payloads) {
+                candidates.add(candidate.candidate);
+                votes.add(candidate.votes);
+            }
 
-                    return;
-                }
+            mCrcLayout.setVisibility(View.VISIBLE);
+            List<CrcEntity> crcEntities = CrcDataSource.getInstance(getContext()).queryCrcsByIds(candidates);
+            if(null!=crcEntities && crcEntities.size()>0) {
+                CrcDataSource.getInstance(getContext()).updateCrcsArea(crcEntities);
+                mFlowLt.setAdapter(crcEntities, R.layout.crc_member_layout, new FlowLayout.ItemView<CrcEntity>() {
+                    @Override
+                    protected void getCover(CrcEntity item, FlowLayout.ViewHolder holder, View inflate, int position) {
+                        String languageCode = Locale.getDefault().getLanguage();
+                        if (!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")) {
+                            holder.setText(R.id.tv_label_name, item.Nickname + " | " + item.AreaZh);
+                        } else {
+                            holder.setText(R.id.tv_label_name, item.Nickname + " | " + item.AreaEn);
+                        }
+                    }
+                });
+
+                return;
             }
         }
         mCrcLayout.setVisibility(View.GONE);

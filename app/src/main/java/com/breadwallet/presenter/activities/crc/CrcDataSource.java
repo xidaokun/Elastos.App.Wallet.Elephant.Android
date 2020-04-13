@@ -13,6 +13,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.vote.CityEntity;
 import com.breadwallet.vote.CrcEntity;
+import com.breadwallet.vote.CrcTxEntity;
 import com.breadwallet.vote.CrcsEntity;
 import com.breadwallet.wallet.wallets.ela.ElaDataUtils;
 import com.google.gson.Gson;
@@ -143,16 +144,96 @@ public class CrcDataSource implements BRDataSourceInterface {
         return queryCrcsByIds(ids, null);
     }
 
+    //TODO 代替crc/producer接口
     public void getCrcPayload(String txid) {
         try {
+            List<CrcTxEntity.Candidates> candidates = queryCrcPayload(txid);
+            if(candidates!=null && candidates.size()>0) return;
             //https://node3.elaphant.app/api/v1/transaction/9b570bd355ca7a3d237f1eb3635f3838042054741b53df16b46f1547966e714f
             String url = getUrlByVersion("transaction/"+txid, "v1");
             String result = APIClient.urlGET(mContext, url);
 
+            CrcTxEntity crcTxEntity = new Gson().fromJson(result, CrcTxEntity.class);
+            CrcTxEntity.Vout lastVout = crcTxEntity.Result.vout.get(crcTxEntity.Result.vout.size()-1);
+            List<CrcTxEntity.Contents> contents = lastVout.payload.contents;
+            for(CrcTxEntity.Contents content : contents) {
+                int votetype = content.votetype;
+                if(1 == votetype) {
+                    candidates = content.candidates;
+                    break;
+                }
+            }
+            cacheCrcPayload(txid, candidates);
+            Log.d("test", "test");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    public List<CrcTxEntity.Candidates> queryCrcPayload(String txid) {
+        if(StringUtil.isNullOrEmpty(txid)) return null;
+        List<CrcTxEntity.Candidates> candidates = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            database = openDatabase();
+            cursor = database.query(BRSQLiteHelper.CRC_HISTORY_TABLE_NAME,
+                    ElaDataUtils.crcPayloadColumn, BRSQLiteHelper.CRC_HISTORY_TXID + " = ?", new String[]{txid},
+                    null, null, null);
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                CrcTxEntity.Candidates candidate = ElaDataUtils.cursorToCrcPayload(cursor);
+                candidates.add(candidate);
+                cursor.moveToNext();
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            if (cursor != null)
+                cursor.close();
+            closeDatabase();
+        }
+
+        return candidates;
+    }
+
+    public void cacheCrcPayload(String txid, List<CrcTxEntity.Candidates> candidates) {
+        if(candidates==null || candidates.size()<=0) return;
+        try {
+            database = openDatabase();
+            database.beginTransaction();
+            for(CrcTxEntity.Candidates candidate : candidates){
+                ContentValues value = new ContentValues();
+                value.put(BRSQLiteHelper.CRC_HISTORY_TXID, txid);
+                value.put(BRSQLiteHelper.CRC_HISTORY_DID, candidate.candidate);
+                value.put(BRSQLiteHelper.CRC_HISTORY_VOTE, candidate.votes);
+                long l = database.insertWithOnConflict(BRSQLiteHelper.CRC_HISTORY_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
+            }
+            database.setTransactionSuccessful();
+        } catch (Exception e) {
+            closeDatabase();
+            e.printStackTrace();
+        } finally {
+            database.endTransaction();
+            closeDatabase();
+        }
+    }
+
+//    public void getCrcProducer(List<String> txids) {
+//        if(txids==null || txids.size() <= 0) return;
+//        CrcProducerResult crcProducerResult = null;
+//        try {
+//            ProducerTxid producerTxid = new ProducerTxid();
+//            producerTxid.txid = txids;
+//            String json = new Gson().toJson(producerTxid);
+//            String url = ElaDataUtils.getUrlByVersion(mContext,"crc/transaction/producer", "1");
+//            String result = APIClient.urlPost(url, json);
+//            crcProducerResult = new Gson().fromJson(result, CrcProducerResult.class);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        if(crcProducerResult ==null || crcProducerResult.result==null) return;
+//        cacheCrcProducer(crcProducerResult.result);
+//    }
 
 
     public void getAndCacheCrcs() {
@@ -165,57 +246,57 @@ public class CrcDataSource implements BRDataSourceInterface {
         }
     }
 
-    public void cacheCrcProducer(List<CrcProducerResult.CrcProducers> entities) {
-        if(entities==null || entities.size()<=0) return;
-        try {
-            database = openDatabase();
-            database.beginTransaction();
-            for(CrcProducerResult.CrcProducers crcProducers : entities){
-                if(null== crcProducers.Producer || StringUtil.isNullOrEmpty(crcProducers.Txid)) break;
-                for(CrcProducerResult.CrcProducer crcProducer : crcProducers.Producer){
-                    ContentValues value = new ContentValues();
-                    value.put(BRSQLiteHelper.CRC_PRODUCER_TXID, crcProducers.Txid);
-                    value.put(BRSQLiteHelper.CRC_PRODUCER_DID, crcProducer.Did);
-                    value.put(BRSQLiteHelper.CRC_PRODUCER_LOCATION, crcProducer.Location);
-                    value.put(BRSQLiteHelper.CRC_PRODUCER_STATE, crcProducer.State);
-                    long l = database.insertWithOnConflict(BRSQLiteHelper.CRC_PRODUCER_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
-                }
-            }
-            database.setTransactionSuccessful();
-        } catch (Exception e) {
-            closeDatabase();
-            e.printStackTrace();
-        } finally {
-            database.endTransaction();
-            closeDatabase();
-        }
-    }
+//    public void cacheCrcProducer(List<CrcProducerResult.CrcProducers> entities) {
+//        if(entities==null || entities.size()<=0) return;
+//        try {
+//            database = openDatabase();
+//            database.beginTransaction();
+//            for(CrcProducerResult.CrcProducers crcProducers : entities){
+//                if(null== crcProducers.Producer || StringUtil.isNullOrEmpty(crcProducers.Txid)) break;
+//                for(CrcProducerResult.CrcProducer crcProducer : crcProducers.Producer){
+//                    ContentValues value = new ContentValues();
+//                    value.put(BRSQLiteHelper.CRC_PRODUCER_TXID, crcProducers.Txid);
+//                    value.put(BRSQLiteHelper.CRC_PRODUCER_DID, crcProducer.Did);
+//                    value.put(BRSQLiteHelper.CRC_PRODUCER_LOCATION, crcProducer.Location);
+//                    value.put(BRSQLiteHelper.CRC_PRODUCER_STATE, crcProducer.State);
+//                    long l = database.insertWithOnConflict(BRSQLiteHelper.CRC_PRODUCER_TABLE_NAME, null, value, SQLiteDatabase.CONFLICT_REPLACE);
+//                }
+//            }
+//            database.setTransactionSuccessful();
+//        } catch (Exception e) {
+//            closeDatabase();
+//            e.printStackTrace();
+//        } finally {
+//            database.endTransaction();
+//            closeDatabase();
+//        }
+//    }
 
-    public List<String> queryCrcProducerByTx(String txid){
-        if(StringUtil.isNullOrEmpty(txid)) return null;
-        List<String> entities = new ArrayList<>();
-        Cursor cursor = null;
-        try {
-            database = openDatabase();
-            cursor = database.query(BRSQLiteHelper.CRC_PRODUCER_TABLE_NAME,
-                    ElaDataUtils.crcProducerColumn, BRSQLiteHelper.CRC_PRODUCER_TXID + " = ?", new String[]{txid},
-                    null, null, null);
-            cursor.moveToFirst();
-            while (!cursor.isAfterLast()) {
-                CrcProducerResult.CrcProducer producerEntity = ElaDataUtils.cursorToCrcProducer(cursor);
-                entities.add(producerEntity.Did);
-                cursor.moveToNext();
-            }
-        } catch (Exception e){
-            e.printStackTrace();
-        } finally {
-            if (cursor != null)
-                cursor.close();
-            closeDatabase();
-        }
-
-        return entities;
-    }
+//    public List<String> queryCrcProducerByTx(String txid){
+//        if(StringUtil.isNullOrEmpty(txid)) return null;
+//        List<String> entities = new ArrayList<>();
+//        Cursor cursor = null;
+//        try {
+//            database = openDatabase();
+//            cursor = database.query(BRSQLiteHelper.CRC_PRODUCER_TABLE_NAME,
+//                    ElaDataUtils.crcProducerColumn, BRSQLiteHelper.CRC_PRODUCER_TXID + " = ?", new String[]{txid},
+//                    null, null, null);
+//            cursor.moveToFirst();
+//            while (!cursor.isAfterLast()) {
+//                CrcProducerResult.CrcProducer producerEntity = ElaDataUtils.cursorToCrcProducer(cursor);
+//                entities.add(producerEntity.Did);
+//                cursor.moveToNext();
+//            }
+//        } catch (Exception e){
+//            e.printStackTrace();
+//        } finally {
+//            if (cursor != null)
+//                cursor.close();
+//            closeDatabase();
+//        }
+//
+//        return entities;
+//    }
 
     public List<CrcProducerResult.CrcProducer> queryCrcProducerByDid(List<String> dids) {
         if(dids == null) return null;
@@ -244,23 +325,6 @@ public class CrcDataSource implements BRDataSourceInterface {
 
     static class ProducerTxid {
         public List<String> txid;
-    }
-
-    public void getCrcProducer(List<String> txids) {
-        if(txids==null || txids.size() <= 0) return;
-        CrcProducerResult crcProducerResult = null;
-        try {
-            ProducerTxid producerTxid = new ProducerTxid();
-            producerTxid.txid = txids;
-            String json = new Gson().toJson(producerTxid);
-            String url = ElaDataUtils.getUrlByVersion(mContext,"crc/transaction/producer", "1");
-            String result = APIClient.urlPost(url, json);
-            crcProducerResult = new Gson().fromJson(result, CrcProducerResult.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if(crcProducerResult ==null || crcProducerResult.result==null) return;
-        cacheCrcProducer(crcProducerResult.result);
     }
 
     public String getUrlByVersion(String api, String version) {

@@ -12,7 +12,6 @@ import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 
 import org.chat.lib.entity.MessageInfo;
 import org.chat.lib.push.PushClient;
-import org.chat.lib.push.PushServer;
 import org.chat.lib.utils.Constants;
 import org.elastos.sdk.elephantwallet.contact.Contact;
 import org.elastos.sdk.elephantwallet.contact.Utils;

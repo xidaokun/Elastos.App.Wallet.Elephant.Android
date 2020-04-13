@@ -12,6 +12,7 @@ import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.vote.CrcEntity;
+import com.breadwallet.vote.CrcTxEntity;
 import com.breadwallet.vote.ProducerEntity;
 import com.breadwallet.wallet.wallets.ela.data.DposProducer;
 import com.breadwallet.wallet.wallets.ela.data.HistoryTransactionEntity;
@@ -156,6 +157,18 @@ public class ElaDataUtils {
             BRSQLiteHelper.CRC_PRODUCER_LOCATION,
             BRSQLiteHelper.CRC_PRODUCER_STATE
     };
+
+    public static final String[] crcPayloadColumn = {
+            BRSQLiteHelper.CRC_HISTORY_DID,
+            BRSQLiteHelper.CRC_HISTORY_VOTE
+    };
+
+    public static CrcTxEntity.Candidates cursorToCrcPayload(Cursor cursor) {
+        return new CrcTxEntity.Candidates(
+                cursor.getString(0),
+                cursor.getString(1)
+        );
+    }
 
     public static CrcProducerResult.CrcProducer cursorToCrcProducer(Cursor cursor) {
         return new CrcProducerResult.CrcProducer(cursor.getString(0),

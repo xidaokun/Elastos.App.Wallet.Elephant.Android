@@ -85,11 +85,11 @@ class CrcVoteActivity : AppCompatActivity() {
         }
 
         findViewById<View>(R.id.vote_confirm_btn).setOnClickListener {
-            val balance = BRSharedPrefs.getCachedBalance(this@CrcVoteActivity, "ELA")
-            if (balance.toLong() <= 0) {
-                Toast.makeText(this@CrcVoteActivity, getString(R.string.vote_balance_not_insufficient), Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+//            val balance = BRSharedPrefs.getCachedBalance(this@CrcVoteActivity, "ELA")
+//            if (balance.toLong() <= 0) {
+//                Toast.makeText(this@CrcVoteActivity, getString(R.string.vote_balance_not_insufficient), Toast.LENGTH_SHORT).show()
+//                return@setOnClickListener
+//            }
 //            if (mCandidates.size > 36) {
 //                Toast.makeText(this@CrcVoteActivity, getString(R.string.beyond_max_vote_node), Toast.LENGTH_SHORT).show()
 //                return
@@ -297,7 +297,7 @@ class CrcVoteActivity : AppCompatActivity() {
         if (StringUtil.isNullOrEmpty(txId)) return
         val returnUrl = uriFactory.returnUrl
         if (StringUtil.isNullOrEmpty(returnUrl)) {
-            Toast.makeText(this@CrcVoteActivity, "returnurl is empty", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(this@CrcVoteActivity, "returnurl is empty", Toast.LENGTH_SHORT).show()
             return
         }
         val url: String
@@ -318,7 +318,7 @@ class CrcVoteActivity : AppCompatActivity() {
             txEntity.TXID = txid
             val ret = DidDataSource.getInstance(this).urlPost(backurl, Gson().toJson(txEntity))
         } catch (e: Exception) {
-            Toast.makeText(this@CrcVoteActivity, "callback error", Toast.LENGTH_SHORT)
+//            Toast.makeText(this@CrcVoteActivity, "callback error", Toast.LENGTH_SHORT)
             e.printStackTrace()
         }
 
