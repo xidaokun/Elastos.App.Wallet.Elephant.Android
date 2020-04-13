@@ -77,6 +77,15 @@ public class AboutActivity extends BaseSettingsActivity {
             }
         });
 
+        findViewById(R.id.twitter_share_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(BRConstants.URL_TWITTER));
+                startActivity(browserIntent);
+                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+            }
+        });
+
     }
 
     @Override

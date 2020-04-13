@@ -139,10 +139,9 @@ public final class BRConstants {
      */
 
     public static final String URL_PRIVACY_POLICY = "https://elaphant.app/privacy-policy/";
-    public static final String URL_TWITTER = "https://twitter.com/breadapp";
+    public static final String URL_TWITTER = "https://twitter.com/ElaphantTeam";
     public static final String URL_REDDIT = "https://reddit.com/r/breadwallet/";
     public static final String URL_BLOG  = "http://t.me/elastoswalletelephant";
-
 
     public static final String VOTE_ME_ID = "3461ba97b110118ed25a66697e021004e3de05a52c05bb10470619d73d3932a59c59e81a6f6621f22dfc9b0182df5891d13bd2afcb86cb8665d02e608f03b3cf";
     public static final String MINI_APPS_ID = "ac89a6a3ff8165411c8426529dccde5cd44d5041407bf249b57ae99a6bfeadd60f74409bd5a3d81979805806606dd2d55f6979ca467982583ac734cf6f55a290";

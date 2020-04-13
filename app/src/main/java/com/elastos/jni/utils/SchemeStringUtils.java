@@ -25,16 +25,18 @@ public class SchemeStringUtils {
 
         String regEx = "^(http|https)\\://.+\\.capsule$";
         Pattern p = Pattern.compile(regEx);
-        Matcher matcher = p.matcher(url);
-        return matcher.matches();
+        Matcher matcher = p.matcher(url.trim());
+        boolean ret = matcher.matches();
+        return ret;
     }
 
     public static boolean isElaphantCapsule(String url){
         if (isNullOrEmpty(url)) return false;
         String regEx = "^(elaphant|elastos|elapp:http|elapp:https)\\://.+\\.capsule$";
         Pattern p = Pattern.compile(regEx);
-        Matcher matcher = p.matcher(url.toLowerCase());
-        return matcher.matches();
+        Matcher matcher = p.matcher(url);
+        boolean ret = matcher.matches();
+        return ret;
     }
 
     public static String replaceElsProtocol(String url, String protocol){

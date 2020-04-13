@@ -351,13 +351,13 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
     public void showAndDownloadCapsule(String url) {
         if(mExploreFragment!=null && !StringUtil.isNullOrEmpty(url)){
-            boolean isValid = SchemeStringUtils.isElaphantCapsule(url) || SchemeStringUtils.isHttpCapsule(url);
+            boolean isValid = SchemeStringUtils.isElaphantCapsule(url.trim()) || SchemeStringUtils.isHttpCapsule(url.trim());
             if (!isValid) {
                 Toast.makeText(this, getString(R.string.mini_app_invalid_url), Toast.LENGTH_SHORT).show();
                 return;
             }
             showFragment(mExploreFragment);
-            mExploreFragment.downloadCapsule(url);
+            mExploreFragment.downloadCapsule(url.trim());
             navigation.setSelectedItemId(R.id.navigation_explore);
         }
     }

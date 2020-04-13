@@ -653,6 +653,11 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Mi
         }
     }
 
+    public boolean isExit() {
+
+        return false;
+    }
+
     public void downloadCapsule(String url) {
         if (StringUtil.isNullOrEmpty(url)) {
             if (isAdded())
