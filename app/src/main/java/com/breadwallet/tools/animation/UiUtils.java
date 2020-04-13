@@ -45,9 +45,7 @@ import com.breadwallet.presenter.activities.VoteActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.WalletNameActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
-import com.breadwallet.presenter.activities.crc.CrcDataSource;
 import com.breadwallet.presenter.activities.crc.CrcMembersActivity;
-import com.breadwallet.presenter.activities.crc.CrcProducerResult;
 import com.breadwallet.presenter.activities.crc.CrcVoteActivity;
 import com.breadwallet.presenter.activities.did.DidAuthorizeActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
@@ -80,21 +78,18 @@ import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
-import com.breadwallet.wallet.wallets.ela.ElaDataSource;
-import com.breadwallet.wallet.wallets.ela.ElaDataUtils;
 import com.elastos.jni.Constants;
-import com.elastos.jni.UriFactory;
 import com.google.gson.Gson;
 import com.platform.APIClient;
 import com.platform.sqlite.PlatformSqliteHelper;
 
-import org.chat.lib.presenter.ChatScanActivity;
 import org.chat.lib.presenter.ChatDetailActivity;
 import org.chat.lib.presenter.ChatGroupSelectActivity;
+import org.chat.lib.presenter.ChatScanActivity;
 import org.chat.lib.presenter.FriendProfileEditActivity;
-import org.chat.lib.presenter.NewFriendListActivity;
 import org.chat.lib.presenter.GroupNameActivity;
 import org.chat.lib.presenter.MyQrActivity;
+import org.chat.lib.presenter.NewFriendListActivity;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -254,8 +249,9 @@ public class UiUtils {
         context.startActivity(intent);
     }
 
-    public static void startCrcMembersActivity(Context context, String candidates, String votes) {
+    public static void startCrcMembersActivity(Context context, String from, String candidates, String votes) {
         Intent intent = new Intent(context, CrcMembersActivity.class);
+        intent.putExtra("from", from);
         intent.putExtra("candidates", candidates);
         intent.putExtra("votes", votes);
         context.startActivity(intent);

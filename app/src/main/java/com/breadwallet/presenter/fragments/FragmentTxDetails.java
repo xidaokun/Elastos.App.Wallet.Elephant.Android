@@ -247,13 +247,13 @@ public class FragmentTxDetails extends DialogFragment {
             @Override
             public void onClick(View v) {
                 List<CrcTxEntity.Candidates> candidates = CrcDataSource.getInstance(getContext()).queryCrcPayload(mTransaction.txReversed);
-                StringBuilder candidateSb = new StringBuilder();
-                StringBuilder voteSb = new StringBuilder();
+                List<String> candidateLt = new ArrayList<>();
+                List<String> voteLt = new ArrayList<>();
                 for(CrcTxEntity.Candidates candidate : candidates) {
-                    candidateSb.append(candidate.candidate);
-                    voteSb.append(candidate.votes);
+                    candidateLt.add(candidate.candidate);
+                    voteLt.add(candidate.votes);
                 }
-                UiUtils.startCrcMembersActivity(getContext(), candidateSb.toString(), voteSb.toString());
+                UiUtils.startCrcMembersActivity(getContext(), "FragmentTxDetails", candidateLt.toString(), voteLt.toString());
             }
         });
     }

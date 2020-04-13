@@ -48,6 +48,7 @@ class CrcMembersActivity : AppCompatActivity() {
 
     private val data = ArrayList<Map<String, Any>>()
     fun initData() {
+        val from = intent.getStringExtra("from")
         val crcNodes = Utils.spliteByComma(intent.getStringExtra("candidates")?: return)
         val votes = Utils.spliteByComma(intent.getStringExtra("votes"))
 
@@ -56,22 +57,26 @@ class CrcMembersActivity : AppCompatActivity() {
 
         findViewById<TextView>(R.id.council_title).text = String.format(getString(R.string.crc_vote_crc_nodes), crcNodes.count())
 
+        val balance = BRSharedPrefs.getCachedBalance(this, "ELA").divide(BigDecimal(100))
         for(crcEntity in crcRankEntities) {
             val item = HashMap<String, Any>()
 
             val languageCode = Locale.getDefault().language
-            val balance = BRSharedPrefs.getCachedBalance(this, "ELA").divide(BigDecimal(100))
             var sb = StringBuilder().append(crcEntity.Nickname).append(" | ")
             if (!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")) {
                 sb.append(crcEntity.AreaZh)
             } else {
                 sb.append(crcEntity.AreaEn)
             }
-            if(votes!=null)
+            if(from=="FragmentTxDetails") {
                 sb.append(" | ")
-                    .append(BigDecimal(crcEntity.Vote).multiply(balance).setScale(4, BRConstants.ROUNDING_MODE).toString())
-                    .append(" | ")
-                    .append(crcEntity.Vote)
+                        .append(crcEntity.Vote)
+            } else {
+                sb.append(" | ")
+                        .append(BigDecimal(crcEntity.Vote).multiply(balance).setScale(4, BRConstants.ROUNDING_MODE).toString())
+                        .append(" | ")
+                        .append(crcEntity.Vote)
+            }
             item["content"] = sb.toString()
 
             data.add(item)

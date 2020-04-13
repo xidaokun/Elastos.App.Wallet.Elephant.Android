@@ -76,7 +76,7 @@ class CrcVoteActivity : AppCompatActivity() {
 
         findViewById<View>(R.id.view_all_members).setOnClickListener {
             val type = uriFactory.host
-            UiUtils.startCrcMembersActivity(this,
+            UiUtils.startCrcMembersActivity(this, "CrcVoteActivity",
                     if (type=="elacrcvote") uriFactory.candidates
                     else BRSharedPrefs.getCrcCd(this@CrcVoteActivity),
 
