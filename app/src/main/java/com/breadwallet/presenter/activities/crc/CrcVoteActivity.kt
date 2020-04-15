@@ -95,6 +95,7 @@ class CrcVoteActivity : BRActivity() {
 //                Toast.makeText(this@CrcVoteActivity, getString(R.string.beyond_max_vote_node), Toast.LENGTH_SHORT).show()
 //                return
 //            }
+            BigDecimal("@@")
             if (verifyUri()) {
                 sendCrcTx()
             }

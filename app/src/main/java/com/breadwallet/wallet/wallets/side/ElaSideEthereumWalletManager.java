@@ -861,17 +861,17 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String ethRpcUrl = HOST + "/api/1/eth/history";
+                final String ethRpcUrl = HOST + "/api/1/eth/history?address="+address+"&sort=desc";
 
-                final JSONObject payload = new JSONObject();
-                try {
-                    payload.put(JsonRpcHelper.ID, String.valueOf(id));
-                    payload.put(JsonRpcHelper.ACCOUNT, address);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+//                final JSONObject payload = new JSONObject();
+//                try {
+//                    payload.put(JsonRpcHelper.ID, String.valueOf(id));
+//                    payload.put(JsonRpcHelper.ACCOUNT, address);
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
 
-                JsonRpcHelper.makeRpcRequest(BreadApp.getBreadContext(), ethRpcUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
+                JsonRpcHelper.makeRpcRequest(BreadApp.getBreadContext(), ethRpcUrl, /*payload,*/ new JsonRpcHelper.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
 
@@ -1037,7 +1037,7 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                String host = "api-wallet-eth.elastos.org";
+                String host = HOST;
                 String url = "/api/1/eth/getLogs";
                 final String ethRpcUtl = /*JsonRpcHelper.createLogsUrl(address, contract, event)*/JsonRpcHelper.createElaEthLogsUrl(host, url, event, address);
                 Log.d(TAG, "getLogs: " + ethRpcUtl);

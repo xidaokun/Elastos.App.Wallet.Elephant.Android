@@ -13,6 +13,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.breadwallet.presenter.activities.HomeActivity;
+import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 
 import java.io.File;
@@ -64,7 +65,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
         Log.i(TAG, "handleException");
         AlarmManager mgr = (AlarmManager) BreadApp.getBreadContext().getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(BreadApp.getBreadContext(), HomeActivity.class);
+        Intent intent = new Intent(BreadApp.getBreadContext(), IntroActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("crash", true);
         PendingIntent restartIntent = PendingIntent.getActivity(BreadApp.getBreadContext(), 0, intent, PendingIntent.FLAG_ONE_SHOT);

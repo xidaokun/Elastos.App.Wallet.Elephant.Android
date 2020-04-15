@@ -73,29 +73,6 @@ public class ElaSideEthDataSource implements BRDataSourceInterface {
         return null;
     }
 
-    public String sendRawTransaction(String rawTransaction, int rid, JsonRpcHelper.JsonRpcRequestListener listener) {
-        String url = "https://api-wallet-eth.elastos.org/api/1/eth/wrap";
-        JSONObject payload = new JSONObject();
-        JSONArray params = new JSONArray();
-
-        try {
-            payload.put(JsonRpcHelper.JSONRPC, "2.0");
-            payload.put(JsonRpcHelper.METHOD, JsonRpcHelper.ETH_SEND_RAW_TRANSACTION);
-            params.put(rawTransaction);
-            payload.put(JsonRpcHelper.PARAMS, params);
-            payload.put(JsonRpcHelper.ID, rid);
-
-            String result = urlPost(url, payload.toString());
-
-            if (listener != null) {
-                listener.onRpcRequestCompleted(result);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
