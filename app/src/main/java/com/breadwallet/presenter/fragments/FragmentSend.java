@@ -295,7 +295,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         String iso = BRSharedPrefs.getCurrentWalletIso(getContext());
         if(StringUtil.isNullOrEmpty(iso) || !iso.equalsIgnoreCase("ELA") ||
                 balance.longValue()<1 || null==crcDids){
-            BRSharedPrefs.setAutoCrc(getContext(), false);
+//            BRSharedPrefs.setAutoCrc(getContext(), false);
             mAutoCrcCb.setVisibility(View.GONE);
             hideCrcView();
             return;
@@ -946,13 +946,14 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         boolean isCrcAuto = BRSharedPrefs.getAutoCrc(getContext());
         mAutoCrcCb.setChecked(isCrcAuto);
 
-        if(isDposAuto) {
+        String iso = BRSharedPrefs.getCurrentWalletIso(getContext());
+        if(isDposAuto && !StringUtil.isNullOrEmpty(iso) && iso.equals("ELA")) {
             showDposView();
         } else {
             hideDposView();
         }
 
-        if(isCrcAuto) {
+        if(isCrcAuto && !StringUtil.isNullOrEmpty(iso) && iso.equals("ELA")) {
             showCrcView();
         } else {
             hideCrcView();

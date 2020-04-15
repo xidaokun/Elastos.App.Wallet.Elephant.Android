@@ -430,7 +430,7 @@ public class ElaDataUtils {
 
         List<CrcEntity> crcEntities = CrcDataSource.getInstance(context)
                 .queryCrcsByIds(candidates);
-        if(crcEntities.size() < candidates.size()) {
+        if(crcEntities.size()>0 && (crcEntities.size()<candidates.size())) {
             return context.getString(R.string.crc_scheme_inactive_did);
         }
 

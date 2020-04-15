@@ -9,6 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.breadwallet.R
 import com.breadwallet.did.DidDataSource
+import com.breadwallet.presenter.activities.util.BRActivity
 import com.breadwallet.presenter.customviews.BRButton
 import com.breadwallet.presenter.customviews.LoadingDialog
 import com.breadwallet.presenter.entities.VoteEntity
@@ -35,7 +36,7 @@ import java.util.*
 
 
 @Suppress("UNREACHABLE_CODE")
-class CrcVoteActivity : AppCompatActivity() {
+class CrcVoteActivity : BRActivity() {
 
     private var mLoadingDialog: LoadingDialog? = null
 
@@ -104,87 +105,91 @@ class CrcVoteActivity : AppCompatActivity() {
     fun sendCrcTx() {
         AuthManager.getInstance().authPrompt(this, this.getString(R.string.pin_author_vote), getString(R.string.pin_author_vote_msg), true, false, object : BRAuthCompletion {
             override fun onComplete() {
-                showDialog()
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(Runnable {
+                try {
+                    showDialog()
+                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(Runnable {
 
-                    val type = uriFactory.host
+                        val type = uriFactory.host
 
-                    //dpos payload
-                    val dposNodes = Utils.spliteByComma(if (type=="eladposvote") uriFactory.candidatePublicKeys else BRSharedPrefs.getDposCd(this@CrcVoteActivity))
-                    val address = WalletElaManager.getInstance(this@CrcVoteActivity).address
-                    val amout = 0L
-                    var publickeys: ArrayList<PayLoadEntity>?
-                    if(dposNodes == null) {
-                        publickeys = null
-                    } else {
-                        publickeys = ArrayList()
-                        for(dposNode in dposNodes) {
-                            val payLoadEntity = PayLoadEntity()
-                            payLoadEntity.candidate = dposNode
-                            payLoadEntity.value = amout
-                            publickeys.add(payLoadEntity)
-                        }
-                    }
-
-                    //crc payload
-                    val crcNodes = Utils.spliteByComma(if (type=="elacrcvote") uriFactory.candidates else BRSharedPrefs.getCrcCd(this@CrcVoteActivity))
-                    var crcCandidates: ArrayList<PayLoadEntity>?
-                    if(crcNodes == null) {
-                        crcCandidates = null
-                    } else {
-                        crcCandidates = ArrayList()
-                        for(i in crcNodes.indices) {
-                            val payLoadEntity = PayLoadEntity()
-                            payLoadEntity.candidate = crcNodes[i]
-                            payLoadEntity.value = amout
-                            crcCandidates.add(payLoadEntity)
-                        }
-                    }
-
-                    val transactions = ElaDataSource.getInstance(this@CrcVoteActivity).
-                            createElaTx(address, address, amout, "vote", publickeys, crcCandidates) { elaOutput: ElaOutput, candidateCrcs: MutableList<PayLoadEntity>?, publickeys: MutableList<PayLoadEntity>? ->
-                                try {
-                                    if(publickeys != null) {
-                                        for(i in publickeys.indices) {
-                                            publickeys[i].value = elaOutput.amount
-                                        }
-                                    }
-
-                                    val crcVotes = Utils.spliteByComma(
-                                            if (type=="elacrcvote")
-                                                uriFactory.votes
-                                            else
-                                                BRSharedPrefs.getCrcVotes(this@CrcVoteActivity))
-
-                                    if(null!=crcVotes && null!=candidateCrcs) {
-                                        for(i in crcVotes.indices) {
-                                            candidateCrcs[i].value = BigDecimal(crcVotes[i]).multiply(BigDecimal(elaOutput.amount)).divide(BigDecimal(100)).toLong()
-                                        }
-                                    }
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
-                                }
+                        //dpos payload
+                        val dposNodes = Utils.spliteByComma(if (type=="eladposvote") uriFactory.candidatePublicKeys else BRSharedPrefs.getDposCd(this@CrcVoteActivity))
+                        val address = WalletElaManager.getInstance(this@CrcVoteActivity).address
+                        val amout = 0L
+                        var publickeys: ArrayList<PayLoadEntity>?
+                        if(dposNodes == null) {
+                            publickeys = null
+                        } else {
+                            publickeys = ArrayList()
+                            for(dposNode in dposNodes) {
+                                val payLoadEntity = PayLoadEntity()
+                                payLoadEntity.candidate = dposNode
+                                payLoadEntity.value = amout
+                                publickeys.add(payLoadEntity)
                             }
-                    if (null == transactions) {
-                        dismissDialog()
-                        finish()
-                        return@Runnable
-                    }
+                        }
 
-                    val mRwTxid = ElaDataSource.getInstance(this@CrcVoteActivity).sendElaRawTx(transactions)
-                    if (StringUtil.isNullOrEmpty(mRwTxid)) {
+                        //crc payload
+                        val crcNodes = Utils.spliteByComma(if (type=="elacrcvote") uriFactory.candidates else BRSharedPrefs.getCrcCd(this@CrcVoteActivity))
+                        var crcCandidates: ArrayList<PayLoadEntity>?
+                        if(crcNodes == null) {
+                            crcCandidates = null
+                        } else {
+                            crcCandidates = ArrayList()
+                            for(i in crcNodes.indices) {
+                                val payLoadEntity = PayLoadEntity()
+                                payLoadEntity.candidate = crcNodes[i]
+                                payLoadEntity.value = amout
+                                crcCandidates.add(payLoadEntity)
+                            }
+                        }
+
+                        val transactions = ElaDataSource.getInstance(this@CrcVoteActivity).
+                                createElaTx(address, address, amout, "vote", publickeys, crcCandidates) { elaOutput: ElaOutput, candidateCrcs: MutableList<PayLoadEntity>?, publickeys: MutableList<PayLoadEntity>? ->
+                                    try {
+                                        if(publickeys != null) {
+                                            for(i in publickeys.indices) {
+                                                publickeys[i].value = elaOutput.amount
+                                            }
+                                        }
+
+                                        val crcVotes = Utils.spliteByComma(
+                                                if (type=="elacrcvote")
+                                                    uriFactory.votes
+                                                else
+                                                    BRSharedPrefs.getCrcVotes(this@CrcVoteActivity))
+
+                                        if(null!=crcVotes && null!=candidateCrcs) {
+                                            for(i in crcVotes.indices) {
+                                                candidateCrcs[i].value = BigDecimal(crcVotes[i]).multiply(BigDecimal(elaOutput.amount)).divide(BigDecimal(100)).toLong()
+                                            }
+                                        }
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
+                                }
+                        if (null == transactions) {
+                            dismissDialog()
+                            finish()
+                            return@Runnable
+                        }
+
+                        val mRwTxid = ElaDataSource.getInstance(this@CrcVoteActivity).sendElaRawTx(transactions)
+                        if (StringUtil.isNullOrEmpty(mRwTxid)) {
+                            dismissDialog()
+                            finish()
+                            return@Runnable
+                        }
+                        callBackUrl(mRwTxid)
+                        callReturnUrl(mRwTxid)
+                        BRSharedPrefs.cacheCrcCd(this@CrcVoteActivity, uriFactory.candidates)
+                        BRSharedPrefs.cacheCrcVotes(this@CrcVoteActivity, uriFactory.votes)
+                        BRSharedPrefs.cacheDposCd(this@CrcVoteActivity, uriFactory.candidatePublicKeys)
                         dismissDialog()
                         finish()
-                        return@Runnable
-                    }
-                    callBackUrl(mRwTxid)
-                    callReturnUrl(mRwTxid)
-                    BRSharedPrefs.cacheCrcCd(this@CrcVoteActivity, uriFactory.candidates)
-                    BRSharedPrefs.cacheCrcVotes(this@CrcVoteActivity, uriFactory.votes)
-                    BRSharedPrefs.cacheDposCd(this@CrcVoteActivity, uriFactory.candidatePublicKeys)
-                    dismissDialog()
-                    finish()
-                })
+                    })
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
 
             override fun onCancel() {

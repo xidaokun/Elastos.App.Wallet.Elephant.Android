@@ -32,7 +32,9 @@ import com.breadwallet.tools.sqlite.ProfileDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.vote.CityEntity;
+import com.breadwallet.vote.CrcEntity;
 import com.elastos.jni.Utility;
 import com.elastos.jni.utils.SchemeStringUtils;
 import com.google.gson.Gson;
@@ -154,6 +156,15 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 }
                 // refresh crcs
                 CrcDataSource.getInstance(HomeActivity.this).getAndCacheCrcs();
+                List<String> crcDids = Utils.spliteByComma(BRSharedPrefs.getCrcCd(HomeActivity.this));
+                if(crcDids!=null && crcDids.size()>0) {
+                    List<CrcEntity> crcEntities = CrcDataSource.getInstance(HomeActivity.this).queryCrcsByIds(crcDids);
+                    List<String> candidates = new ArrayList<>();
+                    for(CrcEntity crcEntity : crcEntities) {
+                        candidates.add(crcEntity.Did);
+                    }
+                    BRSharedPrefs.cacheCrcCd(HomeActivity.this, candidates.toString());
+                }
             }
         });
     }
@@ -351,7 +362,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
     public void showAndDownloadCapsule(String url) {
         if(mExploreFragment!=null && !StringUtil.isNullOrEmpty(url)){
-            boolean isValid = SchemeStringUtils.isElaphantCapsule(url.trim()) || SchemeStringUtils.isHttpCapsule(url.trim());
+            boolean isValid = url.toLowerCase().contains(".capsule") && (SchemeStringUtils.isElaphantPrefix(url.trim()) || SchemeStringUtils.isHttpPrefix(url.trim()));
             if (!isValid) {
                 Toast.makeText(this, getString(R.string.mini_app_invalid_url), Toast.LENGTH_SHORT).show();
                 return;

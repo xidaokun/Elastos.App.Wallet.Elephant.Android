@@ -18,21 +18,22 @@ public class SchemeStringUtils {
     }
 
 
-    public static boolean isHttpCapsule(String url) {
+    public static boolean isHttpPrefix(String url) {
         if (isNullOrEmpty(url)) {
             return false;
         }
-
-        String regEx = "^(http|https)\\://.+\\.capsule$";
+//        String regEx = "^(http|https)\\://.+\\.capsule$";
+        String regEx = "^(http|https)\\://.+";
         Pattern p = Pattern.compile(regEx);
         Matcher matcher = p.matcher(url.trim());
         boolean ret = matcher.matches();
         return ret;
     }
 
-    public static boolean isElaphantCapsule(String url){
+    public static boolean isElaphantPrefix(String url){
         if (isNullOrEmpty(url)) return false;
-        String regEx = "^(elaphant|elastos|elapp:http|elapp:https)\\://.+\\.capsule$";
+//        String regEx = "^(elaphant|elastos|elapp:http|elapp:https)\\://.+\\.capsule$";
+        String regEx = "^(elaphant|elastos|elapp:http|elapp:https)\\://.+";
         Pattern p = Pattern.compile(regEx);
         Matcher matcher = p.matcher(url);
         boolean ret = matcher.matches();

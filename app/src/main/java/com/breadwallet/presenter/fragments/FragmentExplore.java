@@ -2,6 +2,7 @@ package com.breadwallet.presenter.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -44,6 +45,7 @@ import com.elastos.jni.utils.SchemeStringUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.eclipse.jetty.util.UrlEncoded;
 import org.elastos.sdk.wallet.BlockChainNode;
 import org.elastos.sdk.wallet.Did;
 import org.elastos.sdk.wallet.DidManager;
@@ -564,7 +566,26 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Mi
                 mAboutPopLayout.setVisibility(View.GONE);
                 if (null != mAboutShowListener) mAboutShowListener.show();
                 if (null != mAboutAppItem) {
-                    UiUtils.shareCapsule(getContext(), mAboutAppItem.path);
+                    StringBuilder sb = new StringBuilder();
+
+                    String languageCode = Locale.getDefault().getLanguage();
+                    if(!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")){
+                        sb.append(mAboutAppItem.name_zh_CN);
+                    } else {
+                        sb.append(mAboutAppItem.name_en);
+                    }
+                    sb.append(" ");
+                    sb.append("https://launch.elaphant.app/?");
+                    if(!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")){
+                        sb.append("appName=").append(Uri.encode(mAboutAppItem.name_zh_CN)).append("&");
+                        sb.append("appTitle=").append(Uri.encode(mAboutAppItem.name_zh_CN)).append("&");
+                    } else {
+                        sb.append("appName=").append(Uri.encode(mAboutAppItem.name_en)).append("&");
+                        sb.append("appTitle=").append(Uri.encode(mAboutAppItem.name_en)).append("&");
+                    }
+                    sb.append("autoRedirect=").append("True").append("&");
+                    sb.append("redirectURL=").append(Uri.encode(mAboutAppItem.path));
+                    UiUtils.shareCapsule(getContext(), sb.toString());
                 }
             }
         });
@@ -653,11 +674,6 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Mi
         }
     }
 
-    public boolean isExit() {
-
-        return false;
-    }
-
     public void downloadCapsule(String url) {
         if (StringUtil.isNullOrEmpty(url)) {
             if (isAdded())
@@ -672,13 +688,22 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Mi
             }
         }
 
-        if (SchemeStringUtils.isElaphantCapsule(url)) {
+        if (SchemeStringUtils.isElaphantPrefix(url)) {
             downloadCapsule(SchemeStringUtils.replaceElsProtocol(url, "http"));
             downloadCapsule(SchemeStringUtils.replaceElsProtocol(url, "https"));
             return;
         }
 
-        boolean isValid = SchemeStringUtils.isHttpCapsule(url);
+        //open url if exit
+        for(MyAppItem item : mItems) {
+            if(url.trim().equals(item.path)) {
+                String[] tmp = url.split("capsule");
+                UiUtils.startWebviewActivity(getActivity(), Uri.encode(item.url+((tmp.length>1)?tmp[1]:"")), item.appId);
+                return;
+            }
+        }
+
+        boolean isValid = SchemeStringUtils.isHttpPrefix(url);
         if (!isValid) {
             if(isAdded())Toast.makeText(getContext(), getString(R.string.mini_app_invalid_url), Toast.LENGTH_SHORT).show();
             return;

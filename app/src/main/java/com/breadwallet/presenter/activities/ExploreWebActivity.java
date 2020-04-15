@@ -240,7 +240,7 @@ public class ExploreWebActivity extends BRActivity {
         } else if(url.contains("elaphant") && url.contains("elacrcvote")) {
             UiUtils.startCrcActivity(ExploreWebActivity.this, url);
 
-        }else if(mHomeActivity!=null && SchemeStringUtils.isElaphantCapsule(url)) {
+        }else if(mHomeActivity!=null && SchemeStringUtils.isElaphantPrefix(url)) {
             mHomeActivity.showAndDownloadCapsule(url);
             finish();
         } else {

@@ -71,6 +71,9 @@ class CrcMembersActivity : AppCompatActivity() {
             if(from=="FragmentTxDetails") {
                 sb.append(" | ")
                         .append(crcEntity.Vote)
+            } else if(from=="FragmentSend") {
+                sb.append(" | ")
+                        .append(BigDecimal(crcEntity.Vote).multiply(balance).setScale(4, BRConstants.ROUNDING_MODE).toString())
             } else {
                 sb.append(" | ")
                         .append(BigDecimal(crcEntity.Vote).multiply(balance).setScale(4, BRConstants.ROUNDING_MODE).toString())
