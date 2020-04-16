@@ -584,7 +584,9 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Mi
                         sb.append("appTitle=").append(Uri.encode(mAboutAppItem.name_en)).append("&");
                     }
                     sb.append("autoRedirect=").append("True").append("&");
-                    sb.append("redirectURL=").append(Uri.encode(mAboutAppItem.path));
+                    sb.append("redirectURL=").append(Uri.encode(mAboutAppItem.path.
+                            replace("http:", "elaphant:")
+                            .replace("https:", "elaphant:")));
                     UiUtils.shareCapsule(getContext(), sb.toString());
                 }
             }
@@ -697,8 +699,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Mi
         //open url if exit
         for(MyAppItem item : mItems) {
             if(url.trim().equals(item.path)) {
-                String[] tmp = url.split("capsule");
-                UiUtils.startWebviewActivity(getActivity(), Uri.encode(item.url+((tmp.length>1)?tmp[1]:"")), item.appId);
+                UiUtils.startWebviewActivity(getActivity(), item.url, item.appId);
                 return;
             }
         }
