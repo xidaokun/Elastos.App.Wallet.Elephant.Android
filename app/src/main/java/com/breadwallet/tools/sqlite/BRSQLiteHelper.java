@@ -55,7 +55,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     }
 
     public static String DATABASE_NAME = "breadwallet.db";
-    private static final int DATABASE_VERSION = 21;
+    private static final int DATABASE_VERSION = 22;
 
 
     public static final String CRC_CIRY_TABLE_NAME = "crcCityTable";
@@ -505,6 +505,12 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+        if(newVersion==22) {
+            db.execSQL("DROP TABLE IF EXISTS " + ELA_TX_TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + IOEX_TX_TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + ELA_TX_TABLE_NAME);
+        }
 
         if(newVersion==20) {
             db.execSQL("DROP TABLE IF EXISTS " + ADD_APPS_TABLE_NAME);
