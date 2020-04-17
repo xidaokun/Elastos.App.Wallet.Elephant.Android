@@ -77,7 +77,6 @@ public class FragmentSetting extends Fragment {
                 e.printStackTrace();
             }
         }
-        Log.d("xidaokun_test", "did:"+did);
         mDidContent.setText("did:ela:"+did);
 
         mNickname = rootView.findViewById(R.id.did_alias);

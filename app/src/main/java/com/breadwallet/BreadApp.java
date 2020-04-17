@@ -142,13 +142,13 @@ public class BreadApp extends BaseApplication {
         mObserver = new ApplicationLifecycleObserver();
         ProcessLifecycleOwner.get().getLifecycle().addObserver(mObserver);
 
+
+        CrashHandler.getInstance().init(getApplicationContext());
+
         Beta.upgradeDialogLayoutId = R.layout.upgrade_layout;
         UpgradeHandler.initString();
         Bugly.init(getApplicationContext(), BuildConfig.UPGRADE_TESTNET? "8b437eefc0":"8a9b0190e0", false);
         cacheVersionCode();
-
-        CrashHandler.getInstance().init(getApplicationContext());
-
 //        PushClient.getInstance().initCloudChannel(this);
     }
 

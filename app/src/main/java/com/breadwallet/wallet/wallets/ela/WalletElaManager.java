@@ -143,7 +143,6 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
                 e.printStackTrace();
             }
         }
-        Log.d("xidaokun_test", "mPrivateKey:"+mPrivateKey);
         return mPrivateKey;
     }
 
@@ -160,14 +159,12 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         }
 //        BRSharedPrefs.putElaPK(mContext, mPublickey);
 
-        Log.d("xidaokun_test", "mPublickey:"+mPublickey);
 
         return mPublickey;
     }
 
     public String getDid() {
         String did = ElastosKeypairDID.getDid(getPublicKey());
-        Log.d("xidaokun_test", "did:"+did);
         return did;
     }
 
@@ -181,7 +178,6 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
             }
         }
 
-        Log.d("xidaokun_test", "mAddress:"+mAddress);
         return mAddress;
     }
 
