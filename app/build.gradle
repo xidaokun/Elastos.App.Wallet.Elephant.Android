@@ -55,7 +55,6 @@ android {
 
     productFlavors {
         ela {
-            applicationId = "elaphant.app"
             dimension "mode"
             resValue "string", "app_name", "Elephant"
             buildConfigField "boolean", "BITCOIN_TESTNET", "false"
@@ -77,7 +76,6 @@ android {
         }
 
         elaTestnet {
-            applicationId = "elaphant.app"
             dimension "mode"
             resValue "string", "app_name", "Elephant"
             buildConfigField "boolean", "BITCOIN_TESTNET", "true"
