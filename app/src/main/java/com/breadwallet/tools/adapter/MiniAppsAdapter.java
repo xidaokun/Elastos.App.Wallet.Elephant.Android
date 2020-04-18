@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,6 +89,8 @@ public class MiniAppsAdapter extends RecyclerView.Adapter<MiniAppsAdapter.MyApps
         } else {
             holder.mLogo.setImageResource(R.drawable.unknow);
         }
+
+        if(null == bitmap) Log.d("bitmap_log", "iconPath:"+new File(item.icon).getAbsolutePath());
 
         //TODO daokun.xi
         if(mIsDelete){

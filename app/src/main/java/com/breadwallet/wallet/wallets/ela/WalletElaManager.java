@@ -9,6 +9,7 @@ import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWalletManager;
 import com.breadwallet.core.ethereum.BREthereumAmount;
+import com.breadwallet.presenter.activities.crc.CrcDataSource;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -20,6 +21,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.SettingsUtil;
 import com.breadwallet.tools.util.StringUtil;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.vote.CrcEntity;
 import com.breadwallet.vote.PayLoadEntity;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
@@ -488,11 +490,12 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         List candidateCrcs = null;
         if(autoCrcVote) {
             List<String> crcDids = Utils.spliteByComma(BRSharedPrefs.getCrcCd(mContext));
-            if(null!=crcDids && crcDids.size()>0) {
+            List<CrcEntity> crcEntities = CrcDataSource.getInstance(mContext).queryCrcsByIds(crcDids);
+            if(null!=crcEntities && crcEntities.size()>0) {
                 candidateCrcs = new ArrayList<PayLoadEntity>();
-                for(String did : crcDids) {
+                for(CrcEntity entity : crcEntities) {
                     PayLoadEntity payLoadEntity = new PayLoadEntity();
-                    payLoadEntity.candidate = did;
+                    payLoadEntity.candidate = entity.Did;
                     candidateCrcs.add(payLoadEntity);
                 }
             }

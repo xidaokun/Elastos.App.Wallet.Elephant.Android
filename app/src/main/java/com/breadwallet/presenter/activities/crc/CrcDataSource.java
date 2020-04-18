@@ -80,7 +80,7 @@ public class CrcDataSource implements BRDataSourceInterface {
         }
     }
 
-    public synchronized void cacheCrcs(List<CrcEntity> crcEntities){
+    public synchronized void cacheActiveCrcs(List<CrcEntity> crcEntities){
         if(crcEntities == null) return;
         try {
             database = openDatabase();
@@ -236,11 +236,19 @@ public class CrcDataSource implements BRDataSourceInterface {
 //    }
 
 
-    public void getAndCacheCrcs() {
+    public void getAndCacheActiveCrcs() {
         try {
             String url = getUrlByVersion("crc/rank/height/241762000?state=active", "v1");
             String result = APIClient.urlGET(mContext, url);
-            cacheCrcs(new Gson().fromJson(result, CrcsEntity.class).result);
+            cacheActiveCrcs(new Gson().fromJson(result, CrcsEntity.class).result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getAndCacheActiveDpos() {
+        try {
+            String url = getUrlByVersion("dpos/rank/height/241762000?state=active", "v1");
         } catch (Exception e) {
             e.printStackTrace();
         }

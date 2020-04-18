@@ -147,24 +147,17 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             @Override
             public void run() {
                 //cache crc cities
-                if(!BRSharedPrefs.isCacheCity(HomeActivity.this)) {
+                if (!BRSharedPrefs.isCacheCity(HomeActivity.this)) {
                     String cityStr = CrcUtils.INSTANCE.readCities(HomeActivity.this, "city/cities");
-                    if(StringUtil.isNullOrEmpty(cityStr)) return;
-                    List<CityEntity> cityEntities = new Gson().fromJson(cityStr, new TypeToken<List<CityEntity>>(){}.getType());
-                    if(cityEntities != null) CrcDataSource.getInstance(HomeActivity.this).cacheCrcCity(cityEntities);
+                    if (StringUtil.isNullOrEmpty(cityStr)) return;
+                    List<CityEntity> cityEntities = new Gson().fromJson(cityStr, new TypeToken<List<CityEntity>>() {
+                    }.getType());
+                    if (cityEntities != null)
+                        CrcDataSource.getInstance(HomeActivity.this).cacheCrcCity(cityEntities);
                     BRSharedPrefs.hasCacheCity(HomeActivity.this);
                 }
                 // refresh crcs
-                CrcDataSource.getInstance(HomeActivity.this).getAndCacheCrcs();
-                List<String> crcDids = Utils.spliteByComma(BRSharedPrefs.getCrcCd(HomeActivity.this));
-                if(crcDids!=null && crcDids.size()>0) {
-                    List<CrcEntity> crcEntities = CrcDataSource.getInstance(HomeActivity.this).queryCrcsByIds(crcDids);
-                    List<String> candidates = new ArrayList<>();
-                    for(CrcEntity crcEntity : crcEntities) {
-                        candidates.add(crcEntity.Did);
-                    }
-                    BRSharedPrefs.cacheCrcCd(HomeActivity.this, candidates.toString());
-                }
+                CrcDataSource.getInstance(HomeActivity.this).getAndCacheActiveCrcs();
             }
         });
     }
@@ -197,7 +190,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     public void MessageEvent(MessageInfo messageInfo) {
         String friendCode = messageInfo.getFriendCode();
 
-        if(StringUtil.isNullOrEmpty(friendCode)) return; //only receive message
+        if (StringUtil.isNullOrEmpty(friendCode)) return; //only receive message
         Log.d("xidaokun", "HomeActivity#MessageEvent#cacheMessgeInfo#begin");
         ChatDataSource.getInstance(this)
                 .setType(BRConstants.CHAT_GROUP_TYPE)
@@ -237,7 +230,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode==KeyEvent.KEYCODE_BACK && (navigation.getVisibility()!=View.VISIBLE)) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && (navigation.getVisibility() != View.VISIBLE)) {
             mExploreFragment.hideAboutView();
             navigation.setVisibility(View.VISIBLE);
             return true;
@@ -250,24 +243,26 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         public String Value;
     }
 
-    private String getKeyVale(String path, String value){
+    private String getKeyVale(String path, String value) {
         KeyValue key = new KeyValue();
         key.Key = path;
         key.Value = value;
         List<KeyValue> keys = new ArrayList<>();
         keys.add(key);
-        return new Gson().toJson(keys, new TypeToken<List<KeyValue>>(){}.getType());
+        return new Gson().toJson(keys, new TypeToken<List<KeyValue>>() {
+        }.getType());
     }
 
     private Did mDid;
     private String mSeed;
     private String publicKey;
-    private void initDid(){
-        if(null == mDid){
+
+    private void initDid() {
+        if (null == mDid) {
             String mnemonic = getMn();
-            if(StringUtil.isNullOrEmpty(mnemonic)) return;
+            if (StringUtil.isNullOrEmpty(mnemonic)) return;
             mSeed = IdentityManager.getSeed(mnemonic, "");
-            if(StringUtil.isNullOrEmpty(mSeed)) return;
+            if (StringUtil.isNullOrEmpty(mSeed)) return;
             Identity identity = IdentityManager.createIdentity(getFilesDir().getAbsolutePath());
             DidManager didManager = identity.createDidManager(mSeed);
             BlockChainNode node = new BlockChainNode(ProfileDataSource.DID_URL);
@@ -278,29 +273,29 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         }
     }
 
-    private void didIsOnchain(){
+    private void didIsOnchain() {
         long nowTime = System.currentTimeMillis();
         long didTime = BRSharedPrefs.getDid2ChainTime(this);
-        Log.d("didIsOnchain", "nowTime-didTime:"+(nowTime-didTime));
-        if(nowTime-didTime < 15*60*1000) return;
+        Log.d("didIsOnchain", "nowTime-didTime:" + (nowTime - didTime));
+        if (nowTime - didTime < 15 * 60 * 1000) return;
         Log.d("didIsOnchain", "nowTime-didTime > 15*60*1000");
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 initDid();
-                if(null == mDid) return;
+                if (null == mDid) return;
                 mDid.syncInfo();
                 String value = mDid.getInfo("PublicKey", false, mSeed);
-                Log.i("didIsOnchain", "value:"+value);
-                if(StringUtil.isNullOrEmpty(value) || !value.contains("PublicKey")){
-                    if(StringUtil.isNullOrEmpty(publicKey)) return;
+                Log.i("didIsOnchain", "value:" + value);
+                if (StringUtil.isNullOrEmpty(value) || !value.contains("PublicKey")) {
+                    if (StringUtil.isNullOrEmpty(publicKey)) return;
                     String data = getKeyVale("PublicKey", publicKey);
-                    if(StringUtil.isNullOrEmpty(data) || StringUtil.isNullOrEmpty(mSeed)) return;
+                    if (StringUtil.isNullOrEmpty(data) || StringUtil.isNullOrEmpty(mSeed)) return;
                     String info = mDid.signInfo(mSeed, data, false);
-                    if(StringUtil.isNullOrEmpty(info)) return;
+                    if (StringUtil.isNullOrEmpty(info)) return;
                     ProfileDataSource.getInstance(HomeActivity.this).upchain(info);
                     String did = BRSharedPrefs.getMyDid(HomeActivity.this);
-                    if(StringUtil.isNullOrEmpty(did)) {
+                    if (StringUtil.isNullOrEmpty(did)) {
                         did = Utility.getInstance(HomeActivity.this).getDid(publicKey);
                         BRSharedPrefs.cacheMyDid(HomeActivity.this, did);
                     }
@@ -312,19 +307,19 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
     private void bindDid() {
         String did = BRSharedPrefs.getMyDid(HomeActivity.this);
-        if(StringUtil.isNullOrEmpty(did)) {
+        if (StringUtil.isNullOrEmpty(did)) {
             did = Utility.getInstance(HomeActivity.this).getDid(publicKey);
             BRSharedPrefs.cacheMyDid(HomeActivity.this, did);
         }
-        Log.d("xidaokun_push", "bind did:"+did);
+        Log.d("xidaokun_push", "bind did:" + did);
         PushClient.getInstance().bindAlias(did, null);
     }
 
-    private String getMn(){
+    private String getMn() {
         byte[] phrase = null;
         try {
             phrase = BRKeyStore.getPhrase(this, 0);
-            if(phrase != null) {
+            if (phrase != null) {
                 return new String(phrase);
             }
         } catch (Exception e) {
@@ -355,13 +350,13 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     }
 
     public void showChatFragment(String value) {
-        if(mChatFragment!=null && !StringUtil.isNullOrEmpty(value)) {
+        if (mChatFragment != null && !StringUtil.isNullOrEmpty(value)) {
             mChatFragment.selectFriendFragment(value);
         }
     }
 
     public void showAndDownloadCapsule(String url) {
-        if(mExploreFragment!=null && !StringUtil.isNullOrEmpty(url)){
+        if (mExploreFragment != null && !StringUtil.isNullOrEmpty(url)) {
             boolean isValid = url.toLowerCase().contains(".capsule") && (SchemeStringUtils.isElaphantPrefix(url.trim()) || SchemeStringUtils.isHttpPrefix(url.trim()));
             if (!isValid) {
                 Toast.makeText(this, getString(R.string.mini_app_invalid_url), Toast.LENGTH_SHORT).show();
@@ -377,6 +372,13 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     public void onConnectionChanged(boolean isConnected) {
         if (mWalletFragment != null)
             mWalletFragment.onConnectionChanged(isConnected);
+        if (isConnected)
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    CrcDataSource.getInstance(HomeActivity.this).getAndCacheActiveCrcs();
+                }
+            });
     }
 
     @Override

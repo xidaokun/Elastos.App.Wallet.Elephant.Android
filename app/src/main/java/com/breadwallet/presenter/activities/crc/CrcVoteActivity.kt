@@ -134,10 +134,11 @@ class CrcVoteActivity : BRActivity() {
                         if(crcNodes == null) {
                             crcCandidates = null
                         } else {
+                            val crcEntities = CrcDataSource.getInstance(this@CrcVoteActivity).queryCrcsByIds(crcNodes)
                             crcCandidates = ArrayList()
-                            for(i in crcNodes.indices) {
+                            for(i in crcEntities.indices) {
                                 val payLoadEntity = PayLoadEntity()
-                                payLoadEntity.candidate = crcNodes[i]
+                                payLoadEntity.candidate = crcEntities[i].Did
                                 payLoadEntity.value = amout
                                 crcCandidates.add(payLoadEntity)
                             }
@@ -237,7 +238,7 @@ class CrcVoteActivity : BRActivity() {
             //crc members lv
             BRExecutor.getInstance().forMainThreadTasks().execute{
                 val crcs = CrcDataSource.getInstance(this@CrcVoteActivity).queryCrcsByIds(crcNodes)
-                CrcDataSource.getInstance(this@CrcVoteActivity).updateCrcsArea(crcs);
+                CrcDataSource.getInstance(this@CrcVoteActivity).updateCrcsArea(crcs)
                 findViewById<FlowLayout>(R.id.numbers_flow_layout).also {
                     with(it) {
                         setAdapter(
