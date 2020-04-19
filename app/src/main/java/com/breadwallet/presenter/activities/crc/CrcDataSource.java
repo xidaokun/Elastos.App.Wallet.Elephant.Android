@@ -246,13 +246,14 @@ public class CrcDataSource implements BRDataSourceInterface {
         }
     }
 
-    public void getAndCacheActiveDpos() {
-        try {
-            String url = getUrlByVersion("dpos/rank/height/241762000?state=active", "v1");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    public void getAndCacheActiveDpos() {
+//        try {
+//            String url = getUrlByVersion("dpos/rank/height/241762000?state=active", "v1");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
 
 //    public void cacheCrcProducer(List<CrcProducerResult.CrcProducers> entities) {
 //        if(entities==null || entities.size()<=0) return;
@@ -331,9 +332,9 @@ public class CrcDataSource implements BRDataSourceInterface {
         return result;
     }
 
-    static class ProducerTxid {
-        public List<String> txid;
-    }
+//    static class ProducerTxid {
+//        public List<String> txid;
+//    }
 
     public String getUrlByVersion(String api, String version) {
         String node = BRSharedPrefs.getElaNode(mContext, ELA_NODE_KEY);

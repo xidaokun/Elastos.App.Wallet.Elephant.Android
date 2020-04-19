@@ -758,13 +758,13 @@ public class BRSharedPrefs {
         if(StringUtil.isNullOrEmpty(candidate)) return;
         SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("dposCandidate", candidate);
+        editor.putString("candidate", candidate);
         editor.apply();
     }
 
     public static String getDposCd(Context context){
         SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
-        return prefs.getString("dposCandidate", "");
+        return prefs.getString("candidate", "");
     }
 
     public static void setExploreFrom(Context context, String from){
