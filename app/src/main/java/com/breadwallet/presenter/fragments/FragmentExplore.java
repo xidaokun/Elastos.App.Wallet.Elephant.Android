@@ -228,21 +228,20 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Mi
 //            String[] apps = assetManager.list("apps");
             BRSharedPrefs.putAddedAppId(getContext(), new Gson().toJson(mAppIds));
             final List<MyAppItem> tmp = ProfileDataSource.getInstance(getContext()).getMyAppItems();
-            if (tmp != null && tmp.size() > 5) {
+            if (tmp != null && tmp.size()>0) {
                 mItems.addAll(tmp);
                 for (MyAppItem item : tmp) {
                     mAppIds.add(item.appId);
                     BRSharedPrefs.putAddedAppId(getContext(), new Gson().toJson(mAppIds));
                 }
                 mAdapter.notifyDataSetChanged();
-            } else {
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        getInterApps(tmp);
-                    }
-                });
             }
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    getInterApps(tmp);
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -86,12 +86,12 @@ public final class SettingsUtil {
     public static List<BRSettingsItem> getMainSettings(final Activity activity) {
         List<BRSettingsItem> settingsItems = new ArrayList<>();
 
-        settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_moment), "", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ChatUiUtils.startMomentActivity(activity);
-            }
-        }, false, R.drawable.ic_moment));
+//        settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_moment), "", new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                ChatUiUtils.startMomentActivity(activity);
+//            }
+//        }, false, R.drawable.ic_moment));
 
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_authorizations), "", new View.OnClickListener() {
             @Override
@@ -187,6 +187,23 @@ public final class SettingsUtil {
             }
         }, false, R.drawable.ic_about));
 
+
+        settingsItems.add(new BRSettingsItem("测试投票数据", "", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<String> crcDids = Utils.spliteByComma(BRSharedPrefs.getCrcCd(activity));
+                List<String> sb = new ArrayList<>();
+                for(int i=0; i<crcDids.size(); i++) {
+                    if(i==0) {
+                        sb.add("xxxxxxxxxxxxxx");
+                    } else {
+                        sb.add(crcDids.get(i));
+                    }
+                }
+                BRSharedPrefs.cacheCrcCd(activity, sb.toString());
+
+            }
+        }, false, R.drawable.ic_about));
 
 //        settingsItems.add(new BRSettingsItem("测试push", "", new View.OnClickListener() {
 //            @Override
