@@ -8,9 +8,11 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -261,9 +263,9 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
 
     private static final String SIGN_DATABASE_CREATE = "create table if not exists " + SIGN_AUTHOR_TABLE_NAME + " (" +
             SIGN_APP_NAME + " text, " +
-            SIGN_APP_ID + " text, " +
+            SIGN_APP_ID + " text  primary key ,  " +
             SIGN_APP_ICON + " text, " +
-            SIGN_DID + " text primary key , " +
+            SIGN_DID + " text, " +
             SIGN_TIMESTAMP + " integer, " +
             SIGN_PURPOSE + " text, " +
             SIGN_CONTENT +" text);";
@@ -285,9 +287,9 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     private static final String DID_AUTHOR_DATABASE_CREATE = "create table if not exists " + DID_AUTHOR_TABLE_NAME + " (" +
             DID_AUTHOR_COLUMN_ID + " integer, " +
             DID_AUTHOR_NICKNAME + " text, " +
-            DID_AUTHOR_DID + " text primary key , " +
+            DID_AUTHOR_DID + " text , " +
             DID_AUTHOR_PK + " text, " +
-            DID_AUTHOR_APP_ID + " text, " +
+            DID_AUTHOR_APP_ID + " text primary key , " +
             DID_AUTHOR_APP_NAME + " text, " +
             DID_AUTHOR_AUTHOR_TIME + " integer DEFAULT '0' , " +
             DID_AUTHOR_EXP_TIME + " integer DEFAULT '0' , " +
@@ -507,9 +509,11 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
         if(newVersion==22) {
+            db.execSQL("DROP TABLE IF EXISTS " + SIGN_AUTHOR_TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + DID_AUTHOR_TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + ELA_TX_TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + IOEX_TX_TABLE_NAME);
-            db.execSQL("DROP TABLE IF EXISTS " + ELA_TX_TABLE_NAME);
+            BRSharedPrefs.putNeedAddApps(BreadApp.getBreadContext(), true);
         }
 
         if(newVersion==20) {

@@ -416,17 +416,17 @@ public class BRSharedPrefs {
     }
 
     //if the user prefers all in crypto units, not fiat currencies
-    public static boolean isAuthorAuto(Context activity, String did) {
-        if(StringUtil.isNullOrEmpty(did)) return false;
+    public static boolean isAuthorAuto(Context activity, String appId) {
+        if(StringUtil.isNullOrEmpty(appId)) return false;
         SharedPreferences prefs = activity.getSharedPreferences(UiUtils.getCacheProviderName(activity, PREFS_NAME), Context.MODE_PRIVATE);
-        return prefs.getBoolean(did, false);
+        return prefs.getBoolean(appId, false);
     }
 
     //if the user prefers all in crypto units, not fiat currencies
-    public static void setIsAuthorAuto(Context activity, String did, boolean b) {
+    public static void setIsAuthorAuto(Context activity, String appId, boolean b) {
         SharedPreferences prefs = activity.getSharedPreferences(UiUtils.getCacheProviderName(activity, PREFS_NAME), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(did, b);
+        editor.putBoolean(appId, b);
         editor.apply();
     }
 
@@ -1001,4 +1001,17 @@ public class BRSharedPrefs {
         SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
         return prefs.getBoolean("hasCacheCity", false);
     }
+
+    public static boolean needAddApps(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        return prefs.getBoolean("needAddApps", false);
+    }
+
+    public static void putNeedAddApps(Context context, boolean need) {
+        SharedPreferences prefs = context.getSharedPreferences(UiUtils.getCacheProviderName(context, PREFS_NAME), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("needAddApps", need);
+        editor.apply();
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.activities.did;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.widget.CheckBox;
@@ -13,12 +14,16 @@ import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.MaxHeightLv;
 import com.breadwallet.presenter.customviews.RoundImageView;
+import com.breadwallet.presenter.entities.MyAppItem;
 import com.breadwallet.tools.adapter.AuthorDetailAdapter;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.sqlite.ProfileDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.StringUtil;
+import com.breadwallet.tools.util.Utils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,21 +53,34 @@ public class AuthorDetailActivity extends BaseSettingsActivity {
         String did = intent.getStringExtra("did");
         String appId = intent.getStringExtra("appId");
         if(!StringUtil.isNullOrEmpty(did)) {
-            mAuthorInfo = DidDataSource.getInstance(this).getInfoByDid(did);
+            mAuthorInfo = DidDataSource.getInstance(this).getInfoByDid(appId);
         }
         initView();
         initData();
-        int iconResourceId = getResources().getIdentifier("unknow", BRConstants.DRAWABLE, getPackageName());
-        if(!StringUtil.isNullOrEmpty(appId)) {
-            if(appId.equals(BRConstants.REA_PACKAGE_ID)){
-                iconResourceId = getResources().getIdentifier("redpackage", BRConstants.DRAWABLE, getPackageName());
-            } else if(appId.equals(BRConstants.DEVELOPER_WEBSITE) || appId.equals(BRConstants.DEVELOPER_WEBSITE_TEST)){
-                iconResourceId = getResources().getIdentifier("developerweb", BRConstants.DRAWABLE, getPackageName());
-            } else if(appId.equals(BRConstants.HASH_ID)){
-                iconResourceId = getResources().getIdentifier("hash", BRConstants.DRAWABLE, getPackageName());
+//        int iconResourceId = getResources().getIdentifier("unknow", BRConstants.DRAWABLE, getPackageName());
+//        if(!StringUtil.isNullOrEmpty(appId)) {
+//            if(appId.equals(BRConstants.REA_PACKAGE_ID)){
+//                iconResourceId = getResources().getIdentifier("redpackage", BRConstants.DRAWABLE, getPackageName());
+//            } else if(appId.equals(BRConstants.DEVELOPER_WEBSITE) || appId.equals(BRConstants.DEVELOPER_WEBSITE_TEST)){
+//                iconResourceId = getResources().getIdentifier("developerweb", BRConstants.DRAWABLE, getPackageName());
+//            } else if(appId.equals(BRConstants.HASH_ID)){
+//                iconResourceId = getResources().getIdentifier("hash", BRConstants.DRAWABLE, getPackageName());
+//            }
+//        }
+//        mAppIcon.setImageDrawable(getDrawable(iconResourceId));
+
+        MyAppItem myAppItem = ProfileDataSource.getInstance(this).getAppInfoById(appId);
+        if(myAppItem != null){
+            Bitmap bitmap = null;
+            if(!StringUtil.isNullOrEmpty(myAppItem.icon)){
+                bitmap = Utils.getIconFromPath(new File(myAppItem.icon));
+            }
+            if(null != bitmap){
+                mAppIcon.setImageBitmap(bitmap);
+            } else {
+                mAppIcon.setImageResource(R.drawable.unknow);
             }
         }
-        mAppIcon.setImageDrawable(getDrawable(iconResourceId));
     }
 
     private void initView() {
@@ -72,7 +90,7 @@ public class AuthorDetailActivity extends BaseSettingsActivity {
         mAuthorCbox = findViewById(R.id.auto_checkbox);
         mAppIcon = findViewById(R.id.app_icon);
         mAuthInfoLv = findViewById(R.id.author_info_detail_list);
-        boolean isAuto = BRSharedPrefs.isAuthorAuto(this, mAuthorInfo!=null ?mAuthorInfo.getDid():null);
+        boolean isAuto = BRSharedPrefs.isAuthorAuto(this, mAuthorInfo!=null ?mAuthorInfo.getAppId():null);
         mAuthorCbox.setChecked(isAuto);
 
         mAuthorCbox.setText(String.format(getString(R.string.Author_Auto_Check), mAuthorInfo.getAppName()));
@@ -80,7 +98,7 @@ public class AuthorDetailActivity extends BaseSettingsActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(mAuthorInfo == null) return;
-                BRSharedPrefs.setIsAuthorAuto(AuthorDetailActivity.this, mAuthorInfo.getDid(), b);
+                BRSharedPrefs.setIsAuthorAuto(AuthorDetailActivity.this, mAuthorInfo.getAppId(), b);
             }
         });
     }

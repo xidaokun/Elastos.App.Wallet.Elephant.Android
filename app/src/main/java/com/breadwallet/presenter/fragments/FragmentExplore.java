@@ -235,13 +235,26 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Mi
                     BRSharedPrefs.putAddedAppId(getContext(), new Gson().toJson(mAppIds));
                 }
                 mAdapter.notifyDataSetChanged();
-            }
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    getInterApps(tmp);
+
+                boolean need = BRSharedPrefs.needAddApps(getContext());
+                if(need) {
+                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            addVotemeApp();
+                            addMiniAppsApp();
+                            BRSharedPrefs.putNeedAddApps(getContext(), false);
+                        }
+                    });
                 }
-            });
+            } else {
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        getInterApps(tmp);
+                    }
+                });
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -583,7 +596,7 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Mi
                         sb.append("appTitle=").append(Uri.encode(mAboutAppItem.name_en)).append("&");
                     }
                     sb.append("autoRedirect=").append("True").append("&");
-                    sb.append("redirectURL=").append(Uri.encode(mAboutAppItem.path.
+                    sb.append("redirectURL=").append(Uri.encode(mAboutAppItem.path.trim().
                             replace("http:", "elaphant:")
                             .replace("https:", "elaphant:")));
                     UiUtils.shareCapsule(getContext(), sb.toString());

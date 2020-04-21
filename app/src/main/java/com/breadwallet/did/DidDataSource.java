@@ -122,14 +122,14 @@ public class DidDataSource implements BRDataSourceInterface {
         return infos;
     }
 
-    public AuthorInfo getInfoByDid(String did){
+    public AuthorInfo getInfoByDid(String appId){
         Cursor cursor = null;
         AuthorInfo result = null;
         try{
             database = openDatabase();
             cursor = database.query(BRSQLiteHelper.DID_AUTHOR_TABLE_NAME,
-                    allColumns, BRSQLiteHelper.DID_AUTHOR_DID + " = ? ",
-                    new String[]{did}, null, null, null);
+                    allColumns, BRSQLiteHelper.DID_AUTHOR_APP_ID + " = ? ",
+                    new String[]{appId}, null, null, null);
             cursor.moveToNext();
             if (!cursor.isAfterLast()) {
                 result = cursorToInfo(cursor);

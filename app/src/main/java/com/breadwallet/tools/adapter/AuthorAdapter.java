@@ -1,6 +1,7 @@
 package com.breadwallet.tools.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,9 @@ import com.breadwallet.R;
 import com.breadwallet.did.AuthorInfo;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
+import com.breadwallet.tools.util.Utils;
 
+import java.io.File;
 import java.util.List;
 
 public class AuthorAdapter extends BaseAdapter {
@@ -57,18 +60,28 @@ public class AuthorAdapter extends BaseAdapter {
 
         AuthorInfo info = mData.get(i);
         holder.nameTv.setText(info.getAppName());
-        String appId = info.getAppId();
-        int iconResourceId = mContext.getResources().getIdentifier("unknow", BRConstants.DRAWABLE, mContext.getPackageName());
-        if(!StringUtil.isNullOrEmpty(appId)) {
-            if(appId.equals(BRConstants.REA_PACKAGE_ID)){
-                iconResourceId = mContext.getResources().getIdentifier("redpackage", BRConstants.DRAWABLE, mContext.getPackageName());
-            } else if(appId.equals(BRConstants.DEVELOPER_WEBSITE) || appId.equals(BRConstants.DEVELOPER_WEBSITE_TEST)){
-                iconResourceId = mContext.getResources().getIdentifier("developerweb", BRConstants.DRAWABLE, mContext.getPackageName());
-            } else if(appId.equals(BRConstants.HASH_ID)){
-                iconResourceId = mContext.getResources().getIdentifier("hash", BRConstants.DRAWABLE, mContext.getPackageName());
-            }
+//        String appId = info.getAppId();
+//        int iconResourceId = mContext.getResources().getIdentifier("unknow", BRConstants.DRAWABLE, mContext.getPackageName());
+//        if(!StringUtil.isNullOrEmpty(appId)) {
+//            if(appId.equals(BRConstants.REA_PACKAGE_ID)){
+//                iconResourceId = mContext.getResources().getIdentifier("redpackage", BRConstants.DRAWABLE, mContext.getPackageName());
+//            } else if(appId.equals(BRConstants.DEVELOPER_WEBSITE) || appId.equals(BRConstants.DEVELOPER_WEBSITE_TEST)){
+//                iconResourceId = mContext.getResources().getIdentifier("developerweb", BRConstants.DRAWABLE, mContext.getPackageName());
+//            } else if(appId.equals(BRConstants.HASH_ID)){
+//                iconResourceId = mContext.getResources().getIdentifier("hash", BRConstants.DRAWABLE, mContext.getPackageName());
+//            }
+//        }
+//        holder.iconTv.setImageDrawable(mContext.getDrawable(iconResourceId));
+
+        Bitmap bitmap = null;
+        if(!StringUtil.isNullOrEmpty(info.getAppIcon())){
+            bitmap = Utils.getIconFromPath(new File(info.getAppIcon()));
         }
-        holder.iconTv.setImageDrawable(mContext.getDrawable(iconResourceId));
+        if(null != bitmap){
+            holder.iconTv.setImageBitmap(bitmap);
+        } else {
+            holder.iconTv.setImageResource(R.drawable.unknow);
+        }
 
         return convertView;
     }

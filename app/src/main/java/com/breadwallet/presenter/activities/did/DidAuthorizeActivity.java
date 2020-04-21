@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.activities.did;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.security.keystore.UserNotAuthenticatedException;
@@ -25,19 +26,23 @@ import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.customviews.LoadingDialog;
 import com.breadwallet.presenter.customviews.RoundImageView;
 import com.breadwallet.presenter.entities.AuthorInfoItem;
+import com.breadwallet.presenter.entities.MyAppItem;
 import com.breadwallet.tools.adapter.AuthorInfoAdapter;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.sqlite.ProfileDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.StringUtil;
+import com.breadwallet.tools.util.Utils;
 import com.elastos.jni.AuthorizeManager;
 import com.elastos.jni.Constants;
 import com.elastos.jni.UriFactory;
 import com.elastos.jni.Utility;
 import com.google.gson.Gson;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -123,6 +128,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         mLoadingDialog.setCanceledOnTouchOutside(false);
     }
 
+    MyAppItem myAppItem = null;
     private void initData(){
         if (StringUtil.isNullOrEmpty(mUri)) return;
         uriFactory = new UriFactory();
@@ -132,21 +138,49 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         mWillTv.setText(String.format(getString(R.string.Did_Will_Get), uriFactory.getAppName()));
         mAuthorCbox.setText(String.format(getString(R.string.Author_Auto_Check), uriFactory.getAppName()));
 
-        boolean isAuto = BRSharedPrefs.isAuthorAuto(this, uriFactory.getDID());
+        boolean isAuto = BRSharedPrefs.isAuthorAuto(this, uriFactory.getAppID());
         mAuthorCbox.setChecked(isAuto);
 
         String appId = uriFactory.getAppID();
-        int iconResourceId = getResources().getIdentifier("unknow", BRConstants.DRAWABLE, getPackageName());
-        if(!StringUtil.isNullOrEmpty(appId)) {
-            if(appId.equals(BRConstants.REA_PACKAGE_ID)){
-                iconResourceId = getResources().getIdentifier("redpackage", BRConstants.DRAWABLE, getPackageName());
-            } else if(appId.equals(BRConstants.DEVELOPER_WEBSITE) || appId.equals(BRConstants.DEVELOPER_WEBSITE_TEST)){
-                iconResourceId = getResources().getIdentifier("developerweb", BRConstants.DRAWABLE, getPackageName());
-            } else if(appId.equals(BRConstants.HASH_ID)){
-                iconResourceId = getResources().getIdentifier("hash", BRConstants.DRAWABLE, getPackageName());
+        myAppItem = ProfileDataSource.getInstance(this).getAppInfoById(appId);
+
+//        int iconResourceId = getResources().getIdentifier("unknow", BRConstants.DRAWABLE, getPackageName());
+//        if(!StringUtil.isNullOrEmpty(appId)) {
+//            if(appId.equals(BRConstants.REA_PACKAGE_ID)){
+//                iconResourceId = getResources().getIdentifier("redpackage", BRConstants.DRAWABLE, getPackageName());
+//                mAppIcon.setImageDrawable(getDrawable(iconResourceId));
+//            } else if(appId.equals(BRConstants.DEVELOPER_WEBSITE) || appId.equals(BRConstants.DEVELOPER_WEBSITE_TEST)){
+//                iconResourceId = getResources().getIdentifier("developerweb", BRConstants.DRAWABLE, getPackageName());
+//                mAppIcon.setImageDrawable(getDrawable(iconResourceId));
+//            } else if(appId.equals(BRConstants.HASH_ID)){
+//                iconResourceId = getResources().getIdentifier("hash", BRConstants.DRAWABLE, getPackageName());
+//                mAppIcon.setImageDrawable(getDrawable(iconResourceId));
+//            } else {
+//                if(myAppItem != null){
+//                    Bitmap bitmap = null;
+//                    if(!StringUtil.isNullOrEmpty(myAppItem.icon)){
+//                        bitmap = Utils.getIconFromPath(new File(myAppItem.icon));
+//                    }
+//                    if(null != bitmap){
+//                        mAppIcon.setImageBitmap(bitmap);
+//                    } else {
+//                        mAppIcon.setImageResource(R.drawable.unknow);
+//                    }
+//                }
+//            }
+//        }
+
+        if(myAppItem != null){
+            Bitmap bitmap = null;
+            if(!StringUtil.isNullOrEmpty(myAppItem.icon)){
+                bitmap = Utils.getIconFromPath(new File(myAppItem.icon));
+            }
+            if(null != bitmap){
+                mAppIcon.setImageBitmap(bitmap);
+            } else {
+                mAppIcon.setImageResource(R.drawable.unknow);
             }
         }
-        mAppIcon.setImageDrawable(getDrawable(iconResourceId));
 
         List infos = createInfoList();
         AuthorInfoAdapter authorAdapter = new AuthorInfoAdapter(this, infos);
@@ -246,7 +280,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (uriFactory == null) return;
-                BRSharedPrefs.setIsAuthorAuto(DidAuthorizeActivity.this, uriFactory.getDID(), b);
+                BRSharedPrefs.setIsAuthorAuto(DidAuthorizeActivity.this, uriFactory.getAppID(), b);
             }
         });
     }
@@ -392,7 +426,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         info.setDid(uriFactory.getDID());
         info.setAppName(uriFactory.getAppName());
         info.setExpTime(getAuthorTime(30));
-        info.setAppIcon("www.elstos.org");
+        info.setAppIcon(myAppItem.icon);
         DidDataSource.getInstance(this).putAuthorApp(info);
     }
 
