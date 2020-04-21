@@ -1009,6 +1009,7 @@
     <string name="Did.Detail.Btc.Address">- BTC address</string>
     <string name="Did.Detail.Bch.Address">- BCH address</string>
     <string name="Did.Detail.Eth.Address">- ETH address</string>
+    <string name="Did.Detail.ELAETHSC.Address">- ELAETHSC address</string>
     <string name="Did.Detail.Ioex.Address">- IOEX address</string>
     <string name="Did.Detail.Email">- Email</string>
     <string name="Did.Detail.Phone.Number">- Phone number</string>
