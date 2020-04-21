@@ -187,24 +187,6 @@ public final class SettingsUtil {
             }
         }, false, R.drawable.ic_about));
 
-
-        settingsItems.add(new BRSettingsItem("测试投票数据", "", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                List<String> crcDids = Utils.spliteByComma(BRSharedPrefs.getCrcCd(activity));
-                List<String> sb = new ArrayList<>();
-                for(int i=0; i<crcDids.size(); i++) {
-                    if(i==0) {
-                        sb.add("xxxxxxxxxxxxxx");
-                    } else {
-                        sb.add(crcDids.get(i));
-                    }
-                }
-                BRSharedPrefs.cacheCrcCd(activity, sb.toString());
-
-            }
-        }, false, R.drawable.ic_about));
-
 //        settingsItems.add(new BRSettingsItem("测试push", "", new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {

@@ -147,7 +147,7 @@ public class BreadApp extends BaseApplication {
 
         Beta.upgradeDialogLayoutId = R.layout.upgrade_layout;
         UpgradeHandler.initString();
-        Bugly.init(getApplicationContext(), "8b437eefc0", false);
+        Bugly.init(getApplicationContext(), "8a9b0190e0", false);
         cacheVersionCode();
 //        PushClient.getInstance().initCloudChannel(this);
     }
