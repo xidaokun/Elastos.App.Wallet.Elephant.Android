@@ -241,9 +241,15 @@ public class FragmentExplore extends Fragment implements OnStartDragListener, Mi
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            addVotemeApp();
-                            addMiniAppsApp();
-                            BRSharedPrefs.putNeedAddApps(getContext(), false);
+                            try {
+                                addVotemeApp();
+                                addMiniAppsApp();
+                                BRSharedPrefs.putNeedAddApps(getContext(), false);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            } finally {
+                                dialogDismiss();
+                            }
                         }
                     });
                 }
