@@ -50,9 +50,8 @@ public class AuthorDetailActivity extends BaseSettingsActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
-        String did = intent.getStringExtra("did");
         String appId = intent.getStringExtra("appId");
-        if(!StringUtil.isNullOrEmpty(did)) {
+        if(!StringUtil.isNullOrEmpty(appId)) {
             mAuthorInfo = DidDataSource.getInstance(this).getInfoByDid(appId);
         }
         initView();
