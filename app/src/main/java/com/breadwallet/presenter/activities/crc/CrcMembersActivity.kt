@@ -79,6 +79,7 @@ class CrcMembersActivity : AppCompatActivity() {
                         .append(BigDecimal(crcEntity.Vote).multiply(balance).setScale(4, BRConstants.ROUNDING_MODE).toString())
                         .append(" | ")
                         .append(crcEntity.Vote)
+                        .append("%")
             }
             item["content"] = sb.toString()
 
