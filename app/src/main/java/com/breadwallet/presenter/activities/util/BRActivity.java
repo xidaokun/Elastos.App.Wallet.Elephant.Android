@@ -309,8 +309,6 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                                     UiUtils.startSignActivity(this, url);
                                     return;
                                 case "eladposvote":
-                                    UiUtils.startVoteActivity(this, url);
-                                    return;
                                 case "elacrcvote":
                                     UiUtils.startCrcActivity(this, url);
                                     return;
