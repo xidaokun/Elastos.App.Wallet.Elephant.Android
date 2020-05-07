@@ -3,7 +3,6 @@ package com.breadwallet.tools.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 
 import com.breadwallet.R;
@@ -32,9 +31,6 @@ import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ela.WalletElaManager;
-import com.tencent.bugly.beta.Beta;
-
-import org.chat.lib.utils.ChatUiUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -148,12 +144,12 @@ public final class SettingsUtil {
 //            }
 //        }, false, R.drawable.ic_red_package));
 
-        settingsItems.add(new BRSettingsItem(activity.getString(R.string.Upgrade_title), "", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Beta.checkUpgrade(true, false);
-            }
-        }, false, R.drawable.ic_upgrade));
+//        settingsItems.add(new BRSettingsItem(activity.getString(R.string.Upgrade_title), "", new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Beta.checkUpgrade(true, false);
+//            }
+//        }, false, R.drawable.ic_upgrade));
 
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.Clear_cache_title), "", new View.OnClickListener() {
             @Override

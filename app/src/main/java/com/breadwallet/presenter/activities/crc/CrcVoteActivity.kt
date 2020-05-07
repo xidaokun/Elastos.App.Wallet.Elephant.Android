@@ -246,12 +246,13 @@ class CrcVoteActivity : BRActivity() {
                                 R.layout.crc_member_layout,
                                 object : FlowLayout.ItemView<CrcEntity>() {
                                     override fun getCover(item: CrcEntity?, holder: FlowLayout.ViewHolder?, inflate: View?, position: Int) {
-                                        val languageCode = Locale.getDefault().language
-                                        if (!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")) {
-                                            holder?.setText(R.id.tv_label_name, item?.Nickname + " | " + item?.AreaZh)
-                                        } else {
-                                            holder?.setText(R.id.tv_label_name, item?.Nickname + " | " + item?.AreaEn)
-                                        }
+//                                        val languageCode = Locale.getDefault().language
+//                                        if (!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")) {
+//                                            holder?.setText(R.id.tv_label_name, item?.Nickname + " | " + item?.AreaZh)
+//                                        } else {
+//                                            holder?.setText(R.id.tv_label_name, item?.Nickname + " | " + item?.AreaEn)
+//                                        }
+                                        holder?.setText(R.id.tv_label_name, item?.Nickname)
                                     }
                                 }
                         )

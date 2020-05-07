@@ -61,13 +61,14 @@ class CrcMembersActivity : AppCompatActivity() {
         for(crcEntity in crcRankEntities) {
             val item = HashMap<String, Any>()
 
-            val languageCode = Locale.getDefault().language
-            var sb = StringBuilder().append(crcEntity.Nickname).append(" | ")
-            if (!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")) {
-                sb.append(crcEntity.AreaZh)
-            } else {
-                sb.append(crcEntity.AreaEn)
-            }
+//            val languageCode = Locale.getDefault().language
+            var sb = StringBuilder().append(crcEntity.Nickname)
+//                    .append(" | ")
+//            if (!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")) {
+//                sb.append(crcEntity.AreaZh)
+//            } else {
+//                sb.append(crcEntity.AreaEn)
+//            }
             if(from=="FragmentTxDetails") {
                 sb.append(" | ")
                         .append(crcEntity.Vote)

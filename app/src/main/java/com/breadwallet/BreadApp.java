@@ -15,7 +15,6 @@ import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
-import com.breadwallet.cache.UpgradeHandler;
 import com.breadwallet.presenter.activities.util.ApplicationLifecycleObserver;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.crypto.Base32;
@@ -28,8 +27,7 @@ import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
-import com.tencent.bugly.Bugly;
-import com.tencent.bugly.beta.Beta;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import org.common.lib.BaseApplication;
 
@@ -145,9 +143,10 @@ public class BreadApp extends BaseApplication {
 
         CrashHandler.getInstance().init(getApplicationContext());
 
-        Beta.upgradeDialogLayoutId = R.layout.upgrade_layout;
-        UpgradeHandler.initString();
-        Bugly.init(getApplicationContext(), "8a9b0190e0", false);
+//        Beta.upgradeDialogLayoutId = R.layout.upgrade_layout;
+//        UpgradeHandler.initString();
+//        Bugly.init(getApplicationContext(), "8a9b0190e0", false);
+        CrashReport.initCrashReport(getApplicationContext(), "8a9b0190e0", false);
         cacheVersionCode();
 //        PushClient.getInstance().initCloudChannel(this);
     }

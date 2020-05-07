@@ -315,12 +315,13 @@ public class FragmentTxDetails extends DialogFragment {
                 mFlowLt.setAdapter(crcEntities, R.layout.crc_member_layout, new FlowLayout.ItemView<CrcEntity>() {
                     @Override
                     protected void getCover(CrcEntity item, FlowLayout.ViewHolder holder, View inflate, int position) {
-                        String languageCode = Locale.getDefault().getLanguage();
-                        if (!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")) {
-                            holder.setText(R.id.tv_label_name, item.Nickname + " | " + item.AreaZh);
-                        } else {
-                            holder.setText(R.id.tv_label_name, item.Nickname + " | " + item.AreaEn);
-                        }
+                        holder.setText(R.id.tv_label_name, item.Nickname);
+//                        String languageCode = Locale.getDefault().getLanguage();
+//                        if (!StringUtil.isNullOrEmpty(languageCode) && languageCode.contains("zh")) {
+//                            holder.setText(R.id.tv_label_name, item.Nickname + " | " + item.AreaZh);
+//                        } else {
+//                            holder.setText(R.id.tv_label_name, item.Nickname + " | " + item.AreaEn);
+//                        }
                     }
                 });
 

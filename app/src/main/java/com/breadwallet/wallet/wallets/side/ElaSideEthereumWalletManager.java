@@ -916,7 +916,8 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
                                     if (txObject.has(JsonRpcHelper.TO)) {
                                         txTo = txObject.getString(JsonRpcHelper.TO);
                                         // Log.d(TAG, "TxObject to -> " + txTo);
-
+                                        if(StringUtil.isNullOrEmpty(txTo) || txTo.equals("0x"))
+                                            txTo = "0x0000000000000000000000000000000000000000";
                                     }
 
                                     if (txObject.has(JsonRpcHelper.FROM)) {
@@ -977,7 +978,8 @@ public class ElaSideEthereumWalletManager extends BaseEthereumWalletManager impl
                                     if (txObject.has(JsonRpcHelper.INPUT)) {
                                         txData = txObject.getString(JsonRpcHelper.INPUT);
                                         // Log.d(TAG, "TxObject input -> " + txData);
-
+                                        if(StringUtil.isNullOrEmpty(txData) || txData.equals("0x"))
+                                            txData = "0x0000000000000000000000000000000000000000";
                                     }
 
                                     if (txObject.has(JsonRpcHelper.CONFIRMATIONS)) {

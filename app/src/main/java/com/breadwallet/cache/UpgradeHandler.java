@@ -7,9 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.breadwallet.tools.sqlite.BRDataSourceInterface;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.util.BRConstants;
-import com.tencent.bugly.beta.Beta;
 
-import static com.breadwallet.tools.sqlite.BRSQLiteHelper.ELA_TX_TABLE_NAME;
 import static com.platform.sqlite.PlatformSqliteHelper.KV_STORE_TABLE_NAME;
 
 public class UpgradeHandler implements BRDataSourceInterface {
@@ -33,32 +31,32 @@ public class UpgradeHandler implements BRDataSourceInterface {
         return mInstance;
     }
 
-    public static void initString() {
-        Beta.strToastYourAreTheLatestVersion = "You're up to date";
-        Beta.strToastCheckUpgradeError = "Failed to check for new version, please try again later";
-        Beta.strToastCheckingUpgrade = "Checking, please wait...";
-        Beta.strNotificationDownloading = "Downloading";
-        Beta.strNotificationClickToView = "Click to view";
-        Beta.strNotificationClickToInstall = "Click to install";
-        Beta.strNotificationClickToRetry = "Click to retry";
-        Beta.strNotificationClickToContinue = "Continue download";
-        Beta.strNotificationDownloadSucc = "Download completed";
-        Beta.strNotificationDownloadError = "Download failed";
-        Beta.strNotificationHaveNewVersion = "New version available";
-        Beta.strNetworkTipsMessage = "You have switched to the mobile network, whether to continue the current download?";
-        Beta.strNetworkTipsTitle = "Network tips";
-        Beta.strNetworkTipsConfirmBtn = "Continue download";
-        Beta.strNetworkTipsCancelBtn = "Cancel";
-        Beta.strUpgradeDialogVersionLabel = "Version";
-        Beta.strUpgradeDialogFileSizeLabel = "Package size";
-        Beta.strUpgradeDialogUpdateTimeLabel = "Update time";
-        Beta.strUpgradeDialogFeatureLabel = "Release notes";
-        Beta.strUpgradeDialogUpgradeBtn = "Update";
-        Beta.strUpgradeDialogInstallBtn = "Install";
-        Beta.strUpgradeDialogRetryBtn = "Retry";
-        Beta.strUpgradeDialogContinueBtn = "Continue";
-        Beta.strUpgradeDialogCancelBtn = "Next time";
-    }
+//    public static void initString() {
+//        Beta.strToastYourAreTheLatestVersion = "You're up to date";
+//        Beta.strToastCheckUpgradeError = "Failed to check for new version, please try again later";
+//        Beta.strToastCheckingUpgrade = "Checking, please wait...";
+//        Beta.strNotificationDownloading = "Downloading";
+//        Beta.strNotificationClickToView = "Click to view";
+//        Beta.strNotificationClickToInstall = "Click to install";
+//        Beta.strNotificationClickToRetry = "Click to retry";
+//        Beta.strNotificationClickToContinue = "Continue download";
+//        Beta.strNotificationDownloadSucc = "Download completed";
+//        Beta.strNotificationDownloadError = "Download failed";
+//        Beta.strNotificationHaveNewVersion = "New version available";
+//        Beta.strNetworkTipsMessage = "You have switched to the mobile network, whether to continue the current download?";
+//        Beta.strNetworkTipsTitle = "Network tips";
+//        Beta.strNetworkTipsConfirmBtn = "Continue download";
+//        Beta.strNetworkTipsCancelBtn = "Cancel";
+//        Beta.strUpgradeDialogVersionLabel = "Version";
+//        Beta.strUpgradeDialogFileSizeLabel = "Package size";
+//        Beta.strUpgradeDialogUpdateTimeLabel = "Update time";
+//        Beta.strUpgradeDialogFeatureLabel = "Release notes";
+//        Beta.strUpgradeDialogUpgradeBtn = "Update";
+//        Beta.strUpgradeDialogInstallBtn = "Install";
+//        Beta.strUpgradeDialogRetryBtn = "Retry";
+//        Beta.strUpgradeDialogContinueBtn = "Continue";
+//        Beta.strUpgradeDialogCancelBtn = "Next time";
+//    }
 
     public SQLiteDatabase getWritable() {
 //        if (mOpenCounter.incrementAndGet() == 1) {
