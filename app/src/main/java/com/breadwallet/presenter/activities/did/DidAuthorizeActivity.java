@@ -426,7 +426,7 @@ public class DidAuthorizeActivity extends BaseSettingsActivity {
         info.setDid(uriFactory.getDID());
         info.setAppName(uriFactory.getAppName());
         info.setExpTime(getAuthorTime(30));
-        info.setAppIcon(myAppItem.icon);
+        if(null!=myAppItem) info.setAppIcon(myAppItem.icon);
         DidDataSource.getInstance(this).putAuthorApp(info);
     }
 
